@@ -1850,6 +1850,550 @@
             
             showD1557Validation('تم تحميل بيانات المثال - اضغط "احسب النتائج"', 'success');
         }
+            <!-- D4318 Section -->
+        <div id="sectionD4318" class="bg-white rounded-lg shadow-lg p-6 mb-6 hidden">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b-4 border-purple-500 pb-2">
+                ASTM D4318 - اختبار حدود Atterberg (Atterberg Limits Test)
+            </h2>
+
+            <!-- General Info -->
+            <div class="grid grid-cols-3 gap-4 mb-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">رقم العينة (Sample ID):</label>
+                    <input type="text" id="d4318sampleId" placeholder="A-001" class="w-full px-3 py-2 border rounded">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">تاريخ الاختبار (Test Date):</label>
+                    <input type="date" id="d4318testDate" class="w-full px-3 py-2 border rounded">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">الطريقة (Method):</label>
+                    <select id="d4318method" class="w-full px-3 py-2 border rounded">
+                        <option value="A">Method A (Multipoint)</option>
+                        <option value="B">Method B (One-point)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Liquid Limit Section -->
+            <div class="section-header">اختبار حد السيولة - الطريقة الثنائية (Liquid Limit - Multipoint)</div>
+            <div class="overflow-x-auto mb-6">
+                <table class="w-full border">
+                    <thead class="bg-blue-100">
+                        <tr>
+                            <th>Point</th>
+                            <th>عدد الطرقات (No. of Taps)</th>
+                            <th>رقم الحاوية (Tare No.)</th>
+                            <th>كتلة الحاوية (Tare Wt g)</th>
+                            <th class="bg-yellow-100">الرطب (Wet Wt g)</th>
+                            <th class="bg-yellow-100">الجاف (Dry Wt g)</th>
+                            <th class="bg-green-100">الماء (Water g)</th>
+                            <th class="bg-green-100">التربة الجافة (Dry Soil g)</th>
+                            <th class="bg-blue-100">w (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="d4318llTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Plastic Limit Section -->
+            <div class="section-header">اختبار حد اللدونة (Plastic Limit Test)</div>
+            <div class="overflow-x-auto mb-6">
+                <table class="w-full border">
+                    <thead class="bg-purple-100">
+                        <tr>
+                            <th>Point</th>
+                            <th>رقم الحاوية (Tare No.)</th>
+                            <th>كتلة الحاوية (Tare Wt g)</th>
+                            <th class="bg-yellow-100">الرطب (Wet Wt g)</th>
+                            <th class="bg-yellow-100">الجاف (Dry Wt g)</th>
+                            <th class="bg-green-100">الماء (Water g)</th>
+                            <th class="bg-green-100">التربة الجافة (Dry Soil g)</th>
+                            <th class="bg-purple-100">w (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="d4318plTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-4 mb-6 flex-wrap">
+                <button onclick="calculateD4318()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded">
+                    احسب النتائج (Calculate)
+                </button>
+                <button onclick="resetD4318()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded">
+                    إعادة تعيين (Reset)
+                </button>
+                <button onclick="loadD4318Example()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded">
+                    تحميل مثال (Load Example)
+                </button>
+            </div>
+
+            <!-- Results -->
+            <div id="d4318resultsSection" class="hidden">
+                <div class="section-header">النتائج (Results)</div>
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="result-card bg-gradient-to-br from-blue-400 to-blue-600">
+                        <div class="text-sm text-blue-100 mb-2">حد السيولة (LL)</div>
+                        <div class="text-3xl font-bold"><span id="d4318ll">---</span>%</div>
+                    </div>
+                    <div class="result-card bg-gradient-to-br from-purple-400 to-purple-600">
+                        <div class="text-sm text-purple-100 mb-2">حد اللدونة (PL)</div>
+                        <div class="text-3xl font-bold"><span id="d4318pl">---</span>%</div>
+                    </div>
+                    <div class="result-card bg-gradient-to-br from-red-400 to-red-600">
+                        <div class="text-sm text-red-100 mb-2">مؤشر اللدونة (PI)</div>
+                        <div class="text-3xl font-bold"><span id="d4318pi">---</span>%</div>
+                    </div>
+                </div>
+
+                <!-- Classification Card -->
+                <div class="result-card bg-gradient-to-br from-indigo-400 to-indigo-600 mt-4">
+                    <div class="text-sm text-indigo-100 mb-2">تصنيف التربة (Soil Classification)</div>
+                    <div class="text-2xl font-bold"><span id="d4318classification">---</span></div>
+                    <div class="text-xs text-indigo-100 mt-2" id="d4318classificationDetail">---</div>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div id="d4318chartSection" class="hidden chart-container">
+                <canvas id="d4318chart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('d1557testDate').value = today;
+        document.getElementById('d4318testDate').value = today;
+        initializeD1557Tables();
+        initializeD4318Tables();
+
+        // Tab Switching
+        function switchTab(tab) {
+            const d1557 = document.getElementById('sectionD1557');
+            const d4318 = document.getElementById('sectionD4318');
+            const tabD1557 = document.getElementById('tabD1557');
+            const tabD4318 = document.getElementById('tabD4318');
+            
+            [d1557, d4318].forEach(el => el.classList.add('hidden'));
+            [tabD1557, tabD4318].forEach(el => {
+                el.classList.remove('tab-active');
+                el.classList.add('tab-inactive');
+            });
+            
+            if (tab === 'd1557') {
+                d1557.classList.remove('hidden');
+                tabD1557.classList.add('tab-active');
+                tabD1557.classList.remove('tab-inactive');
+            } else {
+                d4318.classList.remove('hidden');
+                tabD4318.classList.add('tab-active');
+                tabD4318.classList.remove('tab-inactive');
+            }
+        }
+
+        // ============ D1557 FUNCTIONS ============
+        function initializeD1557Tables() {
+            const wcBody = document.getElementById('d1557wcTableBody');
+            const compBody = document.getElementById('d1557compTableBody');
+            wcBody.innerHTML = '';
+            compBody.innerHTML = '';
+            
+            for (let i = 1; i <= 5; i++) {
+                const wcRow = document.createElement('tr');
+                wcRow.innerHTML = `
+                    <td>${i}</td>
+                    <td><input type="number" id="d1557wcWet${i}" step="0.01" placeholder="0.00" onchange="calculateD1557WC(${i})"></td>
+                    <td><input type="number" id="d1557wcDry${i}" step="0.01" placeholder="0.00" onchange="calculateD1557WC(${i})"></td>
+                    <td><input type="number" id="d1557wcTare${i}" step="0.01" placeholder="0.00" onchange="calculateD1557WC(${i})"></td>
+                    <td class="bg-yellow-50" id="d1557wcWater${i}">---</td>
+                    <td class="bg-yellow-50" id="d1557wcDrySoil${i}">---</td>
+                    <td class="bg-green-50" id="d1557w${i}">---</td>
+                `;
+                wcBody.appendChild(wcRow);
+
+                const compRow = document.createElement('tr');
+                compRow.innerHTML = `
+                    <td>${i}</td>
+                    <td><input type="number" id="d1557moldWet${i}" step="0.1" placeholder="0.0" onchange="calculateD1557()"></td>
+                    <td id="d1557moistDensity${i}" class="bg-yellow-50">---</td>
+                    <td id="d1557dryDensity${i}" class="bg-green-100">---</td>
+                `;
+                compBody.appendChild(compRow);
+            }
+        }
+
+        function calculateD1557WC(i) {
+            const wet = parseFloat(document.getElementById(`d1557wcWet${i}`).value) || 0;
+            const dry = parseFloat(document.getElementById(`d1557wcDry${i}`).value) || 0;
+            const tare = parseFloat(document.getElementById(`d1557wcTare${i}`).value) || 0;
+            
+            const water = wet - dry;
+            const drySoil = dry - tare;
+            const w = drySoil > 0 ? (water / drySoil) * 100 : 0;
+            
+            document.getElementById(`d1557wcWater${i}`).textContent = water.toFixed(2);
+            document.getElementById(`d1557wcDrySoil${i}`).textContent = drySoil.toFixed(2);
+            document.getElementById(`d1557w${i}`).textContent = w.toFixed(1);
+        }
+
+        function calculateD1557() {
+            const moldMass = parseFloat(document.getElementById('d1557moldMass').value) || 0;
+            const moldVolValue = parseFloat(document.getElementById('d1557moldVolValue').value) || 0;
+            const moldVolUnit = document.getElementById('d1557moldVolUnit').value;
+            const unitSystem = document.querySelector('input[name="unitSystem"]:checked').value;
+
+            let V_m3 = moldVolUnit === 'cm3' ? moldVolValue * 1e-6 : moldVolValue;
+            const points = [];
+
+            for (let i = 1; i <= 5; i++) {
+                const moldWet = parseFloat(document.getElementById(`d1557moldWet${i}`).value);
+                const wText = document.getElementById(`d1557w${i}`).textContent;
+                
+                if (!moldWet || wText === '---') continue;
+
+                const w = parseFloat(wText);
+                const Mt = moldWet;
+                const rho_m_base = (Mt / 1000) / V_m3;
+                const rho_d_base = rho_m_base / (1 + w / 100);
+
+                let displayMoist, displayDry;
+                if (unitSystem === 'gcm3') {
+                    displayMoist = rho_m_base / 1000;
+                    displayDry = rho_d_base / 1000;
+                } else if (unitSystem === 'kgm3') {
+                    displayMoist = rho_m_base;
+                    displayDry = rho_d_base;
+                } else if (unitSystem === 'kNm3') {
+                    displayMoist = (rho_m_base * 9.80665) / 1000;
+                    displayDry = (rho_d_base * 9.80665) / 1000;
+                }
+
+                document.getElementById(`d1557moistDensity${i}`).textContent = displayMoist.toFixed(4);
+                document.getElementById(`d1557dryDensity${i}`).textContent = displayDry.toFixed(4);
+
+                points.push({ i, w, rho_d_base, displayDry });
+            }
+
+            if (points.length > 0) {
+                let maxPoint = points[0];
+                for (const p of points) {
+                    if (p.rho_d_base > maxPoint.rho_d_base) maxPoint = p;
+                }
+
+                const omc = maxPoint.w.toFixed(1);
+                const mdd = maxPoint.displayDry.toFixed(4);
+
+                document.getElementById('d1557omc').textContent = omc;
+                document.getElementById('d1557mdd').textContent = mdd;
+                document.getElementById('d1557resultsSection').classList.remove('hidden');
+                document.getElementById('d1557chartSection').classList.remove('hidden');
+
+                let altText = '';
+                if (unitSystem === 'gcm3') {
+                    const mddKg = maxPoint.rho_d_base;
+                    const mddKn = (maxPoint.rho_d_base * 9.80665) / 1000;
+                    altText = `${mddKg.toFixed(2)} kg/m³ | ${mddKn.toFixed(3)} kN/m³`;
+                } else if (unitSystem === 'kgm3') {
+                    const mddGcm = maxPoint.rho_d_base / 1000;
+                    const mddKn = (maxPoint.rho_d_base * 9.80665) / 1000;
+                    altText = `${mddGcm.toFixed(4)} g/cm³ | ${mddKn.toFixed(3)} kN/m³`;
+                } else if (unitSystem === 'kNm3') {
+                    const mddKg = maxPoint.rho_d_base;
+                    const mddGcm = maxPoint.rho_d_base / 1000;
+                    altText = `${mddGcm.toFixed(4)} g/cm³ | ${mddKg.toFixed(2)} kg/m³`;
+                }
+                document.getElementById('d1557alternateUnits').textContent = altText;
+
+                drawD1557Chart(points, unitSystem);
+            }
+        }
+
+        function drawD1557Chart(points, unitSystem) {
+            const ctx = document.getElementById('d1557chart').getContext('2d');
+            if (window.d1557ChartInstance) window.d1557ChartInstance.destroy();
+
+            let yLabel = unitSystem === 'gcm3' ? 'الكثافة الجافة (g/cm³)' : 
+                        unitSystem === 'kgm3' ? 'الكثافة الجافة (kg/m³)' : 'وحدة الوزن (kN/m³)';
+
+            window.d1557ChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: points.map(p => p.w.toFixed(1)),
+                    datasets: [{
+                        label: 'منحنى الدمك (Compaction Curve)',
+                        data: points.map(p => p.displayDry),
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        pointRadius: 7,
+                        pointBackgroundColor: 'rgb(239, 68, 68)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: 'محتوى الرطوبة (%) - Water Content' } },
+                        y: { title: { display: true, text: yLabel } }
+                    }
+                }
+            });
+        }
+
+        function updateUnitLabels() {
+            const unitSystem = document.querySelector('input[name="unitSystem"]:checked').value;
+            const moistHeader = document.getElementById('moistHeader');
+            const dryHeader = document.getElementById('dryHeader');
+            const unitLabel = document.getElementById('d1557unitLabel');
+
+            if (unitSystem === 'gcm3') {
+                moistHeader.textContent = 'γm (g/cm³)';
+                dryHeader.textContent = 'γd (g/cm³)';
+                unitLabel.textContent = 'g/cm³';
+            } else if (unitSystem === 'kgm3') {
+                moistHeader.textContent = 'γm (kg/m³)';
+                dryHeader.textContent = 'γd (kg/m³)';
+                unitLabel.textContent = 'kg/m³';
+            } else if (unitSystem === 'kNm3') {
+                moistHeader.textContent = 'γm (kN/m³)';
+                dryHeader.textContent = 'γd (kN/m³)';
+                unitLabel.textContent = 'kN/m³';
+            }
+        }
+
+        function resetD1557() {
+            if (confirm('هل تريد حذف جميع بيانات D1557؟')) {
+                for (let i = 1; i <= 5; i++) {
+                    document.getElementById(`d1557wcWet${i}`).value = '';
+                    document.getElementById(`d1557wcDry${i}`).value = '';
+                    document.getElementById(`d1557wcTare${i}`).value = '';
+                    document.getElementById(`d1557w${i}`).textContent = '---';
+                    document.getElementById(`d1557moldWet${i}`).value = '';
+                    document.getElementById(`d1557moistDensity${i}`).textContent = '---';
+                    document.getElementById(`d1557dryDensity${i}`).textContent = '---';
+                }
+                document.getElementById('d1557resultsSection').classList.add('hidden');
+                document.getElementById('d1557chartSection').classList.add('hidden');
+            }
+        }
+
+        function loadD1557Example() {
+            const wcData = [
+                {wet: 125.5, dry: 120.3, tare: 25.0},
+                {wet: 130.2, dry: 123.5, tare: 25.0},
+                {wet: 135.8, dry: 126.4, tare: 25.0},
+                {wet: 142.3, dry: 129.8, tare: 25.0},
+                {wet: 148.6, dry: 132.5, tare: 25.0}
+            ];
+            
+            const moldWetData = [5250, 5380, 5450, 5420, 5350];
+            
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`d1557wcWet${i}`).value = wcData[i-1].wet.toFixed(2);
+                document.getElementById(`d1557wcDry${i}`).value = wcData[i-1].dry.toFixed(2);
+                document.getElementById(`d1557wcTare${i}`).value = wcData[i-1].tare.toFixed(2);
+                calculateD1557WC(i);
+                document.getElementById(`d1557moldWet${i}`).value = moldWetData[i-1].toFixed(1);
+            }
+
+            document.getElementById('d1557moldMass').value = '3500';
+            document.getElementById('d1557moldVolValue').value = '944';
+            calculateD1557();
+        }
+
+        // ============ D4318 FUNCTIONS ============
+        function initializeD4318Tables() {
+            const llBody = document.getElementById('d4318llTableBody');
+            const plBody = document.getElementById('d4318plTableBody');
+            llBody.innerHTML = '';
+            plBody.innerHTML = '';
+
+            for (let i = 1; i <= 3; i++) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${i}</td>
+                    <td><input type="number" id="d4318llTaps${i}" placeholder="25" min="15" max="45"></td>
+                    <td><input type="text" id="d4318llTareNo${i}" placeholder="A${i}"></td>
+                    <td><input type="number" id="d4318llTare${i}" step="0.01" placeholder="0.00" onchange="calculateD4318LL(${i})"></td>
+                    <td class="bg-yellow-50"><input type="number" id="d4318llWet${i}" step="0.01" placeholder="0.00" onchange="calculateD4318LL(${i})"></td>
+                    <td class="bg-yellow-50"><input type="number" id="d4318llDry${i}" step="0.01" placeholder="0.00" onchange="calculateD4318LL(${i})"></td>
+                    <td class="bg-green-100"><span id="d4318llWater${i}">---</span></td>
+                    <td class="bg-green-100"><span id="d4318llDrySoil${i}">---</span></td>
+                    <td class="bg-blue-50"><span id="d4318llW${i}">---</span></td>
+                `;
+                llBody.appendChild(row);
+            }
+
+            for (let i = 1; i <= 2; i++) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${i}</td>
+                    <td><input type="text" id="d4318plTareNo${i}" placeholder="B${i}"></td>
+                    <td><input type="number" id="d4318plTare${i}" step="0.01" placeholder="0.00" onchange="calculateD4318PL(${i})"></td>
+                    <td class="bg-yellow-50"><input type="number" id="d4318plWet${i}" step="0.01" placeholder="0.00" onchange="calculateD4318PL(${i})"></td>
+                    <td class="bg-yellow-50"><input type="number" id="d4318plDry${i}" step="0.01" placeholder="0.00" onchange="calculateD4318PL(${i})"></td>
+                    <td class="bg-green-100"><span id="d4318plWater${i}">---</span></td>
+                    <td class="bg-green-100"><span id="d4318plDrySoil${i}">---</span></td>
+                    <td class="bg-purple-50"><span id="d4318plW${i}">---</span></td>
+                `;
+                plBody.appendChild(row);
+            }
+        }
+
+        function calculateD4318LL(i) {
+            const wet = parseFloat(document.getElementById(`d4318llWet${i}`).value) || 0;
+            const dry = parseFloat(document.getElementById(`d4318llDry${i}`).value) || 0;
+            const tare = parseFloat(document.getElementById(`d4318llTare${i}`).value) || 0;
+            
+            const water = wet - dry;
+            const drySoil = dry - tare;
+            const w = drySoil > 0 ? (water / drySoil) * 100 : 0;
+            
+            document.getElementById(`d4318llWater${i}`).textContent = water.toFixed(2);
+            document.getElementById(`d4318llDrySoil${i}`).textContent = drySoil.toFixed(2);
+            document.getElementById(`d4318llW${i}`).textContent = w.toFixed(1);
+        }
+
+        function calculateD4318PL(i) {
+            const wet = parseFloat(document.getElementById(`d4318plWet${i}`).value) || 0;
+            const dry = parseFloat(document.getElementById(`d4318plDry${i}`).value) || 0;
+            const tare = parseFloat(document.getElementById(`d4318plTare${i}`).value) || 0;
+            
+            const water = wet - dry;
+            const drySoil = dry - tare;
+            const w = drySoil > 0 ? (water / drySoil) * 100 : 0;
+            
+            document.getElementById(`d4318plWater${i}`).textContent = water.toFixed(2);
+            document.getElementById(`d4318plDrySoil${i}`).textContent = drySoil.toFixed(2);
+            document.getElementById(`d4318plW${i}`).textContent = w.toFixed(1);
+        }
+
+        function calculateD4318() {
+            const llValues = [];
+            for (let i = 1; i <= 3; i++) {
+                const w = parseFloat(document.getElementById(`d4318llW${i}`).textContent);
+                const taps = parseFloat(document.getElementById(`d4318llTaps${i}`).value);
+                if (!isNaN(w) && !isNaN(taps) && w !== '---') {
+                    llValues.push({w, taps});
+                }
+            }
+
+            const plValues = [];
+            for (let i = 1; i <= 2; i++) {
+                const w = parseFloat(document.getElementById(`d4318plW${i}`).textContent);
+                if (!isNaN(w) && w !== '---') {
+                    plValues.push(w);
+                }
+            }
+
+            if (llValues.length < 2 || plValues.length < 1) {
+                alert('الرجاء إدخال بيانات صحيحة - LL نقطتين على الأقل و PL نقطة واحدة على الأقل');
+                return;
+            }
+
+            if (llValues.length >= 3) {
+                const logTaps = llValues.map(v => Math.log10(v.taps));
+                const avgLogTaps = logTaps.reduce((a,b) => a+b) / logTaps.length;
+                const avgW = llValues.reduce((a,b) => a+b.w, 0) / llValues.length;
+                
+                const numerator = llValues.reduce((sum, v) => sum + (Math.log10(v.taps) - avgLogTaps) * (v.w - avgW), 0);
+                const denominator = llValues.reduce((sum, v) => sum + Math.pow(Math.log10(v.taps) - avgLogTaps, 2), 0);
+                const slope = numerator / denominator;
+                
+                const ll = avgW + slope * (Math.log10(25) - avgLogTaps);
+                const pl = plValues.reduce((a,b) => a+b, 0) / plValues.length;
+                const pi = ll - pl;
+
+                document.getElementById('d4318ll').textContent = ll.toFixed(1);
+                document.getElementById('d4318pl').textContent = pl.toFixed(1);
+                document.getElementById('d4318pi').textContent = pi.toFixed(1);
+                document.getElementById('d4318resultsSection').classList.remove('hidden');
+                document.getElementById('d4318chartSection').classList.remove('hidden');
+
+                drawD4318Chart(llValues);
+            }
+        }
+
+        function drawD4318Chart(llValues) {
+            const ctx = document.getElementById('d4318chart').getContext('2d');
+            if (window.d4318ChartInstance) window.d4318ChartInstance.destroy();
+
+            window.d4318ChartInstance = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'نقاط حد السيولة (Liquid Limit Points)',
+                        data: llValues.map(v => ({x: Math.log10(v.taps), y: v.w})),
+                        borderColor: 'rgb(147, 51, 234)',
+                        backgroundColor: 'rgba(147, 51, 234, 0.5)',
+                        pointRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: 'Log (عدد الطرقات - No. of Taps)' } },
+                        y: { title: { display: true, text: 'محتوى الرطوبة (%) - Water Content' } }
+                    }
+                }
+            });
+        }
+
+        function resetD4318() {
+            if (confirm('هل تريد حذف جميع بيانات D4318؟')) {
+                for (let i = 1; i <= 3; i++) {
+                    document.getElementById(`d4318llTaps${i}`).value = '';
+                    document.getElementById(`d4318llTare${i}`).value = '';
+                    document.getElementById(`d4318llWet${i}`).value = '';
+                    document.getElementById(`d4318llDry${i}`).value = '';
+                    document.getElementById(`d4318llW${i}`).textContent = '---';
+                }
+                for (let i = 1; i <= 2; i++) {
+                    document.getElementById(`d4318plTare${i}`).value = '';
+                    document.getElementById(`d4318plWet${i}`).value = '';
+                    document.getElementById(`d4318plDry${i}`).value = '';
+                    document.getElementById(`d4318plW${i}`).textContent = '---';
+                }
+                document.getElementById('d4318resultsSection').classList.add('hidden');
+                document.getElementById('d4318chartSection').classList.add('hidden');
+            }
+        }
+
+        function loadD4318Example() {
+            const llExample = [
+                {taps: 32, tare: 25.0, wet: 128.4, dry: 120.3},
+                {taps: 24, tare: 25.0, wet: 131.5, dry: 120.1},
+                {taps: 18, tare: 25.0, wet: 134.2, dry: 119.8}
+            ];
+            
+            const plExample = [
+                {tare: 25.0, wet: 26.8, dry: 25.2},
+                {tare: 25.0, wet: 27.1, dry: 25.4}
+            ];
+
+            llExample.forEach((data, i) => {
+                document.getElementById(`d4318llTaps${i+1}`).value = data.taps;
+                document.getElementById(`d4318llTare${i+1}`).value = data.tare;
+                document.getElementById(`d4318llWet${i+1}`).value = data.wet;
+                document.getElementById(`d4318llDry${i+1}`).value = data.dry;
+                calculateD4318LL(i+1);
+            });
+
+            plExample.forEach((data, i) => {
+                document.getElementById(`d4318plTare${i+1}`).value = data.tare;
+                document.getElementById(`d4318plWet${i+1}`).value = data.wet;
+                document.getElementById(`d4318plDry${i+1}`).value = data.dry;
+                calculateD4318PL(i+1);
+            });
+
+            calculateD4318();
+        }
     </script>
 </body>
 </html>
+
