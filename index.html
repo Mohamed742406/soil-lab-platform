@@ -776,31 +776,37 @@
     </div>
 
     <script>
-        // ==================== Tab Switching ====================
-        
-        function switchTab(tabName) {
-            // Hide all sections
-            document.getElementById('sectionD6913').classList.add('hidden');
-            document.getElementById('sectionD1557').classList.add('hidden');
-            
-            // Deactivate all tabs
-            document.getElementById('tabD6913').classList.remove('tab-active');
-            document.getElementById('tabD6913').classList.add('tab-inactive');
-            document.getElementById('tabD1557').classList.remove('tab-active');
-            document.getElementById('tabD1557').classList.add('tab-inactive');
-            
-            // Show selected section and activate tab
-            if (tabName === 'd6913') {
-                document.getElementById('sectionD6913').classList.remove('hidden');
-                document.getElementById('tabD6913').classList.remove('tab-inactive');
-                document.getElementById('tabD6913').classList.add('tab-active');
-            } else if (tabName === 'd1557') {
-                document.getElementById('sectionD1557').classList.remove('hidden');
-                document.getElementById('tabD1557').classList.remove('tab-inactive');
-                document.getElementById('tabD1557').classList.add('tab-active');
-            }
-        }
-        
+     // ==================== Tab Switching ====================
+function switchTab(tabName) {
+    // Hide all sections
+    document.getElementById('sectionD6913').classList.add('hidden');
+    document.getElementById('sectionD1557').classList.add('hidden');
+    document.getElementById('sectionD4318').classList.add('hidden');
+
+    // Deactivate all tabs
+    document.getElementById('tabD6913').classList.remove('tab-active');
+    document.getElementById('tabD6913').classList.add('tab-inactive');
+    document.getElementById('tabD1557').classList.remove('tab-active');
+    document.getElementById('tabD1557').classList.add('tab-inactive');
+    document.getElementById('tabD4318').classList.remove('tab-active');
+    document.getElementById('tabD4318').classList.add('tab-inactive');
+
+    // Show selected section and activate tab
+    if (tabName === 'd6913') {
+        document.getElementById('sectionD6913').classList.remove('hidden');
+        document.getElementById('tabD6913').classList.remove('tab-inactive');
+        document.getElementById('tabD6913').classList.add('tab-active');
+    } else if (tabName === 'd1557') {
+        document.getElementById('sectionD1557').classList.remove('hidden');
+        document.getElementById('tabD1557').classList.remove('tab-inactive');
+        document.getElementById('tabD1557').classList.add('tab-active');
+    } else if (tabName === 'd4318') {
+        document.getElementById('sectionD4318').classList.remove('hidden');
+        document.getElementById('tabD4318').classList.remove('tab-inactive');
+        document.getElementById('tabD4318').classList.add('tab-active');
+    }
+}
+
         // ==================== المتغيرات العامة - D6913 ====================
         
         // مواصفات المناخل القياسية
