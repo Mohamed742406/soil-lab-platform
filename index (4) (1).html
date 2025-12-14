@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحليل التدرج الحبيبي - ASTM D6913</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .table-cell {
+            padding: 8px;
+            border: 1px solid #d1d5db;
+        }
+        
+        input[type="number"] {
+            direction: ltr;
+            text-align: center;
+        }
+        
+        .tab-active {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .tab-inactive {
+            background-color: #e5e7eb;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <div class="bg-blue-600 text-white py-6 shadow-lg">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl font-bold">منصة الاختبارات المعملية للتربة</h1>
+            <p class="text-blue-100 mt-2">Laboratory Testing Platform - Soil Mechanics</p>
+            <p class="text-blue-100 text-sm mt-1">إعداد وتطوير: محمد القصبي</p>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="bg-white shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex gap-2 py-4 overflow-x-auto">
+                <button onclick="switchTab('d6913')" id="tabD6913" class="tab-active px-6 py-3 rounded-t-lg font-semibold whitespace-nowrap">
+                    تدرج التربة (D6913)
+                </button>
+                <button onclick="switchTab('d1557')" id="tabD1557" class="tab-inactive px-6 py-3 rounded-t-lg font-semibold whitespace-nowrap">
+                    الدمك (D1557)
+                </button>
+                <button class="tab-inactive px-6 py-3 rounded-t-lg font-semibold whitespace-nowrap cursor-not-allowed" disabled>
+                    حدود أتربرج (D4318)
+                </button>
+                <button class="tab-inactive px-6 py-3 rounded-t-lg font-semibold whitespace-nowrap cursor-not-allowed" disabled>
+                    القص المباشر
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- D6913 Section -->
+        <div id="sectionD6913" class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-blue-500 pb-2">
+                تحليل التدرج الحبيبي للتربة
+                <span class="text-lg text-gray-600 block mt-1">ASTM D6913/D6913M-17 - Particle-Size Distribution (Gradation)</span>
+            </h2>
+
+            <!-- Method Selection -->
+            <div class="mb-6 bg-blue-50 p-4 rounded-lg">
+                <label class="block text-lg font-semibold text-gray-700 mb-3">اختيار طريقة الاختبار:</label>
+                <div class="flex gap-4 mb-4">
+                    <label class="flex items-center gap-2 cursor-pointer bg-white px-4 py-3 rounded-lg border-2 border-blue-300">
+                        <input type="radio" name="method" value="single" checked onchange="updateMethodUI()" class="w-5 h-5">
+                        <span class="font-medium">Single-Set Sieving (مجموعة واحدة)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-white px-4 py-3 rounded-lg border-2 border-blue-300">
+                        <input type="radio" name="method" value="composite" onchange="updateMethodUI()" class="w-5 h-5">
+                        <span class="font-medium">Composite Sieving (فصل مزدوج)</span>
+                    </label>
+                </div>
+                
+                <!-- Separator Sieve Selection (for Composite only) -->
+                <div id="separatorSelection" class="hidden bg-white p-4 rounded-lg border-2 border-purple-300">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        منخل الفصل (Designated Separating Sieve):
+                    </label>
+                    <select id="separatorSieve" onchange="onSeparatorChange()" class="w-full md:w-1/2 px-3 py-2 border border-gray-300 rounded-lg font-semibold">
+                        <option value="19.0">3/4 in (19.0 mm)</option>
+                        <option value="9.5">3/8 in (9.5 mm)</option>
+                        <option value="4.75" selected>No.4 (4.75 mm)</option>
+                        <option value="2.0">No.10 (2.00 mm)</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-2">💡 سيتم إعادة بناء الجداول تلقائياً عند تغيير منخل الفصل</p>
+                </div>
+            </div>
+
+            <!-- General Settings -->
+            <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">رقم العينة (Sample ID):</label>
+                    <input type="text" id="sampleId" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="S-001">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">التاريخ:</label>
+                    <input type="date" id="testDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">وحدة الكتلة:</label>
+                    <select id="massUnit" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option value="g">جرام (g)</option>
+                        <option value="kg" selected>كيلوجرام (kg)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">ملاحظات:</label>
+                <textarea id="notes" class="w-full px-3 py-2 border border-gray-300 rounded-lg" rows="2" placeholder="أي ملاحظات على العينة أو الاختبار..."></textarea>
+            </div>
+
+            <!-- Single-Set Inputs -->
+            <div id="singleSetInputs" class="mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 bg-green-50 p-3 rounded-lg">
+                    بيانات الإدخال - Single-Set Method
+                </h3>
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        S,Md - الوزن الجاف للعينة الكلية (kg):
+                    </label>
+                    <input type="number" id="single_SMd" step="0.001" class="w-full md:w-1/3 px-3 py-2 border border-gray-300 rounded-lg" placeholder="5.000">
+                </div>
+
+                <h4 class="font-bold text-gray-700 mb-3">جدول إدخال الكتل المحتجزة التراكمية (CMRN):</h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse" id="singleTable">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="table-cell font-semibold">المنخل (Sieve)</th>
+                                <th class="table-cell font-semibold">الفتحة (mm)</th>
+                                <th class="table-cell font-semibold">CMRN - الكتلة المحتجزة التراكمية (kg)</th>
+                                <th class="table-cell font-semibold">% Passing</th>
+                            </tr>
+                        </thead>
+                        <tbody id="singleTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Composite Inputs -->
+            <div id="compositeInputs" class="mb-6 hidden">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 bg-purple-50 p-3 rounded-lg">
+                    بيانات الإدخال - Composite Method (Separator: No.4 - 4.75 mm)
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            CP,Md - الوزن الجاف للجزء الخشن (محتجز على No.4) (kg):
+                        </label>
+                        <input type="number" id="comp_CPMd" step="0.001" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="2.500" oninput="calculateCompositeMasses()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            FP,Mm - الوزن الرطب للجزء الناعم (مار من No.4) (kg):
+                        </label>
+                        <input type="number" id="comp_FPMm" step="0.001" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="2.600" oninput="calculateCompositeMasses()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            wfp - محتوى الماء للجزء الناعم (%):
+                        </label>
+                        <input type="number" id="comp_wfp" step="0.1" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="4.0" oninput="calculateCompositeMasses()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            SubS,Md - الوزن الجاف للعينة الفرعية الناعمة (kg):
+                        </label>
+                        <input type="number" id="comp_SubSMd" step="0.001" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="2.400">
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                    <h4 class="font-bold text-gray-700 mb-2">القيم المحسوبة تلقائياً (Calculated Values):</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div class="bg-white p-3 rounded-lg">
+                            <div class="text-xs text-gray-500 mb-1">FP,Md - الوزن الجاف للجزء الناعم</div>
+                            <div class="text-lg font-bold text-blue-600">
+                                <span id="calc_FPMd">---</span> <span class="text-sm">kg</span>
+                            </div>
+                            <div class="text-xs text-gray-400 mt-1">= FP,Mm / (1 + wfp/100)</div>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg">
+                            <div class="text-xs text-gray-500 mb-1">S,Md - الوزن الجاف الكلي</div>
+                            <div class="text-lg font-bold text-green-600">
+                                <span id="calc_SMd">---</span> <span class="text-sm">kg</span>
+                            </div>
+                            <div class="text-xs text-gray-400 mt-1">= CP,Md + FP,Md</div>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg">
+                            <div class="text-xs text-gray-500 mb-1">CSCF - عامل التصحيح عند No.4</div>
+                            <div class="text-lg font-bold text-purple-600">
+                                <span id="calc_CSCF">---</span> <span class="text-sm">%</span>
+                            </div>
+                            <div class="text-xs text-gray-400 mt-1">%Passing @ No.4 (دقة 0.1%)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coarse Portion Table -->
+                <h4 id="coarseTableTitle" class="font-bold text-gray-700 mb-3 mt-6 bg-orange-50 p-2 rounded">
+                    📊 جدول (1): الجزء الخشن (Coarser Portion - CP) — من 3 in حتى No.4
+                </h4>
+                <div class="text-sm text-gray-600 mb-2 mr-2">
+                    💡 CP,PPN = 100 × (1 - CP,CMRN / S,Md) — محسوب على أساس الوزن الكلي للعينة
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse" id="coarseTable">
+                        <thead class="bg-orange-100">
+                            <tr>
+                                <th class="table-cell font-semibold">المنخل<br><span class="text-xs font-normal">Sieve</span></th>
+                                <th class="table-cell font-semibold">الفتحة<br><span class="text-xs font-normal">Opening (mm)</span></th>
+                                <th class="table-cell font-semibold">CP,CMRN<br><span class="text-xs font-normal">Cumulative Mass Retained (kg)</span></th>
+                                <th class="table-cell font-semibold">CP,PPN<br><span class="text-xs font-normal">% Passing</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="coarseTableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Fine Portion Table -->
+                <h4 id="fineTableTitle" class="font-bold text-gray-700 mb-3 mt-6 bg-green-50 p-2 rounded">
+                    📊 جدول (2): الجزء الناعم (Fine Subspecimen - SubS) — من No.4 حتى No.200
+                </h4>
+                <div class="text-sm text-gray-600 mb-2 mr-2">
+                    💡 SubS,FPPN = 100 × (1 - SubS,FCMRN / SubS,Md) — داخل العينة الفرعية فقط<br>
+                    💡 SubS,PPN = CSCF × (SubS,FPPN / 100) — النسبة النهائية بعد التصحيح للعينة الكلية
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse" id="fineTable">
+                        <thead class="bg-green-100">
+                            <tr>
+                                <th class="table-cell font-semibold">المنخل<br><span class="text-xs font-normal">Sieve</span></th>
+                                <th class="table-cell font-semibold">الفتحة<br><span class="text-xs font-normal">Opening (mm)</span></th>
+                                <th class="table-cell font-semibold">SubS,FCMRN<br><span class="text-xs font-normal">Cum. Mass Retained (kg)</span></th>
+                                <th class="table-cell font-semibold">SubS,FPPN<br><span class="text-xs font-normal">% Pass (Subspecimen)</span></th>
+                                <th class="table-cell font-semibold">SubS,PPN<br><span class="text-xs font-normal">% Pass (Corrected)</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="fineTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-4 mb-6">
+                <button onclick="calculate()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition">
+                    🧮 احسب النتائج
+                </button>
+                <button onclick="resetAll()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition">
+                    🔄 إعادة تعيين
+                </button>
+                <button onclick="loadExample()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition">
+                    📝 تحميل مثال
+                </button>
+            </div>
+
+            <!-- Validation Messages -->
+            <div id="validationMessages" class="mb-6"></div>
+
+            <!-- Final Results Table -->
+            <div id="resultsSection" class="mb-6 hidden">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 bg-yellow-50 p-3 rounded-lg border-r-4 border-yellow-500">
+                    🎯 جدول (3): النتيجة النهائية — تدرج العينة الكلية (Final Specimen Gradation)
+                </h3>
+                <div class="text-sm text-gray-600 mb-3 mr-2">
+                    💡 Method A: النتائج مقربة لأقرب 1% | 
+                    المناخل > No.4 من جدول CP | 
+                    المناخل ≤ No.4 من جدول SubS (بعد CSCF)
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead class="bg-yellow-100">
+                            <tr>
+                                <th class="table-cell font-semibold">المنخل<br><span class="text-xs font-normal">Sieve</span></th>
+                                <th class="table-cell font-semibold">الفتحة<br><span class="text-xs font-normal">Opening (mm)</span></th>
+                                <th class="table-cell font-semibold">% Passing<br><span class="text-xs font-normal">(Final - Method A)</span></th>
+                                <th class="table-cell font-semibold">% Retained<br><span class="text-xs font-normal">Cumulative</span></th>
+                                <th class="table-cell font-semibold">% Retained<br><span class="text-xs font-normal">Individual</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- D-values and Coefficients -->
+                <div class="mt-6 bg-indigo-50 p-4 rounded-lg">
+                    <h4 class="font-bold text-gray-800 mb-3">المعاملات الهندسية (Particle Size Parameters):</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                        <div class="bg-white p-3 rounded-lg text-center">
+                            <div class="text-sm text-gray-600">D10</div>
+                            <div id="d10_value" class="text-lg font-bold text-blue-600">---</div>
+                            <div class="text-xs text-gray-500">mm</div>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg text-center">
+                            <div class="text-sm text-gray-600">D30</div>
+                            <div id="d30_value" class="text-lg font-bold text-blue-600">---</div>
+                            <div class="text-xs text-gray-500">mm</div>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg text-center">
+                            <div class="text-sm text-gray-600">D60</div>
+                            <div id="d60_value" class="text-lg font-bold text-blue-600">---</div>
+                            <div class="text-xs text-gray-500">mm</div>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg text-center">
+                            <div class="text-sm text-gray-600">Cu</div>
+                            <div id="cu_value" class="text-lg font-bold text-green-600">---</div>
+                            <div class="text-xs text-gray-500">معامل التجانس</div>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg text-center">
+                            <div class="text-sm text-gray-600">Cc</div>
+                            <div id="cc_value" class="text-lg font-bold text-green-600">---</div>
+                            <div class="text-xs text-gray-500">معامل الانحناء</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div id="chartSection" class="mb-6 hidden">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 bg-pink-50 p-3 rounded-lg">
+                    منحنى التدرج الحبيبي (Gradation Curve)
+                </h3>
+                <div class="bg-white p-4 rounded-lg shadow-inner">
+                    <canvas id="gradationChart" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- D1557 Section (Hidden by default) -->
+        <div id="sectionD1557" class="bg-white rounded-lg shadow-lg p-6 mb-6 hidden">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-green-500 pb-2">
+                اختبار الدمك المعدل
+                <span class="text-lg text-gray-600 block mt-1">ASTM D1557 - Modified Proctor Compaction Test</span>
+            </h2>
+
+            <!-- Unit System Selection -->
+            <div class="mb-6 bg-green-50 p-4 rounded-lg">
+                <label class="block text-lg font-semibold text-gray-700 mb-3">نظام الوحدات (Units):</label>
+                <div class="flex gap-4">
+                    <label class="flex items-center gap-2 cursor-pointer bg-white px-4 py-3 rounded-lg border-2 border-green-300">
+                        <input type="radio" name="unitSystem" value="g_cm3" checked onchange="updateUnitLabels()" class="w-5 h-5">
+                        <span class="font-medium">g/cm³ (الكثافة)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-white px-4 py-3 rounded-lg border-2 border-green-300">
+                        <input type="radio" name="unitSystem" value="kg_m3" onchange="updateUnitLabels()" class="w-5 h-5">
+                        <span class="font-medium">kg/m³ (الكثافة)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-white px-4 py-3 rounded-lg border-2 border-green-300">
+                        <input type="radio" name="unitSystem" value="kN_m3" onchange="updateUnitLabels()" class="w-5 h-5">
+                        <span class="font-medium">kN/m³ (وزن الوحدة)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- General Settings -->
+            <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">رقم العينة (Sample ID):</label>
+                    <input type="text" id="d1557_sampleId" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="P-001">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">التاريخ:</label>
+                    <input type="date" id="d1557_testDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">الطريقة (Method):</label>
+                    <select id="d1557_method" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option value="A">Method A (4 in mold)</option>
+                        <option value="B">Method B (6 in mold)</option>
+                        <option value="C" selected>Method C (6 in mold)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">ملاحظات:</label>
+                <textarea id="d1557_notes" class="w-full px-3 py-2 border border-gray-300 rounded-lg" rows="2" placeholder="أي ملاحظات على العينة أو الاختبار..."></textarea>
+            </div>
+
+            <!-- Mold Properties -->
+            <div class="mb-6 bg-indigo-50 p-4 rounded-lg">
+                <h3 class="text-lg font-bold text-gray-800 mb-3">خصائص القالب (Mold Properties):</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            وزن القالب الفارغ (Empty Mold Mass) - g:
+                            <span class="text-xs text-gray-500 block mt-1">M<sub>md</sub></span>
+                        </label>
+                        <input type="number" id="d1557_moldMass" step="0.1" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="3500.0">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            حجم القالب (Mold Volume) - V:
+                            <span class="text-xs text-gray-500 block mt-1">Volume</span>
+                        </label>
+                        <input type="number" id="d1557_moldVolValue" step="0.001" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="944">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">وحدة الحجم:</label>
+                        <select id="d1557_moldVolUnit" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            <option value="cm3" selected>cm³</option>
+                            <option value="m3">m³</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Specific Gravity -->
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">الكثافة النوعية (Gs) - للصفر هواء:</label>
+                <input type="number" id="d1557_Gs" step="0.01" class="w-full md:w-1/3 px-3 py-2 border border-gray-300 rounded-lg" placeholder="2.65" value="2.65">
+            </div>
+
+            <!-- Water Content Table -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 bg-blue-50 p-3 rounded-lg">
+                جدول محتوى الماء (Water Content)
+            </h3>
+            <div class="overflow-x-auto mb-6">
+                <table class="w-full border-collapse">
+                    <thead class="bg-blue-100">
+                        <tr>
+                            <th class="table-cell font-semibold">النقطة<br><span class="text-xs font-normal">Point</span></th>
+                            <th class="table-cell font-semibold">Wet+Tare<br><span class="text-xs font-normal">(g)</span></th>
+                            <th class="table-cell font-semibold">Dry+Tare<br><span class="text-xs font-normal">(g)</span></th>
+                            <th class="table-cell font-semibold">Tare<br><span class="text-xs font-normal">(g)</span></th>
+                            <th class="table-cell font-semibold bg-yellow-50">Water<br><span class="text-xs font-normal">(g)</span></th>
+                            <th class="table-cell font-semibold bg-yellow-50">Dry Soil<br><span class="text-xs font-normal">(g)</span></th>
+                            <th class="table-cell font-semibold bg-green-100">w<br><span class="text-xs font-normal">(%)</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="d1557_wcTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Compaction Table -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 bg-orange-50 p-3 rounded-lg">
+                جدول الدمك (Compaction Data)
+            </h3>
+            <div class="overflow-x-auto mb-6">
+                <table class="w-full border-collapse">
+                    <thead class="bg-orange-100">
+                        <tr>
+                            <th class="table-cell font-semibold">النقطة<br><span class="text-xs font-normal">Point</span></th>
+                            <th class="table-cell font-semibold">
+                                القالب + التربة الرطبة<br>
+                                <span class="text-xs font-normal">M<sub>t</sub> (g)</span>
+                            </th>
+                            <th class="table-cell font-semibold bg-yellow-50" id="d1557_moistDensityHeader">ρm<br><span class="text-xs font-normal">(g/cm³)</span></th>
+                            <th class="table-cell font-semibold bg-green-100" id="d1557_dryDensityHeader">ρd<br><span class="text-xs font-normal">(g/cm³)</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="d1557_compTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-4 mb-6">
+                <button onclick="calculateD1557()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition">
+                    🧮 احسب النتائج
+                </button>
+                <button onclick="resetD1557()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition">
+                    🔄 إعادة تعيين
+                </button>
+                <button onclick="loadD1557Example()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition">
+                    📝 تحميل مثال
+                </button>
+            </div>
+
+            <!-- Validation Messages -->
+            <div id="d1557_validationMessages" class="mb-6"></div>
+
+            <!-- Results Cards -->
+            <div id="d1557_resultsSection" class="mb-6 hidden">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 bg-purple-50 p-3 rounded-lg">
+                    📊 النتائج النهائية (Results)
+                </h3>
+                
+                <!-- Uncorrected Results -->
+                <div id="d1557_uncorrectedResults">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-sm font-semibold text-gray-700">قبل التصحيح (Uncorrected)</span>
+                        <span class="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded">Test Fraction Only</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg shadow-md border-2 border-blue-300">
+                            <div class="text-sm text-gray-600 mb-2">محتوى الماء الأمثل</div>
+                            <div class="text-sm text-gray-500 mb-1">Optimum Moisture Content (OMC)</div>
+                            <div class="text-4xl font-bold text-blue-700">
+                                <span id="d1557_omc">---</span><span class="text-2xl">%</span>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg shadow-md border-2 border-green-300">
+                            <div class="text-sm text-gray-600 mb-2">الكثافة الجافة القصوى</div>
+                            <div class="text-sm text-gray-500 mb-1">Maximum Dry Density (MDD)</div>
+                            <div class="text-4xl font-bold text-green-700">
+                                <span id="d1557_mdd">---</span>
+                            </div>
+                            <div class="text-xs text-gray-600 mt-2" id="d1557_unitLabel">g/cm³</div>
+                            <div class="text-xs text-gray-500 mt-2" id="d1557_alternateUnits">---</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Corrected Results -->
+                <div id="d1557_correctedResults" class="hidden">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-sm font-semibold text-gray-700">بعد التصحيح (Corrected)</span>
+                        <span class="px-2 py-1 bg-purple-200 text-purple-700 text-xs rounded">Total Material</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 p-6 rounded-lg shadow-md border-2 border-indigo-300">
+                            <div class="text-sm text-gray-600 mb-2">محتوى الماء الأمثل المصحح</div>
+                            <div class="text-sm text-gray-500 mb-1">Corrected OMC (OMC<sub>c</sub>)</div>
+                            <div class="text-4xl font-bold text-indigo-700">
+                                <span id="d1557_omcCorrected">---</span><span class="text-2xl">%</span>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-br from-teal-50 to-teal-100 p-6 rounded-lg shadow-md border-2 border-teal-300">
+                            <div class="text-sm text-gray-600 mb-2">الكثافة الجافة القصوى المصححة</div>
+                            <div class="text-sm text-gray-500 mb-1">Corrected MDD (MDD<sub>c</sub>)</div>
+                            <div class="text-4xl font-bold text-teal-700">
+                                <span id="d1557_mddCorrected">---</span>
+                            </div>
+                            <div class="text-xs text-gray-600 mt-2" id="d1557_unitLabelCorrected">g/cm³</div>
+                            <div class="text-xs text-gray-500 mt-2" id="d1557_alternateUnitsCorrected">---</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Oversize Correction -->
+            <div class="mb-6 bg-yellow-50 p-4 rounded-lg border-2 border-yellow-300">
+                <div class="flex items-center justify-between mb-4">
+                    <h4 class="font-bold text-gray-800">تصحيح الحصى الزائد (Oversize Correction):</h4>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="d1557_enableCorrection" class="w-5 h-5 rounded" onchange="toggleOversizeCorrection()">
+                        <span class="text-sm font-semibold text-gray-700">تفعيل التصحيح</span>
+                    </label>
+                </div>
+                
+                <div id="d1557_correctionInputs" class="hidden">
+                    <div class="mb-3">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            PC% (نسبة المحتجز على منخل 3/4 in):
+                            <span class="text-xs text-gray-500 block">Percent Coarser than 19.0 mm</span>
+                        </label>
+                        <div class="flex items-center gap-4">
+                            <input type="number" id="d1557_PC" step="0.1" min="0" max="100" class="w-32 px-3 py-2 border border-gray-300 rounded-lg" placeholder="0.0" value="0" oninput="validatePC()">
+                            <span class="text-xs text-gray-600">%</span>
+                            <span id="d1557_PF" class="text-sm text-gray-600">PF% = 100.0%</span>
+                        </div>
+                    </div>
+                    
+                    <div id="d1557_pcValidation" class="mb-3"></div>
+                    
+                    <button onclick="toggleCorrectionDetails()" class="text-sm text-blue-600 hover:text-blue-800 underline">
+                        📊 إظهار/إخفاء تفاصيل التصحيح
+                    </button>
+                    
+                    <div id="d1557_correctionDetails" class="hidden mt-3 bg-white p-3 rounded-lg border border-gray-300">
+                        <h5 class="font-semibold text-gray-700 mb-2">تفاصيل التصحيح (حسب ASTM D4718/D4718M):</h5>
+                        <div class="text-xs text-gray-600 mb-2">
+                            PF% = 100 - PC% (نسبة الجزء المار من 3/4 in)<br>
+                            w<sub>c</sub> = w × (PF/100) — محتوى الماء المصحح<br>
+                            ρ<sub>dc</sub> = ρ<sub>d</sub> × (PF/100) — الكثافة الجافة المصححة
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse text-xs">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="table-cell">Point</th>
+                                        <th class="table-cell">w (%)</th>
+                                        <th class="table-cell">ρd</th>
+                                        <th class="table-cell bg-blue-50">w<sub>c</sub> (%)</th>
+                                        <th class="table-cell bg-blue-50">ρ<sub>dc</sub></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="d1557_correctionDetailsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div id="d1557_chartSection" class="mb-6 hidden">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 bg-pink-50 p-3 rounded-lg">
+                    منحنى الدمك (Compaction Curve)
+                </h3>
+                <div class="bg-white p-4 rounded-lg shadow-inner">
+                    <canvas id="d1557_chart" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="bg-gray-800 text-white py-6 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-sm">© 2025 منصة القصبى — جميع الحقوق محفوظة</p>
+            <p class="text-xs text-gray-400 mt-2">إعداد وتطوير: محمد القصبي</p>
+        </div>
+    </div>
+
+    <script>
+        // ==================== Tab Switching ====================
+        
+        function switchTab(tabName) {
+            // Hide all sections
+            document.getElementById('sectionD6913').classList.add('hidden');
+            document.getElementById('sectionD1557').classList.add('hidden');
+            
+            // Deactivate all tabs
+            document.getElementById('tabD6913').classList.remove('tab-active');
+            document.getElementById('tabD6913').classList.add('tab-inactive');
+            document.getElementById('tabD1557').classList.remove('tab-active');
+            document.getElementById('tabD1557').classList.add('tab-inactive');
+            
+            // Show selected section and activate tab
+            if (tabName === 'd6913') {
+                document.getElementById('sectionD6913').classList.remove('hidden');
+                document.getElementById('tabD6913').classList.remove('tab-inactive');
+                document.getElementById('tabD6913').classList.add('tab-active');
+            } else if (tabName === 'd1557') {
+                document.getElementById('sectionD1557').classList.remove('hidden');
+                document.getElementById('tabD1557').classList.remove('tab-inactive');
+                document.getElementById('tabD1557').classList.add('tab-active');
+            }
+        }
+        
+        // ==================== المتغيرات العامة - D6913 ====================
+        
+        // مواصفات المناخل القياسية
+        const sieves = [
+            {name: '3 in', opening: 75.0},
+            {name: '2 in', opening: 50.0},
+            {name: '1.5 in', opening: 37.5},
+            {name: '1 in', opening: 25.0},
+            {name: '3/4 in', opening: 19.0},
+            {name: '3/8 in', opening: 9.5},
+            {name: 'No.4', opening: 4.75},
+            {name: 'No.10', opening: 2.0},
+            {name: 'No.20', opening: 0.85},
+            {name: 'No.40', opening: 0.425},
+            {name: 'No.60', opening: 0.25},
+            {name: 'No.100', opening: 0.15},
+            {name: 'No.140', opening: 0.106},
+            {name: 'No.200', opening: 0.075},
+            {name: 'Pan', opening: 0}
+        ];
+
+        let chartInstance = null;
+        let finalResults = [];
+        let currentSeparatorOpening = 4.75; // Default: No.4
+
+        // ==================== تهيئة الواجهة ====================
+        
+        function initializeTables() {
+            // Single-Set Table (always all sieves)
+            const singleTableBody = document.getElementById('singleTableBody');
+            singleTableBody.innerHTML = '';
+            sieves.forEach((sieve, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="table-cell font-semibold">${sieve.name}</td>
+                    <td class="table-cell">${sieve.opening.toFixed(3)}</td>
+                    <td class="table-cell">
+                        <input type="number" step="0.001" id="single_cmrn_${index}" 
+                               class="w-full px-2 py-1 border border-gray-300 rounded" 
+                               placeholder="0.000">
+                    </td>
+                    <td class="table-cell bg-blue-50" id="single_pp_${index}">---</td>
+                `;
+                singleTableBody.appendChild(row);
+            });
+
+            // Composite Tables (dynamic based on separator)
+            buildCompositeTables();
+        }
+
+        function buildCompositeTables() {
+            const separatorOpening = currentSeparatorOpening;
+            
+            // Find separator sieve
+            const separatorIndex = sieves.findIndex(s => s.opening === separatorOpening);
+            const separatorSieve = sieves[separatorIndex];
+
+            // Coarse Table: all sieves >= separator (including separator)
+            const coarseTableBody = document.getElementById('coarseTableBody');
+            coarseTableBody.innerHTML = '';
+            const coarseSieves = sieves.filter(s => s.opening >= separatorOpening);
+            
+            coarseSieves.forEach((sieve, index) => {
+                const row = document.createElement('tr');
+                const isSeparator = sieve.opening === separatorOpening;
+                row.innerHTML = `
+                    <td class="table-cell font-semibold ${isSeparator ? 'bg-purple-100' : ''}">${sieve.name}</td>
+                    <td class="table-cell ${isSeparator ? 'bg-purple-100' : ''}">${sieve.opening.toFixed(3)}</td>
+                    <td class="table-cell">
+                        <input type="number" step="0.001" id="coarse_cmrn_${index}" 
+                               class="w-full px-2 py-1 border border-gray-300 rounded" 
+                               placeholder="0.000">
+                    </td>
+                    <td class="table-cell bg-orange-50" id="coarse_pp_${index}">---</td>
+                `;
+                coarseTableBody.appendChild(row);
+            });
+
+            // Fine Table: separator and all sieves < separator
+            const fineTableBody = document.getElementById('fineTableBody');
+            fineTableBody.innerHTML = '';
+            const fineSieves = sieves.filter(s => s.opening <= separatorOpening);
+            
+            fineSieves.forEach((sieve, index) => {
+                const row = document.createElement('tr');
+                const isSeparator = sieve.opening === separatorOpening;
+                row.innerHTML = `
+                    <td class="table-cell font-semibold ${isSeparator ? 'bg-purple-100' : ''}">${sieve.name}</td>
+                    <td class="table-cell ${isSeparator ? 'bg-purple-100' : ''}">${sieve.opening.toFixed(3)}</td>
+                    <td class="table-cell">
+                        <input type="number" step="0.001" id="fine_cmrn_${index}" 
+                               class="w-full px-2 py-1 border border-gray-300 rounded" 
+                               placeholder="0.000">
+                    </td>
+                    <td class="table-cell bg-green-50" id="fine_fpp_${index}">---</td>
+                    <td class="table-cell bg-green-50" id="fine_pp_${index}">---</td>
+                `;
+                fineTableBody.appendChild(row);
+            });
+
+            // Update table headers with separator info
+            updateCompositeHeaders();
+        }
+
+        function updateCompositeHeaders() {
+            const separatorSieve = sieves.find(s => s.opening === currentSeparatorOpening);
+            const separatorName = separatorSieve ? separatorSieve.name : 'N/A';
+            
+            // Update coarse table header using specific ID
+            const coarseTitle = document.getElementById('coarseTableTitle');
+            if (coarseTitle) {
+                coarseTitle.innerHTML = `📊 جدول (1): الجزء الخشن (Coarser Portion - CP) — من 3 in حتى ${separatorName}`;
+            }
+
+            // Update fine table header using specific ID
+            const fineTitle = document.getElementById('fineTableTitle');
+            if (fineTitle) {
+                fineTitle.innerHTML = `📊 جدول (2): الجزء الناعم (Fine Subspecimen - SubS) — من ${separatorName} حتى No.200`;
+            }
+        }
+
+        function onSeparatorChange() {
+            const newSeparator = parseFloat(document.getElementById('separatorSieve').value);
+            currentSeparatorOpening = newSeparator;
+            
+            // Rebuild composite tables
+            buildCompositeTables();
+            
+            // Clear previous results
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('chartSection').classList.add('hidden');
+            clearValidation();
+            
+            // Clear calculated values
+            document.getElementById('calc_FPMd').textContent = '---';
+            document.getElementById('calc_SMd').textContent = '---';
+            document.getElementById('calc_CSCF').textContent = '---';
+            
+            // Show notification
+            const separatorSieve = sieves.find(s => s.opening === newSeparator);
+            showValidation(`✅ تم تحديث منخل الفصل إلى: ${separatorSieve.name} (${newSeparator} mm)`, 'success');
+        }
+
+        function updateMethodUI() {
+            const method = document.querySelector('input[name="method"]:checked').value;
+            const singleInputs = document.getElementById('singleSetInputs');
+            const compositeInputs = document.getElementById('compositeInputs');
+            const separatorSelection = document.getElementById('separatorSelection');
+            
+            if (method === 'single') {
+                singleInputs.classList.remove('hidden');
+                compositeInputs.classList.add('hidden');
+                separatorSelection.classList.add('hidden');
+            } else {
+                singleInputs.classList.add('hidden');
+                compositeInputs.classList.remove('hidden');
+                separatorSelection.classList.remove('hidden');
+            }
+        }
+
+        function calculateCompositeMasses() {
+            const CPMd = parseFloat(document.getElementById('comp_CPMd').value) || 0;
+            const FPMm = parseFloat(document.getElementById('comp_FPMm').value) || 0;
+            const wfp = parseFloat(document.getElementById('comp_wfp').value) || 0;
+
+            // حساب FP,Md = FP,Mm / (1 + wfp/100)
+            const FPMd = FPMm / (1 + wfp / 100);
+            
+            // حساب S,Md = CP,Md + FP,Md
+            const SMd = CPMd + FPMd;
+
+            document.getElementById('calc_FPMd').textContent = FPMd.toFixed(3);
+            document.getElementById('calc_SMd').textContent = SMd.toFixed(3);
+        }
+
+        // ==================== الحسابات ====================
+
+        function calculate() {
+            const method = document.querySelector('input[name="method"]:checked').value;
+            
+            clearValidation();
+            
+            if (method === 'single') {
+                calculateSingleSet();
+            } else {
+                calculateComposite();
+            }
+        }
+
+        function calculateSingleSet() {
+            const SMd = parseFloat(document.getElementById('single_SMd').value);
+            
+            if (!SMd || SMd <= 0) {
+                showValidation('يرجى إدخال قيمة صحيحة للوزن الجاف للعينة (S,Md)', 'error');
+                return;
+            }
+
+            const results = [];
+            let previousCMRN = 0;
+            let hasError = false;
+
+            sieves.forEach((sieve, index) => {
+                const cmrnInput = document.getElementById(`single_cmrn_${index}`);
+                const cmrn = parseFloat(cmrnInput.value) || 0;
+
+                // التحقق من أن CMRN تتزايد
+                if (cmrn < previousCMRN && sieve.name !== 'Pan') {
+                    showValidation(`خطأ: الكتلة المحتجزة التراكمية عند ${sieve.name} أقل من المنخل السابق`, 'error');
+                    hasError = true;
+                }
+                previousCMRN = cmrn;
+
+                // حساب % Passing
+                const percentPassing = 100 * (1 - cmrn / SMd);
+                
+                // عرض النتيجة في الجدول
+                document.getElementById(`single_pp_${index}`).textContent = percentPassing.toFixed(1) + '%';
+
+                results.push({
+                    sieve: sieve.name,
+                    opening: sieve.opening,
+                    percentPassing: Math.round(percentPassing), // Method A: أقرب 1%
+                    cmrn: cmrn
+                });
+            });
+
+            // التحقق من الكتلة النهائية (يجب أن تساوي S,Md)
+            const finalCMRN = parseFloat(document.getElementById(`single_cmrn_${sieves.length - 1}`).value) || 0;
+            const massDiff = Math.abs(finalCMRN - SMd);
+            const diffPercent = (massDiff / SMd) * 100;
+            
+            if (diffPercent > 2) { // 2% tolerance
+                showValidation(`⚠️ تحذير: فرق وزن كبير بين CMRN النهائي (${finalCMRN.toFixed(3)} kg) و S,Md (${SMd.toFixed(3)} kg) = ${diffPercent.toFixed(2)}%`, 'warning');
+            } else if (diffPercent > 0.5) {
+                showValidation(`ℹ️ ملاحظة: فرق طفيف في الوزن = ${diffPercent.toFixed(2)}% (ضمن الحد المقبول)`, 'warning');
+            }
+
+            if (!hasError) {
+                finalResults = results;
+                displayFinalResults();
+                drawChart();
+                
+                // عرض ملخص النتائج
+                const finesPercent = results.find(r => r.sieve === 'No.200')?.percentPassing || 0;
+                const gravelPercent = 100 - (results.find(r => r.sieve === 'No.4')?.percentPassing || 0);
+                showValidation(`✅ تم الحساب بنجاح - التصنيف الأولي: حصى ${gravelPercent}% | غرين+طين (أصغر من No.200) ${finesPercent}%`, 'success');
+            }
+        }
+
+        function calculateComposite() {
+            const CPMd = parseFloat(document.getElementById('comp_CPMd').value);
+            const FPMm = parseFloat(document.getElementById('comp_FPMm').value);
+            const wfp = parseFloat(document.getElementById('comp_wfp').value);
+            const SubSMd = parseFloat(document.getElementById('comp_SubSMd').value);
+
+            if (!CPMd || !FPMm || wfp === undefined || !SubSMd) {
+                showValidation('يرجى إدخال جميع القيم المطلوبة للطريقة Composite', 'error');
+                return;
+            }
+
+            // حساب القيم الأساسية
+            const FPMd = FPMm / (1 + wfp / 100);
+            const SMd = CPMd + FPMd;
+
+            const separatorOpening = currentSeparatorOpening;
+            const separatorSieve = sieves.find(s => s.opening === separatorOpening);
+
+            // جدول الخشن (Coarse) - ديناميكي حسب منخل الفصل
+            const coarseSieves = sieves.filter(s => s.opening >= separatorOpening);
+            const coarseResults = [];
+            let CSCF = 100; // سيتم تحديثه
+
+            coarseSieves.forEach((sieve, index) => {
+                const cmrn = parseFloat(document.getElementById(`coarse_cmrn_${index}`).value) || 0;
+                const percentPassing = 100 * (1 - cmrn / SMd);
+                
+                document.getElementById(`coarse_pp_${index}`).textContent = percentPassing.toFixed(1) + '%';
+                
+                coarseResults.push({
+                    sieve: sieve.name,
+                    opening: sieve.opening,
+                    percentPassing: percentPassing
+                });
+
+                // آخر منخل في الـCoarse (منخل الفصل) = CSCF بدقة 0.1%
+                if (sieve.opening === separatorOpening) {
+                    CSCF = percentPassing;
+                }
+            });
+
+            document.getElementById('calc_CSCF').textContent = CSCF.toFixed(1);
+
+            // جدول الناعم (Fine) - ديناميكي حسب منخل الفصل
+            const fineSieves = sieves.filter(s => s.opening <= separatorOpening);
+            const fineResults = [];
+
+            fineSieves.forEach((sieve, index) => {
+                const fcmrn = parseFloat(document.getElementById(`fine_cmrn_${index}`).value) || 0;
+                
+                // حساب Fractional % Passing داخل العينة الفرعية
+                const fppn = 1 - (fcmrn / SubSMd); // as decimal
+                
+                // تصحيح بـ CSCF
+                const correctedPP = CSCF * fppn;
+                
+                document.getElementById(`fine_fpp_${index}`).textContent = (fppn * 100).toFixed(1) + '%';
+                document.getElementById(`fine_pp_${index}`).textContent = correctedPP.toFixed(1) + '%';
+                
+                fineResults.push({
+                    sieve: sieve.name,
+                    opening: sieve.opening,
+                    percentPassing: correctedPP
+                });
+
+                // تحذير لو في احتجاز على أول منخل (منخل الفصل) في العينة الفرعية
+                if (index === 0 && sieve.opening === separatorOpening && fcmrn > 0) {
+                    const retainedPercent = (fcmrn / SubSMd) * 100;
+                    if (retainedPercent > 2) {
+                        showValidation(`⚠️ تحذير: احتجاز على منخل ${separatorSieve.name} في العينة الفرعية الناعمة = ${retainedPercent.toFixed(1)}% (حد القبول < 2% حسب ASTM D6913)`, 'warning');
+                    } else if (retainedPercent > 0) {
+                        showValidation(`ℹ️ ملاحظة: احتجاز طفيف على منخل ${separatorSieve.name} في العينة الفرعية = ${retainedPercent.toFixed(1)}% (ضمن الحد المقبول)`, 'warning');
+                    }
+                }
+            });
+
+            // دمج النتائج النهائية
+            const mergedResults = [];
+            
+            // إضافة المناخل الخشنة (أكبر من منخل الفصل)
+            coarseSieves.filter(s => s.opening > separatorOpening).forEach(sieve => {
+                const result = coarseResults.find(r => r.sieve === sieve.name);
+                mergedResults.push({
+                    sieve: sieve.name,
+                    opening: sieve.opening,
+                    percentPassing: Math.round(result.percentPassing) // Method A
+                });
+            });
+
+            // إضافة منخل الفصل من جدول Coarse (المرجعية حسب ASTM)
+            const separatorCoarse = coarseResults.find(r => r.opening === separatorOpening);
+            mergedResults.push({
+                sieve: separatorSieve.name,
+                opening: separatorOpening,
+                percentPassing: Math.round(separatorCoarse.percentPassing) // Method A - CSCF مقرب
+            });
+
+            // إضافة المناخل الأصغر من منخل الفصل فقط
+            fineSieves.filter(s => s.opening < separatorOpening).forEach(sieve => {
+                const result = fineResults.find(r => r.sieve === sieve.name);
+                mergedResults.push({
+                    sieve: sieve.name,
+                    opening: sieve.opening,
+                    percentPassing: Math.round(result.percentPassing) // Method A
+                });
+            });
+
+            finalResults = mergedResults;
+            displayFinalResults();
+            drawChart();
+            
+            // عرض ملخص النتائج
+            const finesPercent = mergedResults.find(r => r.sieve === 'No.200')?.percentPassing || 0;
+            const separatorPercent = mergedResults.find(r => r.opening === separatorOpening)?.percentPassing || 100;
+            const coarsePercent = 100 - separatorPercent;
+            showValidation(`✅ تم الحساب بنجاح - التصنيف الأولي: محتجز على ${separatorSieve.name} = ${coarsePercent}% | غرين+طين (أصغر من No.200) ${finesPercent}%`, 'success');
+        }
+
+        function displayFinalResults() {
+            const resultsTableBody = document.getElementById('resultsTableBody');
+            resultsTableBody.innerHTML = '';
+
+            // تصفية النتائج (بدون Pan للعرض النهائي)
+            const displayResults = finalResults.filter(r => r.sieve !== 'Pan');
+
+            displayResults.forEach((result, index) => {
+                const cumRetained = 100 - result.percentPassing;
+                
+                // حساب Individual Retained من فرق %Passing مع حماية من السالب
+                const prevPassing = index === 0 ? 100 : displayResults[index - 1].percentPassing;
+                const retained = Math.max(0, prevPassing - result.percentPassing);
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="table-cell font-semibold">${result.sieve}</td>
+                    <td class="table-cell">${result.opening.toFixed(3)}</td>
+                    <td class="table-cell bg-yellow-100 font-bold text-lg">${result.percentPassing}%</td>
+                    <td class="table-cell">${cumRetained.toFixed(0)}%</td>
+                    <td class="table-cell">${retained.toFixed(0)}%</td>
+                `;
+                resultsTableBody.appendChild(row);
+            });
+
+            document.getElementById('resultsSection').classList.remove('hidden');
+            calculateDValues();
+        }
+
+        function calculateDValues() {
+            // استخراج D10, D30, D60 من المنحنى بالاستيفاء
+            const data = finalResults.filter(r => r.opening > 0 && r.percentPassing >= 0 && r.percentPassing <= 100);
+            
+            const d10 = interpolateDValue(10, data);
+            const d30 = interpolateDValue(30, data);
+            const d60 = interpolateDValue(60, data);
+
+            document.getElementById('d10_value').textContent = d10 !== null ? d10.toFixed(3) : 'N/A';
+            document.getElementById('d30_value').textContent = d30 !== null ? d30.toFixed(3) : 'N/A';
+            document.getElementById('d60_value').textContent = d60 !== null ? d60.toFixed(3) : 'N/A';
+
+            if (d10 && d60) {
+                const Cu = d60 / d10;
+                const Cc = d30 ? (d30 * d30) / (d60 * d10) : null;
+                
+                document.getElementById('cu_value').textContent = Cu.toFixed(2);
+                document.getElementById('cc_value').textContent = Cc !== null ? Cc.toFixed(2) : 'N/A';
+            } else {
+                document.getElementById('cu_value').textContent = 'N/A';
+                document.getElementById('cc_value').textContent = 'N/A';
+            }
+        }
+
+        function interpolateDValue(percentPassing, data) {
+            // البحث عن نقطتين محيطتين بالـ percentPassing المطلوب
+            // الترتيب تنازلي حسب الفتحة
+            const sortedData = [...data].sort((a, b) => b.opening - a.opening);
+
+            for (let i = 0; i < sortedData.length - 1; i++) {
+                const p1 = sortedData[i];
+                const p2 = sortedData[i + 1];
+
+                // النسبة تتناقص مع صغر الفتحة
+                if ((p1.percentPassing >= percentPassing && p2.percentPassing <= percentPassing) ||
+                    (p1.percentPassing <= percentPassing && p2.percentPassing >= percentPassing)) {
+                    
+                    // استيفاء لوغاريتمي
+                    const logD1 = Math.log10(p1.opening);
+                    const logD2 = Math.log10(p2.opening);
+                    
+                    const logD = logD1 + (percentPassing - p1.percentPassing) * (logD2 - logD1) / (p2.percentPassing - p1.percentPassing);
+                    
+                    return Math.pow(10, logD);
+                }
+            }
+            
+            return null;
+        }
+
+        function drawChart() {
+            const ctx = document.getElementById('gradationChart').getContext('2d');
+            
+            // تدمير الرسم القديم
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            // إعداد البيانات
+            const data = finalResults
+                .filter(r => r.opening > 0)
+                .sort((a, b) => b.opening - a.opening);
+
+            const labels = data.map(d => d.opening);
+            const values = data.map(d => d.percentPassing);
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '% Passing',
+                        data: values,
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        pointBackgroundColor: 'rgb(239, 68, 68)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'logarithmic',
+                            title: {
+                                display: true,
+                                text: 'فتحة المنخل (mm) - Sieve Opening',
+                                font: { size: 14, weight: 'bold' }
+                            },
+                            reverse: false,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        y: {
+                            min: 0,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'النسبة المارة (%) - Percent Passing',
+                                font: { size: 14, weight: 'bold' }
+                            },
+                            ticks: {
+                                stepSize: 10
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                font: { size: 12 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.parsed.y}% يمر من ${context.parsed.x.toFixed(3)} mm`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            document.getElementById('chartSection').classList.remove('hidden');
+        }
+
+        // ==================== التحقق والتنبيهات ====================
+
+        function showValidation(message, type) {
+            const container = document.getElementById('validationMessages');
+            const div = document.createElement('div');
+            
+            const colors = {
+                error: 'bg-red-100 border-red-400 text-red-700',
+                warning: 'bg-yellow-100 border-yellow-400 text-yellow-700',
+                success: 'bg-green-100 border-green-400 text-green-700'
+            };
+
+            div.className = `border-l-4 p-4 mb-2 ${colors[type]}`;
+            div.textContent = message;
+            
+            container.appendChild(div);
+        }
+
+        function clearValidation() {
+            document.getElementById('validationMessages').innerHTML = '';
+        }
+
+        // ==================== أدوات مساعدة ====================
+
+        function resetAll() {
+            if (confirm('هل أنت متأكد من إعادة تعيين جميع البيانات؟')) {
+                // مسح جميع الحقول
+                document.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
+                document.querySelectorAll('input[type="text"]').forEach(input => input.value = '');
+                document.getElementById('notes').value = '';
+                
+                // مسح النتائج
+                document.getElementById('resultsSection').classList.add('hidden');
+                document.getElementById('chartSection').classList.add('hidden');
+                
+                // مسح الجداول المحسوبة
+                sieves.forEach((_, index) => {
+                    const singlePP = document.getElementById(`single_pp_${index}`);
+                    if (singlePP) singlePP.textContent = '---';
+                });
+
+                clearValidation();
+                
+                if (chartInstance) {
+                    chartInstance.destroy();
+                    chartInstance = null;
+                }
+
+                calculateCompositeMasses();
+            }
+        }
+
+        function loadExample() {
+            // تحميل بيانات مثال للطريقة المختارة
+            const method = document.querySelector('input[name="method"]:checked').value;
+            
+            if (method === 'single') {
+                document.getElementById('sampleId').value = 'S-001-EX';
+                document.getElementById('single_SMd').value = '5.000';
+                
+                // بيانات مثال
+                const exampleData = [0, 0.150, 0.450, 0.800, 1.200, 1.800, 2.400, 2.900, 3.300, 3.650, 3.900, 4.200, 4.450, 4.700, 4.950];
+                exampleData.forEach((val, index) => {
+                    const input = document.getElementById(`single_cmrn_${index}`);
+                    if (input) input.value = val.toFixed(3);
+                });
+                
+            } else {
+                const separatorOpening = currentSeparatorOpening;
+                
+                document.getElementById('sampleId').value = 'S-002-EX';
+                document.getElementById('comp_CPMd').value = '2.500';
+                document.getElementById('comp_FPMm').value = '2.600';
+                document.getElementById('comp_wfp').value = '4.0';
+                document.getElementById('comp_SubSMd').value = '2.400';
+                
+                calculateCompositeMasses();
+                
+                // بيانات ديناميكية حسب منخل الفصل
+                const coarseSieves = sieves.filter(s => s.opening >= separatorOpening);
+                const fineSieves = sieves.filter(s => s.opening <= separatorOpening);
+                
+                // بيانات الخشن (proportional)
+                coarseSieves.forEach((sieve, index) => {
+                    const ratio = (coarseSieves.length - index) / coarseSieves.length;
+                    const val = 2.500 * (1 - ratio * 0.95);
+                    const input = document.getElementById(`coarse_cmrn_${index}`);
+                    if (input) input.value = val.toFixed(3);
+                });
+                
+                // بيانات الناعم (proportional)
+                fineSieves.forEach((sieve, index) => {
+                    const ratio = (fineSieves.length - index) / fineSieves.length;
+                    const val = 2.400 * (1 - ratio * 0.95);
+                    const input = document.getElementById(`fine_cmrn_${index}`);
+                    if (input) input.value = val.toFixed(3);
+                });
+            }
+            
+            showValidation('تم تحميل بيانات المثال - اضغط "احسب النتائج"', 'success');
+        }
+
+        // ==================== التهيئة عند التحميل ====================
+        
+        window.addEventListener('DOMContentLoaded', function() {
+            initializeTables();
+            updateMethodUI();
+            
+            // تعيين التاريخ الحالي
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('testDate').value = today;
+            document.getElementById('d1557_testDate').value = today;
+            
+            // Initialize D1557 tables
+            initializeD1557Tables();
+        });
+
+        // ==================== D1557 Functions ====================
+        
+        let d1557ChartInstance = null;
+        let d1557UncorrectedResults = null;
+        let d1557CorrectedResults = null;
+
+        function toggleOversizeCorrection() {
+            const enabled = document.getElementById('d1557_enableCorrection').checked;
+            const inputsDiv = document.getElementById('d1557_correctionInputs');
+            
+            if (enabled) {
+                inputsDiv.classList.remove('hidden');
+            } else {
+                inputsDiv.classList.add('hidden');
+                document.getElementById('d1557_correctionDetails').classList.add('hidden');
+                document.getElementById('d1557_correctedResults').classList.add('hidden');
+            }
+            
+            // Re-calculate to update chart and cards visibility
+            const resultsVisible = !document.getElementById('d1557_resultsSection').classList.contains('hidden');
+            if (resultsVisible) {
+                calculateD1557();
+            }
+        }
+
+        function toggleCorrectionDetails() {
+            const detailsDiv = document.getElementById('d1557_correctionDetails');
+            detailsDiv.classList.toggle('hidden');
+        }
+
+        function validatePC() {
+            const PC = parseFloat(document.getElementById('d1557_PC').value) || 0;
+            const PF = 100 - PC;
+            const validationDiv = document.getElementById('d1557_pcValidation');
+            
+            document.getElementById('d1557_PF').textContent = `PF% = ${PF.toFixed(1)}%`;
+            
+            validationDiv.innerHTML = '';
+            
+            if (PC < 0 || PC > 100) {
+                validationDiv.innerHTML = '<div class="text-sm text-red-600 font-bold p-3 bg-red-50 border-r-4 border-red-500 rounded">❌ خطأ: النسبة المئوية يجب أن تكون بين 0 و 100</div>';
+            } else if (PC > 30) {
+                validationDiv.innerHTML = '<div class="text-sm text-orange-800 font-bold p-3 bg-orange-50 border-r-4 border-orange-500 rounded">⚠️ تحذير: نسبة الـ Oversize تتجاوز 30%، العينة خارج نطاق تطبيق ASTM D1557 المعتاد.</div>';
+            } else if (PC > 5) {
+                validationDiv.innerHTML = '<div class="text-sm text-blue-800 font-bold p-3 bg-blue-50 border-r-4 border-blue-500 rounded">ℹ️ وفق ASTM D1557: عند وجود أكثر من 5% oversize، يجب عمل تصحيح للنتائج باستخدام Practice D4718/D4718M.</div>';
+            } else if (PC > 0) {
+                validationDiv.innerHTML = '<div class="text-sm text-green-800 p-3 bg-green-50 border-r-4 border-green-500 rounded">✅ نسبة الـ Oversize أقل من 5%، التصحيح غالباً غير مطلوب ويمكن تشغيله اختيارياً.</div>';
+            }
+        }
+
+        function initializeD1557Tables() {
+            // Water Content Table (5 rows)
+            const wcTableBody = document.getElementById('d1557_wcTableBody');
+            wcTableBody.innerHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="table-cell font-bold text-center">${i}</td>
+                    <td class="table-cell">
+                        <input type="number" step="0.01" id="d1557_wcWet_${i}" 
+                               class="w-full px-2 py-1 border border-gray-300 rounded" 
+                               placeholder="0.00" oninput="calculateD1557WC(${i})">
+                    </td>
+                    <td class="table-cell">
+                        <input type="number" step="0.01" id="d1557_wcDry_${i}" 
+                               class="w-full px-2 py-1 border border-gray-300 rounded" 
+                               placeholder="0.00" oninput="calculateD1557WC(${i})">
+                    </td>
+                    <td class="table-cell">
+                        <input type="number" step="0.01" id="d1557_wcTare_${i}" 
+                               class="w-full px-2 py-1 border border-gray-300 rounded" 
+                               placeholder="0.00" oninput="calculateD1557WC(${i})">
+                    </td>
+                    <td class="table-cell bg-yellow-50" id="d1557_wcWater_${i}">---</td>
+                    <td class="table-cell bg-yellow-50" id="d1557_wcDrySoil_${i}">---</td>
+                    <td class="table-cell bg-green-100 font-bold" id="d1557_w_${i}">---</td>
+                `;
+                wcTableBody.appendChild(row);
+            }
+
+            // Compaction Table (5 rows)
+            const compTableBody = document.getElementById('d1557_compTableBody');
+            compTableBody.innerHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="table-cell font-bold text-center">${i}</td>
+                    <td class="table-cell">
+                        <input type="number" step="0.1" id="d1557_moldWet_${i}" 
+                               class="w-full px-2 py-1 border border-gray-300 rounded" 
+                               placeholder="0.0">
+                    </td>
+                    <td class="table-cell bg-yellow-50" id="d1557_moistDensity_${i}">---</td>
+                    <td class="table-cell bg-green-100 font-bold" id="d1557_dryDensity_${i}">---</td>
+                `;
+                compTableBody.appendChild(row);
+            }
+        }
+
+        function calculateD1557WC(pointNum) {
+            const wet = parseFloat(document.getElementById(`d1557_wcWet_${pointNum}`).value) || 0;
+            const dry = parseFloat(document.getElementById(`d1557_wcDry_${pointNum}`).value) || 0;
+            const tare = parseFloat(document.getElementById(`d1557_wcTare_${pointNum}`).value) || 0;
+
+            const water = wet - dry;
+            const drySoil = dry - tare;
+            const w = drySoil > 0 ? (water / drySoil) * 100 : 0;
+
+            document.getElementById(`d1557_wcWater_${pointNum}`).textContent = water.toFixed(2);
+            document.getElementById(`d1557_wcDrySoil_${pointNum}`).textContent = drySoil.toFixed(2);
+            document.getElementById(`d1557_w_${pointNum}`).textContent = w.toFixed(1);
+        }
+
+        function updateUnitLabels() {
+            const unitSystem = document.querySelector('input[name="unitSystem"]:checked').value;
+            const moistHeader = document.getElementById('d1557_moistDensityHeader');
+            const dryHeader = document.getElementById('d1557_dryDensityHeader');
+            
+            const isKnm3 = unitSystem === 'kN_m3';
+            const term = isKnm3 ? 'γ' : 'ρ';
+            const name = isKnm3 ? 'Unit Weight' : 'Density';
+            const unit = isKnm3 ? 'kN/m³' : (unitSystem === 'g_cm3' ? 'g/cm³' : 'kg/m³');
+
+            moistHeader.innerHTML = `${term}m (${name})<br><span class="text-xs font-normal">(${unit})</span>`;
+            dryHeader.innerHTML = `${term}d (${name})<br><span class="text-xs font-normal">(${unit})</span>`;
+
+            if (d1557UncorrectedResults) {
+                renderD1557CompactionTable(d1557UncorrectedResults.points, unitSystem);
+                renderD1557Results(d1557UncorrectedResults, d1557CorrectedResults, document.getElementById('d1557_enableCorrection').checked);
+                
+                const Gs = parseFloat(document.getElementById('d1557_Gs').value) || 2.65;
+                const moldVolUnit = document.getElementById('d1557_moldVolUnit').value;
+                drawD1557Chart(d1557UncorrectedResults, d1557CorrectedResults, Gs, unitSystem, moldVolUnit, document.getElementById('d1557_enableCorrection').checked);
+            }
+        }
+
+        function convertDensity(rho_kgm3, targetUnit) {
+            if (targetUnit === 'kg_m3') return rho_kgm3;
+            if (targetUnit === 'g_cm3') return rho_kgm3 / 1000;
+            if (targetUnit === 'kN_m3') return (rho_kgm3 * 9.80665) / 1000;
+            return rho_kgm3;
+        }
+
+        function renderD1557CompactionTable(points, unitSystem) {
+            // Clear current table displays first
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`d1557_moistDensity_${i}`).textContent = '---';
+                document.getElementById(`d1557_dryDensity_${i}`).textContent = '---';
+            }
+            // Update with points
+            points.forEach(p => {
+                const moist = convertDensity(p.moistDensity, unitSystem);
+                const dry = convertDensity(p.dryDensity, unitSystem);
+                document.getElementById(`d1557_moistDensity_${p.point}`).textContent = moist.toFixed(4);
+                document.getElementById(`d1557_dryDensity_${p.point}`).textContent = dry.toFixed(4);
+            });
+        }
+
+        function calculateUncorrectedResults(points, Gs, unitSystem, moldVolUnit) {
+            // Find OMC and MDD from uncorrected data
+            if (points.length === 0) return null;
+            
+            let maxPoint = points[0];
+            for (const point of points) {
+                if (point.dryDensity > maxPoint.dryDensity) {
+                    maxPoint = point;
+                }
+            }
+
+            return {
+                omc: maxPoint.w,
+                mdd: maxPoint.dryDensity,
+                points: points,
+                unitSystem: unitSystem
+            };
+        }
+
+        function calculateCorrectedResults(uncorrectedResults, PC) {
+            if (!uncorrectedResults || !uncorrectedResults.points) return null;
+            
+            if (PC <= 0) {
+                return {
+                    omc: uncorrectedResults.omc,
+                    mdd: uncorrectedResults.mdd,
+                    points: uncorrectedResults.points,
+                    PC: 0, PF: 100
+                };
+            }
+
+            const PF = 100 - PC;
+            const Gc = 2.65; // Assumed specific gravity of rocks
+            const rho_w_kgm3 = 1000.0; // standard density of water
+
+            const correctedPoints = uncorrectedResults.points.map(p => {
+                // rho_df in kg/m3 (base)
+                const rho_df = p.dryDensity;
+                
+                // ASTM D4718 Eq 1 (Modified for kg/m3):
+                // rho_dc = (100 * rho_df * Gc * rho_w) / (PF * Gc * rho_w + PC * rho_df)
+                const numerator = 100 * rho_df * Gc * rho_w_kgm3;
+                const denominator = (PF * Gc * rho_w_kgm3) + (PC * rho_df);
+                const rho_dc = numerator / denominator;
+
+                // ASTM D4718 Eq 2: wc = (w_f * PF + w_c * PC) / 100
+                // Assuming w_c (rock moisture) = 0
+                const wc_corrected = (p.w * PF) / 100;
+
+                return {
+                    point: p.point,
+                    w: wc_corrected,
+                    dryDensity: rho_dc
+                };
+            });
+            
+            let maxPoint = correctedPoints[0];
+            for (const point of correctedPoints) {
+                if (point.dryDensity > maxPoint.dryDensity) maxPoint = point;
+            }
+            
+            return {
+                omc: maxPoint.w,
+                mdd: maxPoint.dryDensity,
+                points: correctedPoints,
+                PC: PC, PF: PF
+            };
+        }
+
+        function renderD1557Results(uncorrected, corrected, isCorrectionEnabled) {
+            const unitSystem = document.querySelector('input[name="unitSystem"]:checked').value;
+            const isKnm3 = unitSystem === 'kN_m3';
+            const unitName = isKnm3 ? 'kN/m³' : (unitSystem === 'g_cm3' ? 'g/cm³' : 'kg/m³');
+
+            // Render Uncorrected
+            const mdd_base = uncorrected.mdd; // MDD is always in kg/m3 base
+            const mdd_val = convertDensity(mdd_base, unitSystem);
+            
+            document.getElementById('d1557_omc').textContent = uncorrected.omc.toFixed(1);
+            document.getElementById('d1557_mdd').textContent = mdd_val.toFixed(isKnm3 ? 2 : 4);
+            document.getElementById('d1557_unitLabel').textContent = unitName;
+            
+            const alt_g = convertDensity(mdd_base, 'g_cm3').toFixed(4);
+            const alt_kg = convertDensity(mdd_base, 'kg_m3').toFixed(2);
+            const alt_kN = convertDensity(mdd_base, 'kN_m3').toFixed(2);
+            document.getElementById('d1557_alternateUnits').textContent = `${alt_g} g/cm³ | ${alt_kg} kg/m³ | ${alt_kN} kN/m³`;
+
+            // Render Corrected
+            const correctedDiv = document.getElementById('d1557_correctedResults');
+            if (isCorrectionEnabled && corrected) {
+                correctedDiv.classList.remove('hidden');
+                const mddc_base = corrected.mdd;
+                const mddc_val = convertDensity(mddc_base, unitSystem);
+                
+                document.getElementById('d1557_omcCorrected').textContent = corrected.omc.toFixed(1);
+                document.getElementById('d1557_mddCorrected').textContent = mddc_val.toFixed(isKnm3 ? 2 : 4);
+                document.getElementById('d1557_unitLabelCorrected').textContent = unitName;
+
+                const altc_g = convertDensity(mddc_base, 'g_cm3').toFixed(4);
+                const altc_kg = convertDensity(mddc_base, 'kg_m3').toFixed(2);
+                const altc_kN = convertDensity(mddc_base, 'kN_m3').toFixed(2);
+                document.getElementById('d1557_alternateUnitsCorrected').textContent = `${altc_g} g/cm³ | ${altc_kg} kg/m³ | ${altc_kN} kN/m³`;
+
+                updateCorrectionDetailsTable(uncorrected, corrected, unitSystem);
+            } else {
+                correctedDiv.classList.add('hidden');
+            }
+            
+            document.getElementById('d1557_resultsSection').classList.remove('hidden');
+        }
+
+        function updateCorrectionDetailsTable(uncorrected, corrected, unitSystem) {
+            const tableBody = document.getElementById('d1557_correctionDetailsTable');
+            tableBody.innerHTML = '';
+            
+            for (let i = 0; i < uncorrected.points.length; i++) {
+                const uncorr = uncorrected.points[i];
+                const corr = corrected.points[i];
+                
+                const d_uncorr = convertDensity(uncorr.dryDensity, unitSystem);
+                const d_corr = convertDensity(corr.dryDensity, unitSystem);
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="table-cell text-center">${uncorr.point}</td>
+                    <td class="table-cell text-center">${uncorr.w.toFixed(1)}</td>
+                    <td class="table-cell text-center">${d_uncorr.toFixed(3)}</td>
+                    <td class="table-cell text-center bg-blue-50">${corr.w.toFixed(1)}</td>
+                    <td class="table-cell text-center bg-blue-50">${d_corr.toFixed(3)}</td>
+                `;
+                tableBody.appendChild(row);
+            }
+        }
+
+        function calculateD1557() {
+            clearD1557Validation();
+
+            const moldMass = parseFloat(document.getElementById('d1557_moldMass').value);
+            const moldVolValue = parseFloat(document.getElementById('d1557_moldVolValue').value);
+            const moldVolUnit = document.getElementById('d1557_moldVolUnit').value;
+            const Gs = parseFloat(document.getElementById('d1557_Gs').value) || 2.65;
+            const unitSystem = document.querySelector('input[name="unitSystem"]:checked').value;
+
+            if (!moldMass || moldMass <= 0 || !moldVolValue || moldVolValue <= 0) {
+                showD1557Validation('يرجى إدخال بيانات القالب (الكتلة والحجم) بشكل صحيح', 'error');
+                return;
+            }
+
+            const points = [];
+            let hasValidPoint = false;
+
+            const V_m3 = (moldVolUnit === 'cm3') ? moldVolValue * 1e-6 : moldVolValue;
+
+            for (let i = 1; i <= 5; i++) {
+                const moldWet_g = parseFloat(document.getElementById(`d1557_moldWet_${i}`).value);
+                const wText = document.getElementById(`d1557_w_${i}`).textContent;
+                const w = parseFloat(wText);
+
+                if (!moldWet_g || isNaN(w) || wText === '---') continue;
+
+                const soilWet_kg = (moldWet_g - moldMass) / 1000;
+                if (soilWet_kg <= 0) continue;
+
+                const rho_m_kgm3 = soilWet_kg / V_m3;
+                const rho_d_kgm3 = rho_m_kgm3 / (1 + w / 100);
+
+                points.push({
+                    point: i,
+                    w: w,
+                    moistDensity: rho_m_kgm3,
+                    dryDensity: rho_d_kgm3
+                });
+                hasValidPoint = true;
+            }
+
+            if (!hasValidPoint) {
+                showD1557Validation('لا توجد نقاط كاملة للحساب', 'error');
+                return;
+            }
+
+            renderD1557CompactionTable(points, unitSystem);
+            d1557UncorrectedResults = calculateUncorrectedResults(points, Gs, unitSystem, moldVolUnit);
+
+            const isCorrectionEnabled = document.getElementById('d1557_enableCorrection').checked;
+            const PC = parseFloat(document.getElementById('d1557_PC').value) || 0;
+            
+            if (isCorrectionEnabled && PC > 0) {
+                d1557CorrectedResults = calculateCorrectedResults(d1557UncorrectedResults, PC);
+            } else {
+                d1557CorrectedResults = null;
+            }
+
+            renderD1557Results(d1557UncorrectedResults, d1557CorrectedResults, isCorrectionEnabled);
+            drawD1557Chart(d1557UncorrectedResults, d1557CorrectedResults, Gs, unitSystem, moldVolUnit, isCorrectionEnabled);
+
+            showD1557Validation(`✅ تم الحساب بنجاح - OMC = ${d1557UncorrectedResults.omc.toFixed(1)}%`, 'success');
+        }
+
+        function drawD1557Chart(uncorrectedResults, correctedResults, Gs, unitSystem, moldVolUnit, isCorrectionEnabled) {
+            const ctx = document.getElementById('d1557_chart').getContext('2d');
+            if (d1557ChartInstance) d1557ChartInstance.destroy();
+
+            const isKnm3 = unitSystem === 'kN_m3';
+            const unitName = isKnm3 ? 'Unit Weight (kN/m³)' : `Density (${unitSystem === 'g_cm3' ? 'g/cm³' : 'kg/m³'})`;
+
+            const uncorrectedData = uncorrectedResults.points.map(p => ({
+                x: p.w,
+                y: convertDensity(p.dryDensity, unitSystem)
+            }));
+
+            // ZAV
+            const gamma_w_knm3 = 9.80665;
+            const zavPoints = [];
+            const minW = Math.min(...uncorrectedResults.points.map(p => p.w));
+            const maxW = Math.max(...uncorrectedResults.points.map(p => p.w));
+
+            for (let w = Math.max(0, minW - 3); w <= maxW + 5; w += 0.25) {
+                const g_d_zav_knm3 = (gamma_w_knm3 * Gs) / (1 + (w / 100) * Gs);
+                let y_zav;
+                if (unitSystem === 'kN_m3') y_zav = g_d_zav_knm3;
+                else if (unitSystem === 'g_cm3') y_zav = g_d_zav_knm3 / 9.80665;
+                else y_zav = (g_d_zav_knm3 / 9.80665) * 1000;
+                
+                zavPoints.push({ x: w, y: y_zav });
+            }
+
+            const datasets = [
+                {
+                    label: 'Compaction Curve (Uncorrected)',
+                    data: uncorrectedData,
+                    borderColor: 'rgb(59, 130, 246)',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 3,
+                    pointRadius: 7,
+                    pointBackgroundColor: 'rgb(239, 68, 68)',
+                    tension: 0.4,
+                    fill: false
+                }
+            ];
+            
+            if (isCorrectionEnabled && correctedResults) {
+                const correctedData = correctedResults.points.map(p => ({
+                    x: p.w,
+                    y: convertDensity(p.dryDensity, unitSystem)
+                }));
+                datasets.push({
+                    label: 'Compaction Curve (Corrected)',
+                    data: correctedData,
+                    borderColor: 'rgb(147, 51, 234)',
+                    backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                    borderWidth: 3,
+                    pointRadius: 7,
+                    pointBackgroundColor: 'rgb(192, 38, 211)',
+                    tension: 0.4,
+                    fill: false
+                });
+            }
+            
+            datasets.push({
+                label: 'Zero Air Voids (S=100%)',
+                data: zavPoints,
+                borderColor: 'rgb(34, 197, 94)',
+                borderWidth: 2,
+                borderDash: [5, 5],
+                pointRadius: 0,
+                tension: 0.3,
+                fill: false
+            });
+
+            d1557ChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: { datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            title: { display: true, text: 'Water Content (%)', font: { size: 14, weight: 'bold' } }
+                        },
+                        y: {
+                            title: { display: true, text: unitName, font: { size: 14, weight: 'bold' } }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: true, position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => `${context.dataset.label}: ${context.parsed.y.toFixed(4)} @ ${context.parsed.x.toFixed(1)}%`
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Check ZAV warning
+            let exceedsZAV = false;
+            for (const point of uncorrectedResults.points) {
+                const zavAtW = zavPoints.find(z => Math.abs(z.x - point.w) < 0.5);
+                const dryDensityTarget = convertDensity(point.dryDensity, unitSystem);
+                if (zavAtW && dryDensityTarget > zavAtW.y * 1.01) {
+                    exceedsZAV = true;
+                    break;
+                }
+            }
+            if (exceedsZAV) {
+                showD1557Validation('⚠️ تحذير: بعض النقاط تتجاوز منحنى 100% تشبع - خطأ محتمل في Gs أو القياسات', 'warning');
+            }
+
+            document.getElementById('d1557_chartSection').classList.remove('hidden');
+        }
+
+        function showD1557Validation(message, type) {
+            const container = document.getElementById('d1557_validationMessages');
+            const div = document.createElement('div');
+            
+            const colors = {
+                error: 'bg-red-100 border-red-400 text-red-700',
+                warning: 'bg-yellow-100 border-yellow-400 text-yellow-700',
+                success: 'bg-green-100 border-green-400 text-green-700'
+            };
+
+            div.className = `border-l-4 p-4 mb-2 ${colors[type]}`;
+            div.textContent = message;
+            
+            container.appendChild(div);
+        }
+
+        function clearD1557Validation() {
+            document.getElementById('d1557_validationMessages').innerHTML = '';
+        }
+
+        function resetD1557() {
+            if (confirm('هل أنت متأكد من إعادة تعيين جميع بيانات D1557؟')) {
+                // Clear all inputs
+                document.getElementById('d1557_sampleId').value = '';
+                document.getElementById('d1557_notes').value = '';
+                document.getElementById('d1557_moldMass').value = '';
+                document.getElementById('d1557_moldVolValue').value = '';
+                document.getElementById('d1557_Gs').value = '2.65';
+                document.getElementById('d1557_PC').value = '0';
+                
+                // Clear tables
+                for (let i = 1; i <= 5; i++) {
+                    document.getElementById(`d1557_wcWet_${i}`).value = '';
+                    document.getElementById(`d1557_wcDry_${i}`).value = '';
+                    document.getElementById(`d1557_wcTare_${i}`).value = '';
+                    document.getElementById(`d1557_wcWater_${i}`).textContent = '---';
+                    document.getElementById(`d1557_wcDrySoil_${i}`).textContent = '---';
+                    document.getElementById(`d1557_w_${i}`).textContent = '---';
+                    
+                    document.getElementById(`d1557_moldWet_${i}`).value = '';
+                    document.getElementById(`d1557_moistDensity_${i}`).textContent = '---';
+                    document.getElementById(`d1557_dryDensity_${i}`).textContent = '---';
+                }
+                
+                // Clear results
+                document.getElementById('d1557_resultsSection').classList.add('hidden');
+                document.getElementById('d1557_chartSection').classList.add('hidden');
+                document.getElementById('d1557_oversizeWarning').classList.add('hidden');
+                
+                clearD1557Validation();
+                
+                if (d1557ChartInstance) {
+                    d1557ChartInstance.destroy();
+                    d1557ChartInstance = null;
+                }
+            }
+        }
+
+        function loadD1557Example() {
+            document.getElementById('d1557_sampleId').value = 'P-001-EX';
+            document.getElementById('d1557_moldMass').value = '3500.0';
+            document.getElementById('d1557_moldVolValue').value = '944';
+            document.getElementById('d1557_Gs').value = '2.70';
+            
+            // Example water content data
+            const wcData = [
+                { wet: 125.50, dry: 120.30, tare: 25.00 },
+                { wet: 130.20, dry: 123.50, tare: 25.00 },
+                { wet: 135.80, dry: 126.40, tare: 25.00 },
+                { wet: 142.30, dry: 129.80, tare: 25.00 },
+                { wet: 148.60, dry: 132.50, tare: 25.00 }
+            ];
+            
+            const moldWetData = [5250, 5380, 5450, 5420, 5350];
+            
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`d1557_wcWet_${i}`).value = wcData[i-1].wet.toFixed(2);
+                document.getElementById(`d1557_wcDry_${i}`).value = wcData[i-1].dry.toFixed(2);
+                document.getElementById(`d1557_wcTare_${i}`).value = wcData[i-1].tare.toFixed(2);
+                calculateD1557WC(i);
+                
+                document.getElementById(`d1557_moldWet_${i}`).value = moldWetData[i-1].toFixed(1);
+            }
+            
+            showD1557Validation('تم تحميل بيانات المثال - اضغط "احسب النتائج"', 'success');
+        }
+    </script>
+</body>
+</html>
