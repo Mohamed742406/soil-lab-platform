@@ -343,6 +343,160 @@
                 </div>
             </div>
         </div>
+<!-- D4318 Section (Hidden by default) -->
+<div id="sectionD4318" class="bg-white rounded-lg shadow-lg p-6 mb-6 hidden">
+  <!-- Header info -->
+  <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-purple-500 pb-2">
+    Plasticity & Liquidity Test – Atterberg Limits
+    <span class="text-lg text-gray-600 block mt-1">
+      ASTM D4318 - Liquid Limit, Plastic Limit & Plasticity Index
+    </span>
+  </h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6">
+    <div>
+      <label class="block text-xs font-semibold text-gray-700 mb-1">TESTING DATE:</label>
+      <input type="date" id="d4318_date" class="w-full px-2 py-1 border border-gray-300 rounded">
+    </div>
+    <div>
+      <label class="block text-xs font-semibold text-gray-700 mb-1">LOCATION:</label>
+      <input type="text" id="d4318_location" class="w-full px-2 py-1 border border-gray-300 rounded">
+    </div>
+    <div>
+      <label class="block text-xs font-semibold text-gray-700 mb-1">CODE:</label>
+      <input type="text" id="d4318_code" class="w-full px-2 py-1 border border-gray-300 rounded bg-green-100">
+    </div>
+    <div>
+      <label class="block text-xs font-semibold text-gray-700 mb-1">ZONE:</label>
+      <input type="text" id="d4318_zone" class="w-full px-2 py-1 border border-gray-300 rounded">
+    </div>
+  </div>
+
+  <!-- Main LL / PL table (similar to Excel) -->
+  <div class="overflow-x-auto mb-6">
+    <table class="w-full border-collapse text-xs">
+      <thead>
+        <tr>
+          <th class="table-cell font-semibold bg-gray-100" rowspan="2">Test</th>
+          <th class="table-cell font-semibold bg-gray-100" colspan="5">Liquid Limit</th>
+          <th class="table-cell font-semibold bg-gray-100" colspan="5">Plastic Limit</th>
+        </tr>
+        <tr>
+          <th class="table-cell font-semibold bg-gray-100">No. of Blows</th>
+          <th class="table-cell font-semibold bg-gray-100">Tare WT (g)</th>
+          <th class="table-cell font-semibold bg-gray-100">Tare+Wet WT (g)</th>
+          <th class="table-cell font-semibold bg-gray-100">Tare+Dry WT (g)</th>
+          <th class="table-cell font-semibold bg-yellow-50">Moisture %</th>
+
+          <th class="table-cell font-semibold bg-gray-100">Tare No.</th>
+          <th class="table-cell font-semibold bg-gray-100">Tare WT (g)</th>
+          <th class="table-cell font-semibold bg-gray-100">Tare+Wet WT (g)</th>
+          <th class="table-cell font-semibold bg-gray-100">Tare+Dry WT (g)</th>
+          <th class="table-cell font-semibold bg-yellow-50">Moisture %</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 4 LL rows -->
+        <tr>
+          <td class="table-cell font-semibold">1</td>
+          <td class="table-cell"><input id="ll_N_1" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="ll_tare_1" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="ll_wet_1" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="ll_dry_1" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell bg-yellow-50"><input id="ll_w_1" type="number" class="w-full text-center border border-gray-300" readonly></td>
+
+          <td class="table-cell"><input id="pl_tareNo_1" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="pl_tare_1" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="pl_wet_1" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="pl_dry_1" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell bg-yellow-50"><input id="pl_w_1" type="number" class="w-full text-center border border-gray-300" readonly></td>
+        </tr>
+        <tr>
+          <td class="table-cell font-semibold">2</td>
+          <td class="table-cell"><input id="ll_N_2" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="ll_tare_2" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="ll_wet_2" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="ll_dry_2" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell bg-yellow-50"><input id="ll_w_2" type="number" class="w-full text-center border border-gray-300" readonly></td>
+
+          <td class="table-cell"><input id="pl_tareNo_2" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="pl_tare_2" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="pl_wet_2" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="pl_dry_2" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell bg-yellow-50"><input id="pl_w_2" type="number" class="w-full text-center border border-gray-300" readonly></td>
+        </tr>
+        <tr>
+          <td class="table-cell font-semibold">3</td>
+          <td class="table-cell"><input id="ll_N_3" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="ll_tare_3" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="ll_wet_3" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="ll_dry_3" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell bg-yellow-50"><input id="ll_w_3" type="number" class="w-full text-center border border-gray-300" readonly></td>
+
+          <td class="table-cell"><input id="pl_tareNo_3" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="pl_tare_3" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="pl_wet_3" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="pl_dry_3" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell bg-yellow-50"><input id="pl_w_3" type="number" class="w-full text-center border border-gray-300" readonly></td>
+        </tr>
+        <tr>
+          <td class="table-cell font-semibold">4</td>
+          <td class="table-cell"><input id="ll_N_4" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="ll_tare_4" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="ll_wet_4" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="ll_dry_4" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell bg-yellow-50"><input id="ll_w_4" type="number" class="w-full text-center border border-gray-300" readonly></td>
+
+          <td class="table-cell"><input id="pl_tareNo_4" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="pl_tare_4" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="pl_wet_4" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell"><input id="pl_dry_4" type="number" class="w-full text-center border border-gray-300"></td>
+          <td class="table-cell bg-yellow-50"><input id="pl_w_4" type="number" class="w-full text-center border border-gray-300" readonly></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Summary row LL / PL / PI -->
+  <div class="overflow-x-auto mb-6">
+    <table class="w-full border-collapse text-sm">
+      <tr>
+        <td class="table-cell font-semibold bg-gray-100 w-1/3 text-center">LL</td>
+        <td class="table-cell w-1/3 text-center">
+          <span id="d4318_LL">---</span> %
+        </td>
+        <td class="table-cell font-semibold bg-gray-100 w-1/3 text-center">PL</td>
+        <td class="table-cell w-1/3 text-center">
+          <span id="d4318_PL">---</span> %
+        </td>
+        <td class="table-cell font-semibold bg-gray-100 w-1/3 text-center">PI</td>
+        <td class="table-cell w-1/3 text-center">
+          <span id="d4318_PI">---</span>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Buttons -->
+  <div class="flex gap-4 mb-6">
+    <button onclick="calculateD4318()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-8 rounded shadow">
+      🧮 Calculate
+    </button>
+    <button onclick="resetD4318()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-8 rounded shadow">
+      🔄 Reset
+    </button>
+  </div>
+
+  <!-- Liquidity curve chart -->
+  <div class="mb-4 bg-white p-4 rounded-lg border">
+    <h3 class="text-sm font-bold text-gray-800 mb-2 text-center">
+      Liquidity Curve – Liquid Limit Determination (Casagrande)
+    </h3>
+    <canvas id="d4318_chart" height="260"></canvas>
+  </div>
+
+  <div id="d4318_validation" class="text-sm text-red-600 mt-2"></div>
+</div>
 
         <!-- D1557 Section (Hidden by default) -->
         <div id="sectionD1557" class="bg-white rounded-lg shadow-lg p-6 mb-6 hidden">
@@ -1849,7 +2003,176 @@
             }
             
             showD1557Validation('تم تحميل بيانات المثال - اضغط "احسب النتائج"', 'success');
+               // ==================== D4318 – Atterberg Limits ====================
+
+// حساب محتوى الماء من الأوزان
+function calcWater(tare, wet, dry) {
+    tare = parseFloat(tare);
+    wet  = parseFloat(wet);
+    dry  = parseFloat(dry);
+    if (isNaN(tare) || isNaN(wet) || isNaN(dry)) return null;
+    const water = wet - dry;
+    const drySoil = dry - tare;
+    if (drySoil <= 0) return null;
+    return (water / drySoil) * 100;
+}
+
+function calculateD4318() {
+    const llN = [];
+    const llw = [];
+    const plw = [];
+
+    // حساب w لكل صف LL و PL وتعبئة الخانات
+    for (let i = 1; i <= 4; i++) {
+        const N    = parseFloat(document.getElementById(`ll_N_${i}`).value);
+        const tare = document.getElementById(`ll_tare_${i}`).value;
+        const wet  = document.getElementById(`ll_wet_${i}`).value;
+        const dry  = document.getElementById(`ll_dry_${i}`).value;
+
+        const wLL = calcWater(tare, wet, dry);
+        if (!isNaN(N) && wLL !== null) {
+            llN.push(N);
+            llw.push(wLL);
+            document.getElementById(`ll_w_${i}`).value = wLL.toFixed(2);
         }
+
+        const ptare = document.getElementById(`pl_tare_${i}`).value;
+        const pwet  = document.getElementById(`pl_wet_${i}`).value;
+        const pdry  = document.getElementById(`pl_dry_${i}`).value;
+
+        const wPL = calcWater(ptare, pwet, pdry);
+        if (wPL !== null) {
+            plw.push(wPL);
+            document.getElementById(`pl_w_${i}`).value = wPL.toFixed(2);
+        }
+    }
+
+    const validation = document.getElementById('d4318_validation');
+    if (validation) validation.textContent = '';
+
+    if (llN.length < 2) {
+        if (validation) validation.textContent = 'يجب إدخال على الأقل نقطتين لحد السيولة لحساب المنحنى.';
+        return;
+    }
+    if (plw.length === 0) {
+        if (validation) validation.textContent = 'يجب إدخال بيانات حد اللدونة (PL) لحساب المتوسط.';
+        return;
+    }
+
+    // حساب LL من خط أفضل تطابق عند N = 25 (على أساس log10 N)
+    const logN = llN.map(n => Math.log10(n));
+    const n = logN.length;
+    let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+    for (let i = 0; i < n; i++) {
+        sumX += logN[i];
+        sumY += llw[i];
+        sumXY += logN[i] * llw[i];
+        sumXX += logN[i] * logN[i];
+    }
+    const denom = n * sumXX - sumX * sumX;
+    const a = (n * sumXY - sumX * sumY) / denom;  // الميل
+    const b = (sumY * sumXX - sumX * sumXY) / denom; // التقاطع
+
+    const log25 = Math.log10(25);
+    const LL = a * log25 + b;
+
+    // PL = متوسط قيم w للـ PL
+    const PL = plw.reduce((s, v) => s + v, 0) / plw.length;
+    const PI = LL - PL;
+
+    const llSpan = document.getElementById('d4318_LL');
+    const plSpan = document.getElementById('d4318_PL');
+    const piSpan = document.getElementById('d4318_PI');
+
+    if (llSpan) llSpan.textContent = LL.toFixed(1);
+    if (plSpan) plSpan.textContent = PL.toFixed(1);
+    if (piSpan) piSpan.textContent = PI.toFixed(1);
+
+    // رسم Liquidity Curve باستخدام Chart.js
+    const canvas = document.getElementById('d4318_chart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    // ترتيب النقاط تصاعدي حسب N
+    const pairs = llN.map((Nval, idx) => ({ N: Nval, w: llw[idx] }));
+    pairs.sort((a, b) => a.N - b.N);
+
+    const chartDataN = pairs.map(p => p.N);
+    const chartDataW = pairs.map(p => p.w);
+
+    if (window.d4318Chart) {
+        window.d4318Chart.destroy();
+    }
+
+    window.d4318Chart = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+            datasets: [
+                {
+                    label: 'Data Points',
+                    data: chartDataN.map((Nval, idx) => ({ x: Nval, y: chartDataW[idx] })),
+                    backgroundColor: '#1d4ed8',
+                    pointRadius: 4
+                },
+                {
+                    label: 'Best-fit Line',
+                    type: 'line',
+                    data: [
+                        { x: Math.min(...chartDataN), y: a * Math.log10(Math.min(...chartDataN)) + b },
+                        { x: Math.max(...chartDataN), y: a * Math.log10(Math.max(...chartDataN)) + b }
+                    ],
+                    borderColor: '#2563eb',
+                    borderWidth: 2,
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            plugins: {
+                legend: { position: 'top' },
+                title: {
+                    display: true,
+                    text: 'Flow Curve – Liquid Limit Determination (Casagrande Method)'
+                }
+            },
+            scales: {
+                x: {
+                    type: 'linear',
+                    title: { display: true, text: 'Num of Blows (N)' }
+                },
+                y: {
+                    title: { display: true, text: 'Moisture (%)' }
+                }
+            }
+        }
+    });
+}
+
+function resetD4318() {
+    for (let i = 1; i <= 4; i++) {
+        ['ll_N_', 'll_tare_', 'll_wet_', 'll_dry_', 'll_w_',
+         'pl_tareNo_', 'pl_tare_', 'pl_wet_', 'pl_dry_', 'pl_w_']
+        .forEach(prefix => {
+            const el = document.getElementById(prefix + i);
+            if (el) el.value = '';
+        });
+    }
+    const llSpan = document.getElementById('d4318_LL');
+    const plSpan = document.getElementById('d4318_PL');
+    const piSpan = document.getElementById('d4318_PI');
+    if (llSpan) llSpan.textContent = '---';
+    if (plSpan) plSpan.textContent = '---';
+    if (piSpan) piSpan.textContent = '---';
+    const validation = document.getElementById('d4318_validation');
+    if (validation) validation.textContent = '';
+    if (window.d4318Chart) {
+        window.d4318Chart.destroy();
+        window.d4318Chart = null;
+    }
+}
+ 
+        }
+        
     </script>
 </body>
 </html>
