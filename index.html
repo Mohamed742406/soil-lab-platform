@@ -130,7 +130,7 @@
                 </div>
                 <div class="text-left">
                     <p class="text-sm text-blue-200">الإصدار 2.0</p>
-                    <p class="text-xs text-blue-300 mt-1">تم تطوير المنصة: م. محمد القصبي</p>
+                    <p class="text-base text-blue-500 mt-1">تم تطوير المنصة: م. محمد القصبي</p>
                 </div>
             </div>
         </div>
@@ -201,7 +201,7 @@
                         <input type="date" id="testDate" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">وحدة الكتلة</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">وحدة الوزن</label>
                         <select id="massUnit" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2" onchange="updateUnitLabels()">
                             <option value="g">جرام (g)</option>
                             <option value="kg">كيلوجرام (kg)</option>
@@ -215,7 +215,7 @@
 
                 <!-- Method Selection -->
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg mb-4">
-                    <label class="block text-sm font-bold text-gray-800 mb-3">طريقة الغربلة — Sieving Method:</label>
+                    <label class="block text-sm font-bold text-gray-800 mb-3">طريقة النخل — Sieving Method:</label>
                     <div class="flex flex-wrap gap-4">
                         <label class="flex items-center gap-3 bg-white px-4 py-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-blue-400 transition-all">
                             <input type="radio" name="method" value="single" checked onchange="toggleMethod()" class="w-5 h-5 text-blue-600">
@@ -267,18 +267,18 @@
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <h4 class="font-bold text-gray-700 mb-2">متغيرات الكتلة — Mass Variables:</h4>
                         <ul class="space-y-2">
-                            <li><span class="glossary-term">S,Md</span> — الكتلة الجافة للعينة الكلية (Specimen Dry Mass)</li>
-                            <li><span class="glossary-term">CP,Md</span> — الكتلة الجافة للجزء الخشن (Coarser Portion Dry Mass)</li>
-                            <li><span class="glossary-term">FP,Mm</span> — الكتلة الرطبة للجزء الناعم (Finer Portion Moist Mass)</li>
-                            <li><span class="glossary-term">FP,Md</span> — الكتلة الجافة للجزء الناعم المحسوبة (Finer Portion Dry Mass)</li>
-                            <li><span class="glossary-term">SubS,Md</span> — الكتلة الجافة للعينة الفرعية الناعمة (Subspecimen Dry Mass)</li>
+                            <li><span class="glossary-term">S,Md</span> — الوزن الجاف للعينة الكلية (Specimen Dry Mass)</li>
+                            <li><span class="glossary-term">CP,Md</span> — الوزن الجاف للجزء الخشن (Coarser Portion Dry Mass)</li>
+                            <li><span class="glossary-term">FP,Mm</span> — الوزن الرطب للجزء الناعم (Finer Portion Moist Mass)</li>
+                            <li><span class="glossary-term">FP,Md</span> — الوزن الجاف للجزء الناعم المحسوبة (Finer Portion Dry Mass)</li>
+                            <li><span class="glossary-term">SubS,Md</span> — الوزن الجاف للعينة الفرعية الناعمة (Subspecimen Dry Mass)</li>
                             <li><span class="glossary-term">wfp</span> — المحتوى المائي للجزء الناعم % (Water Content of FP)</li>
                         </ul>
                     </div>
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <h4 class="font-bold text-gray-700 mb-2">متغيرات النتائج — Result Variables:</h4>
                         <ul class="space-y-2">
-                            <li><span class="glossary-term">CMRN</span> — الكتلة التراكمية المحتجزة (Cumulative Mass Retained)</li>
+                            <li><span class="glossary-term">CMRN</span> — الوزن التراكمي المحتجز (Cumulative Mass Retained)</li>
                             <li><span class="glossary-term">PPN</span> — النسبة المئوية المارة (Percent Passing)</li>
                             <li><span class="glossary-term">CSCF</span> — معامل تصحيح الفصل المركب (Composite Separation Correction Factor)</li>
                             <li><span class="glossary-term">D10, D30, D60</span> — أقطار حبيبات عند نسب مرور معينة</li>
@@ -298,7 +298,7 @@
                 
                 <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg mb-4">
                     <label class="block text-sm font-bold text-gray-700 mb-2">
-                        <span class="glossary-term">S,Md</span> — الكتلة الجافة للعينة المغربلة:
+                        <span class="glossary-term">S,Md</span> — الوزن الجاف للعينة المغربلة:
                     </label>
                     <div class="flex items-center gap-2">
                         <input type="number" id="single_SMd" step="0.01" min="0" class="input-field w-48 border-2 border-gray-300 rounded-lg px-3 py-2" placeholder="0.00">
@@ -314,7 +314,7 @@
                                 <th class="p-3 text-center border border-blue-800 w-28">الفتحة (mm)<br>Opening</th>
                                 <th class="p-3 text-center border border-blue-800 w-40">
                                     <span class="glossary-term bg-blue-200 text-blue-900">CMRN</span><br>
-                                    الكتلة التراكمية المحتجزة
+                                    الوزن التراكمي المحتجز
                                 </th>
                                 <th class="p-3 text-center border border-blue-800 w-32">
                                     <span class="glossary-term bg-green-200 text-green-900">PPN</span><br>
@@ -332,14 +332,14 @@
                 <div class="section-card p-6 mb-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                         <span class="bg-orange-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
-                        Composite — بيانات الكتل المطلوبة
+                        Composite — بيانات الوزن المطلوب
                     </h3>
                     
                     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
                             <label class="block text-sm font-bold text-gray-700 mb-2">
                                 <span class="glossary-term">CP,Md</span><br>
-                                <span class="text-xs" id="cpMdLabel">الكتلة الجافة للجزء الخشن (المحتجز على منخل الفصل)</span>
+                                <span class="text-xs" id="cpMdLabel">الوزن الجاف للجزء الخشن (المحتجز على منخل الفصل)</span>
                             </label>
                             <div class="flex items-center gap-2">
                                 <input type="number" id="comp_CPMd" step="0.01" min="0" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2" placeholder="0.00">
@@ -350,7 +350,7 @@
                         <div class="bg-green-50 border border-green-200 p-4 rounded-lg">
                             <label class="block text-sm font-bold text-gray-700 mb-2">
                                 <span class="glossary-term">FP,Mm</span><br>
-                                <span class="text-xs" id="fpMmLabel">الكتلة الرطبة للجزء الناعم (المار من منخل الفصل)</span>
+                                <span class="text-xs" id="fpMmLabel">الوزن الرطب للجزء الناعم (المار من منخل الفصل)</span>
                             </label>
                             <div class="flex items-center gap-2">
                                 <input type="number" id="comp_FPMm" step="0.01" min="0" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2" placeholder="0.00">
@@ -372,7 +372,7 @@
                         <div class="bg-purple-50 border border-purple-200 p-4 rounded-lg">
                             <label class="block text-sm font-bold text-gray-700 mb-2">
                                 <span class="glossary-term">SubS,Md</span><br>
-                                <span class="text-xs">الكتلة الجافة للعينة الفرعية الناعمة المغربلة</span>
+                                <span class="text-xs">الوزن الجاف للعينة الفرعية الناعمة المغربلة</span>
                             </label>
                             <div class="flex items-center gap-2">
                                 <input type="number" id="comp_SubSMd" step="0.01" min="0" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2" placeholder="0.00">
@@ -429,7 +429,7 @@
                                     <th class="p-3 text-center border border-blue-800 w-28">الفتحة (mm)<br>Opening</th>
                                     <th class="p-3 text-center border border-blue-800 w-40">
                                         <span class="glossary-term bg-blue-200 text-blue-900">CP,CMRN</span><br>
-                                        الكتلة التراكمية المحتجزة
+                                        الوزن التراكمي المحجوز
                                     </th>
                                     <th class="p-3 text-center border border-blue-800 w-32">
                                         <span class="glossary-term bg-green-200 text-green-900">CP,PPN</span><br>
@@ -457,7 +457,7 @@
                                     <th class="p-3 text-center border border-blue-800 w-24">الفتحة (mm)<br>Opening</th>
                                     <th class="p-3 text-center border border-blue-800 w-36">
                                         <span class="glossary-term bg-blue-200 text-blue-900">SubS,FCMRN</span><br>
-                                        الكتلة التراكمية
+                                        الوزن التراكمي
                                     </th>
                                     <th class="p-3 text-center border border-blue-800 w-28">
                                         <span class="glossary-term bg-yellow-200 text-yellow-900">SubS,FPPN</span><br>
@@ -474,7 +474,7 @@
                     </div>
                     
                     <div id="separatorWarning" class="hidden validation-msg validation-warning mt-4">
-                        ⚠️ تحذير: يوجد احتجاز على منخل الفصل في العينة الفرعية الناعمة.
+                        ⚠️ تحذير: يوجد محجوز على منخل الفصل في العينة الفرعية الناعمة.
                     </div>
                 </div>
             </div>
@@ -493,8 +493,8 @@
                                 <th class="p-3 text-center border border-emerald-800 w-24">المنخل<br>Sieve</th>
                                 <th class="p-3 text-center border border-emerald-800 w-28">الفتحة (mm)<br>Opening</th>
                                 <th class="p-3 text-center border border-emerald-800 w-32">% المار النهائي<br>Final PPN</th>
-                                <th class="p-3 text-center border border-emerald-800 w-32">% المحتجز التراكمي<br>Cum. % Retained</th>
-                                <th class="p-3 text-center border border-emerald-800 w-32">% المحتجز الفردي<br>% Retained</th>
+                                <th class="p-3 text-center border border-emerald-800 w-32">% المحجوز التراكمي<br>Cum. % Retained</th>
+                                <th class="p-3 text-center border border-emerald-800 w-32">% المحجوز الفردي<br>% Retained</th>
                             </tr>
                         </thead>
                         <tbody id="finalTableBody"></tbody>
@@ -578,7 +578,7 @@
                     </div>
                     <div>
                         <h2 class="text-2xl font-bold text-gray-800">اختبار الدمك المعدل — Modified Proctor Compaction</h2>
-                        <p class="text-gray-600">ASTM D1557-12(2021) | طاقة الدمك: 2700 kN·m/m³ | 5 طبقات × 25 ضربة</p>
+                        <p class="text-gray-600">ASTM D1557-12(2021) | طاقة الدمك: 2700 kN·m/m³ </p>
                     </div>
                 </div>
             </div>
@@ -694,16 +694,16 @@
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <h4 class="font-bold text-gray-700 mb-2">متغيرات المحتوى المائي — Water Content Variables:</h4>
                         <ul class="space-y-2">
-                            <li><span class="glossary-term">Wet+Tare</span> — كتلة التربة الرطبة + العلبة (Wet Soil + Container)</li>
-                            <li><span class="glossary-term">Dry+Tare</span> — كتلة التربة الجافة + العلبة (Dry Soil + Container)</li>
-                            <li><span class="glossary-term">Tare</span> — كتلة العلبة الفارغة (Container Mass)</li>
+                            <li><span class="glossary-term">Wet+Tare</span> — وزن التربة الرطبة + العلبة (Wet Soil + Container)</li>
+                            <li><span class="glossary-term">Dry+Tare</span> — وزن التربة الجافة + العلبة (Dry Soil + Container)</li>
+                            <li><span class="glossary-term">Tare</span> — وزن العلبة الفارغة (Container Mass)</li>
                             <li><span class="glossary-term">w%</span> — المحتوى المائي (Water Content)</li>
                         </ul>
                     </div>
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <h4 class="font-bold text-gray-700 mb-2">متغيرات الكثافة — Density Variables:</h4>
                         <ul class="space-y-2">
-                            <li><span class="glossary-term">Mt</span> — كتلة القالب + التربة الرطبة (Mold + Moist Soil)</li>
+                            <li><span class="glossary-term">Mt</span> — وزن القالب + التربة الرطبة (Mold + Moist Soil)</li>
                             <li><span class="glossary-term">ρm</span> — الكثافة الرطبة (Moist Density) — Eq 4</li>
                             <li><span class="glossary-term">ρd</span> — الكثافة الجافة (Dry Density) — Eq 5</li>
                             <li><span class="glossary-term">γd</span> — وزن الوحدة الجاف (Dry Unit Weight) — Eq 7</li>
@@ -1481,7 +1481,7 @@
                     <!-- Fines % -->
                     <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border-2 border-blue-200 text-center">
                         <div class="text-sm font-bold text-blue-800 mb-1">% Fines (No.200)</div>
-                        <div class="text-xs text-gray-500 mb-2">نسبة الغرامات — من D6913</div>
+                        <div class="text-xs text-gray-500 mb-2">نسبة المواد الناعمة  — من D6913</div>
                         <div class="text-3xl font-bold text-blue-700" id="sc_fines">—</div>
                     </div>
                     
@@ -1935,7 +1935,7 @@
             <p class="text-gray-400 text-sm mt-2">ASTM D6913, D4318, D2487, D3282 & D1557 | AASHTO M 145</p>
             <p class="text-gray-500 text-sm mt-1">جميع الحسابات وفقًا للمواصفات القياسية الأمريكية | Unified Soil Classification System (USCS)</p>
             <div class="mt-4 pt-4 border-t border-gray-700">
-                <p class="text-gray-400 text-sm">تم تطوير المنصة: <span class="text-blue-400 font-semibold">م. محمد القصبي</span></p>
+                <p class="text-gray-400 text-sm">تم تطوير المنصة: <span class="text-blue-500 font-semibold">م. محمد القصبي</span></p>
             </div>
         </div>
     </footer>
@@ -2116,8 +2116,8 @@
 
         function updateLabelsForSeparator() {
             const sepName = getSeparatorSieve().name;
-            document.getElementById('cpMdLabel').textContent = `الكتلة الجافة للجزء الخشن (المحتجز على ${sepName})`;
-            document.getElementById('fpMmLabel').textContent = `الكتلة الرطبة للجزء الناعم (المار من ${sepName})`;
+            document.getElementById('cpMdLabel').textContent = `الوزن الجاف للجزء الخشن (المحجوز على ${sepName})`;
+            document.getElementById('fpMmLabel').textContent = `الوزن الرطب للجزء الناعم (المار من ${sepName})`;
             document.getElementById('cscfDescription').textContent = `= % Passing عند ${sepName} من جدول الخشن (بدقة 0.1%)`;
         }
 
@@ -2700,7 +2700,7 @@
             const moldMass = parseFloat(document.getElementById('moldMass_g').value) || 0;
             const moldVol = parseFloat(document.getElementById('moldVol_value').value) || 0;
 
-            if (moldMass <= 0) { messages.push({ type: 'error', text: 'يجب إدخال كتلة القالب بقيمة موجبة' }); isValid = false; }
+            if (moldMass <= 0) { messages.push({ type: 'error', text: 'يجب إدخال وزن القالب بقيمة موجبة' }); isValid = false; }
             if (moldVol <= 0) { messages.push({ type: 'error', text: 'يجب إدخال حجم القالب بقيمة موجبة' }); isValid = false; }
 
             // Check each point
@@ -3644,7 +3644,7 @@
         }
 
         /**
-         * تحديد نوع الغرامات (طمي أم طين)
+         * تحديد نوع المواد الناعمة (طمي أم طين)
          * Determine fines type (silt or clay)
          */
         function getFinesType(LL, PI) {
@@ -3737,7 +3737,7 @@
                     
                 } else if (fines >= 12) {
                     // ========================================
-                    // تربة بغرامات كثيرة - Fines ≥ 12%
+                    // تربة بمواد ناعمة كثيرة - Fines ≥ 12%
                     // ========================================
                     if (LL !== null && PI !== null) {
                         const finesType = getFinesType(LL, PI);
@@ -3763,7 +3763,7 @@
                         // لا توجد بيانات Atterberg
                         symbol = prefix + 'M/' + prefix + 'C';
                         description = `${soilNameEn} with fines (Atterberg limits needed)`;
-                        nameAr = `${soilName} بغرامات (يلزم حدود أتربرج)`;
+                        nameAr = `${soilName} بناعم (يلزم حدود أتربرج)`;
                     }
                     
                 } else {
@@ -3780,7 +3780,7 @@
                         gradeSuffix = 'P';
                     }
                     
-                    // تحديد نوع الغرامات
+                    // تحديد نوع الناعم
                     if (LL !== null && PI !== null) {
                         const finesType = getFinesType(LL, PI);
                         const aLine = getALinePosition(LL, PI);
@@ -3804,7 +3804,7 @@
                     const finesTextAr = finesSuffix === 'C' ? 'طيني' : 'طميي';
                     
                     description = `${gradeText} ${soilNameEn} with ${finesText} fines`;
-                    nameAr = `${soilName} ${gradeTextAr} مع غرامات ${finesTextAr === 'طيني' ? 'طينية' : 'طميية'}`;
+                    nameAr = `${soilName} ${gradeTextAr} مع ناعم ${finesTextAr === 'طيني' ? 'طينية' : 'طميية'}`;
                 }
                 
             } else {
