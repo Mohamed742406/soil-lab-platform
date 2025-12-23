@@ -3935,17 +3935,18 @@
          * A-line: PI = 0.73 × (LL - 20)
          */
         function getALinePosition(LL, PI) {
-            const PI_A = 0.73 * (LL - 20);
-            const diff = PI - PI_A;
-            
-            if (Math.abs(diff) <= 2) {
-                return { position: 'on', PI_A: PI_A, diff: diff };
-            } else if (diff > 0) {
-                return { position: 'above', PI_A: PI_A, diff: diff };
-            } else {
-                return { position: 'below', PI_A: PI_A, diff: diff };
-            }
-        }
+    const PI_A = 0.73 * (LL - 20);    // معادلة A-line [web:125]
+    const diff = PI - PI_A;
+    const tol = 0.1;                  // سماحية صغيرة (0.1%)
+
+    if (diff > tol) {
+        return { position: 'above', PI_A, diff };
+    } else if (diff < -tol) {
+        return { position: 'below', PI_A, diff };
+    } else {
+        return { position: 'on', PI_A, diff };
+    }
+}
 
         /**
          * تحديد هل التدرج جيد أم ضعيف
