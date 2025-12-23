@@ -4534,13 +4534,24 @@
                         uscsDesc = `${LL < 50 ? 'Low' : 'High'} plasticity Silt`;
                         uscsNameAr = `طمي ${LL < 50 ? 'منخفض' : 'عالي'} اللدونة`;
                         uscsALine = 'تحت A-Line';
-                    } else {
-                        uscsSymbol = 'CL-ML';
-                        uscsDesc = 'Silty Clay (borderline)';
-                        uscsNameAr = 'طين طميي (حدي)';
-                        uscsALine = 'على A-Line';
-                        uscsNotes = 'Borderline zone';
-                    }
+                          } else {
+            // CL-ML فقط لو PI بين 4 و7 وعلى/فوق A-line
+            if (PI >= 4 && PI <= 7) {
+                uscsSymbol = 'CL-ML';
+                uscsDesc = 'Silty Clay (borderline)';
+                uscsNameAr = 'طين طميي (حدي)';
+                uscsALine = 'على A-Line';
+                uscsNotes = 'Borderline zone';
+            } else {
+                // لو مش في مدى 4-7: رجّعها لأقرب مجموعة
+                uscsSymbol = (PI > 7 ? 'C' : 'M') + plasticity;
+                uscsDesc = `${LL < 50 ? 'Low' : 'High'} plasticity ${PI > 7 ? 'Clay' : 'Silt'}`;
+                uscsNameAr = `${PI > 7 ? 'طين' : 'طمي'} ${LL < 50 ? 'منخفض' : 'عالي'} اللدونة`;
+                uscsALine = 'قريب من A-Line';
+                uscsNotes = 'Near A-Line';
+            }
+        }
+
                 } else {
                     uscsSymbol = 'ML/CL';
                     uscsDesc = 'Fine-grained soil';
