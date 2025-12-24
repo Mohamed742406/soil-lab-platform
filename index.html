@@ -2231,7 +2231,53 @@
     </div>
   </div>
 </div>
+<!-- D854 Variables Glossary -->
+<div class="section-card p-4 mt-4">
+  <button
+    type="button"
+    class="flex items-center justify-between w-full text-right font-semibold text-gray-800"
+    onclick="toggleSection('d854Glossary')"
+  >
+    <span>دليل المتغيرات والمصطلحات — D854 Variables Glossary</span>
+    <span class="text-purple-600 text-xl font-bold">▾</span>
+  </button>
 
+  <div id="d854Glossary" class="mt-3 hidden">
+    <h4 class="font-semibold text-gray-800 mb-1">متغيرات الكتلة — Mass Variables</h4>
+    <ul class="list-disc pr-6 text-sm text-gray-700 mb-3">
+      <li>M<sub>p</sub> — كتلة البيكنوميتر الجاف (Pycnometer Mass)</li>
+      <li>M<sub>pw</sub> — كتلة البيكنوميتر + ماء حتى العلامة (Pycnometer + Water to Mark)</li>
+      <li>M<sub>s</sub> — كتلة التربة الجافة (Dry Soil Mass)</li>
+      <li>M<sub>pws</sub> — كتلة البيكنوميتر + تربة + ماء حتى العلامة (Pycnometer + Soil + Water)</li>
+      <li>W₁ — كتلة الفلاسك + الماء حتى العلامة (Mass of Flask + Water)</li>
+      <li>W₂ — كتلة الفلاسك + التربة + الماء حتى العلامة (Mass of Flask + Soil + Water)</li>
+      <li>W<sub>s</sub> — كتلة التربة الجافة (نفس M<sub>s</sub> في المعادلات)</li>
+    </ul>
+
+    <h4 class="font-semibold text-gray-800 mb-1">متغيرات الحجم والكثافة — Volume & Density</h4>
+    <ul class="list-disc pr-6 text-sm text-gray-700 mb-3">
+      <li>V<sub>p</sub> — حجم البيكنوميتر (Pycnometer Volume)</li>
+      <li>ρ<sub>w</sub>(T) — كثافة الماء عند درجة الحرارة T (Water Density at T)</li>
+      <li>ρ<sub>s</sub> — كثافة حبيبات التربة (Soil Solids Density)</li>
+      <li>G<sub>t</sub> — الكثافة النوعية عند درجة الحرارة T (Specific Gravity at T)</li>
+      <li>G<sub>20</sub> — الكثافة النوعية المصححة إلى 20°م (Specific Gravity at 20°C)</li>
+    </ul>
+
+    <h4 class="font-semibold text-gray-800 mb-1">معاملات الحرارة — Temperature Parameters</h4>
+    <ul class="list-disc pr-6 text-sm text-gray-700 mb-3">
+      <li>T — درجة حرارة الماء/البيكنوميتر أثناء الوزن (Test Temperature)</li>
+      <li>K — معامل التصحيح الحراري لتحويل G<sub>t</sub> إلى G<sub>20</sub> (Temperature Correction Factor)</li>
+    </ul>
+
+    <h4 class="font-semibold text-gray-800 mb-1">المعادلات الأساسية — Key Equations</h4>
+    <ul class="list-disc pr-6 text-sm text-gray-700">
+      <li>W<sub>w</sub> = (W₁ + W<sub>s</sub>) − W₂ — كتلة الماء المكافئ لحجم حبيبات التربة</li>
+      <li>G<sub>t</sub> = W<sub>s</sub> / W<sub>w</sub> — الكثافة النوعية عند درجة الحرارة T</li>
+      <li>G<sub>20</sub> = K × G<sub>t</sub> — تصحيح الكثافة النوعية إلى 20°م</li>
+      <li>W₁ = M<sub>p</sub> + V<sub>p</sub> × ρ<sub>w</sub>(T) — طريقة إدخال M<sub>p</sub>, V<sub>p</sub></li>
+    </ul>
+  </div>
+</div>
         <!-- ============================================= -->
         <!-- USCS CLASSIFICATION SECTION -->
         <div id="uscsSection" class="hidden section-card p-6 mb-6">
