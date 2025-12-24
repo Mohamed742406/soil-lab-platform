@@ -5148,7 +5148,7 @@
          * إعادة تعيين تبويب التصنيف
          * Reset Soil Classification tab
          */
-        function resetSoilClassification() {
+              function resetSoilClassification() {
             // Reset display cards
             ['sc_fines', 'sc_LL', 'sc_PL', 'sc_PI', 'sc_passNo4', 'sc_passNo10', 'sc_passNo40', 'sc_CuCc'].forEach(id => {
                 document.getElementById(id).textContent = '—';
@@ -5159,8 +5159,9 @@
              'sc_aashto_group', 'sc_aashto_desc', 'sc_aashto_gi', 'sc_aashto_eval', 'sc_aashto_eval_desc'].forEach(id => {
                 document.getElementById(id).textContent = '—';
             });
+        }   // ← هنا نقفل resetSoilClassification تمامًا
 
-            // =============================================
+// =============================================
 // D854 FUNCTIONS - Specific Gravity of Soil Solids
 // =============================================
 
@@ -5211,10 +5212,17 @@ function calculateD854() {
   document.getElementById('d854_G20').textContent = G20.toFixed(3);
 }
 
-// Hide results
-document.getElementById('soilClassResults').classList.add('hidden');
-document.getElementById('sc_proctorData').classList.add('hidden');
-document.getElementById('soilClassValidation').innerHTML = '';
-    </script>
+// Hide results عند تحميل الصفحة
+window.addEventListener('load', () => {
+  const soilClassResults    = document.getElementById('soilClassResults');
+  const scProctorData       = document.getElementById('sc_proctorData');
+  const soilClassValidation = document.getElementById('soilClassValidation');
+
+  if (soilClassResults)    soilClassResults.classList.add('hidden');
+  if (scProctorData)       scProctorData.classList.add('hidden');
+  if (soilClassValidation) soilClassValidation.innerHTML = '';
+});
+
+</script>
 </body>
 </html>
