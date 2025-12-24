@@ -2146,6 +2146,13 @@
   >
     حساب الكثافة النوعية
   </button>
+<button
+  type="button"
+  class="bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded-lg w-full"
+  onclick="resetD854()"
+>
+  إعادة تعيين
+</button>
 
   <button
     type="button"
@@ -5238,15 +5245,36 @@ function setD854Mode(mode) {
     Vpg.classList.remove('hidden');
   }
 }
+
 // تعبئة بيانات تجريبية من Test No. 1 (Mp + Vp mode)
 function loadD854Demo() {
-  setD854Mode('MpVp');  // ← غيّر هنا
+  setD854Mode('MpVp');
 
   document.getElementById('d854_T').value     = 23;
-  document.getElementById('d854_Mp').value    = 623.0;  // ← غيّر هنا (Mp بدل W1)
-  document.getElementById('d854_Vp').value    = 37.0;   // ← أضف هذا السطر
+  document.getElementById('d854_Mp').value    = 623.0;
+  document.getElementById('d854_Vp').value    = 37.0;
   document.getElementById('d854_Mpws').value  = 722.0;
   document.getElementById('d854_Ms').value    = 99.0;
+}
+
+// هنا تضيف دالة إعادة التعيين
+function resetD854() {
+  // رجّع وضع الإدخال إلى W1
+  setD854Mode('W1');
+
+  // مسح خانات الإدخال
+  ['d854_T','d854_W1_in','d854_Mp','d854_Vp','d854_Mpws','d854_Ms']
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+
+  // مسح نتائج الجدول
+  ['d854_W1','d854_W2','d854_Ws','d854_Ww','d854_Gt','d854_G20']
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = '';
+    });
 }
 
 // الحساب الرئيسي لاختبار D854 (يدعم W1 مباشر أو Mp+Vp)
