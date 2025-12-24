@@ -5180,29 +5180,22 @@ function getTemperatureCoefficient(T) {
   return rho_w / rho20;
 }
 
-// الحساب الرئيسي لاختبار D854 (Test No. 1)
+// الحساب الرئيسي لاختبار D854 (باستخدام W1 من الجدول)
 function calculateD854() {
-  const T  = parseFloat(document.getElementById('d854_T').value);
-  const Mp = parseFloat(document.getElementById('d854_Mp').value);
-  const Vp = parseFloat(document.getElementById('d854_Vp').value);
-  const Mpws = parseFloat(document.getElementById('d854_Mpws').value);
-  const Ms   = parseFloat(document.getElementById('d854_Ms').value);
+  const T  = parseFloat(document.getElementById('d854_T').value);      // درجة الحرارة
+  const W1 = parseFloat(document.getElementById('d854_W1_in').value);  // كتلة الفلاسك + الماء، من الجدول
+  const W2 = parseFloat(document.getElementById('d854_Mpws').value);   // Mass of flask + soil + water
+  const Ws = parseFloat(document.getElementById('d854_Ms').value);     // Mass of dry soil
 
-  if (isNaN(T) || isNaN(Mp) || isNaN(Vp) || isNaN(Mpws) || isNaN(Ms)) {
-    alert('من فضلك أدخل جميع القيم المطلوبة لاختبار D854.');
+  if (isNaN(T) || isNaN(W1) || isNaN(W2) || isNaN(Ws)) {
+    alert('من فضلك أدخل درجة الحرارة و W₁ و W₂ و Wₛ من الجدول.');
     return;
   }
 
-  const rho_w = getWaterDensity(T);
-  const Mpw_t = Mp + Vp * rho_w;   // Mass of pycnometer + water at T (Eq. 2)
-  const W1 = Mpw_t;
-  const W2 = Mpws;
-  const Ws = Ms;
-
-  const Ww = (W1 + Ws) - W2;       // Mass of equal volume of water
-  const Gt = Ws / Ww;              // Gs(T) ≈ Eq. (3) [web:384]
-  const K  = getTemperatureCoefficient(T);
-  const G20 = K * Gt;              // Gs(20°C) = K · Gt (Eq. 4)
+  const Ww  = (W1 + Ws) - W2;       // Mass of equal volume of water
+  const Gt  = Ws / Ww;              // Gs(T)
+  const K   = getTemperatureCoefficient(T);
+  const G20 = K * Gt;               // Gs(20°C)
 
   document.getElementById('d854_W1').textContent  = W1.toFixed(2);
   document.getElementById('d854_W2').textContent  = W2.toFixed(2);
