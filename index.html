@@ -2139,15 +2139,23 @@
         <input id="d854_Ms" type="number" step="0.01"
                class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
       </div>
-      <div class="flex items-end">
-      <button
-  class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg w-full"
-  onclick="calculateD854()"
->
-  حساب الكثافة النوعية
-</button>
+     <div class="flex flex-col items-end gap-2">
+  <button
+    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg w-full"
+    onclick="calculateD854()"
+  >
+    حساب الكثافة النوعية
+  </button>
 
-      </div>
+  <button
+    type="button"
+    class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-lg w-full"
+    onclick="loadD854Demo()"
+  >
+    بيانات تجريبية — Demo Test No. 1
+  </button>
+</div>
+
     </div>
   </div>
 
@@ -5230,7 +5238,16 @@ function setD854Mode(mode) {
     Vpg.classList.remove('hidden');
   }
 }
+// تعبئة بيانات تجريبية من Test No. 1
+function loadD854Demo() {
+  // تأكد أن الوضع هو إدخال W1 مباشرة
+  setD854Mode('W1');
 
+  document.getElementById('d854_T').value     = 23;
+  document.getElementById('d854_W1_in').value = 660.0; // يعطي Ww = 37
+  document.getElementById('d854_Mpws').value  = 722.0;
+  document.getElementById('d854_Ms').value    = 99.0;
+}
 
 // الحساب الرئيسي لاختبار D854 (يدعم W1 مباشر أو Mp+Vp)
 function calculateD854() {
