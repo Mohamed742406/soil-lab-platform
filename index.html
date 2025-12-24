@@ -5403,6 +5403,13 @@ window.addEventListener('load', () => {
   if (soilClassValidation) soilClassValidation.innerHTML = '';
 });
 
+// دالة فتح/إغلاق الكروت (مثل دليل D854)
+function toggleSection(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.toggle('hidden');
+}
+
 </script>
 </body>
 </html>
