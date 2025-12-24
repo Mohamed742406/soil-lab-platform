@@ -2070,31 +2070,59 @@
     <h3 class="text-lg font-bold text-gray-800 mb-4">
       بيانات الاختبار — Test Data (Test No. 1)
     </h3>
+  <!-- اختيار طريقة الإدخال -->
+  <div class="mb-4">
+    <span class="block text-sm font-semibold text-gray-700 mb-1">
+      طريقة إدخال البيانات:
+    </span>
+    <label class="inline-flex items-center mr-4">
+      <input type="radio" name="d854_mode" value="W1" checked
+             onclick="setD854Mode('W1')" class="mr-1">
+      <span class="text-sm">إدخال W₁ مباشرة (أمثلة الجداول)</span>
+    </label>
+    <label class="inline-flex items-center">
+      <input type="radio" name="d854_mode" value="MpVp"
+             onclick="setD854Mode('MpVp')" class="mr-1">
+      <span class="text-sm">إدخال Mₚ و Vₚ (حسب المواصفة)</span>
+    </label>
+  </div>
 
-    <div class="grid md:grid-cols-3 gap-4 mb-4">
-      <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-1">
-          درجة الحرارة T (°C)
-        </label>
-        <input id="d854_T" type="number" step="0.1"
-               class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2"
-               placeholder="مثال: 23.0">
-      </div>
-      <div>
-  <label class="block text-sm font-semibold text-gray-700 mb-1">
-    كتلة الفلاسك + الماء حتى العلامة، W₁ (g)
-  </label>
-  <input id="d854_W1_in" type="number" step="0.01"
-         class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
+   <div class="grid md:grid-cols-3 gap-4 mb-4">
+  <!-- درجة الحرارة -->
+  <div>
+    <label class="block text-sm font-semibold text-gray-700 mb-1">
+      درجة الحرارة T (°C)
+    </label>
+    <input id="d854_T" type="number" step="0.1"
+           class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2"
+           placeholder="مثال: 23.0">
+  </div>
+
+  <!-- إدخال W1 مباشرة -->
+  <div id="d854_W1_group">
+    <label class="block text-sm font-semibold text-gray-700 mb-1">
+      كتلة الفلاسك + الماء حتى العلامة، W₁ (g)
+    </label>
+    <input id="d854_W1_in" type="number" step="0.01"
+           class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
+  </div>
+
+  <!-- إدخال Mp و Vp (يظهران فقط في وضع MpVp) -->
+  <div id="d854_Mp_group" class="hidden">
+    <label class="block text-sm font-semibold text-gray-700 mb-1">
+      كتلة البيكنوميتر الجاف M<sub>p</sub> (g)
+    </label>
+    <input id="d854_Mp" type="number" step="0.01"
+           class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
+  </div>
+  <div id="d854_Vp_group" class="hidden">
+    <label class="block text-sm font-semibold text-gray-700 mb-1">
+      حجم البيكنوميتر V<sub>p</sub> (mL)
+    </label>
+    <input id="d854_Vp" type="number" step="0.1"
+           class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
+  </div>
 </div>
-      <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-1">
-          حجم البيكنوميتر V<sub>p</sub> (mL)
-        </label>
-        <input id="d854_Vp" type="number" step="0.1"
-               class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
-      </div>
-    </div>
 
     <div class="grid md:grid-cols-3 gap-4 mb-4">
       <div>
@@ -5180,22 +5208,71 @@ function getTemperatureCoefficient(T) {
   return rho_w / rho20;
 }
 
-// الحساب الرئيسي لاختبار D854 (باستخدام W1 من الجدول)
-function calculateD854() {
-  const T  = parseFloat(document.getElementById('d854_T').value);      // درجة الحرارة
-  const W1 = parseFloat(document.getElementById('d854_W1_in').value);  // كتلة الفلاسك + الماء، من الجدول
-  const W2 = parseFloat(document.getElementById('d854_Mpws').value);   // Mass of flask + soil + water
-  const Ws = parseFloat(document.getElementById('d854_Ms').value);     // Mass of dry soil
+// ===============================
+// D854 mode selector (W1 أو Mp+Vp)
+// ===============================
+let d854Mode = 'W1'; // الوضع الافتراضي: إدخال W1 مباشرة
 
-  if (isNaN(T) || isNaN(W1) || isNaN(W2) || isNaN(Ws)) {
-    alert('من فضلك أدخل درجة الحرارة و W₁ و W₂ و Wₛ من الجدول.');
+function setD854Mode(mode) {
+  d854Mode = mode;
+
+  const W1g = document.getElementById('d854_W1_group');
+  const Mpg = document.getElementById('d854_Mp_group');
+  const Vpg = document.getElementById('d854_Vp_group');
+
+  if (mode === 'W1') {
+    W1g.classList.remove('hidden');
+    Mpg.classList.add('hidden');
+    Vpg.classList.add('hidden');
+  } else {
+    W1g.classList.add('hidden');
+    Mpg.classList.remove('hidden');
+    Vpg.classList.remove('hidden');
+  }
+}
+
+
+// الحساب الرئيسي لاختبار D854 (يدعم W1 مباشر أو Mp+Vp)
+function calculateD854() {
+  const T = parseFloat(document.getElementById('d854_T').value);
+  if (isNaN(T)) {
+    alert('من فضلك أدخل درجة الحرارة T.');
     return;
   }
 
-  const Ww  = (W1 + Ws) - W2;       // Mass of equal volume of water
-  const Gt  = Ws / Ww;              // Gs(T)
+  let W1;
+
+  if (d854Mode === 'W1') {
+    // إدخال W1 مباشرة (أمثلة الجداول)
+    W1 = parseFloat(document.getElementById('d854_W1_in').value);
+    if (isNaN(W1)) {
+      alert('من فضلك أدخل قيمة W₁.');
+      return;
+    }
+  } else {
+    // حساب W1 من Mp و Vp حسب ASTM D854 [web:477][web:480]
+    const Mp = parseFloat(document.getElementById('d854_Mp').value);
+    const Vp = parseFloat(document.getElementById('d854_Vp').value);
+    if (isNaN(Mp) || isNaN(Vp)) {
+      alert('من فضلك أدخل قيم Mₚ و Vₚ.');
+      return;
+    }
+    const rho_w = getWaterDensity(T);   // كثافة الماء عند T
+    W1 = Mp + Vp * rho_w;               // W1 = Mp + Vp·ρw(T)
+  }
+
+  const W2 = parseFloat(document.getElementById('d854_Mpws').value);
+  const Ws = parseFloat(document.getElementById('d854_Ms').value);
+
+  if (isNaN(W2) || isNaN(Ws)) {
+    alert('من فضلك أدخل W₂ و Wₛ.');
+    return;
+  }
+
+  const Ww  = (W1 + Ws) - W2;
+  const Gt  = Ws / Ww;
   const K   = getTemperatureCoefficient(T);
-  const G20 = K * Gt;               // Gs(20°C)
+  const G20 = K * Gt;
 
   document.getElementById('d854_W1').textContent  = W1.toFixed(2);
   document.getElementById('d854_W2').textContent  = W2.toFixed(2);
