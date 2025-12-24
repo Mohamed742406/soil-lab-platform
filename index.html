@@ -5238,13 +5238,13 @@ function setD854Mode(mode) {
     Vpg.classList.remove('hidden');
   }
 }
-// تعبئة بيانات تجريبية من Test No. 1
+// تعبئة بيانات تجريبية من Test No. 1 (Mp + Vp mode)
 function loadD854Demo() {
-  // تأكد أن الوضع هو إدخال W1 مباشرة
-  setD854Mode('W1');
+  setD854Mode('MpVp');  // ← غيّر هنا
 
   document.getElementById('d854_T').value     = 23;
-  document.getElementById('d854_W1_in').value = 660.0; // يعطي Ww = 37
+  document.getElementById('d854_Mp').value    = 623.0;  // ← غيّر هنا (Mp بدل W1)
+  document.getElementById('d854_Vp').value    = 37.0;   // ← أضف هذا السطر
   document.getElementById('d854_Mpws').value  = 722.0;
   document.getElementById('d854_Ms').value    = 99.0;
 }
