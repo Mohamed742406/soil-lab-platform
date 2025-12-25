@@ -3158,22 +3158,28 @@ function buildFinalCurvePoints() {
 }
 
         function calculateDValues() {
-            const data = results.final.filter(item => item.opening > 0).sort((a, b) => a.opening - b.opening);
-            if (data.length < 2) return;
+    const points = buildFinalCurvePoints();
+    if (!points || points.length < 2) return;
 
-            const d10 = interpolateD(data, 10);
-            const d30 = interpolateD(data, 30);
-            const d60 = interpolateD(data, 60);
+    const data = points
+        .map(p => ({ opening: p.Dmm, ppn: p.PPN }))
+        .sort((a, b) => a.opening - b.opening);
 
-            document.getElementById('d10Value').textContent = d10 ? d10.toFixed(3) : '—';
-            document.getElementById('d30Value').textContent = d30 ? d30.toFixed(3) : '—';
-            document.getElementById('d60Value').textContent = d60 ? d60.toFixed(3) : '—';
+    const d10 = interpolateD(data, 10);
+    const d30 = interpolateD(data, 30);
+    const d60 = interpolateD(data, 60);
 
-            if (d10 && d60) {
-                document.getElementById('cuValue').textContent = (d60 / d10).toFixed(2);
-                if (d30) document.getElementById('ccValue').textContent = ((d30 * d30) / (d10 * d60)).toFixed(2);
-            }
+    document.getElementById('d10Value').textContent = d10 ? d10.toFixed(3) : '—';
+    document.getElementById('d30Value').textContent = d30 ? d30.toFixed(3) : '—';
+    document.getElementById('d60Value').textContent = d60 ? d60.toFixed(3) : '—';
+
+    if (d10 && d60) {
+        document.getElementById('cuValue').textContent = (d60 / d10).toFixed(2);
+        if (d30) {
+            document.getElementById('ccValue').textContent = ((d30 * d30) / (d10 * d60)).toFixed(2);
         }
+    }
+}
 
         function interpolateD(data, targetPercent) {
             for (let i = 0; i < data.length - 1; i++) {
