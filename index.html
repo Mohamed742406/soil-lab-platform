@@ -3150,11 +3150,12 @@ function buildFinalCurvePoints() {
 
     return allPoints;
 }
-        function updateGradationChart() {
-            const data = results.final.filter(item => item.opening > 0).map(item => ({ x: item.opening, y: item.ppn })).sort((a, b) => b.x - a.x);
-            gradationChart.data.datasets[0].data = data;
-            gradationChart.update();
-        }
+      function updateGradationChart() {
+    const points = buildFinalCurvePoints();      // نجيب المنحنى المشترك (منخل + هيدروميتر)
+    const data = points.map(p => ({ x: p.Dmm, y: p.PPN }));
+    gradationChart.data.datasets[0].data = data;
+    gradationChart.update();
+}
 
         function calculateDValues() {
             const data = results.final.filter(item => item.opening > 0).sort((a, b) => a.opening - b.opening);
