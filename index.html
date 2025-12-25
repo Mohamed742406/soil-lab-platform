@@ -143,6 +143,9 @@
                 <button id="tabD6913" onclick="switchTab('D6913')" class="tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap">
                     📊 تدرج التربة (D6913)
                 </button>
+                <button id="tabHydrometer" onclick="switchTab('Hydrometer')" class="tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap">
+                 🌡️ تحليل الهيدروميتر (ASTM D422)
+                  </button>
                 <button id="tabD4318" onclick="switchTab('D4318')" class="tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap">
                     🏋️ حدود أتربرج (D4318)
                 </button>
@@ -563,7 +566,197 @@
             </div>
 
         </div>
+        
+        <!-- ============================================= -->
+        <!-- HYDROMETER (ASTM D422) SECTION -->
+        <!-- ============================================= -->
+        <div id="sectionHydrometer" class="hidden">
+            <!-- Page Title -->
+            <div class="section-card p-6 mb-6">
+                <div class="flex items-center gap-4">
+                    <div class="bg-blue-100 p-4 rounded-full">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 3v10m0 0a4 4 0 100 8 4 4 0 000-8z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            تحليل الهيدروميتر — Hydrometer Analysis
+                        </h2>
+                        <p class="text-gray-600">
+                            ASTM D422-63 — تحليل الجزء المار من منخل رقم 200 باستخدام الهيدروميتر
+                        </p>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Test Settings -->
+            <div class="section-card p-6 mb-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
+                    إعدادات اختبار الهيدروميتر — Test Settings
+                </h3>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">رقم العينة (Sample ID)</label>
+                        <input id="hydSampleId" type="text"
+                               class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2"
+                               placeholder="مثال: S-001-H">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">تاريخ الاختبار</label>
+                        <input id="hydTestDate" type="date"
+                               class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">
+                            Gs — الكثافة النوعية لحبيبات التربة
+                        </label>
+                        <input id="hydGs" type="number" step="0.01" value="2.65"
+                               class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">
+                            كتلة العينة الجافة المستخدمة في الهيدروميتر (g)
+                        </label>
+                        <input id="hydDryMass" type="number" step="0.01" min="0"
+                               class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2"
+                               placeholder="مثال: 50.00">
+                    </div>
+                </div>
+
+                <p class="text-xs text-gray-500">
+                    طبقاً لـ ASTM D422 يتم استخدام عينة حوالي 50 g للترب الناعمة و100 g للترب الرملية،
+                    مع افتراض Gs ≈ 2.65 في أغلب الحالات ما لم يتم قياسها من D854. [file:554][web:587]
+                </p>
+            </div>
+
+            <!-- Hydrometer Glossary (simple) -->
+            <details class="section-card p-6 mb-6">
+                <summary class="text-lg font-bold text-gray-800 cursor-pointer flex items-center gap-2">
+                    <span class="bg-purple-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">📖</span>
+                    دليل المتغيرات والمعادلات — Hydrometer Variables
+                </summary>
+                <div class="mt-4 grid md:grid-cols-2 gap-4 text-sm">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-bold text-gray-700 mb-2">متغيرات الإدخال:</h4>
+                        <ul class="space-y-2">
+                            <li><span class="glossary-term">T</span> — الزمن بالدقائق من بداية الترسيب لكل قراءة.</li>
+                            <li><span class="glossary-term">H</span> — قراءة الهيدروميتر الخام عند قمة المنيسكس.</li>
+                            <li><span class="glossary-term">Temp</span> — درجة حرارة المعلق (°C).</li>
+                            <li><span class="glossary-term">Gs</span> — الكثافة النوعية لحبيبات التربة.</li>
+                            <li><span class="glossary-term">W</span> — الكتلة الجافة للعينة الممثلة (g).</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-bold text-gray-700 mb-2">متغيرات النتائج (سنبرمجها لاحقاً):</h4>
+                        <ul class="space-y-2">
+                            <li><span class="glossary-term">R</span> — قراءة مصححة (بعد تصحيح درجة الحرارة والمحلول والمنيسكس).</li>
+                            <li><span class="glossary-term">P</span> — % الكسر المتبقي في التعليق عند عمق القياس.</li>
+                            <li><span class="glossary-term">D</span> — القطر المكافئ للحبيبات المحسوب من قانون ستوكس. [file:554][web:590]</li>
+                        </ul>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Hydrometer Readings Table (structure only) -->
+            <div class="section-card p-6 mb-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
+                    جدول قراءات الهيدروميتر — Hydrometer Readings
+                </h3>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gradient-to-r from-blue-700 to-indigo-600 text-white text-sm">
+                                <th class="p-3 text-center border border-blue-800">#</th>
+                                <th class="p-3 text-center border border-blue-800">الزمن T (min)</th>
+                                <th class="p-3 text-center border border-blue-800">قراءة H</th>
+                                <th class="p-3 text-center border border-blue-800">درجة الحرارة (°C)</th>
+                                <th class="p-3 text-center border border-blue-800">R المصححة</th>
+                                <th class="p-3 text-center border border-blue-800">% متبقي في التعليق P</th>
+                                <th class="p-3 text-center border border-blue-800">القطر D (mm)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="hydrometerTableBody">
+                            <!-- صفوف ثابتة كبداية (2,5,15,30,60,250,1440) يمكن تعديلها لاحقاً بالـ JS -->
+                            <tr class="bg-white">
+                                <td class="border p-2 text-center">1</td>
+                                <td class="border p-2 text-center"><input type="number" step="0.01" value="2" class="w-20 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="number" step="0.001" class="w-24 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="number" step="0.1" class="w-20 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="border p-2 text-center">2</td>
+                                <td class="border p-2 text-center"><input type="number" step="0.01" value="5" class="w-20 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="number" step="0.001" class="w-24 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="number" step="0.1" class="w-20 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="border p-2 text-center">3</td>
+                                <td class="border p-2 text-center"><input type="number" step="0.01" value="15" class="w-20 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="number" step="0.001" class="w-24 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="number" step="0.1" class="w-20 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="border p-2 text-center">4</td>
+                                <td class="border p-2 text-center"><input type="number" step="0.01" value="30" class="w-20 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="number" step="0.001" class="w-24 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="number" step="0.1" class="w-20 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="border p-2 text-center">5</td>
+                                <td class="border p-2 text-center"><input type="number" step="0.01" value="60" class="w-20 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="number" step="0.001" class="w-24 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="number" step="0.1" class="w-20 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="border p-2 text-center">6</td>
+                                <td class="border p-2 text-center"><input type="number" step="0.01" value="250" class="w-20 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="number" step="0.001" class="w-24 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="number" step="0.1" class="w-20 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="border p-2 text-center">7</td>
+                                <td class="border p-2 text-center"><input type="number" step="0.01" value="1440" class="w-20 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="number" step="0.001" class="w-24 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="number" step="0.1" class="w-20 text-center border rounded"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                                <td class="border p-2 text-center"><input type="text" readonly class="w-24 text-center border rounded bg-gray-100"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="mt-3 text-xs text-gray-500">
+                    أوقات القراءات المقترحة مأخوذة من خطوات D422 (2, 5, 15, 30, 60, 250, 1440 دقيقة)،
+                    ويمكن تعديلها حسب متطلبات المشروع. [file:554][web:595]
+                </p>
+            </div>
+        </div>
+        
         <!-- ============================================= -->
         <!-- D1557 SECTION - Modified Proctor -->
         <!-- ============================================= -->
