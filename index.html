@@ -5615,6 +5615,122 @@ function toggleSection(id) {
   if (!el) return;
   el.classList.toggle('hidden');
 }
+// ================================
+// HYDROMETER (ASTM D422) CALCULATIONS
+// ================================
+
+const HYDROMETER_TYPE = "152H";
+
+function getACorrection(Gs) {
+    if (!Gs || Gs <= 0) return 1.0;
+    const a = 1.25 - 0.1 * Gs;
+    return Math.max(0.9, Math.min(1.1, a));
+}
+
+function getKConstant(tempC, Gs) {
+    if (!tempC) tempC = 20;
+    if (!Gs || Gs <= 0) Gs = 2.65;
+    const baseK20 = 0.01365;
+    const deltaT = tempC - 20;
+    const factor = 1 - (0.07 / 5) * deltaT;
+    return baseK20 * factor;
+}
+
+function getEffectiveDepthL(Hreading) {
+    if (Hreading == null || isNaN(Hreading)) return 10.0;
+    const H = Number(Hreading);
+    const points = [
+        { H: 0,   L: 16.3 },
+        { H: 10,  L: 14.7 },
+        { H: 20,  L: 13.0 },
+        { H: 30,  L: 11.4 },
+        { H: 40,  L: 9.7  },
+        { H: 50,  L: 8.1  },
+        { H: 60,  L: 6.5  }
+    ];
+    if (H <= points[0].H) return points[0].L;
+    if (H >= points[points.length - 1].H) return points[points.length - 1].L;
+    for (let i = 0; i < points.length - 1; i++) {
+        const p1 = points[i];
+        const p2 = points[i + 1];
+        if (H >= p1.H && H <= p2.H) {
+            const ratio = (H - p1.H) / (p2.H - p1.H);
+            return p1.L + ratio * (p2.L - p1.L);
+        }
+    }
+    return 10.0;
+}
+
+function getHydrometerW() {
+    const dryMassInput = document.getElementById('hydDryMass');
+    const dryMass = dryMassInput ? parseFloat(dryMassInput.value) : NaN;
+    if (!dryMass || dryMass <= 0) return NaN;
+    return dryMass;
+}
+
+function calculateHydrometerResults() {
+    const GsInput = document.getElementById('hydGs');
+    const Gs = GsInput ? parseFloat(GsInput.value) : 2.65;
+
+    const W = getHydrometerW();
+    if (!W || isNaN(W)) {
+        alert('من فضلك أدخل كتلة العينة الجافة المستخدمة في الهيدروميتر (g).');
+        return;
+    }
+
+    const tbody = document.getElementById('hydrometerTableBody');
+    if (!tbody) return;
+
+    const rows = tbody.querySelectorAll('tr');
+
+    rows.forEach((row) => {
+        const cells = row.querySelectorAll('td');
+
+        // الأعمدة: # | T | H | Temp | R | P | D
+        const Tinput    = cells[1]?.querySelector('input');
+        const Hinput    = cells[2]?.querySelector('input');
+        const TempInput = cells[3]?.querySelector('input');
+        const Rinput    = cells[4]?.querySelector('input');
+        const Pinput    = cells[5]?.querySelector('input');
+        const Dinput    = cells[6]?.querySelector('input');
+
+        const T    = Tinput ? parseFloat(Tinput.value) : NaN;
+        const H    = Hinput ? parseFloat(Hinput.value) : NaN;
+        const Temp = TempInput ? parseFloat(TempInput.value) : NaN;
+
+        if (!H || isNaN(H) || !T || isNaN(T)) {
+            if (Rinput) Rinput.value = '';
+            if (Pinput) Pinput.value = '';
+            if (Dinput) Dinput.value = '';
+            return;
+        }
+
+        const tempC = !isNaN(Temp) ? Temp : 20;
+
+        // 1) R (بدون Composite Correction حالياً)
+        const compositeCorrection = 0.0;
+        const R = H + compositeCorrection;
+        if (Rinput) Rinput.value = R.toFixed(3);
+
+        // 2) P طبقاً لـ 14.3
+        let P = 0;
+        if (HYDROMETER_TYPE === "152H") {
+            const a = getACorrection(Gs);
+            P = (R * a * 100.0) / W;
+        } else {
+            P = (100000.0 / W) * (Gs / (Gs - 1.0)) * (R - 1.0);
+        }
+        if (Pinput) Pinput.value = P.toFixed(2);
+
+        // 3) D طبقاً لـ 15.1 / 15.2
+        const L = getEffectiveDepthL(R);
+        const K = getKConstant(tempC, Gs);
+        const D = K * Math.sqrt(L / T);
+        if (Dinput) Dinput.value = D.toFixed(4);
+    });
+
+    alert('تم حساب قيم R و P و D لقراءات الهيدروميتر.');
+}
 
 </script>
 </body>
