@@ -2692,10 +2692,10 @@
         // =============================================
         let currentTab = 'D6913';
 
- function switchTab(tab) {
+function switchTab(tab) {
     currentTab = tab;
     
-    // تحديث شكل الأزرار (الكود القديم بتاعك سليم)
+    // تحديث شكل الأزرار
     document.getElementById('tabD6913').className =
         tab === 'D6913'
             ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
@@ -2708,6 +2708,11 @@
 
     document.getElementById('tabD4318').className =
         tab === 'D4318'
+            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
+            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+
+    document.getElementById('tabClassification').className =
+        tab === 'Classification'
             ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
             : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
 
@@ -2726,11 +2731,7 @@
             ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
             : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
     
-    // ========================================
-    // الجزء الجديد - إخفاء الكل ثم إظهار الواحد
-    // ========================================
-    
-    // 1) إخفاء كل الـ sections
+    // إخفاء كل الـ sections
     const allSections = [
         'sectionClassification', 'sectionD1557', 'sectionD2216', 
         'sectionD854', 'sectionD4318', 'sectionHydrometer', 'sectionD6913'
@@ -2741,85 +2742,16 @@
         if (element) element.classList.add('hidden');
     });
     
-    // 2) إظهار الـ section المطلوب فقط
+    // إظهار الـ section المطلوب فقط
     const targetSectionId = tab === 'Classification' ? 'sectionClassification' : 'section' + tab;
     const targetElement = document.getElementById(targetSectionId);
     if (targetElement) targetElement.classList.remove('hidden');
     
-    // 3) تشغيل التصنيف تلقائياً
+    // تشغيل التصنيف تلقائياً
     if (tab === 'Classification') {
         autoReadDataForClassification();
     }
 }
- 
-    // إظهار / إخفاء السكاشن
-    document.getElementById('sectionD6913').classList.toggle('hidden', tab !== 'D6913');
-    document.getElementById('sectionHydrometer').classList.toggle('hidden', tab !== 'Hydrometer');
-    document.getElementById('sectionD4318').classList.toggle('hidden', tab !== 'D4318');
-    document.getElementById('sectionD1557').classList.toggle('hidden', tab !== 'D1557');
-    document.getElementById('sectionD2216').classList.toggle('hidden', tab !== 'D2216');
-    document.getElementById('sectionD854').classList.toggle('hidden', tab !== 'D854');
-
-    // سكشن التصنيف (يفترض id="sectionClassification")
-    document.getElementById('sectionClassification').classList.toggle('hidden', tab !== 'Classification');
-    
-    // لما نروح للتصنيف نقرأ البيانات تلقائيًا
-    if (tab === 'Classification') {
-        autoReadDataForClassification();
-    }
-}
-        // =============================================
-        // D6913 SIEVE DATA DEFINITIONS
-        // =============================================
-        const ALL_SIEVES = [
-            { name: '3 in', opening: 75 },
-            { name: '2 in', opening: 50 },
-            { name: '1.5 in', opening: 37.5 },
-            { name: '1 in', opening: 25 },
-            { name: '3/4 in', opening: 19 },
-            { name: '3/8 in', opening: 9.5 },
-            { name: 'No.4', opening: 4.75 },
-            { name: 'No.10', opening: 2.0 },
-            { name: 'No.20', opening: 0.85 },
-            { name: 'No.40', opening: 0.425 },
-            { name: 'No.60', opening: 0.25 },
-            { name: 'No.100', opening: 0.15 },
-            { name: 'No.140', opening: 0.106 },
-            { name: 'No.200', opening: 0.075 },
-            { name: 'Pan', opening: 0 }
-        ];
-
-        // D6913 State
-        let currentMethod = 'single';
-        let currentSeparator = 4.75;
-        let gradationChart = null;
-        let results = { singleSet: [], coarser: [], finer: [], final: [], CSCF: 0, SMd: 0 };
-
-        // D1557 State
-        let proctorChart = null;
-        let proctorResults = { points: [], OMC: 0, MDD: 0 };
-
-        // =============================================
-        // INITIALIZATION
-        // =============================================
-        document.addEventListener('DOMContentLoaded', () => {
-            // D6913 Init
-            initializeTables();
-            initializeGradationChart();
-            document.getElementById('testDate').valueAsDate = new Date();
-            updateSeparatorDisplay();
-            
-            // D1557 Init
-            document.getElementById('proctor_testDate').valueAsDate = new Date();
-            initializeProctorChart();
-            
-            // D4318 Init
-            document.getElementById('d4318_testDate').valueAsDate = new Date();
-            initD4318Tables();
-            
-            // D2216 Init
-            document.getElementById('d2216_testDate').valueAsDate = new Date();
-        });
 
         // =============================================
         // D6913 FUNCTIONS
