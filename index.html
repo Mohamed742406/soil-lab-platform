@@ -2692,10 +2692,10 @@
         // =============================================
         let currentTab = 'D6913';
 
-  function switchTab(tab) {
+ function switchTab(tab) {
     currentTab = tab;
     
-    // تحديث شكل الأزرار
+    // تحديث شكل الأزرار (الكود القديم بتاعك سليم)
     document.getElementById('tabD6913').className =
         tab === 'D6913'
             ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
@@ -2725,13 +2725,33 @@
         tab === 'D854'
             ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
             : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-    // تبويب التصنيف (اسم الزر في HTML يفترض tabClassification)
-    document.getElementById('tabClassification').className =
-        tab === 'Classification'
-            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
     
+    // ========================================
+    // الجزء الجديد - إخفاء الكل ثم إظهار الواحد
+    // ========================================
+    
+    // 1) إخفاء كل الـ sections
+    const allSections = [
+        'sectionClassification', 'sectionD1557', 'sectionD2216', 
+        'sectionD854', 'sectionD4318', 'sectionHydrometer', 'sectionD6913'
+    ];
+    
+    allSections.forEach(sectionId => {
+        const element = document.getElementById(sectionId);
+        if (element) element.classList.add('hidden');
+    });
+    
+    // 2) إظهار الـ section المطلوب فقط
+    const targetSectionId = tab === 'Classification' ? 'sectionClassification' : 'section' + tab;
+    const targetElement = document.getElementById(targetSectionId);
+    if (targetElement) targetElement.classList.remove('hidden');
+    
+    // 3) تشغيل التصنيف تلقائياً
+    if (tab === 'Classification') {
+        autoReadDataForClassification();
+    }
+}
+ 
     // إظهار / إخفاء السكاشن
     document.getElementById('sectionD6913').classList.toggle('hidden', tab !== 'D6913');
     document.getElementById('sectionHydrometer').classList.toggle('hidden', tab !== 'Hydrometer');
