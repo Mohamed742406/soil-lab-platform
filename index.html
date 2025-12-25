@@ -3134,7 +3134,22 @@
                 }
             });
         }
+// يبني نقاط منحنى التدرج النهائي (منخل + هيدروميتر)
+function buildFinalCurvePoints() {
+    const sieveData = results.final
+        .filter(item => item.opening > 0)
+        .map(item => ({ Dmm: item.opening, PPN: item.ppn }));
 
+    // نقاط الهيدروميتر (لو موجودة) للجزء الناعم فقط
+    const hydPoints = (window.hydrometerCurvePoints || [])
+        .filter(p => p.Dmm < 0.075);
+
+    const allPoints = [...sieveData, ...hydPoints]
+        .filter(p => !isNaN(p.Dmm) && !isNaN(p.PPN))
+        .sort((a, b) => b.Dmm - a.Dmm); // تنازلي زي الرسم الأصلي
+
+    return allPoints;
+}
         function updateGradationChart() {
             const data = results.final.filter(item => item.opening > 0).map(item => ({ x: item.opening, y: item.ppn })).sort((a, b) => b.x - a.x);
             gradationChart.data.datasets[0].data = data;
