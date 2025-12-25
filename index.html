@@ -2692,57 +2692,62 @@
         // =============================================
         let currentTab = 'D6913';
 
-    function switchTab(tab) {
+  function switchTab(tab) {
     currentTab = tab;
     
-    // Update tab buttons
-    document.getElementById('tabD6913').className = tab === 'D6913' ? 
-        'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' :
-        'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+    // تحديث شكل الأزرار
+    document.getElementById('tabD6913').className =
+        tab === 'D6913'
+            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
+            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
 
-    // زر الهيدروميتر
-    document.getElementById('tabHydrometer').className = tab === 'Hydrometer' ? 
-        'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' :
-        'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+    document.getElementById('tabHydrometer').className =
+        tab === 'Hydrometer'
+            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
+            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
 
-    document.getElementById('tabD4318').className = tab === 'D4318' ? 
-        'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' :
-        'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+    document.getElementById('tabD4318').className =
+        tab === 'D4318'
+            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
+            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
 
-    document.getElementById('tabSoilClass').className = tab === 'SoilClass' ? 
-        'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' :
-        'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+    document.getElementById('tabD1557').className =
+        tab === 'D1557'
+            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
+            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
 
-    document.getElementById('tabD1557').className = tab === 'D1557' ? 
-        'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' :
-        'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+    document.getElementById('tabD2216').className =
+        tab === 'D2216'
+            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
+            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
 
-    document.getElementById('tabD2216').className = tab === 'D2216' ? 
-        'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' :
-        'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+    document.getElementById('tabD854').className =
+        tab === 'D854'
+            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
+            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
 
-    document.getElementById('tabD854').className = tab === 'D854' ? 
-        'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' :
-        'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+    // تبويب التصنيف (اسم الزر في HTML يفترض tabClassification)
+    document.getElementById('tabClassification').className =
+        tab === 'Classification'
+            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
+            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
     
-    // Show/hide sections
+    // إظهار / إخفاء السكاشن
     document.getElementById('sectionD6913').classList.toggle('hidden', tab !== 'D6913');
-
-    // سكشن الهيدروميتر
     document.getElementById('sectionHydrometer').classList.toggle('hidden', tab !== 'Hydrometer');
-
     document.getElementById('sectionD4318').classList.toggle('hidden', tab !== 'D4318');
-    document.getElementById('sectionSoilClass').classList.toggle('hidden', tab !== 'SoilClass');
     document.getElementById('sectionD1557').classList.toggle('hidden', tab !== 'D1557');
     document.getElementById('sectionD2216').classList.toggle('hidden', tab !== 'D2216');
     document.getElementById('sectionD854').classList.toggle('hidden', tab !== 'D854');
+
+    // سكشن التصنيف (يفترض id="sectionClassification")
+    document.getElementById('sectionClassification').classList.toggle('hidden', tab !== 'Classification');
     
-    // When switching to SoilClass, auto-read data
-    if (tab === 'SoilClass') {
+    // لما نروح للتصنيف نقرأ البيانات تلقائيًا
+    if (tab === 'Classification') {
         autoReadDataForClassification();
     }
 }
-
         // =============================================
         // D6913 SIEVE DATA DEFINITIONS
         // =============================================
