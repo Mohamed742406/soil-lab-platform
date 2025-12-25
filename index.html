@@ -5910,6 +5910,36 @@ function loadHydrometerDemo() {
 
     alert('تم تحميل بيانات تجريبية للهيدروميتر.\nاضغط زر "احسب نتائج الهيدروميتر" لرؤية الحسابات.');
 }
+function resetHydrometer() {
+    const GsInput = document.getElementById('hydGs');
+    const dryMassInput = document.getElementById('hydDryMass');
+    if (GsInput) GsInput.value = '';
+    if (dryMassInput) dryMassInput.value = '';
+
+    const tbody = document.getElementById('hydrometerTableBody');
+    if (!tbody) return;
+    const rows = tbody.querySelectorAll('tr');
+
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const Tinput    = cells[1]?.querySelector('input');
+        const Hinput    = cells[2]?.querySelector('input');
+        const TempInput = cells[3]?.querySelector('input');
+        const Rinput    = cells[4]?.querySelector('input');
+        const Pinput    = cells[5]?.querySelector('input');
+        const Dinput    = cells[6]?.querySelector('input');
+
+        if (Tinput)   Tinput.value = '';
+        if (Hinput)   Hinput.value = '';
+        if (TempInput) TempInput.value = '';
+        if (Rinput)   Rinput.value = '';
+        if (Pinput)   Pinput.value = '';
+        if (Dinput)   Dinput.value = '';
+    });
+
+    // نمسح نقاط المنحنى الناعم عشان D6913 يعتمد على المناخل فقط حتى إعادة الحساب
+    window.hydrometerCurvePoints = [];
+}
 
 </script>
 </body>
