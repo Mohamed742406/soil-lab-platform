@@ -750,13 +750,18 @@
                     </table>
                 </div>
 
-                <!-- زر حساب نتائج الهيدروميتر -->
-                <div class="flex flex-wrap gap-4 justify-center mt-4">
-                    <button onclick="calculateHydrometerResults()" 
-                            class="btn-primary text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
-                        احسب نتائج الهيدروميتر — Calculate
-                    </button>
-                </div>
+               <!-- أزرار حساب / بيانات تجريبية للهيدروميتر -->
+<div class="flex flex-wrap gap-4 justify-center mt-4">
+    <button onclick="calculateHydrometerResults()" 
+            class="btn-primary text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
+        احسب نتائج الهيدروميتر — Calculate
+    </button>
+
+    <button onclick="loadHydrometerDemo()" 
+            class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
+        بيانات تجريبية — Demo
+    </button>
+</div>
 
                 <p class="mt-3 text-xs text-gray-500">
                     أوقات القراءات المقترحة مأخوذة من خطوات D422 (2, 5, 15, 30, 60, 250, 1440 دقيقة)،
@@ -5730,6 +5735,50 @@ function calculateHydrometerResults() {
     });
 
     alert('تم حساب قيم R و P و D لقراءات الهيدروميتر.');
+}
+
+// دالة تحميل بيانات تجريبية للهيدروميتر
+function loadHydrometerDemo() {
+    const GsInput = document.getElementById('hydGs');
+    const dryMassInput = document.getElementById('hydDryMass');
+    if (GsInput) GsInput.value = 2.70;
+    if (dryMassInput) dryMassInput.value = 50.0;
+
+    const tbody = document.getElementById('hydrometerTableBody');
+    if (!tbody) return;
+    const rows = tbody.querySelectorAll('tr');
+
+    const demoData = [
+        { T: 2,    H: 28.0, Temp: 20 },
+        { T: 5,    H: 26.5, Temp: 20 },
+        { T: 15,   H: 24.0, Temp: 20 },
+        { T: 30,   H: 22.5, Temp: 20 },
+        { T: 60,   H: 20.0, Temp: 20 },
+        { T: 250,  H: 15.0, Temp: 20 },
+        { T: 1440, H: 10.5, Temp: 20 }
+    ];
+
+    rows.forEach((row, i) => {
+        const cells = row.querySelectorAll('td');
+        const Tinput    = cells[1]?.querySelector('input');
+        const Hinput    = cells[2]?.querySelector('input');
+        const TempInput = cells[3]?.querySelector('input');
+
+        const d = demoData[i];
+        if (!d) return;
+        if (Tinput) Tinput.value = d.T;
+        if (Hinput) Hinput.value = d.H;
+        if (TempInput) TempInput.value = d.Temp;
+
+        const Rinput = cells[4]?.querySelector('input');
+        const Pinput = cells[5]?.querySelector('input');
+        const Dinput = cells[6]?.querySelector('input');
+        if (Rinput) Rinput.value = '';
+        if (Pinput) Pinput.value = '';
+        if (Dinput) Dinput.value = '';
+    });
+
+    alert('تم تحميل بيانات تجريبية للهيدروميتر.\nاضغط زر "احسب نتائج الهيدروميتر" لرؤية الحسابات.');
 }
 
 </script>
