@@ -5785,6 +5785,7 @@ function calculateHydrometerResults() {
     if (!tbody) return;
 
     const rows = tbody.querySelectorAll('tr');
+const hydPoints = [];   // هنخزن فيه نقاط الهيدروميتر للمنحنى
 
     rows.forEach((row) => {
         const cells = row.querySelectorAll('td');
@@ -5810,7 +5811,7 @@ function calculateHydrometerResults() {
 
         const tempC = !isNaN(Temp) ? Temp : 20;
 
-        // 1) R (بدون Composite Correction حالياً)
+               // 1) R (بدون Composite Correction حالياً)
         const compositeCorrection = 0.0;
         const R = H + compositeCorrection;
         if (Rinput) Rinput.value = R.toFixed(3);
@@ -5830,7 +5831,16 @@ function calculateHydrometerResults() {
         const K = getKConstant(tempC, Gs);
         const D = K * Math.sqrt(L / T);
         if (Dinput) Dinput.value = D.toFixed(4);
+
+        // تخزين نقطة الهيدروميتر للمنحنى
+               const percentPassing = 100 - P;
+        if (!isNaN(D) && !isNaN(percentPassing)) {
+            hydPoints.push({ Dmm: D, PPN: percentPassing });
+        }
     });
+
+    // هنا بالضبط نضيف السطر الجديد
+    window.hydrometerCurvePoints = hydPoints;
 
     alert('تم حساب قيم R و P و D لقراءات الهيدروميتر.');
 }
