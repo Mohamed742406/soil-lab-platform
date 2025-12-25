@@ -5626,44 +5626,142 @@ function toggleSection(id) {
 
 const HYDROMETER_TYPE = "152H";
 
+// جدول 1: معامل a حسب Gs [file:554]
+const A_TABLE = [
+    { Gs: 2.95, a: 0.94 },
+    { Gs: 2.90, a: 0.95 },
+    { Gs: 2.85, a: 0.96 },
+    { Gs: 2.80, a: 0.97 },
+    { Gs: 2.75, a: 0.98 },
+    { Gs: 2.70, a: 0.99 },
+    { Gs: 2.65, a: 1.00 },
+    { Gs: 2.60, a: 1.01 },
+    { Gs: 2.55, a: 1.02 },
+    { Gs: 2.50, a: 1.03 },
+    { Gs: 2.45, a: 1.05 }
+];
+
 function getACorrection(Gs) {
-    if (!Gs || Gs <= 0) return 1.0;
-    const a = 1.25 - 0.1 * Gs;
-    return Math.max(0.9, Math.min(1.1, a));
+    if (!Gs) Gs = 2.65;
+    let best = A_TABLE[0];
+    let minDiff = Math.abs(Gs - best.Gs);
+    for (const row of A_TABLE) {
+        const d = Math.abs(Gs - row.Gs);
+        if (d < minDiff) {
+            minDiff = d;
+            best = row;
+        }
+    }
+    return best.a;
 }
+
+
+// جدول 3 لقيم K عند Gs≈2.65 من 16 إلى 30°C [file:554][image:628]
+const K_TABLE_265 = {
+    16: 0.01435,
+    17: 0.01417,
+    18: 0.01399,
+    19: 0.01382,
+    20: 0.01365,
+    21: 0.01348,
+    22: 0.01332,
+    23: 0.01316,
+    24: 0.01301,
+    25: 0.01286,
+    26: 0.01271,
+    27: 0.01257,
+    28: 0.01243,
+    29: 0.01230,
+    30: 0.01217
+};
 
 function getKConstant(tempC, Gs) {
     if (!tempC) tempC = 20;
-    if (!Gs || Gs <= 0) Gs = 2.65;
-    const baseK20 = 0.01365;
-    const deltaT = tempC - 20;
-    const factor = 1 - (0.07 / 5) * deltaT;
-    return baseK20 * factor;
+    let t = Math.round(tempC);
+    if (t < 16) t = 16;
+    if (t > 30) t = 30;
+    return K_TABLE_265[t];
 }
 
+
+// جدول 2 للهيدروميتر 152H: قراءة فعلية → عمق فعال L (cm)
+const DEPTH_TABLE_152H = [
+    { H: 0,  L: 11.2 },
+    { H: 1,  L: 11.1 },
+    { H: 2,  L: 10.9 },
+    { H: 3,  L: 10.7 },
+    { H: 4,  L: 10.6 },
+    { H: 5,  L: 10.4 },
+    { H: 6,  L: 10.3 },
+    { H: 7,  L: 10.1 },
+    { H: 8,  L: 9.9  },
+    { H: 9,  L: 9.8  },
+    { H: 10, L: 9.6  },
+    { H: 11, L: 9.4  },
+    { H: 12, L: 9.3  },
+    { H: 13, L: 9.1  },
+    { H: 14, L: 9.0  },
+    { H: 15, L: 8.8  },
+    { H: 16, L: 8.6  },
+    { H: 17, L: 8.5  },
+    { H: 18, L: 8.3  },
+    { H: 19, L: 8.2  },
+    { H: 20, L: 8.0  },
+    { H: 21, L: 7.9  },
+    { H: 22, L: 7.7  },
+    { H: 23, L: 7.6  },
+    { H: 24, L: 7.4  },
+    { H: 25, L: 7.3  },
+    { H: 26, L: 7.1  },
+    { H: 27, L: 7.0  },
+    { H: 28, L: 6.8  },
+    { H: 29, L: 6.7  },
+    { H: 30, L: 6.5  },
+    { H: 31, L: 11.2 },
+    { H: 32, L: 11.1 },
+    { H: 33, L: 10.9 },
+    { H: 34, L: 10.7 },
+    { H: 35, L: 10.6 },
+    { H: 36, L: 10.4 },
+    { H: 37, L: 10.2 },
+    { H: 38, L: 10.1 },
+    { H: 39, L: 9.9  },
+    { H: 40, L: 9.7  },
+    { H: 41, L: 9.6  },
+    { H: 42, L: 9.4  },
+    { H: 43, L: 9.2  },
+    { H: 44, L: 9.1  },
+    { H: 45, L: 8.9  },
+    { H: 46, L: 8.8  },
+    { H: 47, L: 8.6  },
+    { H: 48, L: 8.4  },
+    { H: 49, L: 8.3  },
+    { H: 50, L: 8.1  },
+    { H: 51, L: 7.9  },
+    { H: 52, L: 7.8  },
+    { H: 53, L: 7.6  },
+    { H: 54, L: 7.4  },
+    { H: 55, L: 7.3  },
+    { H: 56, L: 7.1  },
+    { H: 57, L: 7.0  },
+    { H: 58, L: 6.8  },
+    { H: 59, L: 6.6  },
+    { H: 60, L: 6.5  }
+];
+
 function getEffectiveDepthL(Hreading) {
-    if (Hreading == null || isNaN(Hreading)) return 10.0;
-    const H = Number(Hreading);
-    const points = [
-        { H: 0,   L: 16.3 },
-        { H: 10,  L: 14.7 },
-        { H: 20,  L: 13.0 },
-        { H: 30,  L: 11.4 },
-        { H: 40,  L: 9.7  },
-        { H: 50,  L: 8.1  },
-        { H: 60,  L: 6.5  }
-    ];
-    if (H <= points[0].H) return points[0].L;
-    if (H >= points[points.length - 1].H) return points[points.length - 1].L;
-    for (let i = 0; i < points.length - 1; i++) {
-        const p1 = points[i];
-        const p2 = points[i + 1];
-        if (H >= p1.H && H <= p2.H) {
-            const ratio = (H - p1.H) / (p2.H - p1.H);
-            return p1.L + ratio * (p2.L - p1.L);
+    if (Hreading == null || isNaN(Hreading)) return 8.0;
+    const H = Math.round(Number(Hreading));
+    let best = DEPTH_TABLE_152H[0];
+    let minDiff = Math.abs(H - best.H);
+    for (const row of DEPTH_TABLE_152H) {
+        const d = Math.abs(H - row.H);
+        if (d < minDiff) {
+            minDiff = d;
+            best = row;
         }
     }
-    return 10.0;
+    return best.L;
 }
 
 function getHydrometerW() {
