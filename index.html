@@ -3209,38 +3209,77 @@ function buildFinalCurvePoints() {
             console.log('D6913 Results:', output);
         }
 
-        function resetAll() {
-            document.querySelectorAll('#sectionD6913 input[type="number"], #sectionD6913 input[type="text"]').forEach(i => { if (i.id !== 'testDate') i.value = ''; i.classList.remove('input-error', 'input-warning'); });
-            document.querySelectorAll('[id^="single_ppn_"], [id^="coarse_ppn_"], [id^="fine_fppn_"], [id^="fine_ppn_"], [id^="final_ppn_"], [id^="final_cumret_"], [id^="final_ret_"]').forEach(c => c.textContent = '—');
-            document.getElementById('cscfDisplay').textContent = '—';
-            ['d10Value', 'd30Value', 'd60Value', 'cuValue', 'ccValue'].forEach(id => document.getElementById(id).textContent = '—');
-            gradationChart.data.datasets[0].data = [];
-            gradationChart.update();
-            document.getElementById('validationMessages').innerHTML = '';
-            results = { singleSet: [], coarser: [], finer: [], final: [], CSCF: 0, SMd: 0 };
-        }
+       function resetAll() {
+    // Clear inputs
+    document.querySelectorAll('#sectionD6913 input[type="number"], #sectionD6913 input[type="text"]').forEach(i => {
+        if (i.id !== 'testDate') i.value = '';
+        i.classList.remove('input-error', 'input-warning');
+    });
 
-        function loadDemoData() {
-            resetAll();
-            if (currentMethod === 'single') {
-                document.getElementById('sampleId').value = 'DEMO-SS-001';
-                document.getElementById('single_SMd').value = '500';
-                [0, 0, 12, 35, 58, 95, 142, 198, 265, 312, 358, 402, 435, 462, 485].forEach((val, idx) => {
-                    const input = document.getElementById(`single_cmrn_${idx}`);
-                    if (input) input.value = val;
-                });
-            } else {
-                document.getElementById('sampleId').value = 'DEMO-COMP-001';
-                document.getElementById('comp_CPMd').value = '850';
-                document.getElementById('comp_FPMm').value = '680';
-                document.getElementById('comp_wfp').value = '8.5';
-                document.getElementById('comp_SubSMd').value = '150';
-                [0, 25, 68, 125, 198, 345, 520].forEach((val, idx) => { const i = document.getElementById(`coarse_cmrn_${idx}`); if (i) i.value = val; });
-                [2, 18, 42, 68, 92, 112, 128, 140, 148].forEach((val, idx) => { const i = document.getElementById(`fine_cmrn_${idx}`); if (i) i.value = val; });
-            }
-            document.getElementById('notes').value = 'بيانات تجريبية';
-            setTimeout(() => calculate(), 100);
-        }
+    // Clear result cells
+    document.querySelectorAll('[id^="single_ppn_"], [id^="coarse_ppn_"], [id^="fine_fppn_"], [id^="fine_ppn_"], [id^="final_ppn_"], [id^="final_cumret_"], [id^="final_ret_"]').forEach(c => c.textContent = '—');
+    
+    // Clear special cells
+    document.getElementById('cscfDisplay').textContent = '—';
+    ['d10Value', 'd30Value', 'd60Value', 'cuValue', 'ccValue'].forEach(id => {
+        const elem = document.getElementById(id);
+        if (elem) elem.textContent = '—';
+    });
+
+    // Clear chart ONLY if it exists
+    if (gradationChart && gradationChart.data && gradationChart.data.datasets) {
+        gradationChart.data.datasets[0].data = [];
+        gradationChart.update();
+    }
+
+    // Clear messages
+    document.getElementById('validationMessages').innerHTML = '';
+
+    // Reset state
+    results = {
+        singleSet: [],
+        coarser: [],
+        finer: [],
+        final: [],
+        CSCF: 0,
+        SMd: 0,
+        points: [],
+        OMC: 0,
+        MDD: 0,
+        corrected: null,
+        correctedPoints: []
+    };
+}
+
+function loadDemoData() {
+    resetAll();
+    
+    if (currentMethod === 'single') {
+        document.getElementById('sampleId').value = 'DEMO-SS-001';
+        document.getElementById('single_SMd').value = '500';
+        [0, 0, 12, 35, 58, 95, 142, 198, 265, 312, 358, 402, 435, 462, 485].forEach((val, idx) => {
+            const input = document.getElementById(`single_cmrn_${idx}`);
+            if (input) input.value = val;
+        });
+    } else {
+        document.getElementById('sampleId').value = 'DEMO-COMP-001';
+        document.getElementById('comp_CPMd').value = '850';
+        document.getElementById('comp_FPMm').value = '680';
+        document.getElementById('comp_wfp').value = '8.5';
+        document.getElementById('comp_SubSMd').value = '150';
+        [0, 25, 68, 125, 198, 345, 520].forEach((val, idx) => {
+            const i = document.getElementById(`coarse_cmrn_${idx}`);
+            if (i) i.value = val;
+        });
+        [2, 18, 42, 68, 92, 112, 128, 140, 148].forEach((val, idx) => {
+            const i = document.getElementById(`fine_cmrn_${idx}`);
+            if (i) i.value = val;
+        });
+    }
+    
+    document.getElementById('notes').value = 'بيانات تجريبية';
+    setTimeout(() => calculate(), 100);
+}
 
         // =============================================
         // D1557 PROCTOR FUNCTIONS
