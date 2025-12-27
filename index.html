@@ -3514,15 +3514,25 @@ function calculateD422() {
                 }
             });
         }
+function buildCombinedCurve() {
+    const sieveData = results.final
+        .filter(item => item.opening > 0 && item.ppn >= 0 && item.ppn <= 100)
+        .map(item => ({ x: item.opening, y: item.ppn }));
 
-       function updateGradationChart() {
-    const data = results.final
-        .filter(item => item.opening > 0)
-        .map(item => ({ x: item.opening, y: item.ppn }))
+    const hydroData = d422Points
+        .filter(p => p.D > 0 && p.pass >= 0 && p.pass <= 100)
+        .map(p => ({ x: p.D, y: p.pass }));
+
+    combinedCurve = [...sieveData, ...hydroData]
         .sort((a, b) => b.x - a.x);
+}
+
+      function updateGradationChart() {
+    // بناء المنحنى المدمج (مناخل + هيدروميتر)
+    buildCombinedCurve();
 
     if (gradationChart && gradationChart.data.datasets[0]) {
-        gradationChart.data.datasets[0].data = data;
+        gradationChart.data.datasets[0].data = combinedCurve;
         gradationChart.update();
     }
 }
