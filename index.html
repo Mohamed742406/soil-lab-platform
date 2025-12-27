@@ -3559,23 +3559,30 @@ function buildCombinedCurve() {
 }
 
         function calculateDValues() {
-            const data = results.final.filter(item => item.opening > 0).sort((a, b) => a.opening - b.opening);
-            if (data.length < 2) return;
+    // استخدام المنحنى المدمج (D6913 + D422) لحساب D10 و D30 و D60
+    const data = combinedCurve
+        .filter(p => p.x > 0 && p.y >= 0 && p.y <= 100)
+        .map(p => ({ opening: p.x, ppn: p.y }))
+        .sort((a, b) => a.opening - b.opening);
 
-            const d10 = interpolateD(data, 10);
-            const d30 = interpolateD(data, 30);
-            const d60 = interpolateD(data, 60);
+    if (data.length < 2) return;
 
-            document.getElementById('d10Value').textContent = d10 ? d10.toFixed(3) : '—';
-            document.getElementById('d30Value').textContent = d30 ? d30.toFixed(3) : '—';
-            document.getElementById('d60Value').textContent = d60 ? d60.toFixed(3) : '—';
+    const d10 = interpolateD(data, 10);
+    const d30 = interpolateD(data, 30);
+    const d60 = interpolateD(data, 60);
 
-            if (d10 && d60) {
-                document.getElementById('cuValue').textContent = (d60 / d10).toFixed(2);
-                if (d30) document.getElementById('ccValue').textContent = ((d30 * d30) / (d10 * d60)).toFixed(2);
-            }
+    document.getElementById('d10Value').textContent = d10 ? d10.toFixed(3) : '—';
+    document.getElementById('d30Value').textContent = d30 ? d30.toFixed(3) : '—';
+    document.getElementById('d60Value').textContent = d60 ? d60.toFixed(3) : '—';
+
+    if (d10 && d60) {
+        document.getElementById('cuValue').textContent = (d60 / d10).toFixed(2);
+        if (d30) {
+            document.getElementById('ccValue').textContent =
+                ((d30 * d30) / (d10 * d60)).toFixed(2);
         }
-
+    }
+}
         function interpolateD(data, targetPercent) {
             for (let i = 0; i < data.length - 1; i++) {
                 const p1 = data[i], p2 = data[i + 1];
