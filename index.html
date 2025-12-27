@@ -3323,19 +3323,27 @@ function calculateD422() {
     });
 }
 
-        function onSeparatorChange() {
-            const newSeparator = parseFloat(document.getElementById('separatorSieve').value);
-            if (newSeparator !== currentSeparator) {
-                clearCompositeData();
-                currentSeparator = newSeparator;
-                initializeCompositeTables();
-                updateFinalTable();
-                updateSeparatorDisplay();
-                results = { coarser: [], finer: [], final: [], CSCF: 0, SMd: 0 };
+     function onSeparatorChange() {
+    const newSeparator = parseFloat(document.getElementById('separatorSieve').value);
+    if (newSeparator !== currentSeparator) {
+        clearCompositeData();
+        currentSeparator = newSeparator;
+        initializeCompositeTables();
+        updateFinalTable();
+        updateSeparatorDisplay();
+        results = { coarser: [], finer: [], final: [], CSCF: 0, SMd: 0 };
+
+        if (gradationChart) {
+            if (gradationChart.data.datasets[0]) {
                 gradationChart.data.datasets[0].data = [];
-                gradationChart.update();
             }
+            if (gradationChart.data.datasets[1]) {
+                gradationChart.data.datasets[1].data = [];
+            }
+            gradationChart.update();
         }
+    }
+}
 
         function clearCompositeData() {
             document.querySelectorAll('[id^="coarse_cmrn_"], [id^="fine_cmrn_"]').forEach(i => i.value = '');
