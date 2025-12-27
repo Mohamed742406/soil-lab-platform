@@ -6202,6 +6202,22 @@ function toggleSection(id) {
   el.classList.toggle('hidden');
 }
 
+// دالة فتح/إغلاق دليل متغيرات الهيدروميتر
+function toggleD422Glossary() {
+  const content = document.getElementById('d422GlossaryContent');
+  const icon = document.getElementById('d422GlossaryToggleIcon');
+  if (!content || !icon) return;
+
+  const isHidden = content.classList.contains('hidden');
+  if (isHidden) {
+    content.classList.remove('hidden'); // يظهر الدليل
+    icon.textContent = '−';             // علامة ناقص عند الفتح
+  } else {
+    content.classList.add('hidden');    // يخفي الدليل
+    icon.textContent = '+';             // علامة زائد عند الإغلاق
+  }
+}
+
 </script>
 </body>
 </html>
