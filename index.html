@@ -3037,7 +3037,85 @@ function loadD422Demo() {
         if (rh) rh.value = readings[i];
     }
 }
+function calculateD422() {
+    const hydTypeEl = document.getElementById('d422HydrometerType');
+    const GsEl      = document.getElementById('d422Gs');
+    const TempEl    = document.getElementById('d422Temp');
+    const WairEl    = document.getElementById('d422Wair');
+    const HEl       = document.getElementById('d422Hfactor');
+    const Pass10El  = document.getElementById('d422PassNo10');
 
+    if (!hydTypeEl || !GsEl || !TempEl || !WairEl || !HEl || !Pass10El) {
+        alert('لم يتم العثور على عناصر إعدادات الهيدروميتر في الصفحة.');
+        return;
+    }
+
+    const hydType  = hydTypeEl.value;
+    const Gs       = parseFloat(GsEl.value)      || 2.65;
+    const Tlab     = parseFloat(TempEl.value)    || 20.0;
+    const Wair     = parseFloat(WairEl.value)    || 0;
+    const H        = parseFloat(HEl.value)       || 1.0;
+    const passNo10 = parseFloat(Pass10El.value)  || 100;
+
+    if (!Wair || !passNo10) {
+        alert('أدخل W_air و %Passing No.10 أولاً في إعدادات الهيدروميتر.');
+        return;
+    }
+
+    const Wod = Wair * H;                 // 14.1
+    const W   = Wod * 100 / passNo10;     // 14.2
+    const G1  = 1.0;
+
+    const aFactor = hydType === '152H' ? getAFactor(Gs) : null; // جدول 1 [file:22]
+    const K       = getK(Tlab, Gs);                             // جدول 3 [file:22]
+
+    d422Points = [];
+
+    for (let i = 1; i <= 7; i++) {
+        const Tval = parseFloat(document.getElementById(`d422T${i}`).value)  || 0;
+        const Rhval = parseFloat(document.getElementById(`d422Rh${i}`).value) || 0;
+        if (!Tval || !Rhval) continue;
+
+        const Cc = 0; // composite correction مؤقتاً صفر
+        const R  = Rhval + Cc;
+        const Rcell = document.getElementById(`d422R${i}`);
+        if (Rcell) Rcell.textContent = R.toFixed(3);
+
+        const L  = getEffectiveDepth(R, hydType);
+        const Lcell = document.getElementById(`d422L${i}`);
+        if (Lcell) Lcell.textContent = L.toFixed(2);
+
+        const Kcell = document.getElementById(`d422K${i}`);
+        if (Kcell) Kcell.textContent = K.toFixed(5);
+
+        const D  = K * Math.sqrt(L / Tval); // D = K sqrt(L/T)
+        const Dcell = document.getElementById(`d422D${i}`);
+        if (Dcell) Dcell.textContent = D.toFixed(4);
+
+        let P; // % الباقي في التعليق
+        if (hydType === '151H') {
+            const C = (100000 / W) * (Gs / (Gs - G1)); // 14.3 [file:22]
+            P = C * (R - G1);
+        } else {
+            P = (R * aFactor / W) * 100;              // معادلة 152H [file:22]
+        }
+
+        if (P < 0) P = 0;
+        if (P > 100) P = 100;
+
+        const pass = 100 - P;
+
+        const Pcell    = document.getElementById(`d422Ps${i}`);
+        const PassCell = document.getElementById(`d422Pass${i}`);
+        if (Pcell)    Pcell.textContent    = P.toFixed(1);
+        if (PassCell) PassCell.textContent = pass.toFixed(1);
+
+        d422Points.push({ D, pass });
+    }
+
+    // ترتيب النقاط من الأكبر للأصغر لتحضيرها للرسم والدمج
+    d422Points.sort((a, b) => b.D - a.D);
+}
         // D6913 State
         let currentMethod = 'single';
         let currentSeparator = 4.75;
