@@ -3546,16 +3546,39 @@ function calculateD422() {
             console.log('D6913 Results:', output);
         }
 
-        function resetAll() {
-            document.querySelectorAll('#sectionD6913 input[type="number"], #sectionD6913 input[type="text"]').forEach(i => { if (i.id !== 'testDate') i.value = ''; i.classList.remove('input-error', 'input-warning'); });
-            document.querySelectorAll('[id^="single_ppn_"], [id^="coarse_ppn_"], [id^="fine_fppn_"], [id^="fine_ppn_"], [id^="final_ppn_"], [id^="final_cumret_"], [id^="final_ret_"]').forEach(c => c.textContent = '—');
-            document.getElementById('cscfDisplay').textContent = '—';
-            ['d10Value', 'd30Value', 'd60Value', 'cuValue', 'ccValue'].forEach(id => document.getElementById(id).textContent = '—');
+     function resetAll() {
+    // مسح مدخلات قسم D6913
+    document.querySelectorAll('#sectionD6913 input[type="number"], #sectionD6913 input[type="text"]').forEach(i => {
+        if (i.id !== 'testDate') i.value = '';
+        i.classList.remove('input-error', 'input-warning');
+    });
+
+    // مسح نتائج الجداول
+    document.querySelectorAll('[id^="single_ppn_"], [id^="coarse_ppn_"], [id^="fine_fppn_"], [id^="fine_ppn_"], [id^="final_ppn_"], [id^="final_cumret_"], [id^="final_ret_"]').forEach(c => c.textContent = '—');
+    document.getElementById('cscfDisplay').textContent = '—';
+    ['d10Value', 'd30Value', 'd60Value', 'cuValue', 'ccValue'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '—';
+    });
+
+    // مسح منحنى التدرج ومنحنى الهيدروميتر
+    if (gradationChart) {
+        if (gradationChart.data.datasets[0]) {
             gradationChart.data.datasets[0].data = [];
-            gradationChart.update();
-            document.getElementById('validationMessages').innerHTML = '';
-            results = { singleSet: [], coarser: [], finer: [], final: [], CSCF: 0, SMd: 0 };
         }
+        if (gradationChart.data.datasets[1]) {
+            gradationChart.data.datasets[1].data = [];
+        }
+        gradationChart.update();
+    }
+
+    // مسح رسائل التحقق وإعادة النتائج
+    document.getElementById('validationMessages').innerHTML = '';
+    results = { singleSet: [], coarser: [], finer: [], final: [], CSCF: 0, SMd: 0 };
+
+    // مسح نقاط الهيدروميتر أيضاً
+    d422Points = [];
+}
 
         function loadDemoData() {
             resetAll();
