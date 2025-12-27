@@ -143,6 +143,9 @@
                 <button id="tabD6913" onclick="switchTab('D6913')" class="tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap">
                     📊 تدرج التربة (D6913)
                 </button>
+               <button id="tabD422"onclick="switchTab('D422')"class="tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap">
+                    🧪 تحليل الهيدروميتر (D422)
+                </button>
                 <button id="tabD4318" onclick="switchTab('D4318')" class="tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap">
                     🏋️ حدود أتربرج (D4318)
                 </button>
@@ -563,6 +566,130 @@
             </div>
 
         </div>
+<!-- ============================================= -->
+<!-- D422 SECTION - Hydrometer Analysis (ASTM D422-63) -->
+<!-- ============================================= -->
+<div id="sectionD422" class="hidden">
+  <!-- Title Card -->
+  <div class="section-card p-6 mb-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-2">
+      🧪 تحليل الهيدروميتر — Hydrometer Analysis
+    </h2>
+    <p class="text-gray-600">
+      ASTM D422-63 (2002) — Particle-Size Analysis of Soils (Sieve + Hydrometer).
+    </p>
+    <p class="mt-2 text-sm text-gray-500">
+      في هذا التبويب سيتم إدخال قراءات الهيدروميتر وحساب D و%Passing ودمجها مع منحنى التدرج
+      طبقاً لبنود الحسابات 14–17 في المواصفة. [file:22]
+    </p>
+  </div>
+
+  <!-- Hydrometer Test Settings -->
+  <div class="section-card p-6 mb-6">
+    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+      <span class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
+      إعدادات اختبار الهيدروميتر — Hydrometer Test Settings
+    </h3>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+      <!-- Hydrometer Type -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">
+          نوع الهيدروميتر — Hydrometer Type
+        </label>
+        <select id="d422HydrometerType"
+                class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
+          <option value="151H">151H — Specific Gravity Scale</option>
+          <option value="152H" selected>152H — g/L Scale</option>
+        </select>
+        <p class="text-xs text-gray-500 mt-1">
+          طبقاً للبند 3.3 من ASTM D422 (Hydrometers 151H و152H). [file:22]
+        </p>
+      </div>
+
+      <!-- Gs -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">
+          Gs — الكثافة النوعية لحبيبات التربة
+        </label>
+        <input id="d422Gs" type="number" step="0.01"
+               class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2"
+               placeholder="مثال: 2.65">
+        <p class="text-xs text-gray-500 mt-1">
+          تؤخذ من اختبار الكثافة النوعية للتربة (ASTM D854). [file:22]
+        </p>
+      </div>
+
+      <!-- Temperature -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">
+          T — درجة حرارة التعليق (°C)
+        </label>
+        <input id="d422Temp" type="number" step="0.1"
+               class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2"
+               placeholder="20.0">
+        <p class="text-xs text-gray-500 mt-1">
+          تستخدم لاختيار ثابت K من جدول 3 لحساب D طبقاً للمعادلة (4). [file:22]
+        </p>
+      </div>
+
+      <!-- % Passing No.10 -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">
+          % Passing No.10 — النسبة المارة من منخل رقم 10
+        </label>
+        <input id="d422PassNo10" type="number" step="0.1"
+               class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2"
+               placeholder="مثال: 70.0">
+        <p class="text-xs text-gray-500 mt-1">
+          تُقرأ من اختبار D6913، وتستخدم لحساب W طبقاً للبند 14.2. [file:22]
+        </p>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-4">
+      <!-- W_air -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">
+          W<sub>air</sub> — كتلة العينة الهوائية المستخدمة (g)
+        </label>
+        <input id="d422Wair" type="number" step="0.01"
+               class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
+        <p class="text-xs text-gray-500 mt-1">
+          كتلة العينة المستخدمة في الهيدروميتر قبل التجفيف (من البند 9). [file:22]
+        </p>
+      </div>
+
+      <!-- H factor -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">
+          H — معامل الرطوبة الهجروسكوبية
+        </label>
+        <input id="d422Hfactor" type="number" step="0.0001"
+               class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2"
+               placeholder="1.000">
+        <p class="text-xs text-gray-500 mt-1">
+          H = W<sub>od</sub> / W<sub>air</sub> من قياس الرطوبة الهجروسكوبية (البند 8 و13). [file:22]
+        </p>
+      </div>
+
+      <!-- W and Wod info -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">
+          W و W<sub>od</sub> — تعريف الكتل المحسوبة
+        </label>
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-700">
+          <div>W<sub>od</sub>: الكتلة الجافة للعينة المستخدمة في الهيدروميتر (بعد التصحيح بـ H).</div>
+          <div>W: الكتلة الكلية للعينة التي تمثلها هذه العينة طبقاً للمعادلة في 14.2.</div>
+          <div class="mt-1 text-xs text-gray-500">
+            سيتم حساب W<sub>od</sub> و W تلقائياً في خطوة الحسابات القادمة.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
         <!-- ============================================= -->
         <!-- D1557 SECTION - Modified Proctor -->
