@@ -3115,6 +3115,9 @@ function calculateD422() {
 
     // ترتيب النقاط من الأكبر للأصغر لتحضيرها للرسم والدمج
     d422Points.sort((a, b) => b.D - a.D);
+    
+    // تحديث منحنى الهيدروميتر على التشارت
+    updateHydrometerCurve();
 }
         // D6913 State
         let currentMethod = 'single';
