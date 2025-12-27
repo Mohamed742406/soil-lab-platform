@@ -3611,16 +3611,13 @@ function buildCombinedCurve() {
         if (el) el.textContent = '—';
     });
 
-    // مسح منحنى التدرج ومنحنى الهيدروميتر
-    if (gradationChart) {
-        if (gradationChart.data.datasets[0]) {
-            gradationChart.data.datasets[0].data = [];
-        }
-        if (gradationChart.data.datasets[1]) {
-            gradationChart.data.datasets[1].data = [];
-        }
-        gradationChart.update();
+   // مسح منحنى التدرج (المنحنى المدمج)
+if (gradationChart) {
+    if (gradationChart.data.datasets[0]) {
+        gradationChart.data.datasets[0].data = [];
     }
+    gradationChart.update();
+}
 
     // مسح رسائل التحقق وإعادة النتائج
     document.getElementById('validationMessages').innerHTML = '';
