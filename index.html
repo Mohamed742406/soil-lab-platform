@@ -3510,11 +3510,31 @@ function calculateD422() {
             });
         }
 
-        function updateGradationChart() {
-            const data = results.final.filter(item => item.opening > 0).map(item => ({ x: item.opening, y: item.ppn })).sort((a, b) => b.x - a.x);
-            gradationChart.data.datasets[0].data = data;
-            gradationChart.update();
-        }
+       function updateGradationChart() {
+    const data = results.final
+        .filter(item => item.opening > 0)
+        .map(item => ({ x: item.opening, y: item.ppn }))
+        .sort((a, b) => b.x - a.x);
+
+    if (gradationChart && gradationChart.data.datasets[0]) {
+        gradationChart.data.datasets[0].data = data;
+        gradationChart.update();
+    }
+}
+
+// تحديث منحنى الهيدروميتر (D422) على نفس التشارت
+function updateHydrometerCurve() {
+    if (!gradationChart || !gradationChart.data.datasets[1]) return;
+
+    const data = d422Points
+        .filter(p => p.D > 0 && p.pass >= 0 && p.pass <= 100)
+        .map(p => ({ x: p.D, y: p.pass }))
+        .sort((a, b) => b.x - a.x);
+
+    gradationChart.data.datasets[1].data = data;
+    gradationChart.update();
+}
+
 
         function calculateDValues() {
             const data = results.final.filter(item => item.opening > 0).sort((a, b) => a.opening - b.opening);
