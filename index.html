@@ -2851,6 +2851,64 @@ function switchTab(tab) {
             { name: 'No.200', opening: 0.075 },
             { name: 'Pan', opening: 0 }
         ];
+// D422 Hydrometer State
+let d422Points = []; // { D, pass }
+
+function resetD422() {
+    // مسح حقول الأرقام
+    const ids = ['d422Gs','d422Temp','d422PassNo10','d422Wair','d422Hfactor'];
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+
+    // مسح جدول القراءات
+    for (let i = 1; i <= 7; i++) {
+        const t  = document.getElementById(`d422T${i}`);
+        const rh = document.getElementById(`d422Rh${i}`);
+        if (t)  t.value  = i === 1 ? 2 : i === 2 ? 5 : i === 3 ? 15 : i === 4 ? 30 : i === 5 ? 60 : i === 6 ? 250 : 1440;
+        if (rh) rh.value = '';
+
+        ['R','L','K','D','Ps','Pass'].forEach(suffix => {
+            const cell = document.getElementById(`d422${suffix}${i}`);
+            if (cell) cell.textContent = '';
+        });
+    }
+
+    d422Points = [];
+}
+
+function loadD422Demo() {
+    // إعادة التعيين أولاً
+    resetD422();
+
+    // إعدادات عامة للمثال
+    const typeEl = document.getElementById('d422HydrometerType');
+    if (typeEl) typeEl.value = '152H';
+
+    const setVal = (id, v) => {
+        const el = document.getElementById(id);
+        if (el) el.value = v;
+    };
+
+    setVal('d422Gs',        2.65);
+    setVal('d422Temp',      20.0);
+    setVal('d422PassNo10',  70.0);
+    setVal('d422Wair',      50.0);
+    setVal('d422Hfactor',   1.000);
+
+    // أزمنة وقراءات Rh كمثال تعليمي
+    const times    = [2, 5, 15, 30, 60, 250, 1440];
+    const readings = [28.0, 24.5, 20.0, 17.0, 14.0,  8.0,  4.0]; // مثال تقريبي [web:3][web:6]
+
+    for (let i = 0; i < times.length; i++) {
+        const row = i + 1;
+        const t  = document.getElementById(`d422T${row}`);
+        const rh = document.getElementById(`d422Rh${row}`);
+        if (t)  t.value  = times[i];
+        if (rh) rh.value = readings[i];
+    }
+}
 
         // D6913 State
         let currentMethod = 'single';
