@@ -3242,58 +3242,49 @@ function calculateD422() {
             updateLabelsForSeparator();
         }
 
-        function updateLabelsForSeparator() {
-            const sepName = getSeparatorSieve().name;
-            document.getElementById('cpMdLabel').textContent = `الكتلة الجافة للجزء الخشن (المحتجز على ${sepName})`;
-            document.getElementById('fpMmLabel').textContent = `الكتلة الرطبة للجزء الناعم (المار من ${sepName})`;
-            document.getElementById('cscfDescription').textContent = `= % Passing عند ${sepName} من جدول الخشن (بدقة 0.1%)`;
-        }
+       function updateLabelsForSeparator() {
+    const sepName = getSeparatorSieve().name;
+    document.getElementById('cpMdLabel').textContent =
+        `الكتلة الجافة للجزء الخشن (المحتجز على ${sepName})`;
+    document.getElementById('fpMmLabel').textContent =
+        `الكتلة الرطبة للجزء الناعم (المار من ${sepName})`;
+    document.getElementById('cscfDescription').textContent =
+        `= % Passing عند ${sepName} من جدول الخشن (بدقة 0.1%)`;
+}
 
-        function updateFinalTable() {
-            const finalBody = document.getElementById('finalTableBody');
-            const displaySieves = ALL_SIEVES.filter(s => s.name !== 'Pan');
-            finalBody.innerHTML = displaySieves.map((sieve, idx) => {
-                const isSeparator = sieve.opening === currentSeparator && currentMethod === 'composite';
-                return `
-                <tr class="${idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'} ${isSeparator ? 'separator-highlight' : ''}">
-                    <td class="p-2 text-center border border-gray-300 font-semibold">
-                        ${isSeparator ? '<span class="separator-badge">فصل</span>' : ''}${sieve.name}
-                    </td>
-                    <td class="p-2 text-center border border-gray-300 text-gray-600">${sieve.opening}</td>
-                    <td class="p-2 text-center border border-gray-300 bg-green-50 font-bold text-green-700" id="final_ppn_${idx}">—</td>
-                    <td class="p-2 text-center border border-gray-300" id="final_cumret_${idx}">—</td>
-                    <td class="p-2 text-center border border-gray-300" id="final_ret_${idx}">—</td>
-                </tr>
-            `}).join('');
-        }
+function updateFinalTable() {
+    const finalBody = document.getElementById('finalTableBody');
+    const displaySieves = ALL_SIEVES.filter(s => s.name !== 'Pan');
+    finalBody.innerHTML = displaySieves.map((sieve, idx) => {
+        const isSeparator = sieve.opening === currentSeparator && currentMethod === 'composite';
+        return `
+            <tr class="${idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'} ${isSeparator ? 'separator-highlight' : ''}">
+                <td class="p-2 text-center border border-gray-300 font-semibold">
+                    ${isSeparator ? '<span class="separator-badge">فصل</span>' : ''}${sieve.name}
+                </td>
+                <td class="p-2 text-center border border-gray-300 text-gray-600">${sieve.opening}</td>
+                <td class="p-2 text-center border border-gray-300 bg-green-50 font-bold text-green-700" id="final_ppn_${idx}">—</td>
+                <td class="p-2 text-center border border-gray-300" id="final_cumret_${idx}">—</td>
+                <td class="p-2 text-center border border-gray-300" id="final_ret_${idx}">—</td>
+            </tr>
+        `;
+    }).join('');
+}
 
-      function initializeGradationChart() {
+function initializeGradationChart() {
     const ctx = document.getElementById('gradationChart').getContext('2d');
     gradationChart = new Chart(ctx, {
         type: 'line',
         data: {
             datasets: [
                 {
-                    label: 'منحنى التدرج — Gradation Curve (D6913)',
+                    label: 'منحنى التدرج المدمج — Combined Gradation Curve (D6913 + D422)',
                     data: [],
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderColor: '#a855f7',                  // لون واحد للمنحنى بالكامل
+                    backgroundColor: 'rgba(168, 85, 247, 0.08)',
                     borderWidth: 3,
                     fill: true,
                     tension: 0.3,
-                    pointRadius: 6,
-                    pointBackgroundColor: '#3b82f6',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2
-                },
-                {
-                    label: 'منحنى الهيدروميتر — Hydrometer Curve (D422)',
-                    data: [],
-                    borderColor: '#a855f7',
-                    backgroundColor: 'rgba(168, 85, 247, 0.08)',
-                    borderWidth: 2,
-                    fill: false,
-                    tension: 0.2,
                     pointRadius: 5,
                     pointBackgroundColor: '#a855f7',
                     pointBorderColor: '#fff',
@@ -3308,17 +3299,30 @@ function calculateD422() {
                 x: {
                     type: 'logarithmic',
                     position: 'bottom',
-                    title: { display: true, text: 'فتحة المنخل / القطر (mm)', font: { size: 14, weight: 'bold' } },
+                    title: {
+                        display: true,
+                        text: 'فتحة المنخل / القطر (mm)',
+                        font: { size: 14, weight: 'bold' }
+                    },
                     min: 0.0005,
                     max: 100,
                     ticks: {
-                        callback: v => [0.001,0.002,0.005,0.01,0.02,0.05,0.075,0.1,0.25,0.5,1,2,4.75,10,19,25,50,75].includes(v) ? v : ''
+                        callback: v => [
+                            0.001, 0.002, 0.005, 0.01, 0.02, 0.05,
+                            0.075, 0.1, 0.25, 0.5, 1, 2, 4.75,
+                            10, 19, 25, 50, 75
+                        ].includes(v) ? v : ''
                     },
                     grid: { color: 'rgba(0,0,0,0.1)' }
                 },
                 y: {
-                    title: { display: true, text: 'النسبة المئوية المارة (%) — Percent Passing', font: { size: 14, weight: 'bold' } },
-                    min: 0, max: 100,
+                    title: {
+                        display: true,
+                        text: 'النسبة المئوية المارة (%) — Percent Passing',
+                        font: { size: 14, weight: 'bold' }
+                    },
+                    min: 0,
+                    max: 100,
                     ticks: { stepSize: 10 },
                     grid: { color: 'rgba(0,0,0,0.1)' }
                 }
@@ -3328,7 +3332,7 @@ function calculateD422() {
     });
 }
 
-     function onSeparatorChange() {
+function onSeparatorChange() {
     const newSeparator = parseFloat(document.getElementById('separatorSieve').value);
     if (newSeparator !== currentSeparator) {
         clearCompositeData();
@@ -3342,76 +3346,93 @@ function calculateD422() {
             if (gradationChart.data.datasets[0]) {
                 gradationChart.data.datasets[0].data = [];
             }
-            if (gradationChart.data.datasets[1]) {
-                gradationChart.data.datasets[1].data = [];
-            }
             gradationChart.update();
         }
     }
 }
 
-        function clearCompositeData() {
-            document.querySelectorAll('[id^="coarse_cmrn_"], [id^="fine_cmrn_"]').forEach(i => i.value = '');
-            ['comp_CPMd', 'comp_FPMm', 'comp_wfp', 'comp_SubSMd', 'comp_FPMd', 'comp_SMd'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = '';
+function clearCompositeData() {
+    document.querySelectorAll('[id^="coarse_cmrn_"], [id^="fine_cmrn_"]').forEach(i => i.value = '');
+    ['comp_CPMd', 'comp_FPMm', 'comp_wfp', 'comp_SubSMd', 'comp_FPMd', 'comp_SMd']
+        .forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+    document.getElementById('cscfDisplay').textContent = '—';
+    document.querySelectorAll('[id^="coarse_ppn_"], [id^="fine_fppn_"], [id^="fine_ppn_"]')
+        .forEach(c => c.textContent = '—');
+    document.getElementById('separatorWarning').classList.add('hidden');
+}
+
+function updateSeparatorDisplay() {
+    document.getElementById('selectedSeparatorDisplay').textContent = getSeparatorName();
+}
+
+function toggleMethod() {
+    currentMethod = document.querySelector('input[name="method"]:checked').value;
+    document.getElementById('singleSetSection')
+        .classList.toggle('hidden', currentMethod !== 'single');
+    document.getElementById('compositeSection')
+        .classList.toggle('hidden', currentMethod !== 'composite');
+    document.getElementById('separatorSelection')
+        .classList.toggle('hidden', currentMethod !== 'composite');
+    updateFinalTable();
+}
+
+function updateUnitLabels() {
+    const unit = document.getElementById('massUnit').value;
+    document.querySelectorAll('.unit-label').forEach(el => el.textContent = unit);
+}
+
+function convertToGrams(value) {
+    const unit = document.getElementById('massUnit').value;
+    return unit === 'kg' ? value * 1000 : value;
+}
+
+function validateInputs() {
+    const messages = [];
+    let isValid = true;
+
+    document.querySelectorAll('.input-error, .input-warning')
+        .forEach(el => el.classList.remove('input-error', 'input-warning'));
+
+    if (currentMethod === 'single') {
+        const sMd = parseFloat(document.getElementById('single_SMd').value) || 0;
+        if (sMd <= 0) {
+            messages.push({
+                type: 'error',
+                text: 'يجب إدخال كتلة العينة الجافة S,Md بقيمة موجبة'
             });
-            document.getElementById('cscfDisplay').textContent = '—';
-            document.querySelectorAll('[id^="coarse_ppn_"], [id^="fine_fppn_"], [id^="fine_ppn_"]').forEach(c => c.textContent = '—');
-            document.getElementById('separatorWarning').classList.add('hidden');
+            document.getElementById('single_SMd').classList.add('input-error');
+            isValid = false;
         }
+    } else {
+        const cpMd   = parseFloat(document.getElementById('comp_CPMd').value) || 0;
+        const fpMm   = parseFloat(document.getElementById('comp_FPMm').value) || 0;
+        const subsMd = parseFloat(document.getElementById('comp_SubSMd').value) || 0;
 
-        function updateSeparatorDisplay() {
-            document.getElementById('selectedSeparatorDisplay').textContent = getSeparatorName();
+        if (cpMd <= 0) {
+            messages.push({ type: 'error', text: 'يجب إدخال CP,Md بقيمة موجبة' });
+            isValid = false;
         }
-
-        function toggleMethod() {
-            currentMethod = document.querySelector('input[name="method"]:checked').value;
-            document.getElementById('singleSetSection').classList.toggle('hidden', currentMethod !== 'single');
-            document.getElementById('compositeSection').classList.toggle('hidden', currentMethod !== 'composite');
-            document.getElementById('separatorSelection').classList.toggle('hidden', currentMethod !== 'composite');
-            updateFinalTable();
+        if (fpMm <= 0) {
+            messages.push({ type: 'error', text: 'يجب إدخال FP,Mm بقيمة موجبة' });
+            isValid = false;
         }
-
-        function updateUnitLabels() {
-            const unit = document.getElementById('massUnit').value;
-            document.querySelectorAll('.unit-label').forEach(el => el.textContent = unit);
+        if (subsMd <= 0) {
+            messages.push({ type: 'error', text: 'يجب إدخال SubS,Md بقيمة موجبة' });
+            isValid = false;
         }
+    }
 
-        function convertToGrams(value) {
-            const unit = document.getElementById('massUnit').value;
-            return unit === 'kg' ? value * 1000 : value;
-        }
+    document.getElementById('validationMessages').innerHTML = messages.map(m =>
+        `<div class="validation-msg ${m.type === 'error' ? 'validation-error' : 'validation-warning'}">
+            ${m.type === 'error' ? '❌' : '⚠️'} ${m.text}
+        </div>`
+    ).join('');
 
-        function validateInputs() {
-            const messages = [];
-            let isValid = true;
-            document.querySelectorAll('.input-error, .input-warning').forEach(el => el.classList.remove('input-error', 'input-warning'));
-
-            if (currentMethod === 'single') {
-                const sMd = parseFloat(document.getElementById('single_SMd').value) || 0;
-                if (sMd <= 0) {
-                    messages.push({ type: 'error', text: 'يجب إدخال كتلة العينة الجافة S,Md بقيمة موجبة' });
-                    document.getElementById('single_SMd').classList.add('input-error');
-                    isValid = false;
-                }
-            } else {
-                const cpMd = parseFloat(document.getElementById('comp_CPMd').value) || 0;
-                const fpMm = parseFloat(document.getElementById('comp_FPMm').value) || 0;
-                const subsMd = parseFloat(document.getElementById('comp_SubSMd').value) || 0;
-                if (cpMd <= 0) { messages.push({ type: 'error', text: 'يجب إدخال CP,Md بقيمة موجبة' }); isValid = false; }
-                if (fpMm <= 0) { messages.push({ type: 'error', text: 'يجب إدخال FP,Mm بقيمة موجبة' }); isValid = false; }
-                if (subsMd <= 0) { messages.push({ type: 'error', text: 'يجب إدخال SubS,Md بقيمة موجبة' }); isValid = false; }
-            }
-
-            document.getElementById('validationMessages').innerHTML = messages.map(m => 
-                `<div class="validation-msg ${m.type === 'error' ? 'validation-error' : 'validation-warning'}">
-                    ${m.type === 'error' ? '❌' : '⚠️'} ${m.text}</div>`
-            ).join('');
-
-            return isValid;
-        }
-
+    return isValid;
+}
         function calculate() {
             if (!validateInputs()) return;
             currentMethod === 'single' ? calculateSingleSet() : calculateComposite();
