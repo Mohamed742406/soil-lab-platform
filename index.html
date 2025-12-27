@@ -6231,6 +6231,54 @@ function toggleD422Glossary() {
   }
 }
 
+// ============================================
+// Handle Non-Plastic checkbox — معالج الاختيار بلا لدونة
+// ============================================
+document.addEventListener('DOMContentLoaded', function() {
+    const npCheckbox = document.getElementById("npCheckbox");
+    if (!npCheckbox) return;
+    
+    npCheckbox.addEventListener("change", function() {
+        const isNonPlastic = this.checked;
+        const plTable = document.getElementById("d4318_plBody");
+        
+        if (!plTable) return;
+        
+        const plTableSection = plTable.closest('.section-card');
+        
+        if (isNonPlastic) {
+            // إخفاء جدول Plastic Limit
+            if (plTableSection) {
+                plTableSection.style.display = "none";
+            }
+            
+            // عرض النتائج مع NP
+            const plVal = document.getElementById("d4318_PL_val");
+            const piVal = document.getElementById("d4318_PI_val");
+            
+            if (plVal) plVal.textContent = "NP";
+            if (piVal) piVal.textContent = "NP";
+            
+            const resultsDiv = document.getElementById("d4318_results");
+            if (resultsDiv) {
+                resultsDiv.classList.remove("hidden");
+            }
+            
+        } else {
+            // إظهار جدول Plastic Limit مرة أخرى
+            if (plTableSection) {
+                plTableSection.style.display = "block";
+            }
+            
+            const plVal = document.getElementById("d4318_PL_val");
+            const piVal = document.getElementById("d4318_PI_val");
+            
+            if (plVal) plVal.textContent = "—";
+            if (piVal) piVal.textContent = "—";
+        }
+    });
+});
+
 </script>
 </body>
 </html>
