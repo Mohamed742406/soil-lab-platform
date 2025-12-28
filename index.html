@@ -3567,6 +3567,116 @@ function showCBRValidationMessage(message, type = 'info') {
     }
 })();
 
+// =============================================
+// CBR TEST MODE SELECTION
+// =============================================
+
+let cbrTestMode = 'single'; // 'single' أو 'multiple'
+let cbrSamplesData = {
+    sample1: { data: [], color: 'rgb(220, 38, 38)', name: 'العينة 1' },
+    sample2: { data: [], color: 'rgb(59, 130, 246)', name: 'العينة 2' },
+    sample3: { data: [], color: 'rgb(34, 197, 94)', name: 'العينة 3' }
+};
+let currentSample = 'sample1';
+
+function initializeCBRMode() {
+    const modeButtons = document.querySelectorAll('.cbr-mode-btn');
+    modeButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const selectedMode = this.getAttribute('data-mode');
+            setCBRMode(selectedMode);
+        });
+    });
+    setCBRMode('single');
+}
+
+function setCBRMode(mode) {
+    cbrTestMode = mode;
+    const singleBtn = document.getElementById('cbr_mode_single');
+    const multiBtn = document.getElementById('cbr_mode_multiple');
+    const sampleSelectDiv = document.getElementById('cbr_sample_selection');
+    
+    if (mode === 'single') {
+        if (singleBtn) singleBtn.classList.add('bg-blue-600', 'text-white', 'border-blue-700');
+        if (singleBtn) singleBtn.classList.remove('bg-gray-200', 'text-gray-700', 'border-gray-300');
+        if (multiBtn) multiBtn.classList.remove('bg-blue-600', 'text-white', 'border-blue-700');
+        if (multiBtn) multiBtn.classList.add('bg-gray-200', 'text-gray-700', 'border-gray-300');
+        if (sampleSelectDiv) sampleSelectDiv.classList.add('hidden');
+        
+        resetCBRFull();
+        showCBRValidationMessage('✅ وضع العينة الواحدة - أدخل بيانات عينة واحدة فقط', 'success');
+        
+    } else {
+        if (multiBtn) multiBtn.classList.add('bg-blue-600', 'text-white', 'border-blue-700');
+        if (multiBtn) multiBtn.classList.remove('bg-gray-200', 'text-gray-700', 'border-gray-300');
+        if (singleBtn) singleBtn.classList.remove('bg-blue-600', 'text-white', 'border-blue-700');
+        if (singleBtn) singleBtn.classList.add('bg-gray-200', 'text-gray-700', 'border-gray-300');
+        if (sampleSelectDiv) sampleSelectDiv.classList.remove('hidden');
+        
+        resetCBRFull();
+        showCBRValidationMessage('✅ وضع العينات المتعددة (3 عينات) - اختر العينة وأدخل البيانات', 'success');
+    }
+}
+
+function switchToSample(sampleNum) {
+    currentSample = `sample${sampleNum}`;
+    const btn1 = document.getElementById('cbr_sample1_btn');
+    const btn2 = document.getElementById('cbr_sample2_btn');
+    const btn3 = document.getElementById('cbr_sample3_btn');
+    
+    if (btn1) btn1.classList.remove('bg-red-600', 'text-white');
+    if (btn2) btn2.classList.remove('bg-blue-600', 'text-white');
+    if (btn3) btn3.classList.remove('bg-green-600', 'text-white');
+    
+    if (sampleNum === 1 && btn1) btn1.classList.add('bg-red-600', 'text-white');
+    if (sampleNum === 2 && btn2) btn2.classList.add('bg-blue-600', 'text-white');
+    if (sampleNum === 3 && btn3) btn3.classList.add('bg-green-600', 'text-white');
+    
+    resetCBRFull();
+    showCBRValidationMessage(`✅ العينة ${sampleNum} مختارة - ادخل البيانات الجديدة`, 'info');
+}
+
+function resetCBRFull() {
+    const inputs = ['cbr_sampleId', 'cbr_testDate', 'cbr_dryUnitWeight', 'cbr_initialHeight', 'cbr_soakedHeight', 'cbr_swellingPercent'];
+    inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    
+    const calibrationInput = document.getElementById('cbr_dialCalibration');
+    if (calibrationInput) calibrationInput.value = '1.0';
+    
+    CBR_PENETRATION_POINTS.forEach((_, index) => {
+        const dialInput = document.getElementById(`cbr_dial_${index}`);
+        if (dialInput) {
+            dialInput.value = '';
+            updateCBRRow(index);
+        }
+    });
+    
+    const resultsDiv = document.getElementById('cbr_results');
+    const chartDiv = document.getElementById('cbr_chartWrap');
+    const messagesDiv = document.getElementById('cbr_validationMessages');
+    
+    if (resultsDiv) resultsDiv.classList.add('hidden');
+    if (chartDiv) chartDiv.classList.add('hidden');
+    if (messagesDiv) messagesDiv.innerHTML = '';
+    
+    if (cbrChart) {
+        cbrChart.destroy();
+        cbrChart = null;
+    }
+}
+
+(function() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeCBRMode);
+    } else {
+        initializeCBRMode();
+    }
+})();
+
+
 // استيفاء خطي عام بين قيمتين
 function linearInterpolate(x, x1, y1, x2, y2) {
     if (x2 === x1) return y1;
