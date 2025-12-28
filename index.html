@@ -2970,7 +2970,7 @@
     </footer>
 
     <script>
-     // =============================================
+   // =============================================
 // TAB SWITCHING
 // =============================================
 let currentTab = 'D6913';
@@ -3014,6 +3014,12 @@ function switchTab(tab) {
             ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
             : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
 
+    // ⭐ جديد - CBR Tab
+    document.getElementById('tabCBR').className =
+        tab === 'CBR'
+            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 animate-pulse'
+            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 animate-pulse';
+
     // Show/hide sections
     document.getElementById('sectionD6913').classList.toggle('hidden', tab !== 'D6913');
     document.getElementById('sectionD422').classList.toggle('hidden', tab !== 'D422');
@@ -3022,6 +3028,9 @@ function switchTab(tab) {
     document.getElementById('sectionD1557').classList.toggle('hidden', tab !== 'D1557');
     document.getElementById('sectionD2216').classList.toggle('hidden', tab !== 'D2216');
     document.getElementById('sectionD854').classList.toggle('hidden', tab !== 'D854');
+
+    // ⭐ جديد - CBR Section
+    document.getElementById('sectionCBR').classList.toggle('hidden', tab !== 'CBR');
 
     // When switching to SoilClass, auto-read data
     if (tab === 'SoilClass') {
