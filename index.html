@@ -1841,326 +1841,363 @@
             </div>
         </div>
 
-        <!-- ============================================= -->
-        <!-- SOIL CLASSIFICATION SECTION (USCS + AASHTO) -->
-        <!-- ============================================= -->
-        <div id="sectionSoilClass" class="hidden">
-            <!-- Page Title -->
-            <div class="section-card p-6 mb-6">
-                <div class="flex items-center gap-4">
-                    <div class="bg-teal-100 p-4 rounded-full">
-                        <svg class="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                        </svg>
-                    </div>
+<!-- ============================================= -->
+<!-- SOIL CLASSIFICATION SECTION (USCS + AASHTO) -->
+<!-- ============================================= -->
+<div id="sectionSoilClass" class="hidden">
+    <!-- Page Title -->
+    <div class="section-card p-6 mb-6">
+        <div class="flex items-center gap-4">
+            <div class="bg-teal-100 p-4 rounded-full">
+                <svg class="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                </svg>
+            </div>
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800">تصنيف التربة — Soil Classification</h2>
+                <p class="text-gray-600">USCS (ASTM D2487) + AASHTO (Selectable: M 145 / ASTM D3282)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- AASHTO Reference Selection -->
+    <div class="section-card p-6 mb-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <span class="bg-teal-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
+            اختيار مرجع التصنيف — Classification Reference Selection
+        </h3>
+        
+        <div class="bg-gradient-to-r from-teal-50 to-cyan-50 p-4 rounded-lg mb-4">
+            <label class="block text-sm font-bold text-gray-800 mb-3">
+                مرجع تصنيف AASHTO — AASHTO Classification Reference:
+            </label>
+            <div class="flex flex-wrap gap-4">
+                <label class="flex items-center gap-3 bg-white px-4 py-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-teal-400 transition-all">
+                    <input type="radio" name="aashtoRef" value="M145" checked class="w-5 h-5 text-teal-600">
                     <div>
-                        <h2 class="text-2xl font-bold text-gray-800">تصنيف التربة — Soil Classification</h2>
-                        <p class="text-gray-600">USCS (ASTM D2487) + AASHTO (Selectable: M 145 / ASTM D3282)</p>
+                        <span class="font-semibold text-gray-800">AASHTO M 145</span>
+                        <p class="text-xs text-gray-500">المواصفة القياسية لتصنيف التربة والخلطات الترابية</p>
                     </div>
-                </div>
+                </label>
+                <label class="flex items-center gap-3 bg-white px-4 py-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-teal-400 transition-all">
+                    <input type="radio" name="aashtoRef" value="D3282" class="w-5 h-5 text-teal-600">
+                    <div>
+                        <span class="font-semibold text-gray-800">ASTM D3282</span>
+                        <p class="text-xs text-gray-500">Standard Practice for Classification of Soils (AASHTO System)</p>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <p class="text-sm text-blue-800">
+                <strong>ℹ️ ملاحظة:</strong> يتم حساب تصنيف USCS دائماً طبقاً لـ ASTM D2487، بينما يتم حساب تصنيف AASHTO حسب المرجع المختار أعلاه.
+            </p>
+        </div>
+    </div>
+
+    <!-- Input Data Display Cards -->
+    <div class="section-card p-6 mb-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <span class="bg-purple-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
+            البيانات المقروءة تلقائياً — Auto-Read Input Data
+        </h3>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Fines % -->
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border-2 border-blue-200 text-center">
+                <div class="text-sm font-bold text-blue-800 mb-1">% Fines (No.200)</div>
+                <div class="text-xs text-gray-500 mb-2">نسبة الغرامات — من D6913</div>
+                <div class="text-3xl font-bold text-blue-700" id="sc_fines">—</div>
+            </div>
+            
+            <!-- LL -->
+            <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl border-2 border-purple-200 text-center">
+                <div class="text-sm font-bold text-purple-800 mb-1">LL (Liquid Limit)</div>
+                <div class="text-xs text-gray-500 mb-2">حد السيولة — من D4318</div>
+                <div class="text-3xl font-bold text-purple-700" id="sc_LL">—</div>
+            </div>
+            
+            <!-- PL -->
+            <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-xl border-2 border-indigo-200 text-center">
+                <div class="text-sm font-bold text-indigo-800 mb-1">PL (Plastic Limit)</div>
+                <div class="text-xs text-gray-500 mb-2">حد اللدونة — من D4318</div>
+                <div class="text-3xl font-bold text-indigo-700" id="sc_PL">—</div>
+            </div>
+            
+            <!-- PI -->
+            <div class="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-xl border-2 border-orange-200 text-center">
+                <div class="text-sm font-bold text-orange-800 mb-1">PI (Plasticity Index)</div>
+                <div class="text-xs text-gray-500 mb-2">دليل اللدونة = LL − PL</div>
+                <div class="text-3xl font-bold text-orange-700" id="sc_PI">—</div>
+            </div>
+        </div>
+
+        <!-- Additional Data Row -->
+        <div class="grid md:grid-cols-4 gap-4 mt-4">
+            <div class="bg-gray-50 p-3 rounded-lg border text-center">
+                <div class="text-xs text-gray-600">% Passing No.4</div>
+                <div class="text-lg font-bold text-gray-700" id="sc_passNo4">—</div>
+            </div>
+            <div class="bg-gray-50 p-3 rounded-lg border text-center">
+                <div class="text-xs text-gray-600">% Passing No.10</div>
+                <div class="text-lg font-bold text-gray-700" id="sc_passNo10">—</div>
+            </div>
+            <div class="bg-gray-50 p-3 rounded-lg border text-center">
+                <div class="text-xs text-gray-600">% Passing No.40</div>
+                <div class="text-lg font-bold text-gray-700" id="sc_passNo40">—</div>
+            </div>
+            <div class="bg-gray-50 p-3 rounded-lg border text-center">
+                <div class="text-xs text-gray-600">Cu / Cc</div>
+                <div class="text-lg font-bold text-gray-700" id="sc_CuCc">—</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calculate Button -->
+    <div class="flex flex-wrap gap-4 justify-center mb-6">
+        <button onclick="calculateSoilClassification()" class="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white px-8 py-4 rounded-lg font-bold text-lg shadow-lg flex items-center gap-3 transition-all hover:transform hover:-translate-y-1">
+            <span class="text-2xl">🧮</span>
+            حساب التصنيف — Calculate Classification
+        </button>
+        <button onclick="resetSoilClassification()" class="btn-secondary text-white px-6 py-4 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
+            🔄 إعادة تعيين — Reset
+        </button>
+    </div>
+
+    <div id="soilClassValidation" class="mb-6"></div>
+
+    <!-- Results Section -->
+    <div id="soilClassResults" class="hidden">
+        <!-- USCS Classification Result -->
+        <div class="section-card p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">📋</span>
+                تصنيف USCS — Unified Soil Classification System (ASTM D2487)
+            </h3>
+            
+            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-6 rounded-xl shadow-lg text-center mb-4">
+                <div class="text-lg font-bold mb-2 opacity-90">رمز USCS — USCS Symbol</div>
+                <div class="text-5xl font-bold mb-2" id="sc_uscs_symbol">—</div>
+                <div class="text-xl" id="sc_uscs_desc">—</div>
+                <div class="text-sm mt-2 opacity-80" id="sc_uscs_name_ar">—</div>
             </div>
 
-            <!-- AASHTO Reference Selection -->
-            <div class="section-card p-6 mb-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <span class="bg-teal-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
-                    اختيار مرجع التصنيف — Classification Reference Selection
-                </h3>
-                
-                <div class="bg-gradient-to-r from-teal-50 to-cyan-50 p-4 rounded-lg mb-4">
-                    <label class="block text-sm font-bold text-gray-800 mb-3">
-                        مرجع تصنيف AASHTO — AASHTO Classification Reference:
-                    </label>
-                    <div class="flex flex-wrap gap-4">
-                        <label class="flex items-center gap-3 bg-white px-4 py-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-teal-400 transition-all">
-                            <input type="radio" name="aashtoRef" value="M145" checked class="w-5 h-5 text-teal-600">
-                            <div>
-                                <span class="font-semibold text-gray-800">AASHTO M 145</span>
-                                <p class="text-xs text-gray-500">المواصفة القياسية لتصنيف التربة والخلطات الترابية</p>
-                            </div>
-                        </label>
-                        <label class="flex items-center gap-3 bg-white px-4 py-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-teal-400 transition-all">
-                            <input type="radio" name="aashtoRef" value="D3282" class="w-5 h-5 text-teal-600">
-                            <div>
-                                <span class="font-semibold text-gray-800">ASTM D3282</span>
-                                <p class="text-xs text-gray-500">Standard Practice for Classification of Soils (AASHTO System)</p>
-                            </div>
-                        </label>
-                    </div>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 text-center">
+                    <div class="text-sm text-gray-600 mb-1">نوع التربة</div>
+                    <div class="font-bold text-blue-700" id="sc_uscs_type">—</div>
                 </div>
-
-                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <p class="text-sm text-blue-800">
-                        <strong>ℹ️ ملاحظة:</strong> يتم حساب تصنيف USCS دائماً طبقاً لـ ASTM D2487، بينما يتم حساب تصنيف AASHTO حسب المرجع المختار أعلاه.
-                    </p>
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 text-center">
+                    <div class="text-sm text-gray-600 mb-1">موقع A-Line</div>
+                    <div class="font-bold text-blue-700" id="sc_uscs_aline">—</div>
                 </div>
-            </div>
-
-            <!-- Input Data Display Cards -->
-            <div class="section-card p-6 mb-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <span class="bg-purple-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
-                    البيانات المقروءة تلقائياً — Auto-Read Input Data
-                </h3>
-                
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- Fines % -->
-                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border-2 border-blue-200 text-center">
-                        <div class="text-sm font-bold text-blue-800 mb-1">% Fines (No.200)</div>
-                        <div class="text-xs text-gray-500 mb-2">نسبة الغرامات — من D6913</div>
-                        <div class="text-3xl font-bold text-blue-700" id="sc_fines">—</div>
-                    </div>
-                    
-                    <!-- LL -->
-                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl border-2 border-purple-200 text-center">
-                        <div class="text-sm font-bold text-purple-800 mb-1">LL (Liquid Limit)</div>
-                        <div class="text-xs text-gray-500 mb-2">حد السيولة — من D4318</div>
-                        <div class="text-3xl font-bold text-purple-700" id="sc_LL">—</div>
-                    </div>
-                    
-                    <!-- PL -->
-                    <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-xl border-2 border-indigo-200 text-center">
-                        <div class="text-sm font-bold text-indigo-800 mb-1">PL (Plastic Limit)</div>
-                        <div class="text-xs text-gray-500 mb-2">حد اللدونة — من D4318</div>
-                        <div class="text-3xl font-bold text-indigo-700" id="sc_PL">—</div>
-                    </div>
-                    
-                    <!-- PI -->
-                    <div class="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-xl border-2 border-orange-200 text-center">
-                        <div class="text-sm font-bold text-orange-800 mb-1">PI (Plasticity Index)</div>
-                        <div class="text-xs text-gray-500 mb-2">دليل اللدونة = LL − PL</div>
-                        <div class="text-3xl font-bold text-orange-700" id="sc_PI">—</div>
-                    </div>
-                </div>
-
-                <!-- Additional Data Row -->
-                <div class="grid md:grid-cols-4 gap-4 mt-4">
-                    <div class="bg-gray-50 p-3 rounded-lg border text-center">
-                        <div class="text-xs text-gray-600">% Passing No.4</div>
-                        <div class="text-lg font-bold text-gray-700" id="sc_passNo4">—</div>
-                    </div>
-                    <div class="bg-gray-50 p-3 rounded-lg border text-center">
-                        <div class="text-xs text-gray-600">% Passing No.10</div>
-                        <div class="text-lg font-bold text-gray-700" id="sc_passNo10">—</div>
-                    </div>
-                    <div class="bg-gray-50 p-3 rounded-lg border text-center">
-                        <div class="text-xs text-gray-600">% Passing No.40</div>
-                        <div class="text-lg font-bold text-gray-700" id="sc_passNo40">—</div>
-                    </div>
-                    <div class="bg-gray-50 p-3 rounded-lg border text-center">
-                        <div class="text-xs text-gray-600">Cu / Cc</div>
-                        <div class="text-lg font-bold text-gray-700" id="sc_CuCc">—</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Calculate Button -->
-            <div class="flex flex-wrap gap-4 justify-center mb-6">
-                <button onclick="calculateSoilClassification()" class="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white px-8 py-4 rounded-lg font-bold text-lg shadow-lg flex items-center gap-3 transition-all hover:transform hover:-translate-y-1">
-                    <span class="text-2xl">🧮</span>
-                    حساب التصنيف — Calculate Classification
-                </button>
-                <button onclick="resetSoilClassification()" class="btn-secondary text-white px-6 py-4 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
-                    🔄 إعادة تعيين — Reset
-                </button>
-            </div>
-
-            <div id="soilClassValidation" class="mb-6"></div>
-
-            <!-- Results Section -->
-            <div id="soilClassResults" class="hidden">
-                <!-- USCS Classification Result -->
-                <div class="section-card p-6 mb-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">📋</span>
-                        تصنيف USCS — Unified Soil Classification System (ASTM D2487)
-                    </h3>
-                    
-                    <div class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-6 rounded-xl shadow-lg text-center mb-4">
-                        <div class="text-lg font-bold mb-2 opacity-90">رمز USCS — USCS Symbol</div>
-                        <div class="text-5xl font-bold mb-2" id="sc_uscs_symbol">—</div>
-                        <div class="text-xl" id="sc_uscs_desc">—</div>
-                        <div class="text-sm mt-2 opacity-80" id="sc_uscs_name_ar">—</div>
-                    </div>
-
-                    <div class="grid md:grid-cols-3 gap-4">
-                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 text-center">
-                            <div class="text-sm text-gray-600 mb-1">نوع التربة</div>
-                            <div class="font-bold text-blue-700" id="sc_uscs_type">—</div>
-                        </div>
-                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 text-center">
-                            <div class="text-sm text-gray-600 mb-1">موقع A-Line</div>
-                            <div class="font-bold text-blue-700" id="sc_uscs_aline">—</div>
-                        </div>
-                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 text-center">
-                            <div class="text-sm text-gray-600 mb-1">ملاحظات</div>
-                            <div class="font-bold text-blue-700" id="sc_uscs_notes">—</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- AASHTO Classification Result -->
-                <div class="section-card p-6 mb-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <span class="bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">📋</span>
-                        تصنيف AASHTO — <span id="aashtoRefDisplay">AASHTO M 145</span>
-                    </h3>
-                    
-                    <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-6 rounded-xl shadow-lg text-center mb-4">
-                        <div class="text-lg font-bold mb-2 opacity-90">مجموعة AASHTO — AASHTO Group</div>
-                        <div class="text-5xl font-bold mb-2" id="sc_aashto_group">—</div>
-                        <div class="text-xl" id="sc_aashto_desc">—</div>
-                    </div>
-
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div class="bg-green-50 p-4 rounded-lg border border-green-200 text-center">
-                            <div class="text-sm text-gray-600 mb-1">دليل المجموعة — Group Index (GI)</div>
-                            <div class="text-3xl font-bold text-green-700" id="sc_aashto_gi">—</div>
-                            <div class="text-xs text-gray-500 mt-1">GI = (F-35)[0.2+0.005(LL-40)] + 0.01(F-15)(PI-10)</div>
-                        </div>
-                        <div class="bg-green-50 p-4 rounded-lg border border-green-200 text-center">
-                            <div class="text-sm text-gray-600 mb-1">تقييم التربة — Soil Evaluation</div>
-                            <div class="text-xl font-bold text-green-700" id="sc_aashto_eval">—</div>
-                            <div class="text-xs text-gray-500 mt-1" id="sc_aashto_eval_desc">—</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- AASHTO Groups Reference Table -->
-                <details class="section-card p-6 mb-6">
-                    <summary class="text-lg font-bold text-gray-800 cursor-pointer flex items-center gap-2">
-                        <span class="text-xl">📖</span>
-                        جدول مجموعات AASHTO — AASHTO Classification Groups
-                    </summary>
-                    <div class="mt-4 overflow-x-auto">
-                        <table class="w-full text-sm border-collapse">
-                            <thead>
-                                <tr class="bg-green-600 text-white">
-                                    <th class="p-2 border" rowspan="2">التصنيف العام</th>
-                                    <th class="p-2 border" colspan="7">مواد حبيبية (35% أو أقل مار من No.200)</th>
-                                    <th class="p-2 border" colspan="4">مواد طمي-طين (أكثر من 35% مار من No.200)</th>
-                                </tr>
-                                <tr class="bg-green-500 text-white">
-                                    <th class="p-2 border">A-1-a</th>
-                                    <th class="p-2 border">A-1-b</th>
-                                    <th class="p-2 border">A-3</th>
-                                    <th class="p-2 border">A-2-4</th>
-                                    <th class="p-2 border">A-2-5</th>
-                                    <th class="p-2 border">A-2-6</th>
-                                    <th class="p-2 border">A-2-7</th>
-                                    <th class="p-2 border">A-4</th>
-                                    <th class="p-2 border">A-5</th>
-                                    <th class="p-2 border">A-6</th>
-                                    <th class="p-2 border">A-7</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="bg-gray-50">
-                                    <td class="p-2 border font-semibold">% مار No.10</td>
-                                    <td class="p-2 border text-center">≤50</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">—</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border font-semibold">% مار No.40</td>
-                                    <td class="p-2 border text-center">≤30</td>
-                                    <td class="p-2 border text-center">≤50</td>
-                                    <td class="p-2 border text-center">>50</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">—</td>
-                                </tr>
-                                <tr class="bg-gray-50">
-                                    <td class="p-2 border font-semibold">% مار No.200</td>
-                                    <td class="p-2 border text-center">≤15</td>
-                                    <td class="p-2 border text-center">≤25</td>
-                                    <td class="p-2 border text-center">≤10</td>
-                                    <td class="p-2 border text-center">≤35</td>
-                                    <td class="p-2 border text-center">≤35</td>
-                                    <td class="p-2 border text-center">≤35</td>
-                                    <td class="p-2 border text-center">≤35</td>
-                                    <td class="p-2 border text-center">>35</td>
-                                    <td class="p-2 border text-center">>35</td>
-                                    <td class="p-2 border text-center">>35</td>
-                                    <td class="p-2 border text-center">>35</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border font-semibold">LL (حد السيولة)</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">—</td>
-                                    <td class="p-2 border text-center">NP</td>
-                                    <td class="p-2 border text-center">≤40</td>
-                                    <td class="p-2 border text-center">>40</td>
-                                    <td class="p-2 border text-center">≤40</td>
-                                    <td class="p-2 border text-center">>40</td>
-                                    <td class="p-2 border text-center">≤40</td>
-                                    <td class="p-2 border text-center">>40</td>
-                                    <td class="p-2 border text-center">≤40</td>
-                                    <td class="p-2 border text-center">>40</td>
-                                </tr>
-                                <tr class="bg-gray-50">
-                                    <td class="p-2 border font-semibold">PI (دليل اللدونة)</td>
-                                    <td class="p-2 border text-center">≤6</td>
-                                    <td class="p-2 border text-center">≤6</td>
-                                    <td class="p-2 border text-center">NP</td>
-                                    <td class="p-2 border text-center">≤10</td>
-                                    <td class="p-2 border text-center">≤10</td>
-                                    <td class="p-2 border text-center">>10</td>
-                                    <td class="p-2 border text-center">>10</td>
-                                    <td class="p-2 border text-center">≤10</td>
-                                    <td class="p-2 border text-center">≤10</td>
-                                    <td class="p-2 border text-center">>10</td>
-                                    <td class="p-2 border text-center">>10</td>
-                                </tr>
-                                <tr class="bg-yellow-50">
-                                    <td class="p-2 border font-semibold">المواد النموذجية</td>
-                                    <td class="p-2 border text-center text-xs">حجر مكسر</td>
-                                    <td class="p-2 border text-center text-xs">حصى ورمل</td>
-                                    <td class="p-2 border text-center text-xs">رمل ناعم</td>
-                                    <td class="p-2 border text-center text-xs" colspan="4">حصى ورمل طميي/طيني</td>
-                                    <td class="p-2 border text-center text-xs" colspan="2">تربة طميية</td>
-                                    <td class="p-2 border text-center text-xs" colspan="2">تربة طينية</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </details>
-
-                <!-- Proctor Data Display -->
-                <div id="sc_proctorData" class="hidden section-card p-6 mb-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <span class="bg-orange-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">🔨</span>
-                        بيانات الدمك — Compaction Data (D1557) — للعرض فقط
-                    </h3>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div class="bg-orange-50 p-4 rounded-lg border border-orange-200 text-center">
-                            <div class="text-sm text-gray-600 mb-1">OMC — المحتوى المائي الأمثل</div>
-                            <div class="text-2xl font-bold text-orange-700" id="sc_OMC">—</div>
-                            <div class="text-sm text-gray-500">%</div>
-                        </div>
-                        <div class="bg-orange-50 p-4 rounded-lg border border-orange-200 text-center">
-                            <div class="text-sm text-gray-600 mb-1">MDD — الكثافة الجافة القصوى</div>
-                            <div class="text-2xl font-bold text-orange-700" id="sc_MDD">—</div>
-                            <div class="text-sm text-gray-500" id="sc_MDD_unit">g/cm³</div>
-                        </div>
-                    </div>
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 text-center">
+                    <div class="text-sm text-gray-600 mb-1">ملاحظات</div>
+                    <div class="font-bold text-blue-700" id="sc_uscs_notes">—</div>
                 </div>
             </div>
         </div>
 
+        <!-- AASHTO Classification Result -->
+        <div class="section-card p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span class="bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">📋</span>
+                تصنيف AASHTO — <span id="aashtoRefDisplay">AASHTO M 145</span>
+            </h3>
+            
+            <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-6 rounded-xl shadow-lg text-center mb-4">
+                <div class="text-lg font-bold mb-2 opacity-90">مجموعة AASHTO — AASHTO Group</div>
+                <div class="text-5xl font-bold mb-2" id="sc_aashto_group">—</div>
+                <div class="text-xl" id="sc_aashto_desc">—</div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-green-50 p-4 rounded-lg border border-green-200 text-center">
+                    <div class="text-sm text-gray-600 mb-1">دليل المجموعة — Group Index (GI)</div>
+                    <div class="text-3xl font-bold text-green-700" id="sc_aashto_gi">—</div>
+                    <div class="text-xs text-gray-500 mt-1">GI = (F-35)[0.2+0.005(LL-40)] + 0.01(F-15)(PI-10)</div>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg border border-green-200 text-center">
+                    <div class="text-sm text-gray-600 mb-1">تقييم التربة — Soil Evaluation</div>
+                    <div class="text-xl font-bold text-green-700" id="sc_aashto_eval">—</div>
+                    <div class="text-xs text-gray-500 mt-1" id="sc_aashto_eval_desc">—</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AASHTO Groups Reference Table - CORRECTED ✅ -->
+        <details class="section-card p-6 mb-6">
+            <summary class="text-lg font-bold text-gray-800 cursor-pointer flex items-center gap-2">
+                <span class="text-xl">📖</span>
+                جدول مجموعات AASHTO — AASHTO Classification Groups (ASTM D3282 - TABLE 2)
+            </summary>
+            <div class="mt-4 overflow-x-auto">
+                <table class="w-full text-sm border-collapse">
+                    <!-- Header Row 1 -->
+                    <thead>
+                        <tr class="bg-green-700 text-white">
+                            <th class="p-3 border" rowspan="2" colspan="2">التصنيف العام<br/>General Classification</th>
+                            <th class="p-3 border" colspan="7">مواد حبيبية — 35% أو أقل مار No.200<br/>Granular Materials — 35% or Less Passing 75 μm (No. 200)</th>
+                            <th class="p-3 border" colspan="4">مواد طمي-طين — أكثر من 35% مار No.200<br/>Silt-Clay Materials — More Than 35% Passing 75 μm (No. 200)</th>
+                        </tr>
+                        <!-- Header Row 2 -->
+                        <tr class="bg-green-600 text-white">
+                            <th class="p-3 border">A-1-a</th>
+                            <th class="p-3 border">A-1-b</th>
+                            <th class="p-3 border">A-3</th>
+                            <th class="p-3 border">A-2-4</th>
+                            <th class="p-3 border">A-2-5</th>
+                            <th class="p-3 border">A-2-6</th>
+                            <th class="p-3 border">A-2-7</th>
+                            <th class="p-3 border">A-4</th>
+                            <th class="p-3 border">A-5</th>
+                            <th class="p-3 border">A-6</th>
+                            <th class="p-3 border">A-7-5 / A-7-6</th>
+                        </tr>
+                    </thead>
+                    <!-- Data Rows -->
+                    <tbody>
+                        <!-- Sieve Analysis Row 1: No.10 (2.00 mm) -->
+                        <tr class="bg-white hover:bg-gray-50">
+                            <td class="p-3 border font-bold" rowspan="4">Sieve Analysis, % passing<br/>تحليل غربال — % مار</td>
+                            <td class="p-3 border font-semibold bg-gray-100">2.00 mm (No. 10)</td>
+                            <td class="p-3 border text-center">50 max</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">—</td>
+                        </tr>
+                        
+                        <!-- Sieve Analysis Row 2: No.40 (425 μm) -->
+                        <tr class="bg-white hover:bg-gray-50">
+                            <td class="p-3 border font-semibold bg-gray-100">425 μm (No. 40)</td>
+                            <td class="p-3 border text-center">30 max</td>
+                            <td class="p-3 border text-center">50 max</td>
+                            <td class="p-3 border text-center">51 min</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">—</td>
+                        </tr>
+                        
+                        <!-- Sieve Analysis Row 3: No.200 (75 μm) - KEY ROW ✅ -->
+                        <tr class="bg-blue-50 hover:bg-blue-100 border-blue-300">
+                            <td class="p-3 border font-semibold bg-blue-100">75 μm (No. 200)</td>
+                            <td class="p-3 border text-center font-bold text-blue-700">15 max</td>
+                            <td class="p-3 border text-center font-bold text-blue-700">25 max</td>
+                            <td class="p-3 border text-center font-bold text-blue-700">10 max</td>
+                            <td class="p-3 border text-center font-bold text-blue-700">35 max</td>
+                            <td class="p-3 border text-center font-bold text-blue-700">35 max</td>
+                            <td class="p-3 border text-center font-bold text-blue-700">35 max</td>
+                            <td class="p-3 border text-center font-bold text-blue-700">35 max</td>
+                            <td class="p-3 border text-center font-bold text-blue-700">36 min</td>
+                            <td class="p-3 border text-center font-bold text-blue-700">36 min</td>
+                            <td class="p-3 border text-center font-bold text-blue-700">36 min</td>
+                            <td class="p-3 border text-center font-bold text-blue-700">36 min</td>
+                        </tr>
+
+                        <!-- Characteristics of Fraction Passing 425 μm Header -->
+                        <tr class="bg-yellow-100">
+                            <td class="p-3 border font-semibold bg-yellow-200" colspan="12">Characteristics of Fraction Passing 425 μm (No. 40)<br/>خصائص الجزء المار من 425 ميكرون</td>
+                        </tr>
+
+                        <!-- Liquid Limit Row - LL ✅ -->
+                        <tr class="bg-white hover:bg-gray-50">
+                            <td class="p-3 border font-semibold" colspan="2">Liquid Limit (LL) — حد السيولة</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">N.P.</td>
+                            <td class="p-3 border text-center font-bold text-orange-600">40 max</td>
+                            <td class="p-3 border text-center font-bold text-orange-600">41 min</td>
+                            <td class="p-3 border text-center font-bold text-orange-600">40 max</td>
+                            <td class="p-3 border text-center font-bold text-orange-600">41 min</td>
+                            <td class="p-3 border text-center font-bold text-orange-600">40 max</td>
+                            <td class="p-3 border text-center font-bold text-orange-600">41 min</td>
+                            <td class="p-3 border text-center font-bold text-orange-600">40 max</td>
+                            <td class="p-3 border text-center font-bold text-orange-600">41 min</td>
+                        </tr>
+
+                        <!-- Plasticity Index Row - PI ✅ -->
+                        <tr class="bg-gray-50 hover:bg-gray-100">
+                            <td class="p-3 border font-semibold" colspan="2">Plasticity Index (PI) — دليل اللدونة</td>
+                            <td class="p-3 border text-center">6 max</td>
+                            <td class="p-3 border text-center">—</td>
+                            <td class="p-3 border text-center">N.P.</td>
+                            <td class="p-3 border text-center font-bold text-red-600">10 max</td>
+                            <td class="p-3 border text-center font-bold text-red-600">10 max</td>
+                            <td class="p-3 border text-center font-bold text-red-600">11 min</td>
+                            <td class="p-3 border text-center font-bold text-red-600">11 min</td>
+                            <td class="p-3 border text-center font-bold text-red-600">10 max</td>
+                            <td class="p-3 border text-center font-bold text-red-600">10 max</td>
+                            <td class="p-3 border text-center font-bold text-red-600">11 min</td>
+                            <td class="p-3 border text-center font-bold text-red-600">11 min¹</td>
+                        </tr>
+
+                        <!-- Usual Types Row -->
+                        <tr class="bg-yellow-50 border-yellow-200">
+                            <td class="p-3 border font-semibold" colspan="2">Usual Types of Significant<br/>Constituent Materials<br/>المواد النموذجية</td>
+                            <td class="p-3 border text-center text-xs">حجر مكسر<br/>وحصى ورمل</td>
+                            <td class="p-3 border text-center text-xs">رمل خشن</td>
+                            <td class="p-3 border text-center text-xs">رمل ناعم</td>
+                            <td class="p-3 border text-center text-xs" colspan="4">حصى ورمل طميي<br/>أو طيني</td>
+                            <td class="p-3 border text-center text-xs" colspan="2">تربة طميية<br/>Silty Soils</td>
+                            <td class="p-3 border text-center text-xs" colspan="2">تربة طينية<br/>Clayey Soils</td>
+                        </tr>
+
+                        <!-- General Rating Row -->
+                        <tr class="bg-green-700 text-white font-bold">
+                            <td class="p-3 border" colspan="2">General Rating as Subgrade<br/>التقييم العام كأساس طريق</td>
+                            <td class="p-3 border text-center" colspan="7">Excellent to Good<br/>ممتاز إلى جيد</td>
+                            <td class="p-3 border text-center" colspan="4">Fair to Poor<br/>متوسط إلى ضعيف</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- Notes -->
+                <div class="mt-4 bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                    <p class="text-xs text-gray-700 mb-2">
+                        <strong>¹ملاحظة مهمة:</strong> دليل اللدونة PI للمجموعة A-7-5 يساوي أو أقل من (LL − 30)، بينما PI للمجموعة A-7-6 أكبر من (LL − 30).
+                    </p>
+                    <p class="text-xs text-gray-700">
+                        <strong>المرجع:</strong> ASTM D3282 - 15: TABLE 2 — Classification of Soils and Soil-Aggregate Mixtures
+                    </p>
+                </div>
+            </div>
+        </details>
+
+        <!-- Proctor Data Display -->
+        <div id="sc_proctorData" class="hidden section-card p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span class="bg-orange-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">🔨</span>
+                بيانات الدمك — Compaction Data (D1557) — للعرض فقط
+            </h3>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-orange-50 p-4 rounded-lg border border-orange-200 text-center">
+                    <div class="text-sm text-gray-600 mb-1">OMC — المحتوى المائي الأمثل</div>
+                    <div class="text-2xl font-bold text-orange-700" id="sc_OMC">—</div>
+                    <div class="text-sm text-gray-500">%</div>
+                </div>
+                <div class="bg-orange-50 p-4 rounded-lg border border-orange-200 text-center">
+                    <div class="text-sm text-gray-600 mb-1">MDD — الكثافة الجافة القصوى</div>
+                    <div class="text-2xl font-bold text-orange-700" id="sc_MDD">—</div>
+                    <div class="text-sm text-gray-500" id="sc_MDD_unit">g/cm³</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        
         <!-- ============================================= -->
         <!-- D2216 SECTION - Water (Moisture) Content -->
         <!-- ============================================= -->
