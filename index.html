@@ -2968,7 +2968,7 @@
             </div>
         </div>  
     </footer>
-    <!-- ============================================= -->
+     <!-- ============================================= -->
     <!-- CBR SECTION - ASTM D1883 -->
     <!-- ============================================= -->
     <div id="sectionCBR" class="hidden">
@@ -2985,6 +2985,38 @@
             </div>
         </div>
 
+        <!-- MODE SELECTOR (جديد - مهم جداً) -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl mb-6 border-3 border-blue-300 shadow-md">
+            <h3 class="text-right text-2xl font-bold text-blue-900 mb-4">🔧 اختر طريقة الاختبار:</h3>
+            <div class="flex gap-4 justify-center flex-wrap">
+                <button id="cbr_mode_single" onclick="setCBRMode('single')" class="cbr-mode-btn px-8 py-4 font-bold text-lg rounded-lg border-2 bg-blue-600 text-white border-blue-700 hover:scale-105 transition duration-200 shadow-md">
+                    📊 عينة واحدة
+                </button>
+                <button id="cbr_mode_multiple" onclick="setCBRMode('multiple')" class="cbr-mode-btn px-8 py-4 font-bold text-lg rounded-lg border-2 bg-gray-400 text-white border-gray-500 hover:scale-105 transition duration-200 shadow-md">
+                    📈 ثلاث عينات
+                </button>
+            </div>
+        </div>
+
+        <!-- SAMPLE SELECTION (جديد - مخفي في البداية) -->
+        <div id="cbr_sample_selection" class="hidden bg-gradient-to-r from-gray-50 to-gray-100 p-6 rounded-lg mb-6 border-2 border-gray-300 shadow-md">
+            <h3 class="text-right text-lg font-bold text-gray-800 mb-4">✏️ اختر العينة المراد إدخال بياناتها:</h3>
+            <div class="flex gap-3 justify-center flex-wrap">
+                <button id="cbr_sample1_btn" onclick="switchToSample(1)" class="px-6 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition duration-200 shadow-md">
+                    🔴 العينة 1
+                </button>
+                <button id="cbr_sample2_btn" onclick="switchToSample(2)" class="px-6 py-3 bg-gray-400 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-200 shadow-md">
+                    🔵 العينة 2
+                </button>
+                <button id="cbr_sample3_btn" onclick="switchToSample(3)" class="px-6 py-3 bg-gray-400 text-white font-bold rounded-lg hover:bg-green-600 transition duration-200 shadow-md">
+                    🟢 العينة 3
+                </button>
+                <button onclick="resetAllSamples()" class="px-6 py-3 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition duration-200 shadow-md">
+                    🗑️ حذف الكل
+                </button>
+            </div>
+        </div>
+
         <!-- Test Settings Section -->
         <div class="bg-white p-6 rounded-lg shadow-md mb-6 border-l-4 border-red-600">
             <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -2995,26 +3027,26 @@
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">رقم العينة</label>
-                    <input type="text" id="cbr_sampleId" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-600 focus:outline-none" placeholder="CBR-001">
+                    <input type="text" id="cbr_sampleId" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-600 focus:outline-none transition" placeholder="CBR-001">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">تاريخ الاختبار</label>
-                    <input type="date" id="cbr_testDate" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-600 focus:outline-none">
+                    <input type="date" id="cbr_testDate" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-600 focus:outline-none transition">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">نوع الدمك</label>
-                    <select id="cbr_compactionType" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-600 focus:outline-none">
+                    <select id="cbr_compactionType" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-600 focus:outline-none transition">
                         <option value="D698">Standard (D698)</option>
                         <option value="D1557">Modified (D1557)</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">فترة الغمر (ساعة)</label>
-                    <input type="number" id="cbr_soakingHours" value="96" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-600 focus:outline-none" min="0" max="168">
+                    <input type="number" id="cbr_soakingHours" value="96" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-600 focus:outline-none transition" min="0" max="168">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">معامل المؤشر</label>
-                    <input type="number" id="cbr_dialCalibration" value="1.0" step="0.01" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-600 focus:outline-none" placeholder="0.5-2.0">
+                    <input type="number" id="cbr_dialCalibration" value="1.0" step="0.01" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-600 focus:outline-none transition" placeholder="0.5-2.0">
                 </div>
             </div>
         </div>
@@ -3029,19 +3061,19 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="bg-purple-50 p-4 rounded-lg border-2 border-purple-200">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">الكثافة الجافة (lbf/ft³)</label>
-                    <input type="number" id="cbr_dryUnitWeight" step="0.1" placeholder="115.0" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-purple-600 focus:outline-none">
+                    <input type="number" id="cbr_dryUnitWeight" step="0.1" placeholder="115.0" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-purple-600 focus:outline-none transition">
                 </div>
                 <div class="bg-orange-50 p-4 rounded-lg border-2 border-orange-200">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">الارتفاع الأولي (mm)</label>
-                    <input type="number" id="cbr_initialHeight" step="0.1" placeholder="127.5" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-orange-600 focus:outline-none">
+                    <input type="number" id="cbr_initialHeight" step="0.1" placeholder="127.5" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-orange-600 focus:outline-none transition">
                 </div>
                 <div class="bg-orange-50 p-4 rounded-lg border-2 border-orange-200">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">الارتفاع بعد الغمر (mm)</label>
-                    <input type="number" id="cbr_soakedHeight" step="0.1" placeholder="128.2" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-orange-600 focus:outline-none">
+                    <input type="number" id="cbr_soakedHeight" step="0.1" placeholder="128.2" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-orange-600 focus:outline-none transition">
                 </div>
                 <div class="bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">نسبة الانتفاش (%)</label>
-                    <input type="number" id="cbr_swellingPercent" step="0.1" readonly placeholder="محسوب تلقائياً" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 bg-gray-100 text-gray-600">
+                    <input type="number" id="cbr_swellingPercent" step="0.1" readonly placeholder="محسوب تلقائياً" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 bg-gray-100 text-gray-600 cursor-not-allowed">
                 </div>
             </div>
         </div>
@@ -3049,7 +3081,7 @@
         <!-- Penetration Data Table -->
         <div class="bg-white p-6 rounded-lg shadow-md mb-6 border-l-4 border-red-600">
             <h3 class="text-xl font-bold text-gray-800 mb-4">بيانات الاختراق — Penetration Data</h3>
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto rounded-lg border border-gray-300">
                 <table class="w-full border-collapse text-sm">
                     <thead>
                         <tr class="bg-gradient-to-r from-red-700 to-red-600 text-white">
@@ -3069,13 +3101,13 @@
 
         <!-- Action Buttons -->
         <div class="flex flex-wrap gap-4 justify-center mb-6">
-            <button onclick="calculateCBR()" class="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
+            <button onclick="calculateCBR()" class="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2 transition duration-200 transform hover:scale-105">
                 🧮 احسب CBR — Calculate
             </button>
-            <button onclick="resetCBR()" class="bg-gray-500 hover:bg-gray-600 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
+            <button onclick="resetCBR()" class="bg-gray-500 hover:bg-gray-600 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2 transition duration-200 transform hover:scale-105">
                 🔄 إعادة تعيين — Reset
             </button>
-            <button onclick="loadCBRExample()" class="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
+            <button onclick="loadCBRExample()" class="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2 transition duration-200 transform hover:scale-105">
                 📝 تحميل مثال — Load Example
             </button>
         </div>
@@ -3086,19 +3118,19 @@
         <div id="cbr_results" class="hidden mb-6">
             <h3 class="text-xl font-bold text-gray-800 mb-4">النتائج النهائية — Final Results</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-xl shadow-lg text-center">
+                <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-xl shadow-lg text-center hover:shadow-2xl transition transform hover:scale-105">
                     <div class="text-sm font-semibold mb-2">CBR @ 0.1"</div>
                     <div class="text-4xl font-bold" id="cbr_value_01">—</div>
                 </div>
-                <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-xl shadow-lg text-center">
+                <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-xl shadow-lg text-center hover:shadow-2xl transition transform hover:scale-105">
                     <div class="text-sm font-semibold mb-2">CBR @ 0.2"</div>
                     <div class="text-4xl font-bold" id="cbr_value_02">—</div>
                 </div>
-                <div class="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-6 rounded-xl shadow-lg text-center">
+                <div class="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-6 rounded-xl shadow-lg text-center hover:shadow-2xl transition transform hover:scale-105">
                     <div class="text-sm font-semibold mb-2">الانتفاش</div>
                     <div class="text-4xl font-bold" id="cbr_swell_display">—</div>
                 </div>
-                <div class="bg-gradient-to-br from-teal-500 to-teal-600 text-white p-6 rounded-xl shadow-lg text-center">
+                <div class="bg-gradient-to-br from-teal-500 to-teal-600 text-white p-6 rounded-xl shadow-lg text-center hover:shadow-2xl transition transform hover:scale-105">
                     <div class="text-sm font-semibold mb-2">الكثافة الجافة</div>
                     <div class="text-3xl font-bold" id="cbr_dryWeight_display">—</div>
                 </div>
@@ -3107,82 +3139,58 @@
 
         <!-- Chart Section -->
         <div id="cbr_chartWrap" class="hidden bg-white p-6 rounded-lg shadow-md mb-6 border-l-4 border-indigo-600">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">منحنى الحمل مقابل الاختراق</h3>
-            <div style="height: 500px;">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">منحنى الحمل مقابل الاختراق — Load vs Penetration Curve</h3>
+            <div style="height: 500px; position: relative;">
                 <canvas id="cbr_chart"></canvas>
             </div>
         </div>
 
     </div>
     <!-- =============== END CBR SECTION =============== -->
+
     <script>
-   // =============================================
-// TAB SWITCHING
-// =============================================
-let currentTab = 'D6913';
+    // =============================================
+    // TAB SWITCHING - Updated
+    // =============================================
+    let currentTab = 'D6913';
 
-function switchTab(tab) {
-    currentTab = tab;
+    function switchTab(tab) {
+        currentTab = tab;
 
-    // Update tab buttons
-    document.getElementById('tabD6913').className =
-        tab === 'D6913'
-            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+        // Update all tab buttons safely
+        const tabIds = ['tabD6913', 'tabD422', 'tabD4318', 'tabSoilClass', 'tabD1557', 'tabD2216', 'tabD854', 'tabCBR'];
+        const sectionIds = ['sectionD6913', 'sectionD422', 'sectionD4318', 'sectionSoilClass', 'sectionD1557', 'sectionD2216', 'sectionD854', 'sectionCBR'];
+        const tabNames = ['D6913', 'D422', 'D4318', 'SoilClass', 'D1557', 'D2216', 'D854', 'CBR'];
 
-    document.getElementById('tabD422').className =
-        tab === 'D422'
-            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+        tabIds.forEach((tabId, index) => {
+            const tabEl = document.getElementById(tabId);
+            const sectionEl = document.getElementById(sectionIds[index]);
+            
+            if (tabEl) {
+                // CBR Tab styling
+                if (tabNames[index] === 'CBR') {
+                    tabEl.className = tab === 'CBR'
+                        ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 transition'
+                        : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap bg-gray-400 text-white hover:bg-gray-500 transition';
+                } else {
+                    // Other tabs
+                    tabEl.className = tab === tabNames[index]
+                        ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
+                        : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+                }
+            }
+            
+            if (sectionEl) {
+                sectionEl.classList.toggle('hidden', tab !== tabNames[index]);
+            }
+        });
 
-    document.getElementById('tabD4318').className =
-        tab === 'D4318'
-            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-    document.getElementById('tabSoilClass').className =
-        tab === 'SoilClass'
-            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-    document.getElementById('tabD1557').className =
-        tab === 'D1557'
-            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-    document.getElementById('tabD2216').className =
-        tab === 'D2216'
-            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-    document.getElementById('tabD854').className =
-        tab === 'D854'
-            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-    // ⭐ جديد - CBR Tab
-    document.getElementById('tabCBR').className =
-        tab === 'CBR'
-            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 animate-pulse'
-            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 animate-pulse';
-
-    // Show/hide sections
-    document.getElementById('sectionD6913').classList.toggle('hidden', tab !== 'D6913');
-    document.getElementById('sectionD422').classList.toggle('hidden', tab !== 'D422');
-    document.getElementById('sectionD4318').classList.toggle('hidden', tab !== 'D4318');
-    document.getElementById('sectionSoilClass').classList.toggle('hidden', tab !== 'SoilClass');
-    document.getElementById('sectionD1557').classList.toggle('hidden', tab !== 'D1557');
-    document.getElementById('sectionD2216').classList.toggle('hidden', tab !== 'D2216');
-    document.getElementById('sectionD854').classList.toggle('hidden', tab !== 'D854');
-
-    // ⭐ جديد - CBR Section
-    document.getElementById('sectionCBR').classList.toggle('hidden', tab !== 'CBR');
-
-    // When switching to SoilClass, auto-read data
-    if (tab === 'SoilClass') {
-        autoReadDataForClassification();
+        // When switching to SoilClass, auto-read data
+        if (tab === 'SoilClass' && typeof autoReadDataForClassification === 'function') {
+            autoReadDataForClassification();
+        }
     }
-}
+    </script>
 
         // =============================================
         // D6913 SIEVE DATA DEFINITIONS
