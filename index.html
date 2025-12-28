@@ -4594,13 +4594,14 @@ if (gradationChart) {
             }
         }
 
-       /**
+     /**
  * حساب حدود أتربرج — Calculate Atterberg Limits
  * ASTM D4318-17e1
- * Updated with Non-Plastic Support
+ * Updated with Non-Plastic Support + Method A & B
  */
 function calculateD4318() {
     const isNonPlastic = document.getElementById('isNonPlastic').checked;
+    const method = document.getElementById('d4318_method').value;
     
     // ========================================
     // إذا كانت التربة غير لدنة (NP)
@@ -4615,11 +4616,8 @@ function calculateD4318() {
     }
     
     // ========================================
-    // الحسابات العادية للتربة العادية
-    // ========================================
-    const messages = [];
-    
     // جمع نقاط حد السيولة
+    // ========================================
     const llPoints = [];
     for (let i = 1; i <= LL_ROW_COUNT; i++) {
         const N = parseFloat(document.getElementById(`ll_N_${i}`).value) || 0;
@@ -4637,34 +4635,67 @@ function calculateD4318() {
         }
     }
 
-    // التحقق من عدد النقاط المطلوبة
-    if (llPoints.length < 3) {
-        messages.push({ type: 'error', text: `عدد نقاط حد السيولة غير كافٍ: ${llPoints.length}/3 — يجب 3 نقاط على الأقل` });
-        document.getElementById('d4318_validationMessages').innerHTML = messages.map(m => 
-            `<div class="validation-msg validation-error">❌ ${m.text}</div>`
-        ).join('');
-        return;
+    // ========================================
+    // Method A: Multipoint (متعدد النقاط)
+    // ========================================
+    if (method === 'A') {
+        // التحقق من عدد النقاط المطلوبة
+        if (llPoints.length < 3) {
+            showD4318ValidationMessage(
+                `❌ عدد نقاط حد السيولة غير كافٍ: ${llPoints.length}/3 — يجب 3 نقاط على الأقل في Method A`,
+                'error'
+            );
+            return;
+        }
+
+        // حساب LL باستخدام Linear Regression على log10(N) vs w
+        const n = llPoints.length;
+        const sumX = llPoints.reduce((s, p) => s + p.logN, 0);
+        const sumY = llPoints.reduce((s, p) => s + p.w, 0);
+        const sumXY = llPoints.reduce((s, p) => s + p.logN * p.w, 0);
+        const sumX2 = llPoints.reduce((s, p) => s + p.logN * p.logN, 0);
+
+        const xMean = sumX / n;
+        const yMean = sumY / n;
+
+        // Slope (m) و Intercept (b) للمعادلة y = mx + b
+        const slope = (sumXY - n * xMean * yMean) / (sumX2 - n * xMean * xMean);
+        const intercept = yMean - slope * xMean;
+
+        // LL عند N = 25
+        const log25 = Math.log10(25);
+        const LL = slope * log25 + intercept;
+
+        // إنهاء الحساب بـ Method A
+        completeD4318Calculation(llPoints, LL, slope, method);
+    } 
+    // ========================================
+    // Method B: One-Point (نقطة واحدة)
+    // ========================================
+    else if (method === 'B') {
+        // نقطة واحدة فقط كافية
+        if (llPoints.length < 1) {
+            showD4318ValidationMessage(
+                `❌ لم يتم إدخال أي نقاط — يجب إدخال نقطة واحدة على الأقل في Method B`,
+                'error'
+            );
+            return;
+        }
+
+        // استخدام الصيغة: LL = w × (N/25)^0.121
+        const point = llPoints[0];
+        const LL = point.w * Math.pow(point.N / 25, 0.121);
+
+        // إنهاء الحساب بـ Method B
+        completeD4318Calculation(llPoints, LL, 0, method);
     }
+}
 
-    // حساب LL باستخدام Linear Regression على log10(N) vs w
-    // Method A: LL = w عند N = 25
-    const n = llPoints.length;
-    const sumX = llPoints.reduce((s, p) => s + p.logN, 0);
-    const sumY = llPoints.reduce((s, p) => s + p.w, 0);
-    const sumXY = llPoints.reduce((s, p) => s + p.logN * p.w, 0);
-    const sumX2 = llPoints.reduce((s, p) => s + p.logN * p.logN, 0);
-
-    const xMean = sumX / n;
-    const yMean = sumY / n;
-
-    // Slope (m) و Intercept (b) للمعادلة y = mx + b
-    const slope = (sumXY - n * xMean * yMean) / (sumX2 - n * xMean * xMean);
-    const intercept = yMean - slope * xMean;
-
-    // LL عند N = 25
-    const log25 = Math.log10(25);
-    const LL = slope * log25 + intercept;
-
+/**
+ * إكمال حساب D4318 (المشترك بين Method A و B)
+ * Complete D4318 Calculation
+ */
+function completeD4318Calculation(llPoints, LL, slope, method) {
     // جمع قيم حد اللدونة
     const plValues = [];
     for (let i = 1; i <= PL_ROW_COUNT; i++) {
@@ -4683,10 +4714,10 @@ function calculateD4318() {
     }
 
     if (plValues.length === 0) {
-        messages.push({ type: 'error', text: 'لا توجد بيانات صالحة لحد اللدونة' });
-        document.getElementById('d4318_validationMessages').innerHTML = messages.map(m => 
-            `<div class="validation-msg validation-error">❌ ${m.text}</div>`
-        ).join('');
+        showD4318ValidationMessage(
+            '❌ لا توجد بيانات صالحة لحد اللدونة',
+            'error'
+        );
         return;
     }
 
@@ -4714,17 +4745,22 @@ function calculateD4318() {
 
     // إظهار قسم النتائج
     document.getElementById('d4318_results').classList.remove('hidden');
-    document.getElementById('d4318_chartWrap').classList.remove('hidden');
-
-    // رسم الرسم البياني
-    drawD4318Chart(llPoints, LL, slope, intercept);
+    
+    // إظهار الرسم البياني فقط في Method A
+    if (method === 'A') {
+        document.getElementById('d4318_chartWrap').classList.remove('hidden');
+        drawD4318Chart(llPoints, LL, slope, 0);
+    } else {
+        document.getElementById('d4318_chartWrap').classList.add('hidden');
+    }
 
     // إنشاء JSON
-    generateD4318JSON(llPoints, plValues, LL, PL, PI, slope);
+    generateD4318JSON(llPoints, plValues, LL, PL, PI, slope, method);
 
     // رسالة النجاح
+    const methodText = method === 'A' ? 'Method A (Multipoint)' : 'Method B (One-Point)';
     document.getElementById('d4318_validationMessages').innerHTML = 
-        '<div class="validation-msg validation-success">✅ تم الحساب بنجاح — Calculation completed successfully</div>';
+        `<div class="validation-msg validation-success">✅ تم الحساب بنجاح (${methodText}) — Calculation completed successfully</div>`;
 }
 
 /**
@@ -4931,24 +4967,27 @@ function drawD4318Chart(points, LL, slope, intercept) {
  * إنشاء JSON للنتائج
  * Generate D4318 JSON Output
  */
-function generateD4318JSON(llPoints, plValues, LL, PL, PI, flowIndex) {
+function generateD4318JSON(llPoints, plValues, LL, PL, PI, flowIndex, method) {
     const isNonPlastic = document.getElementById('isNonPlastic').checked;
     
     const output = {
         testInfo: {
             standard: "ASTM D4318-17e1",
-            method: isNonPlastic ? 'Non-Plastic (NP)' : (document.getElementById('d4318_method').value === 'A' ? 'Method A - Multipoint' : 'Method B - One-Point'),
+            method: isNonPlastic ? 'Non-Plastic (NP)' : (method === 'A' ? 'Method A - Multipoint' : 'Method B - One-Point'),
             sampleId: document.getElementById('d4318_sampleId').value,
             testDate: document.getElementById('d4318_testDate').value
         },
         liquidLimit: isNonPlastic ? {
             points: [],
             flowIndex: null,
-            LL_percent: 'NP'
+            LL_percent: 'NP',
+            method: 'NP'
         } : {
             points: llPoints.map(p => ({ N: p.N, w_percent: parseFloat(p.w.toFixed(1)) })),
-            flowIndex: parseFloat(flowIndex.toFixed(3)),
-            LL_percent: parseFloat(LL.toFixed(1))
+            flowIndex: method === 'A' ? parseFloat(flowIndex.toFixed(3)) : 0.121,
+            LL_percent: parseFloat(LL.toFixed(1)),
+            method: method,
+            formula: method === 'A' ? 'Linear Regression: LL = w @ N=25' : 'One-Point: LL = w × (N/25)^0.121'
         },
         plasticLimit: isNonPlastic ? {
             values_percent: [],
@@ -5075,8 +5114,8 @@ function loadD4318Example() {
  */
 function showD4318ValidationMessage(message, type = 'info') {
     const messagesDiv = document.getElementById('d4318_validationMessages');
-    const bgColor = type === 'success' ? 'bg-green-100 border-green-300' : 'bg-blue-100 border-blue-300';
-    const textColor = type === 'success' ? 'text-green-800' : 'text-blue-800';
+    const bgColor = type === 'success' ? 'bg-green-100 border-green-300' : (type === 'error' ? 'bg-red-100 border-red-300' : 'bg-blue-100 border-blue-300');
+    const textColor = type === 'success' ? 'text-green-800' : (type === 'error' ? 'text-red-800' : 'text-blue-800');
     
     messagesDiv.innerHTML = `
         <div class="validation-msg ${bgColor} ${textColor} p-4 rounded-lg border-2">
