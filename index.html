@@ -5313,376 +5313,368 @@ if (gradationChart) {
             console.log('USCS Classification Result:', uscsOutput);
         }
 
-        // =============================================
-        // SOIL CLASSIFICATION TAB FUNCTIONS (USCS + AASHTO)
-        // =============================================
+     // =============================================
+// SOIL CLASSIFICATION TAB FUNCTIONS (USCS + AASHTO)
+// =============================================
+// ✅ CORRECTED FOR ASTM D3282 - TABLE 2
 
-        /**
-         * قراءة البيانات تلقائياً عند فتح تبويب التصنيف
-         * Auto-read data when switching to classification tab
-         */
-        function autoReadDataForClassification() {
-            const gradation = getGradationDataFromDOM();
-            const atterberg = getAtterbergDataFromDOM();
-            const proctor = getProctorDataFromDOM();
+/**
+ * قراءة البيانات تلقائياً عند فتح تبويب التصنيف
+ * Auto-read data when switching to classification tab
+ */
+function autoReadDataForClassification() {
+    const gradation = getGradationDataFromDOM();
+    const atterberg = getAtterbergDataFromDOM();
+    const proctor = getProctorDataFromDOM();
 
-            // Update display cards
-            document.getElementById('sc_fines').textContent = gradation.percentPassingNo200 !== null ? 
-                gradation.percentPassingNo200.toFixed(1) + '%' : '—';
-            document.getElementById('sc_LL').textContent = atterberg.LL !== null ? 
-                atterberg.LL.toFixed(1) + '%' : '—';
-            document.getElementById('sc_PL').textContent = atterberg.PL !== null ? 
-                atterberg.PL.toFixed(1) + '%' : '—';
-            document.getElementById('sc_PI').textContent = atterberg.PI !== null ? 
-                atterberg.PI.toFixed(1) + '%' : '—';
-            document.getElementById('sc_passNo4').textContent = gradation.percentPassingNo4 !== null ? 
-                gradation.percentPassingNo4.toFixed(1) + '%' : '—';
-            
-            // Get additional sieve data
-            let passNo10 = null, passNo40 = null;
-            if (results && results.final && results.final.length > 0) {
-                const no10Item = results.final.find(item => item.opening === 2.0);
-                const no40Item = results.final.find(item => item.opening === 0.425);
-                if (no10Item) passNo10 = no10Item.ppn;
-                if (no40Item) passNo40 = no40Item.ppn;
+    // Update display cards
+    document.getElementById('sc_fines').textContent = gradation.percentPassingNo200 !== null ? 
+        gradation.percentPassingNo200.toFixed(1) + '%' : '—';
+    document.getElementById('sc_LL').textContent = atterberg.LL !== null ? 
+        atterberg.LL.toFixed(1) + '%' : '—';
+    document.getElementById('sc_PL').textContent = atterberg.PL !== null ? 
+        atterberg.PL.toFixed(1) + '%' : '—';
+    document.getElementById('sc_PI').textContent = atterberg.PI !== null ? 
+        atterberg.PI.toFixed(1) + '%' : '—';
+    document.getElementById('sc_passNo4').textContent = gradation.percentPassingNo4 !== null ? 
+        gradation.percentPassingNo4.toFixed(1) + '%' : '—';
+    
+    // Get additional sieve data
+    let passNo10 = null, passNo40 = null;
+    if (results && results.final && results.final.length > 0) {
+        const no10Item = results.final.find(item => item.opening === 2.0);
+        const no40Item = results.final.find(item => item.opening === 0.425);
+        if (no10Item) passNo10 = no10Item.ppn;
+        if (no40Item) passNo40 = no40Item.ppn;
+    }
+    document.getElementById('sc_passNo10').textContent = passNo10 !== null ? passNo10.toFixed(1) + '%' : '—';
+    document.getElementById('sc_passNo40').textContent = passNo40 !== null ? passNo40.toFixed(1) + '%' : '—';
+    
+    document.getElementById('sc_CuCc').textContent = 
+        (gradation.Cu !== null && gradation.Cc !== null) ? 
+        `${gradation.Cu.toFixed(2)} / ${gradation.Cc.toFixed(2)}` : '—';
+}
+
+/**
+ * حساب دليل المجموعة (Group Index) طبقاً لـ AASHTO
+ * Calculate Group Index per AASHTO M 145 / D3282
+ * GI = (F-35)[0.2 + 0.005(LL-40)] + 0.01(F-15)(PI-10)
+ */
+function calculateGroupIndex(F, LL, PI) {
+    let term1 = (F - 35) * (0.2 + 0.005 * (LL - 40));
+    let term2 = 0.01 * (F - 15) * (PI - 10);
+    
+    if (term1 < 0) term1 = 0;
+    if (term2 < 0) term2 = 0;
+    
+    let GI = term1 + term2;
+    GI = Math.max(0, Math.round(GI));
+    
+    return GI;
+}
+
+/**
+ * تصنيف التربة طبقاً لنظام AASHTO
+ * Classify soil per AASHTO M 145 / ASTM D3282 ✅ CORRECTED
+ */
+function classifyAASHTO(passNo10, passNo40, passNo200, LL, PI) {
+    const F = passNo200;
+    
+    // ========================================
+    // مواد حبيبية — Granular Materials (≤35%)
+    // ========================================
+    if (F <= 35) {
+        // A-1-a: No.200 ≤ 15 max ✅
+        if (F <= 15 && passNo40 !== null && passNo40 <= 30 && PI !== null && PI <= 6) {
+            if (passNo10 !== null && passNo10 <= 50) {
+                return { group: 'A-1-a', subgroup: 'A-1', desc: 'Stone fragments, gravel, and sand', descAr: 'شظايا حجرية وحصى ورمل', gi: 0 };
             }
-            document.getElementById('sc_passNo10').textContent = passNo10 !== null ? passNo10.toFixed(1) + '%' : '—';
-            document.getElementById('sc_passNo40').textContent = passNo40 !== null ? passNo40.toFixed(1) + '%' : '—';
-            
-            document.getElementById('sc_CuCc').textContent = 
-                (gradation.Cu !== null && gradation.Cc !== null) ? 
-                `${gradation.Cu.toFixed(2)} / ${gradation.Cc.toFixed(2)}` : '—';
         }
-
-        /**
-         * حساب دليل المجموعة (Group Index) طبقاً لـ AASHTO
-         * Calculate Group Index per AASHTO M 145 / D3282
-         * GI = (F-35)[0.2 + 0.005(LL-40)] + 0.01(F-15)(PI-10)
-         */
-        function calculateGroupIndex(F, LL, PI) {
-            // F = % passing No.200
-            // Partial GI for A-2-6 and A-2-7: GI = 0.01(F-15)(PI-10)
-            
-            let term1 = (F - 35) * (0.2 + 0.005 * (LL - 40));
-            let term2 = 0.01 * (F - 15) * (PI - 10);
-            
-            // Clamp negative values to 0
-            if (term1 < 0) term1 = 0;
-            if (term2 < 0) term2 = 0;
-            
-            let GI = term1 + term2;
-            
-            // GI should be rounded to nearest whole number and minimum 0
-            GI = Math.max(0, Math.round(GI));
-            
-            return GI;
+        
+        // A-1-b: No.200 ≤ 25 max ✅
+        if (F <= 25 && passNo40 !== null && passNo40 <= 50 && PI !== null && PI <= 6) {
+            return { group: 'A-1-b', subgroup: 'A-1', desc: 'Stone fragments, gravel, and sand', descAr: 'شظايا حجرية وحصى ورمل', gi: 0 };
         }
-
-        /**
-         * تصنيف التربة طبقاً لنظام AASHTO
-         * Classify soil per AASHTO M 145 / ASTM D3282
-         */
-        function classifyAASHTO(passNo10, passNo40, passNo200, LL, PI) {
-            const F = passNo200; // Fines percentage
+        
+        // A-3 Group: No.200 ≤ 10 max ✅
+        if (F <= 10 && passNo40 !== null && passNo40 > 50 && (PI === null || PI === 0 || isNaN(PI))) {
+            return { group: 'A-3', subgroup: 'A-3', desc: 'Fine sand', descAr: 'رمل ناعم', gi: 0 };
+        }
+        
+        // A-2 Group: No.200 ≤ 35 max ✅
+        if (F <= 35) {
+            let gi = calculateGroupIndex(F, LL || 0, PI || 0);
+            let partialGI = Math.max(0, Math.round(0.01 * (F - 15) * ((PI || 0) - 10)));
             
-            // ========================================
-            // مواد حبيبية — Granular Materials (≤35% passing No.200)
-            // ========================================
-            if (F <= 35) {
-                // A-1 Group
-                if (F <= 15 && passNo40 !== null && passNo40 <= 30 && PI <= 6) {
-                    if (passNo10 !== null && passNo10 <= 50) {
-                        return { group: 'A-1-a', subgroup: 'A-1', desc: 'Stone fragments, gravel, and sand', descAr: 'شظايا حجرية وحصى ورمل', gi: 0 };
-                    }
-                }
-                if (F <= 25 && passNo40 !== null && passNo40 <= 50 && PI <= 6) {
-                    return { group: 'A-1-b', subgroup: 'A-1', desc: 'Stone fragments, gravel, and sand', descAr: 'شظايا حجرية وحصى ورمل', gi: 0 };
-                }
-                
-                // A-3 Group (Fine sand)
-                if (F <= 10 && passNo40 !== null && passNo40 > 50 && (PI === null || PI === 0 || isNaN(PI))) {
-                    return { group: 'A-3', subgroup: 'A-3', desc: 'Fine sand', descAr: 'رمل ناعم', gi: 0 };
-                }
-                
-                // A-2 Group
-                if (F <= 35) {
-                    let gi = calculateGroupIndex(F, LL || 0, PI || 0);
-                    // For A-2-6 and A-2-7, use partial GI
-                    let partialGI = Math.max(0, Math.round(0.01 * (F - 15) * ((PI || 0) - 10)));
-                    
-                    if (LL !== null && PI !== null) {
-                        if (LL <= 40 && PI <= 10) {
-                            return { group: 'A-2-4', subgroup: 'A-2', desc: 'Silty or clayey gravel and sand', descAr: 'حصى ورمل طميي أو طيني', gi: 0 };
-                        } else if (LL > 40 && PI <= 10) {
-                            return { group: 'A-2-5', subgroup: 'A-2', desc: 'Silty or clayey gravel and sand', descAr: 'حصى ورمل طميي أو طيني', gi: 0 };
-                        } else if (LL <= 40 && PI > 10) {
-                            return { group: 'A-2-6', subgroup: 'A-2', desc: 'Silty or clayey gravel and sand', descAr: 'حصى ورمل طميي أو طيني', gi: partialGI };
-                        } else if (LL > 40 && PI > 10) {
-                            return { group: 'A-2-7', subgroup: 'A-2', desc: 'Silty or clayey gravel and sand', descAr: 'حصى ورمل طميي أو طيني', gi: partialGI };
-                        }
-                    }
-                    // Default A-2-4 if no LL/PI
+            if (LL !== null && PI !== null) {
+                // A-2-4: LL ≤ 40 max, PI ≤ 10 max ✅
+                if (LL <= 40 && PI <= 10) {
                     return { group: 'A-2-4', subgroup: 'A-2', desc: 'Silty or clayey gravel and sand', descAr: 'حصى ورمل طميي أو طيني', gi: 0 };
+                } 
+                // A-2-5: LL ≥ 41 min, PI ≤ 10 max ✅ CORRECTED
+                else if (LL >= 41 && PI <= 10) {
+                    return { group: 'A-2-5', subgroup: 'A-2', desc: 'Silty or clayey gravel and sand', descAr: 'حصى ورمل طميي أو طيني', gi: 0 };
+                } 
+                // A-2-6: LL ≤ 40 max, PI ≥ 11 min ✅ CORRECTED
+                else if (LL <= 40 && PI >= 11) {
+                    return { group: 'A-2-6', subgroup: 'A-2', desc: 'Silty or clayey gravel and sand', descAr: 'حصى ورمل طميي أو طيني', gi: partialGI };
+                } 
+                // A-2-7: LL ≥ 41 min, PI ≥ 11 min ✅ CORRECTED
+                else if (LL >= 41 && PI >= 11) {
+                    return { group: 'A-2-7', subgroup: 'A-2', desc: 'Silty or clayey gravel and sand', descAr: 'حصى ورمل طميي أو طيني', gi: partialGI };
                 }
             }
-            
-            // ========================================
-            // مواد طمي-طين — Silt-Clay Materials (>35% passing No.200)
-            // ========================================
-            if (F > 35) {
-                let gi = calculateGroupIndex(F, LL || 0, PI || 0);
-                
-                if (LL !== null && PI !== null) {
-                    if (LL <= 40 && PI <= 10) {
-                        return { group: 'A-4', subgroup: 'A-4', desc: 'Silty soils', descAr: 'تربة طميية', gi: gi };
-                    } else if (LL > 40 && PI <= 10) {
-                        return { group: 'A-5', subgroup: 'A-5', desc: 'Silty soils', descAr: 'تربة طميية', gi: gi };
-                    } else if (LL <= 40 && PI > 10) {
-                        return { group: 'A-6', subgroup: 'A-6', desc: 'Clayey soils', descAr: 'تربة طينية', gi: gi };
-                    } else if (LL > 40 && PI > 10) {
-                        // A-7: distinguish A-7-5 vs A-7-6
-                        if (PI <= (LL - 30)) {
-                            return { group: 'A-7-5', subgroup: 'A-7', desc: 'Clayey soils (elastic)', descAr: 'تربة طينية مرنة', gi: gi };
-                        } else {
-                            return { group: 'A-7-6', subgroup: 'A-7', desc: 'Clayey soils (high volume change)', descAr: 'تربة طينية عالية الانتفاش', gi: gi };
-                        }
-                    }
-                }
-                // Default A-4 if no LL/PI
+            return { group: 'A-2-4', subgroup: 'A-2', desc: 'Silty or clayey gravel and sand', descAr: 'حصى ورمل طميي أو طيني', gi: 0 };
+        }
+    }
+    
+    // ========================================
+    // مواد طمي-طين — Silt-Clay Materials (>35%)
+    // ========================================
+    if (F > 35) {
+        let gi = calculateGroupIndex(F, LL || 0, PI || 0);
+        
+        if (LL !== null && PI !== null) {
+            // A-4: LL ≤ 40 max, PI ≤ 10 max ✅
+            if (LL <= 40 && PI <= 10) {
                 return { group: 'A-4', subgroup: 'A-4', desc: 'Silty soils', descAr: 'تربة طميية', gi: gi };
-            }
-            
-            return { group: 'Unknown', subgroup: 'Unknown', desc: 'Cannot classify', descAr: 'لا يمكن التصنيف', gi: 0 };
-        }
-
-        /**
-         * تقييم التربة بناءً على دليل المجموعة
-         * Evaluate soil based on Group Index
-         */
-        function evaluateSoilByGI(gi, aashtoGroup) {
-            if (aashtoGroup.startsWith('A-1') || aashtoGroup === 'A-3') {
-                return { eval: 'Excellent to Good', evalAr: 'ممتاز إلى جيد', desc: 'مواد ممتازة للأساسات والقواعد' };
-            }
-            if (aashtoGroup.startsWith('A-2')) {
-                if (gi <= 4) {
-                    return { eval: 'Good', evalAr: 'جيد', desc: 'مواد جيدة للأساسات' };
+            } 
+            // A-5: LL ≥ 41 min, PI ≤ 10 max ✅ CORRECTED
+            else if (LL >= 41 && PI <= 10) {
+                return { group: 'A-5', subgroup: 'A-5', desc: 'Silty soils', descAr: 'تربة طميية', gi: gi };
+            } 
+            // A-6: LL ≤ 40 max, PI ≥ 11 min ✅ CORRECTED
+            else if (LL <= 40 && PI >= 11) {
+                return { group: 'A-6', subgroup: 'A-6', desc: 'Clayey soils', descAr: 'تربة طينية', gi: gi };
+            } 
+            // A-7: LL ≥ 41 min, PI ≥ 11 min ✅ CORRECTED
+            else if (LL >= 41 && PI >= 11) {
+                if (PI <= (LL - 30)) {
+                    return { group: 'A-7-5', subgroup: 'A-7', desc: 'Clayey soils (elastic)', descAr: 'تربة طينية مرنة', gi: gi };
                 } else {
-                    return { eval: 'Fair', evalAr: 'مقبول', desc: 'مواد مقبولة للأساسات' };
+                    return { group: 'A-7-6', subgroup: 'A-7', desc: 'Clayey soils (high volume change)', descAr: 'تربة طينية عالية الانتفاش', gi: gi };
                 }
             }
-            
-            // For A-4 to A-7
-            if (gi === 0) {
-                return { eval: 'Fair to Poor', evalAr: 'مقبول إلى ضعيف', desc: 'GI = 0: الحد الأدنى' };
-            } else if (gi <= 4) {
-                return { eval: 'Fair', evalAr: 'مقبول', desc: 'تربة مقبولة للردم' };
-            } else if (gi <= 9) {
-                return { eval: 'Poor', evalAr: 'ضعيف', desc: 'تربة ضعيفة للأساسات' };
-            } else if (gi <= 20) {
-                return { eval: 'Very Poor', evalAr: 'ضعيف جداً', desc: 'تربة غير مناسبة للأساسات' };
-            } else {
-                return { eval: 'Unsuitable', evalAr: 'غير مناسبة', desc: 'تربة غير صالحة للاستخدام الإنشائي' };
-            }
         }
+        return { group: 'A-4', subgroup: 'A-4', desc: 'Silty soils', descAr: 'تربة طميية', gi: gi };
+    }
+    
+    return { group: 'Unknown', subgroup: 'Unknown', desc: 'Cannot classify', descAr: 'لا يمكن التصنيف', gi: 0 };
+}
 
-        /**
-         * الدالة الرئيسية لحساب التصنيف
-         * Main function to calculate soil classification
-         */
-        function calculateSoilClassification() {
-            const gradation = getGradationDataFromDOM();
-            const atterberg = getAtterbergDataFromDOM();
-            const proctor = getProctorDataFromDOM();
-            const aashtoRef = document.querySelector('input[name="aashtoRef"]:checked').value;
-            
-            const messages = [];
-            
-            // Validate required data
-            if (gradation.percentPassingNo200 === null) {
-                messages.push('⚠️ لم يتم حساب التدرج — احسب D6913 أولاً للحصول على % Passing No.200');
+/**
+ * تقييم التربة بناءً على دليل المجموعة
+ */
+function evaluateSoilByGI(gi, aashtoGroup) {
+    if (aashtoGroup.startsWith('A-1') || aashtoGroup === 'A-3') {
+        return { eval: 'Excellent to Good', evalAr: 'ممتاز إلى جيد', desc: 'مواد ممتازة للأساسات والقواعد' };
+    }
+    if (aashtoGroup.startsWith('A-2')) {
+        if (gi <= 4) {
+            return { eval: 'Good', evalAr: 'جيد', desc: 'مواد جيدة للأساسات' };
+        } else {
+            return { eval: 'Fair', evalAr: 'مقبول', desc: 'مواد مقبولة للأساسات' };
+        }
+    }
+    
+    if (gi === 0) {
+        return { eval: 'Fair to Poor', evalAr: 'مقبول إلى ضعيف', desc: 'GI = 0: الحد الأدنى' };
+    } else if (gi <= 4) {
+        return { eval: 'Fair', evalAr: 'مقبول', desc: 'تربة مقبولة للردم' };
+    } else if (gi <= 9) {
+        return { eval: 'Poor', evalAr: 'ضعيف', desc: 'تربة ضعيفة للأساسات' };
+    } else if (gi <= 20) {
+        return { eval: 'Very Poor', evalAr: 'ضعيف جداً', desc: 'تربة غير مناسبة للأساسات' };
+    } else {
+        return { eval: 'Unsuitable', evalAr: 'غير مناسبة', desc: 'تربة غير صالحة للاستخدام الإنشائي' };
+    }
+}
+
+/**
+ * الدالة الرئيسية لحساب التصنيف
+ */
+function calculateSoilClassification() {
+    const gradation = getGradationDataFromDOM();
+    const atterberg = getAtterbergDataFromDOM();
+    const proctor = getProctorDataFromDOM();
+    const aashtoRef = document.querySelector('input[name="aashtoRef"]:checked').value;
+    
+    const messages = [];
+    
+    if (gradation.percentPassingNo200 === null) {
+        messages.push('⚠️ لم يتم حساب التدرج — احسب D6913 أولاً للحصول على % Passing No.200');
+    }
+    if (gradation.percentPassingNo4 === null) {
+        messages.push('⚠️ لم يتم العثور على % Passing No.4 — احسب D6913 أولاً');
+    }
+    
+    if (messages.length > 0) {
+        document.getElementById('soilClassValidation').innerHTML = messages.map(m => 
+            `<div class="validation-msg validation-warning">${m}</div>`
+        ).join('');
+        document.getElementById('soilClassResults').classList.add('hidden');
+        return;
+    }
+    
+    let passNo10 = null, passNo40 = null;
+    if (results && results.final && results.final.length > 0) {
+        const no10Item = results.final.find(item => item.opening === 2.0);
+        const no40Item = results.final.find(item => item.opening === 0.425);
+        if (no10Item) passNo10 = no10Item.ppn;
+        if (no40Item) passNo40 = no40Item.ppn;
+    }
+    
+    const fines = gradation.percentPassingNo200;
+    const passNo4 = gradation.percentPassingNo4;
+    const Cu = gradation.Cu;
+    const Cc = gradation.Cc;
+    const LL = atterberg.LL;
+    const PL = atterberg.PL;
+    let PI = atterberg.PI;
+    
+    if (PI === null && LL !== null && PL !== null) {
+        PI = LL - PL;
+    }
+    
+    // ========================================
+    // USCS Classification (ASTM D2487)
+    // ========================================
+    let uscsSymbol = '', uscsDesc = '', uscsNameAr = '', uscsType = '', uscsALine = '', uscsNotes = '';
+    
+    if (isCoarseGrained(fines)) {
+        uscsType = 'تربة خشنة (Coarse-grained)';
+        const isGravelType = isGravel(passNo4);
+        const prefix = isGravelType ? 'G' : 'S';
+        const soilName = isGravelType ? 'حصى' : 'رمل';
+        const soilNameEn = isGravelType ? 'Gravel' : 'Sand';
+        const wellGraded = isWellGraded(Cu, Cc, isGravelType);
+        
+        if (fines <= 5) {
+            if (wellGraded === true) {
+                uscsSymbol = prefix + 'W';
+                uscsDesc = `Well-graded ${soilNameEn}`;
+                uscsNameAr = `${soilName} جيد التدرج`;
+            } else {
+                uscsSymbol = prefix + 'P';
+                uscsDesc = `Poorly-graded ${soilNameEn}`;
+                uscsNameAr = `${soilName} ضعيف التدرج`;
             }
-            if (gradation.percentPassingNo4 === null) {
-                messages.push('⚠️ لم يتم العثور على % Passing No.4 — احسب D6913 أولاً');
-            }
-            
-            if (messages.length > 0) {
-                document.getElementById('soilClassValidation').innerHTML = messages.map(m => 
-                    `<div class="validation-msg validation-warning">${m}</div>`
-                ).join('');
-                document.getElementById('soilClassResults').classList.add('hidden');
-                return;
-            }
-            
-            // Get additional sieve data for AASHTO
-            let passNo10 = null, passNo40 = null;
-            if (results && results.final && results.final.length > 0) {
-                const no10Item = results.final.find(item => item.opening === 2.0);
-                const no40Item = results.final.find(item => item.opening === 0.425);
-                if (no10Item) passNo10 = no10Item.ppn;
-                if (no40Item) passNo40 = no40Item.ppn;
-            }
-            
-            const fines = gradation.percentPassingNo200;
-            const passNo4 = gradation.percentPassingNo4;
-            const Cu = gradation.Cu;
-            const Cc = gradation.Cc;
-            const LL = atterberg.LL;
-            const PL = atterberg.PL;
-            let PI = atterberg.PI;
-            
-            // Calculate PI if not available but LL and PL are
-            if (PI === null && LL !== null && PL !== null) {
-                PI = LL - PL;
-            }
-            
-            // ========================================
-            // USCS Classification (ASTM D2487)
-            // ========================================
-            let uscsSymbol = '', uscsDesc = '', uscsNameAr = '', uscsType = '', uscsALine = '', uscsNotes = '';
-            
-            if (isCoarseGrained(fines)) {
-                uscsType = 'تربة خشنة (Coarse-grained)';
-                const isGravelType = isGravel(passNo4);
-                const prefix = isGravelType ? 'G' : 'S';
-                const soilName = isGravelType ? 'حصى' : 'رمل';
-                const soilNameEn = isGravelType ? 'Gravel' : 'Sand';
-                const wellGraded = isWellGraded(Cu, Cc, isGravelType);
-                
-                if (fines <= 5) {
-                    if (wellGraded === true) {
-                        uscsSymbol = prefix + 'W';
-                        uscsDesc = `Well-graded ${soilNameEn}`;
-                        uscsNameAr = `${soilName} جيد التدرج`;
-                    } else {
-                        uscsSymbol = prefix + 'P';
-                        uscsDesc = `Poorly-graded ${soilNameEn}`;
-                        uscsNameAr = `${soilName} ضعيف التدرج`;
-                    }
-                    uscsNotes = 'Clean (Fines ≤ 5%)';
-                } else if (fines >= 12) {
-                    if (LL !== null && PI !== null) {
-                        const aLine = getALinePosition(LL, PI);
-                        if (aLine.position === 'above') {
-                            uscsSymbol = prefix + 'C';
-                            uscsDesc = `Clayey ${soilNameEn}`;
-                            uscsNameAr = `${soilName} طيني`;
-                            uscsALine = 'فوق A-Line';
-                        } else {
-                            uscsSymbol = prefix + 'M';
-                            uscsDesc = `Silty ${soilNameEn}`;
-                            uscsNameAr = `${soilName} طميي`;
-                            uscsALine = 'تحت A-Line';
-                        }
-                    } else {
-                        uscsSymbol = prefix + 'M/' + prefix + 'C';
-                        uscsDesc = `${soilNameEn} with fines`;
-                        uscsNameAr = `${soilName} بغرامات`;
-                        uscsNotes = 'يلزم حدود أتربرج للتحديد';
-                    }
+            uscsNotes = 'Clean (Fines ≤ 5%)';
+        } else if (fines >= 12) {
+            if (LL !== null && PI !== null) {
+                const aLine = getALinePosition(LL, PI);
+                if (aLine.position === 'above') {
+                    uscsSymbol = prefix + 'C';
+                    uscsDesc = `Clayey ${soilNameEn}`;
+                    uscsNameAr = `${soilName} طيني`;
+                    uscsALine = 'فوق A-Line';
                 } else {
-                    // 5% < Fines < 12%: Dual symbol
-                    const gradeSuffix = wellGraded === true ? 'W' : 'P';
-                    let finesSuffix = 'M';
-                    if (LL !== null && PI !== null) {
-                        const aLine = getALinePosition(LL, PI);
-                        finesSuffix = aLine.position === 'above' ? 'C' : 'M';
-                        uscsALine = aLine.position === 'above' ? 'فوق A-Line' : 'تحت A-Line';
-                    }
-                    uscsSymbol = `${prefix}${gradeSuffix}-${prefix}${finesSuffix}`;
-                    uscsDesc = `${gradeSuffix === 'W' ? 'Well' : 'Poorly'}-graded ${soilNameEn} with ${finesSuffix === 'C' ? 'clay' : 'silt'}`;
-                    uscsNameAr = `${soilName} ${gradeSuffix === 'W' ? 'جيد' : 'ضعيف'} التدرج مع ${finesSuffix === 'C' ? 'طين' : 'طمي'}`;
-                    uscsNotes = 'Borderline (5% < Fines < 12%)';
+                    uscsSymbol = prefix + 'M';
+                    uscsDesc = `Silty ${soilNameEn}`;
+                    uscsNameAr = `${soilName} طميي`;
+                    uscsALine = 'تحت A-Line';
                 }
             } else {
-                uscsType = 'تربة ناعمة (Fine-grained)';
-                if (LL !== null && PI !== null) {
-                    const aLine = getALinePosition(LL, PI);
-                    const plasticity = LL < 50 ? 'L' : 'H';
-                    
-                    if (aLine.position === 'above') {
-                        uscsSymbol = 'C' + plasticity;
-                        uscsDesc = `${LL < 50 ? 'Low' : 'High'} plasticity Clay`;
-                        uscsNameAr = `طين ${LL < 50 ? 'منخفض' : 'عالي'} اللدونة`;
-                        uscsALine = 'فوق A-Line';
-                    } else if (aLine.position === 'below') {
-                        uscsSymbol = 'M' + plasticity;
-                        uscsDesc = `${LL < 50 ? 'Low' : 'High'} plasticity Silt`;
-                        uscsNameAr = `طمي ${LL < 50 ? 'منخفض' : 'عالي'} اللدونة`;
-                        uscsALine = 'تحت A-Line';
-                          } else {
-            // CL-ML فقط لو PI بين 4 و7 وعلى/فوق A-line
-            if (PI >= 4 && PI <= 7) {
-                uscsSymbol = 'CL-ML';
-                uscsDesc = 'Silty Clay (borderline)';
-                uscsNameAr = 'طين طميي (حدي)';
-                uscsALine = 'على A-Line';
-                uscsNotes = 'Borderline zone';
-            } else {
-                // لو مش في مدى 4-7: رجّعها لأقرب مجموعة
-                uscsSymbol = (PI > 7 ? 'C' : 'M') + plasticity;
-                uscsDesc = `${LL < 50 ? 'Low' : 'High'} plasticity ${PI > 7 ? 'Clay' : 'Silt'}`;
-                uscsNameAr = `${PI > 7 ? 'طين' : 'طمي'} ${LL < 50 ? 'منخفض' : 'عالي'} اللدونة`;
-                uscsALine = 'قريب من A-Line';
-                uscsNotes = 'Near A-Line';
+                uscsSymbol = prefix + 'M/' + prefix + 'C';
+                uscsDesc = `${soilNameEn} with fines`;
+                uscsNameAr = `${soilName} بغرامات`;
+                uscsNotes = 'يلزم حدود أتربرج للتحديد';
             }
+        } else {
+            const gradeSuffix = wellGraded === true ? 'W' : 'P';
+            let finesSuffix = 'M';
+            if (LL !== null && PI !== null) {
+                const aLine = getALinePosition(LL, PI);
+                finesSuffix = aLine.position === 'above' ? 'C' : 'M';
+                uscsALine = aLine.position === 'above' ? 'فوق A-Line' : 'تحت A-Line';
+            }
+            uscsSymbol = `${prefix}${gradeSuffix}-${prefix}${finesSuffix}`;
+            uscsDesc = `${gradeSuffix === 'W' ? 'Well' : 'Poorly'}-graded ${soilNameEn} with ${finesSuffix === 'C' ? 'clay' : 'silt'}`;
+            uscsNameAr = `${soilName} ${gradeSuffix === 'W' ? 'جيد' : 'ضعيف'} التدرج مع ${finesSuffix === 'C' ? 'طين' : 'طمي'}`;
+            uscsNotes = 'Borderline (5% < Fines < 12%)';
         }
-
+    } else {
+        uscsType = 'تربة ناعمة (Fine-grained)';
+        if (LL !== null && PI !== null) {
+            const aLine = getALinePosition(LL, PI);
+            const plasticity = LL < 50 ? 'L' : 'H';
+            
+            if (aLine.position === 'above') {
+                uscsSymbol = 'C' + plasticity;
+                uscsDesc = `${LL < 50 ? 'Low' : 'High'} plasticity Clay`;
+                uscsNameAr = `طين ${LL < 50 ? 'منخفض' : 'عالي'} اللدونة`;
+                uscsALine = 'فوق A-Line';
+            } else if (aLine.position === 'below') {
+                uscsSymbol = 'M' + plasticity;
+                uscsDesc = `${LL < 50 ? 'Low' : 'High'} plasticity Silt`;
+                uscsNameAr = `طمي ${LL < 50 ? 'منخفض' : 'عالي'} اللدونة`;
+                uscsALine = 'تحت A-Line';
+            } else {
+                if (PI >= 4 && PI <= 7) {
+                    uscsSymbol = 'CL-ML';
+                    uscsDesc = 'Silty Clay (borderline)';
+                    uscsNameAr = 'طين طميي (حدي)';
+                    uscsALine = 'على A-Line';
+                    uscsNotes = 'Borderline zone';
                 } else {
-                    uscsSymbol = 'ML/CL';
-                    uscsDesc = 'Fine-grained soil';
-                    uscsNameAr = 'تربة ناعمة';
-                    uscsNotes = 'يلزم حدود أتربرج للتحديد';
+                    uscsSymbol = (PI > 7 ? 'C' : 'M') + plasticity;
+                    uscsDesc = `${LL < 50 ? 'Low' : 'High'} plasticity ${PI > 7 ? 'Clay' : 'Silt'}`;
+                    uscsNameAr = `${PI > 7 ? 'طين' : 'طمي'} ${LL < 50 ? 'منخفض' : 'عالي'} اللدونة`;
+                    uscsALine = 'قريب من A-Line';
+                    uscsNotes = 'Near A-Line';
                 }
             }
-            
-            // ========================================
-            // AASHTO Classification
-            // ========================================
-            const aashtoResult = classifyAASHTO(passNo10, passNo40, fines, LL, PI);
-            const soilEval = evaluateSoilByGI(aashtoResult.gi, aashtoResult.group);
-            
-            // ========================================
-            // Display Results
-            // ========================================
-            document.getElementById('soilClassResults').classList.remove('hidden');
-            
-            // USCS Results
-            document.getElementById('sc_uscs_symbol').textContent = uscsSymbol;
-            document.getElementById('sc_uscs_desc').textContent = uscsDesc;
-            document.getElementById('sc_uscs_name_ar').textContent = uscsNameAr;
-            document.getElementById('sc_uscs_type').textContent = uscsType;
-            document.getElementById('sc_uscs_aline').textContent = uscsALine || '—';
-            document.getElementById('sc_uscs_notes').textContent = uscsNotes || '—';
-            
-            // AASHTO Results
-            document.getElementById('aashtoRefDisplay').textContent = aashtoRef === 'M145' ? 'AASHTO M 145' : 'ASTM D3282';
-            document.getElementById('sc_aashto_group').textContent = aashtoResult.group;
-            document.getElementById('sc_aashto_desc').textContent = `${aashtoResult.desc} — ${aashtoResult.descAr}`;
-            document.getElementById('sc_aashto_gi').textContent = aashtoResult.gi;
-            document.getElementById('sc_aashto_eval').textContent = `${soilEval.evalAr} (${soilEval.eval})`;
-            document.getElementById('sc_aashto_eval_desc').textContent = soilEval.desc;
-            
-            // Proctor Data (if available)
-            if (proctor.OMC !== null && proctor.MDD !== null) {
-                document.getElementById('sc_proctorData').classList.remove('hidden');
-                document.getElementById('sc_OMC').textContent = proctor.OMC.toFixed(1);
-                document.getElementById('sc_MDD').textContent = proctor.MDD.toFixed(3);
-                document.getElementById('sc_MDD_unit').textContent = proctor.MDD_unit;
-            } else {
-                document.getElementById('sc_proctorData').classList.add('hidden');
-            }
-            
-            // Validation message
-            document.getElementById('soilClassValidation').innerHTML = 
-                '<div class="validation-msg validation-success">✅ تم حساب التصنيف بنجاح — Classification completed successfully</div>';
-            
-            // Console output
-            console.log('Soil Classification Results:', {
-                USCS: { symbol: uscsSymbol, description: uscsDesc, type: uscsType, standard: 'ASTM D2487' },
-                AASHTO: { group: aashtoResult.group, GI: aashtoResult.gi, evaluation: soilEval.eval, standard: aashtoRef === 'M145' ? 'AASHTO M 145' : 'ASTM D3282' },
-                inputData: { fines, passNo4, passNo10, passNo40, LL, PL, PI, Cu, Cc }
-            });
+        } else {
+            uscsSymbol = 'ML/CL';
+            uscsDesc = 'Fine-grained soil';
+            uscsNameAr = 'تربة ناعمة';
+            uscsNotes = 'يلزم حدود أتربرج للتحديد';
         }
+    }
+    
+    // ========================================
+    // AASHTO Classification ✅ CORRECTED
+    // ========================================
+    const aashtoResult = classifyAASHTO(passNo10, passNo40, fines, LL, PI);
+    const soilEval = evaluateSoilByGI(aashtoResult.gi, aashtoResult.group);
+    
+    document.getElementById('soilClassResults').classList.remove('hidden');
+    
+    // USCS Results
+    document.getElementById('sc_uscs_symbol').textContent = uscsSymbol;
+    document.getElementById('sc_uscs_desc').textContent = uscsDesc;
+    document.getElementById('sc_uscs_name_ar').textContent = uscsNameAr;
+    document.getElementById('sc_uscs_type').textContent = uscsType;
+    document.getElementById('sc_uscs_aline').textContent = uscsALine || '—';
+    document.getElementById('sc_uscs_notes').textContent = uscsNotes || '—';
+    
+    // AASHTO Results
+    document.getElementById('aashtoRefDisplay').textContent = aashtoRef === 'M145' ? 'AASHTO M 145' : 'ASTM D3282';
+    document.getElementById('sc_aashto_group').textContent = aashtoResult.group;
+    document.getElementById('sc_aashto_desc').textContent = `${aashtoResult.desc} — ${aashtoResult.descAr}`;
+    document.getElementById('sc_aashto_gi').textContent = aashtoResult.gi;
+    document.getElementById('sc_aashto_eval').textContent = `${soilEval.evalAr} (${soilEval.eval})`;
+    document.getElementById('sc_aashto_eval_desc').textContent = soilEval.desc;
+    
+    // Proctor Data (if available)
+    if (proctor.OMC !== null && proctor.MDD !== null) {
+        document.getElementById('sc_proctorData').classList.remove('hidden');
+        document.getElementById('sc_OMC').textContent = proctor.OMC.toFixed(1);
+        document.getElementById('sc_MDD').textContent = proctor.MDD.toFixed(3);
+        document.getElementById('sc_MDD_unit').textContent = proctor.MDD_unit;
+    } else {
+        document.getElementById('sc_proctorData').classList.add('hidden');
+    }
+    
+    document.getElementById('soilClassValidation').innerHTML = 
+        '<div class="validation-msg validation-success">✅ تم حساب التصنيف بنجاح — Classification completed successfully</div>';
+    
+    console.log('Soil Classification Results:', {
+        USCS: { symbol: uscsSymbol, description: uscsDesc, type: uscsType, standard: 'ASTM D2487' },
+        AASHTO: { group: aashtoResult.group, GI: aashtoResult.gi, evaluation: soilEval.eval, standard: aashtoRef === 'M145' ? 'AASHTO M 145' : 'ASTM D3282' },
+        inputData: { fines, passNo4, passNo10, passNo40, LL, PL, PI, Cu, Cc }
+    });
+}
 
         // =============================================
         // D2216 FUNCTIONS START
