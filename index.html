@@ -3251,6 +3251,321 @@ const D422_L_151H = {
 const D422_L_152H = {
     0: 16.3, 10: 14.7, 20: 13.0, 30: 11.4, 40: 9.7, 50: 8.1
 };
+// =============================================
+// CBR TEST VARIABLES & CONSTANTS
+// =============================================
+let cbrChart = null;
+const PISTON_AREA = 2.994; // in²
+
+const CBR_PENETRATION_POINTS = [
+    { inch: 0.025, mm: 0.64, stdLoad: 1000 },
+    { inch: 0.050, mm: 1.27, stdLoad: 1000 },
+    { inch: 0.075, mm: 1.9, stdLoad: 1000 },
+    { inch: 0.100, mm: 2.54, stdLoad: 1000, important: true },
+    { inch: 0.125, mm: 3.18, stdLoad: 1000 },
+    { inch: 0.150, mm: 3.8, stdLoad: 1000 },
+    { inch: 0.175, mm: 4.45, stdLoad: 1000 },
+    { inch: 0.200, mm: 5.08, stdLoad: 1500, important: true },
+    { inch: 0.300, mm: 7.6, stdLoad: 1500 },
+    { inch: 0.400, mm: 10.0, stdLoad: 1500 },
+    { inch: 0.500, mm: 12.7, stdLoad: 1500 }
+];
+
+function initializeCBRTable() {
+    const tbody = document.getElementById('cbrDataBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    
+    CBR_PENETRATION_POINTS.forEach((point, index) => {
+        const isImportant = point.important ? 'bg-yellow-100' : 'bg-white';
+        const row = `
+            <tr class="${isImportant} hover:bg-gray-100">
+                <td class="p-2 border border-gray-300 text-center font-bold">${point.inch.toFixed(3)}"</td>
+                <td class="p-2 border border-gray-300 text-center">${point.mm.toFixed(2)}</td>
+                <td class="p-2 border border-gray-300 bg-yellow-50">
+                    <input type="number" id="cbr_dial_${index}" step="0.1" class="w-full border border-yellow-300 rounded px-2 py-1" placeholder="0" onchange="updateCBRRow(${index})">
+                </td>
+                <td class="p-2 border border-gray-300 bg-orange-50 text-center font-bold" id="cbr_load_${index}">0</td>
+                <td class="p-2 border border-gray-300 bg-green-50 text-center font-bold" id="cbr_stress_${index}">0</td>
+                <td class="p-2 border border-gray-300 bg-cyan-50 text-center">${point.stdLoad}</td>
+                <td class="p-2 border border-gray-300 bg-blue-50 text-center font-bold" id="cbr_cbrPercent_${index}">—</td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+    });
+}
+
+function updateCBRRow(index) {
+    const dialInput = document.getElementById(`cbr_dial_${index}`);
+    const calibrationInput = document.getElementById('cbr_dialCalibration');
+    
+    if (!dialInput || !calibrationInput) return;
+    
+    const dialReading = parseFloat(dialInput.value) || 0;
+    const calibration = parseFloat(calibrationInput.value) || 1.0;
+    
+    const appliedLoad = dialReading * calibration;
+    const stress = appliedLoad / PISTON_AREA;
+    const stdLoad = CBR_PENETRATION_POINTS[index].stdLoad;
+    const cbrPercent = (stress / stdLoad) * 100;
+    
+    const loadCell = document.getElementById(`cbr_load_${index}`);
+    const stressCell = document.getElementById(`cbr_stress_${index}`);
+    const percentCell = document.getElementById(`cbr_cbrPercent_${index}`);
+    
+    if (loadCell) loadCell.textContent = appliedLoad.toFixed(1);
+    if (stressCell) stressCell.textContent = stress.toFixed(1);
+    if (percentCell) percentCell.textContent = isFinite(cbrPercent) ? cbrPercent.toFixed(1) : '—';
+}
+
+function calculateCBR() {
+    const initialHeightInput = document.getElementById('cbr_initialHeight');
+    const soakedHeightInput = document.getElementById('cbr_soakedHeight');
+    const dryWeightInput = document.getElementById('cbr_dryUnitWeight');
+    const swellInput = document.getElementById('cbr_swellingPercent');
+    
+    if (!initialHeightInput || !soakedHeightInput || !dryWeightInput || !swellInput) {
+        showCBRValidationMessage('❌ خطأ: لم يتم العثور على عناصر الإدخال المطلوبة', 'error');
+        return;
+    }
+    
+    const initialHeight = parseFloat(initialHeightInput.value) || 0;
+    const soakedHeight = parseFloat(soakedHeightInput.value) || 0;
+    const dryUnitWeight = parseFloat(dryWeightInput.value) || 0;
+    
+    if (initialHeight > 0 && soakedHeight > 0) {
+        const swell = ((soakedHeight - initialHeight) / initialHeight) * 100;
+        swellInput.value = swell.toFixed(2);
+    }
+    
+    if (initialHeight <= 0) {
+        showCBRValidationMessage('❌ يجب إدخال الارتفاع الأولي الصحيح', 'error');
+        return;
+    }
+    
+    const cbr01Cell = document.getElementById(`cbr_cbrPercent_3`);
+    const cbr02Cell = document.getElementById(`cbr_cbrPercent_7`);
+    
+    const cbr01Value = cbr01Cell ? parseFloat(cbr01Cell.textContent) || 0 : 0;
+    const cbr02Value = cbr02Cell ? parseFloat(cbr02Cell.textContent) || 0 : 0;
+    
+    let finalCBR = cbr01Value;
+    let usedPenetration = "0.1\"";
+    
+    if (cbr02Value > cbr01Value) {
+        finalCBR = cbr02Value;
+        usedPenetration = "0.2\"";
+        showCBRValidationMessage('⚠️ تحذير: CBR @ 0.2" أكبر من @ 0.1" — يُنصح بإعادة الاختبار', 'warning');
+    } else {
+        showCBRValidationMessage(`✅ تم الحساب بنجاح — CBR @ ${usedPenetration} = ${finalCBR.toFixed(1)}%`, 'success');
+    }
+    
+    const val01 = document.getElementById('cbr_value_01');
+    const val02 = document.getElementById('cbr_value_02');
+    const swellDisplay = document.getElementById('cbr_swell_display');
+    const dryDisplay = document.getElementById('cbr_dryWeight_display');
+    
+    if (val01) val01.textContent = cbr01Value.toFixed(1);
+    if (val02) val02.textContent = cbr02Value.toFixed(1);
+    if (swellDisplay) swellDisplay.textContent = (parseFloat(swellInput.value) || 0).toFixed(2) + '%';
+    if (dryDisplay) dryDisplay.textContent = dryUnitWeight.toFixed(1);
+    
+    const resultsDiv = document.getElementById('cbr_results');
+    const chartDiv = document.getElementById('cbr_chartWrap');
+    
+    if (resultsDiv) resultsDiv.classList.remove('hidden');
+    if (chartDiv) chartDiv.classList.remove('hidden');
+    
+    drawCBRChart();
+}
+
+function drawCBRChart() {
+    const canvas = document.getElementById('cbr_chart');
+    if (!canvas) return;
+    
+    const labels = [];
+    const cbrValues = [];
+    
+    CBR_PENETRATION_POINTS.forEach((point, index) => {
+        labels.push(point.inch.toFixed(3) + '"');
+        const cbrCell = document.getElementById(`cbr_cbrPercent_${index}`);
+        const cbrPercent = cbrCell ? parseFloat(cbrCell.textContent) || 0 : 0;
+        cbrValues.push(cbrPercent);
+    });
+    
+    if (cbrChart) {
+        cbrChart.destroy();
+    }
+    
+    cbrChart = new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'CBR (%)',
+                data: cbrValues,
+                borderColor: 'rgb(220, 38, 38)',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointBackgroundColor: 'rgb(220, 38, 38)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        font: { size: 12, weight: 'bold' },
+                        color: '#333'
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'منحنى CBR مقابل الاختراق',
+                    font: { size: 14, weight: 'bold' }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'CBR (%)',
+                        font: { size: 12, weight: 'bold' }
+                    },
+                    grid: { color: 'rgba(0, 0, 0, 0.1)' }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'الاختراق (بوصات)',
+                        font: { size: 12, weight: 'bold' }
+                    },
+                    grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                }
+            }
+        }
+    });
+}
+
+function resetCBR() {
+    const inputs = ['cbr_sampleId', 'cbr_testDate', 'cbr_dryUnitWeight', 'cbr_initialHeight', 'cbr_soakedHeight', 'cbr_swellingPercent'];
+    inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    
+    const calibrationInput = document.getElementById('cbr_dialCalibration');
+    if (calibrationInput) calibrationInput.value = '1.0';
+    
+    CBR_PENETRATION_POINTS.forEach((_, index) => {
+        const dialInput = document.getElementById(`cbr_dial_${index}`);
+        if (dialInput) {
+            dialInput.value = '';
+            updateCBRRow(index);
+        }
+    });
+    
+    const resultsDiv = document.getElementById('cbr_results');
+    const chartDiv = document.getElementById('cbr_chartWrap');
+    const messagesDiv = document.getElementById('cbr_validationMessages');
+    
+    if (resultsDiv) resultsDiv.classList.add('hidden');
+    if (chartDiv) chartDiv.classList.add('hidden');
+    if (messagesDiv) messagesDiv.innerHTML = '';
+    
+    if (cbrChart) {
+        cbrChart.destroy();
+        cbrChart = null;
+    }
+}
+
+function loadCBRExample() {
+    resetCBR();
+    
+    const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.value = val;
+    };
+    
+    setVal('cbr_sampleId', 'CBR-DEMO-001');
+    setVal('cbr_testDate', new Date().toISOString().split('T')[0]);
+    setVal('cbr_dryUnitWeight', '115.5');
+    setVal('cbr_initialHeight', '127.50');
+    setVal('cbr_soakedHeight', '128.25');
+    
+    const exampleLoads = [80, 150, 220, 300, 360, 410, 450, 520, 700, 850, 950];
+    exampleLoads.forEach((load, index) => {
+        const dialInput = document.getElementById(`cbr_dial_${index}`);
+        if (dialInput) {
+            dialInput.value = load;
+            updateCBRRow(index);
+        }
+    });
+    
+    const swell = ((128.25 - 127.50) / 127.50) * 100;
+    setVal('cbr_swellingPercent', swell.toFixed(2));
+    
+    setTimeout(() => calculateCBR(), 100);
+}
+
+function showCBRValidationMessage(message, type = 'info') {
+    const messagesDiv = document.getElementById('cbr_validationMessages');
+    if (!messagesDiv) return;
+    
+    const bgColor = type === 'success' ? 'bg-green-100 border-green-300 text-green-800' : 
+                    type === 'error' ? 'bg-red-100 border-red-300 text-red-800' :
+                    type === 'warning' ? 'bg-yellow-100 border-yellow-300 text-yellow-800' :
+                    'bg-blue-100 border-blue-300 text-blue-800';
+    
+    messagesDiv.innerHTML = `<div class="${bgColor} p-4 rounded-lg border-2 font-semibold">${message}</div>`;
+    
+    if (type === 'success') {
+        setTimeout(() => {
+            if (messagesDiv) messagesDiv.innerHTML = '';
+        }, 5000);
+    }
+}
+
+(function() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeCBRTable);
+    } else {
+        initializeCBRTable();
+    }
+    
+    const setupAutoCalculateSwell = () => {
+        ['cbr_initialHeight', 'cbr_soakedHeight'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('change', () => {
+                    const initialHeight = parseFloat(document.getElementById('cbr_initialHeight').value) || 0;
+                    const soakedHeight = parseFloat(document.getElementById('cbr_soakedHeight').value) || 0;
+                    const swellInput = document.getElementById('cbr_swellingPercent');
+                    
+                    if (initialHeight > 0 && soakedHeight > 0 && swellInput) {
+                        const swell = ((soakedHeight - initialHeight) / initialHeight) * 100;
+                        swellInput.value = swell.toFixed(2);
+                    }
+                });
+            }
+        });
+    };
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupAutoCalculateSwell);
+    } else {
+        setupAutoCalculateSwell();
+    }
+})();
 
 // استيفاء خطي عام بين قيمتين
 function linearInterpolate(x, x1, y1, x2, y2) {
