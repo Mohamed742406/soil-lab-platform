@@ -2966,9 +2966,155 @@
             <div class="mt-4 pt-4 border-t border-gray-700">
                 <p class="text-gray-400 text-sm">تم تطوير المنصة: <span class="text-blue-400 font-semibold">م. محمد القصبي</span></p>
             </div>
-        </div>
+        </div>  
     </footer>
+    <!-- ============================================= -->
+    <!-- CBR SECTION - ASTM D1883 -->
+    <!-- ============================================= -->
+    <div id="sectionCBR" class="hidden">
+        
+        <!-- Page Title -->
+        <div class="bg-gradient-to-r from-red-600 to-red-700 text-white p-6 rounded-lg mb-6 shadow-lg">
+            <div class="flex items-center gap-4">
+                <div class="text-5xl">🔬</div>
+                <div>
+                    <h2 class="text-3xl font-bold">اختبار CBR</h2>
+                    <p class="text-red-100">California Bearing Ratio Test — ASTM D1883-21</p>
+                    <p class="text-sm text-red-50 mt-1">معامل تحمل التربة ودليل الانتفاش</p>
+                </div>
+            </div>
+        </div>
 
+        <!-- Test Settings Section -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6 border-l-4 border-red-600">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span class="bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
+                إعدادات الاختبار — Test Settings
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">رقم العينة</label>
+                    <input type="text" id="cbr_sampleId" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-600 focus:outline-none" placeholder="CBR-001">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">تاريخ الاختبار</label>
+                    <input type="date" id="cbr_testDate" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-600 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">نوع الدمك</label>
+                    <select id="cbr_compactionType" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-600 focus:outline-none">
+                        <option value="D698">Standard (D698)</option>
+                        <option value="D1557">Modified (D1557)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">فترة الغمر (ساعة)</label>
+                    <input type="number" id="cbr_soakingHours" value="96" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-600 focus:outline-none" min="0" max="168">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">معامل المؤشر</label>
+                    <input type="number" id="cbr_dialCalibration" value="1.0" step="0.01" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-600 focus:outline-none" placeholder="0.5-2.0">
+                </div>
+            </div>
+        </div>
+
+        <!-- Unit Weight & Swell Section -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6 border-l-4 border-purple-600">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span class="bg-purple-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
+                الكثافة والانتفاش — Unit Weight & Swell
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-purple-50 p-4 rounded-lg border-2 border-purple-200">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">الكثافة الجافة (lbf/ft³)</label>
+                    <input type="number" id="cbr_dryUnitWeight" step="0.1" placeholder="115.0" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-purple-600 focus:outline-none">
+                </div>
+                <div class="bg-orange-50 p-4 rounded-lg border-2 border-orange-200">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">الارتفاع الأولي (mm)</label>
+                    <input type="number" id="cbr_initialHeight" step="0.1" placeholder="127.5" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-orange-600 focus:outline-none">
+                </div>
+                <div class="bg-orange-50 p-4 rounded-lg border-2 border-orange-200">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">الارتفاع بعد الغمر (mm)</label>
+                    <input type="number" id="cbr_soakedHeight" step="0.1" placeholder="128.2" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-orange-600 focus:outline-none">
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">نسبة الانتفاش (%)</label>
+                    <input type="number" id="cbr_swellingPercent" step="0.1" readonly placeholder="محسوب تلقائياً" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 bg-gray-100 text-gray-600">
+                </div>
+            </div>
+        </div>
+
+        <!-- Penetration Data Table -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6 border-l-4 border-red-600">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">بيانات الاختراق — Penetration Data</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-gradient-to-r from-red-700 to-red-600 text-white">
+                            <th class="p-3 border border-red-800">Penetration (inch)</th>
+                            <th class="p-3 border border-red-800">Penetration (mm)</th>
+                            <th class="p-3 border border-red-800 bg-yellow-600">Dial Reading</th>
+                            <th class="p-3 border border-red-800 bg-orange-600">Applied Load (lbf)</th>
+                            <th class="p-3 border border-red-800 bg-green-600">Stress (psi)</th>
+                            <th class="p-3 border border-red-800 bg-cyan-600">Std Stress (psi)</th>
+                            <th class="p-3 border border-red-800 bg-blue-600">CBR %</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cbrDataBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-4 justify-center mb-6">
+            <button onclick="calculateCBR()" class="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
+                🧮 احسب CBR — Calculate
+            </button>
+            <button onclick="resetCBR()" class="bg-gray-500 hover:bg-gray-600 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
+                🔄 إعادة تعيين — Reset
+            </button>
+            <button onclick="loadCBRExample()" class="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
+                📝 تحميل مثال — Load Example
+            </button>
+        </div>
+
+        <div id="cbr_validationMessages" class="mb-6"></div>
+
+        <!-- Results Cards -->
+        <div id="cbr_results" class="hidden mb-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">النتائج النهائية — Final Results</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-xl shadow-lg text-center">
+                    <div class="text-sm font-semibold mb-2">CBR @ 0.1"</div>
+                    <div class="text-4xl font-bold" id="cbr_value_01">—</div>
+                </div>
+                <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-xl shadow-lg text-center">
+                    <div class="text-sm font-semibold mb-2">CBR @ 0.2"</div>
+                    <div class="text-4xl font-bold" id="cbr_value_02">—</div>
+                </div>
+                <div class="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-6 rounded-xl shadow-lg text-center">
+                    <div class="text-sm font-semibold mb-2">الانتفاش</div>
+                    <div class="text-4xl font-bold" id="cbr_swell_display">—</div>
+                </div>
+                <div class="bg-gradient-to-br from-teal-500 to-teal-600 text-white p-6 rounded-xl shadow-lg text-center">
+                    <div class="text-sm font-semibold mb-2">الكثافة الجافة</div>
+                    <div class="text-3xl font-bold" id="cbr_dryWeight_display">—</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div id="cbr_chartWrap" class="hidden bg-white p-6 rounded-lg shadow-md mb-6 border-l-4 border-indigo-600">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">منحنى الحمل مقابل الاختراق</h3>
+            <div style="height: 500px;">
+                <canvas id="cbr_chart"></canvas>
+            </div>
+        </div>
+
+    </div>
+    <!-- =============== END CBR SECTION =============== -->
     <script>
    // =============================================
 // TAB SWITCHING
