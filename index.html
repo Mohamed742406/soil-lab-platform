@@ -3167,71 +3167,33 @@
     </footer>
 
     <script>
-     // =============================================
+  // =============================================
 // TAB SWITCHING
 // =============================================
-let currentTab = 'D6913';
-
 function switchTab(tab) {
-    currentTab = tab;
+    // Update tab buttons
+    document.getElementById('tabD6913').className = tab === 'D6913' ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+    document.getElementById('tabD422').className = tab === 'D422' ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+    document.getElementById('tabD4318').className = tab === 'D4318' ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+    document.getElementById('tabSoilClass').className = tab === 'SoilClass' ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+    document.getElementById('tabD1557').className = tab === 'D1557' ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+    document.getElementById('tabD2216').className = tab === 'D2216' ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+    document.getElementById('tabD854').className = tab === 'D854' ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+    document.getElementById('tabCBR').className = tab === 'CBR' ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
 
-  // Update tab buttons
-document.getElementById('tabD6913').className =
-    tab === 'D6913'
-        ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-        : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+    // Show/hide sections
+    document.getElementById('sectionD6913').classList.toggle('hidden', tab !== 'D6913');
+    document.getElementById('sectionD422').classList.toggle('hidden', tab !== 'D422');
+    document.getElementById('sectionD4318').classList.toggle('hidden', tab !== 'D4318');
+    document.getElementById('sectionSoilClass').classList.toggle('hidden', tab !== 'SoilClass');
+    document.getElementById('sectionD1557').classList.toggle('hidden', tab !== 'D1557');
+    document.getElementById('sectionD2216').classList.toggle('hidden', tab !== 'D2216');
+    document.getElementById('sectionD854').classList.toggle('hidden', tab !== 'D854');
+    document.getElementById('sectionCBR').classList.toggle('hidden', tab !== 'CBR');
 
-document.getElementById('tabD422').className =
-    tab === 'D422'
-        ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-        : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-document.getElementById('tabD4318').className =
-    tab === 'D4318'
-        ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-        : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-document.getElementById('tabSoilClass').className =
-    tab === 'SoilClass'
-        ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-        : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-document.getElementById('tabD1557').className =
-    tab === 'D1557'
-        ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-        : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-document.getElementById('tabD2216').className =
-    tab === 'D2216'
-        ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-        : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-document.getElementById('tabD854').className =
-    tab === 'D854'
-        ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-        : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-// ✅ CBR Tab Button - الجديد
-document.getElementById('tabCBR').className =
-    tab === 'CBR'
-        ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-        : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-// Show/hide sections
-document.getElementById('sectionD6913').classList.toggle('hidden', tab !== 'D6913');
-document.getElementById('sectionD422').classList.toggle('hidden', tab !== 'D422');
-document.getElementById('sectionD4318').classList.toggle('hidden', tab !== 'D4318');
-document.getElementById('sectionSoilClass').classList.toggle('hidden', tab !== 'SoilClass');
-document.getElementById('sectionD1557').classList.toggle('hidden', tab !== 'D1557');
-document.getElementById('sectionD2216').classList.toggle('hidden', tab !== 'D2216');
-document.getElementById('sectionD854').classList.toggle('hidden', tab !== 'D854');
-
-// ✅ CBR Section - الجديد
-document.getElementById('sectionCBR').classList.toggle('hidden', tab !== 'CBR');
-
-// When switching to SoilClass, auto-read data
-if (tab === 'SoilClass') {
-    autoReadDataForClassification();
+    if (tab === 'SoilClass') {
+        autoReadDataForClassification();
+    }
 }
         // =============================================
         // D6913 SIEVE DATA DEFINITIONS
