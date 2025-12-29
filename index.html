@@ -2871,37 +2871,38 @@
             </div>
         </div>
 
-        <!-- 2️⃣ قسم الانتفاش -->
-        <div class="section-card p-6 mb-6">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2️⃣</span>
-                الانتفاش أثناء النقع — Swell During Soaking (8.2.5 & 10.4)
-            </h3>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Initial Height hi (mm)</label>
-                    <input id="cbrHi" type="number" step="0.1" value="127" class="input-field w-full">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Initial Dial Reading</label>
-                    <input id="cbrDialInitial" type="number" step="0.01" value="0" class="input-field w-full">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Final Dial Reading</label>
-                    <input id="cbrDialFinal" type="number" step="0.01" value="0" class="input-field w-full">
-                </div>
-                <div class="col-span-2">
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Swell s (%)</label>
-                    <div id="cbrSwellResult" class="font-bold text-green-700 text-2xl bg-green-50 p-4 rounded-lg text-center border-2 border-green-200">0.0%</div>
-                </div>
-            </div>
-
-            <!-- حساب الانتفاش -->
-            <div class="flex gap-4 justify-center">
-                <button onclick="calculateCBRSwell()" class="btn-green text-white px-8 py-3 rounded-lg font-bold shadow-lg">حساب الانتفاش</button>
-            </div>
+     <!-- 2️⃣ قسم الانتفاش -->
+<div class="section-card p-6 mb-6">
+    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <span class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2️⃣</span>
+        الانتفاش أثناء النقع — Swell During Soaking (8.2.5 & 10.4)
+    </h3>
+    
+    <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Initial Height hi (mm)</label>
+            <input id="cbrHi" type="number" step="0.1" value="127" class="input-field w-full">
         </div>
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Initial Dial Reading</label>
+            <input id="cbrDialInitial" type="number" step="0.01" value="0" class="input-field w-full">
+        </div>
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Final Dial Reading</label>
+            <input id="cbrDialFinal" type="number" step="0.01" value="0" class="input-field w-full">
+        </div>
+        <div class="col-span-2">
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Swell s (%)</label>
+            <div id="cbrSwellResult" class="font-bold text-green-700 text-2xl bg-green-50 p-4 rounded-lg text-center border-2 border-green-200">0.0%</div>
+        </div>
+    </div>
+
+    <!-- حساب الانتفاش -->
+    <div class="flex gap-4 justify-center">
+        <button onclick="calculateCBRSwell()" class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-bold shadow-lg transition-colors">حساب الانتفاش</button>
+    </div>
+</div>
+
 
         <!-- 3️⃣ جدول الضغط–الاختراق -->
         <div class="section-card p-6 mb-6">
