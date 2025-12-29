@@ -6663,6 +6663,7 @@ function toggleD422Glossary() {
     icon.textContent = '+';             // علامة زائد عند الإغلاق
   }
 }
+
 // =============================================
 // CBR DENSITY CALCULATIONS - ASTM D1883 (10.3)
 // =============================================
@@ -6685,33 +6686,183 @@ function calculateCBRDensity() {
     // Update results
     document.getElementById('cbrRho1').textContent = rho_d.toFixed(3);
     document.getElementById('cbrGamma1').textContent = gamma_d.toFixed(1);
-
-    // Success message
-    const msg = document.createElement('div');
-    msg.className = 'validation-success mt-4 p-4 rounded-lg';
-    msg.innerHTML = `✅ تم حساب الكثافة بنجاح!<br>ρd = ${rho_d.toFixed(3)} g/cm³ | γd = ${gamma_d.toFixed(1)} kN/m³`;
-    document.querySelector('.section-card:last-child').appendChild(msg);
 }
 
-// CBR Reset
+// =============================================
+// CBR SWELL CALCULATION
+// =============================================
+function calculateCBRSwell() {
+    const hi = parseFloat(document.getElementById('cbrHi').value) || 127;
+    const dialInitial = parseFloat(document.getElementById('cbrDialInitial').value) || 0;
+    const dialFinal = parseFloat(document.getElementById('cbrDialFinal').value) || 0;
+
+    // Swell s = ((ΔDial) / hi) × 100
+    const swell = ((dialFinal - dialInitial) / hi) * 100;
+
+    document.getElementById('cbrSwellResult').textContent = swell.toFixed(1) + '%';
+}
+
+// =============================================
+// CBR STRESS CALCULATION
+// =============================================
+function calculateCBRStress() {
+    const piston = 1.95; // inch diameter
+    const area = Math.PI * Math.pow(piston / 2, 2); // in²
+
+    // Calculate stress for each penetration
+    const penetrations = [
+        { pen: 0.025, id: 'cbrLoad025', stressId: 'cbrStress025' },
+        { pen: 0.050, id: 'cbrLoad050', stressId: 'cbrStress050' },
+        { pen: 0.100, id: 'cbrLoad100', stressId: 'cbrStress100' },
+        { pen: 0.200, id: 'cbrLoad200', stressId: 'cbrStress200' },
+        { pen: 0.500, id: 'cbrLoad500', stressId: 'cbrStress500' }
+    ];
+    
+    penetrations.forEach(obj => {
+        const loadEl = document.getElementById(obj.id);
+        const stressEl = document.getElementById(obj.stressId);
+        
+        if (loadEl && loadEl.value) {
+            const load = parseFloat(loadEl.value);
+            const stress = load / area;
+            stressEl.textContent = stress.toFixed(2) + ' psi';
+        }
+    });
+
+    // Calculate CBR values
+    calculateCBRValues();
+}
+
+// =============================================
+// CBR FINAL VALUES
+// =============================================
+function calculateCBRValues() {
+    const stress100Str = document.getElementById('cbrStress100').textContent;
+    const stress200Str = document.getElementById('cbrStress200').textContent;
+    
+    const stress100 = parseFloat(stress100Str) || 0;
+    const stress200 = parseFloat(stress200Str) || 0;
+
+    if (!stress100 && !stress200) return;
+
+    // CBR @ 0.1" = (Stress / 1000) × 100
+    const cbr100 = (stress100 / 1000) * 100;
+    
+    // CBR @ 0.2" = (Stress / 1500) × 100
+    const cbr200 = (stress200 / 1500) * 100;
+
+    // Final CBR = max(CBR@0.1", CBR@0.2")
+    const cbrFinal = Math.max(cbr100 || 0, cbr200 || 0);
+
+    document.getElementById('cbrValue100').textContent = cbr100.toFixed(2) + '%';
+    document.getElementById('cbrValue200').textContent = cbr200.toFixed(2) + '%';
+    document.getElementById('cbrFinal').textContent = cbrFinal.toFixed(2) + '%';
+}
+
+// =============================================
+// CBR RESET
+// =============================================
 function resetCBR() {
-    document.querySelectorAll('#sectionCBR input[type="number"], #sectionCBR input[type="text"]').forEach(input => {
-        input.value = '';
-    });
-    document.querySelectorAll('#cbrRho1, #cbrGamma1, #cbrSwellResult').forEach(el => {
-        el.textContent = '—';
-    });
-    document.querySelectorAll('.validation-success, .validation-warning').forEach(el => el.remove());
-}
-
-// CBR Demo Data
-function loadCBRDemo() {
-    document.getElementById('cbrSampleId').value = 'CBR-S1';
+    // Clear density inputs
+    document.getElementById('cbrSampleId').value = '';
+    document.getElementById('cbrTestDate').value = '';
+    document.getElementById('cbrMethod').value = 'D698 (Standard Proctor)';
+    
+    document.getElementById('cbrPct1').value = '100';
     document.getElementById('cbrVm1').value = '2250';
     document.getElementById('cbrMm1').value = '4800';
     document.getElementById('cbrMmws1').value = '7050';
     document.getElementById('cbrWac1').value = '12.0';
+    document.getElementById('cbrRho1').textContent = '—';
+    document.getElementById('cbrGamma1').textContent = '—';
+    
+    // Clear swell inputs
+    document.getElementById('cbrHi').value = '127';
+    document.getElementById('cbrDialInitial').value = '0';
+    document.getElementById('cbrDialFinal').value = '0';
+    document.getElementById('cbrSwellResult').textContent = '0.0%';
+    
+    // Clear load-penetration inputs
+    ['025', '050', '100', '200', '500'].forEach(suffix => {
+        const loadEl = document.getElementById('cbrLoad' + suffix);
+        const stressEl = document.getElementById('cbrStress' + suffix);
+        if (loadEl) loadEl.value = '';
+        if (stressEl) stressEl.textContent = '—';
+    });
+    
+    // Clear results
+    document.getElementById('cbrValue100').textContent = '—';
+    document.getElementById('cbrValue200').textContent = '—';
+    document.getElementById('cbrFinal').textContent = '—';
+}
+
+// =============================================
+// CBR DEMO DATA
+// =============================================
+function loadCBRDemo() {
+    document.getElementById('cbrSampleId').value = 'CBR-DEMO-001';
+    document.getElementById('cbrTestDate').value = '2025-12-29';
+    document.getElementById('cbrMethod').value = 'D1557 (Modified Proctor)';
+    
+    // Density data
+    document.getElementById('cbrVm1').value = '2250';
+    document.getElementById('cbrMm1').value = '4800';
+    document.getElementById('cbrMmws1').value = '7050';
+    document.getElementById('cbrWac1').value = '12.0';
+    
     calculateCBRDensity();
+    
+    // Swell data
+    document.getElementById('cbrHi').value = '127';
+    document.getElementById('cbrDialInitial').value = '0.00';
+    document.getElementById('cbrDialFinal').value = '2.54';
+    
+    calculateCBRSwell();
+    
+    // Load-penetration data (lbf)
+    document.getElementById('cbrLoad025').value = '500';
+    document.getElementById('cbrLoad050').value = '850';
+    document.getElementById('cbrLoad100').value = '1250';
+    document.getElementById('cbrLoad200').value = '1600';
+    document.getElementById('cbrLoad500').value = '1900';
+    
+    calculateCBRStress();
+}
+
+// =============================================
+// CBR JSON REPORT
+// =============================================
+function generateCBRJSON() {
+    const output = {
+        testInfo: {
+            standard: 'ASTM D1883-16',
+            sampleId: document.getElementById('cbrSampleId').value,
+            testDate: document.getElementById('cbrTestDate').value,
+            method: document.getElementById('cbrMethod').value
+        },
+        density: {
+            Vm_cm3: parseFloat(document.getElementById('cbrVm1').value),
+            Mm_g: parseFloat(document.getElementById('cbrMm1').value),
+            Mmws_g: parseFloat(document.getElementById('cbrMmws1').value),
+            wac_percent: parseFloat(document.getElementById('cbrWac1').value),
+            rhod_gcm3: parseFloat(document.getElementById('cbrRho1').textContent),
+            gammad_kNm3: parseFloat(document.getElementById('cbrGamma1').textContent)
+        },
+        swell: {
+            hi_mm: parseFloat(document.getElementById('cbrHi').value),
+            dialInitial: parseFloat(document.getElementById('cbrDialInitial').value),
+            dialFinal: parseFloat(document.getElementById('cbrDialFinal').value),
+            swell_percent: parseFloat(document.getElementById('cbrSwellResult').textContent)
+        },
+        results: {
+            cbr_100_percent: parseFloat(document.getElementById('cbrValue100').textContent),
+            cbr_200_percent: parseFloat(document.getElementById('cbrValue200').textContent),
+            cbr_final_percent: parseFloat(document.getElementById('cbrFinal').textContent)
+        }
+    };
+    
+    console.log('CBR Report', output);
+    alert('✅ Report Generated!\nCheck Console (F12) for JSON');
 }
 
 </script>
