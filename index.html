@@ -2764,21 +2764,17 @@
   </div>
 </div>
 
-  <!-- ✅ CBR SECTION - ASTM D1883 -->
+ <!-- ✅ CBR SECTION - ASTM D1883 - كامل ومُصحح -->
 <div id="sectionCBR" class="hidden">
     <div class="container mx-auto px-4 py-6">
-        <!-- Page Title Card -->
+        <!-- Page Title -->
         <div class="section-card p-6 mb-6">
             <div class="flex items-center gap-4 mb-6">
                 <div class="bg-emerald-100 p-4 rounded-full">
-                    <svg class="w-8 h-8 text-emerald-600 fill-none stroke-currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                              d="M19 21V5a2 2 0 00-2-2H7a2
-                                                    </path>
-                    </svg>
+                    <span class="text-2xl">🛣️</span>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800">🛣️ اختبار CBR — California Bearing Ratio</h2>
+                    <h2 class="text-2xl font-bold text-gray-800">اختبار CBR — California Bearing Ratio</h2>
                     <p class="text-gray-600">ASTM D1883-16 | نسبة تحمل كاليفورنيا لتربة مدموكة في المعمل</p>
                 </div>
             </div>
@@ -2786,7 +2782,7 @@
             <!-- Quick Summary -->
             <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                 <span class="bg-emerald-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">📋</span>
-                ملخص سريع — Quick Summary
+                ملخص سريع
             </h3>
             <ul class="list-disc ps-5 text-sm text-gray-700 space-y-2 mb-6">
                 <li>دمك التربة في قالب CBR إلى كثافة محددة (100% أو 95% من γd,max)</li>
@@ -2808,7 +2804,11 @@
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Sample ID</label>
                     <input id="cbrSampleId" type="text" class="input-field w-full" placeholder="CBR-001">
-                                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Test Date</label>
+                    <input id="cbrTestDate" type="date" class="input-field w-full">
+                </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">طريقة الدمك</label>
                     <select id="cbrMethod" class="input-field w-full">
@@ -2847,10 +2847,9 @@
                     </tbody>
                 </table>
             </div>
-                        </div>
 
-            <!-- ✅ أزرار الحساب -->
-            <div class="flex flex-wrap gap-4 justify-center mt-6">
+            <!-- ✅ أزرار الحساب (الأولى الصحيحة) -->
+            <div class="flex flex-wrap gap-4 justify-center mb-6">
                 <button onclick="calculateCBRDensity()" class="btn-orange text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01"></path>
@@ -2872,95 +2871,129 @@
             </div>
         </div>
 
-            <!-- أزرار الحساب -->
-            <div class="flex flex-wrap gap-4 justify-center mb-6">
-                <button onclick="calculateCBRDensity()" class="btn-orange text-white px-8 py-3 rounded-lg font-bold shadow-lg flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3
+        <!-- 2️⃣ قسم الانتفاش -->
+        <div class="section-card p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2️⃣</span>
+                الانتفاش أثناء النقع — Swell During Soaking (8.2.5 & 10.4)
+            </h3>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Initial Height hi (mm)</label>
+                    <input id="cbrHi" type="number" step="0.1" value="127" class="input-field w-full">
                 </div>
                 <div>
-                    <label class
-                                        </div>
-
-            <!-- 2️⃣ قسم الانتفاش -->
-            <div class="section-card p-6 mb-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <span class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2️⃣</span>
-                    الانتفاش أثناء النقع — Swell During Soaking (8.2.5 & 10.4)
-                </h3>
-                
-                <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Initial Height hi (mm)</label>
-                        <input id="cbrHi" type="number" step="0.1" value="127" class="input-field w-full">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Initial Dial Reading</label>
-                        <input id="cbrDialInitial" type="number" step="0.01" value="0" class="input-field w-full">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Final Dial Reading</label>
-                        <input id="cbrDialFinal" type="number" step="0.01" value="0" class="input-field w-full">
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Swell s (%)</label>
-                        <div id="cbrSwellResult" class="font-bold text-green-700 text-2xl bg-green-50 p-4 rounded-lg text-center border-2 border-green-200">0.0%</div>
-                    </div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Initial Dial Reading</label>
+                    <input id="cbrDialInitial" type="number" step="0.01" value="0" class="input-field w-full">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Final Dial Reading</label>
+                    <input id="cbrDialFinal" type="number" step="0.01" value="0" class="input-field w-full">
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Swell s (%)</label>
+                    <div id="cbrSwellResult" class="font-bold text-green-700 text-2xl bg-green-50 p-4 rounded-lg text-center border-2 border-green-200">0.0%</div>
                 </div>
             </div>
 
-           <!-- 3️⃣ جدول الضغط–الاختراق -->
-<div class="section-card p-6 mb-6">
-    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-        <span class="bg-yellow-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">3️⃣</span>
-        قراءات الضغط–الاختراق — Load-Penetration Data (9.3)
-    </h3>
-    
-    <div class="overflow-x-auto">
-        <table class="w-full border-collapse">
-            <thead>
-                <tr class="table-header-orange">
-                    <th class="p-3 text-center border border-orange-800">Penetration (in)</th>
-                    <th class="p-3 text-center border border-orange-800">Penetration (mm)</th>
-                    <th class="p-3 text-center border border-orange-800 w-32">Load (lbf)</th>
-                    <th class="p-3 text-center border border-orange-800 w-32">Stress (psi)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="p-3 border">0.025</td>
-                    <td class="p-3 border">0.64</td>
-                    <td><input id="cbrLoad025" type="number" step="1" class="input-field w-full text-center"></td>
-                    <td id="cbrStress025">—</td>
-                </tr>
-                <tr>
-                    <td class="p-3 border">0.050</td>
-                    <td class="p-3 border">1.27</td>
-                    <td><input id="cbrLoad050" type="number" step="1" class="input-field w-full text-center"></td>
-                    <td id="cbrStress050">—</td>
-                </tr>
-                <tr class="bg-yellow-50">
-                    <td class="p-3 border font-bold">0.100</td>
-                    <td class="p-3 border font-bold">2.54</td>
-                    <td><input id="cbrLoad100" type="number" step="1" class="input-field w-full text-center"></td>
-                    <td id="cbrStress100">—</td>
-                </tr>
-                <tr class="bg-yellow-50">
-                    <td class="p-3 border font-bold">0.200</td>
-                    <td class="p-3 border font-bold">5.08</td>
-                    <td><input id="cbrLoad200" type="number" step="1" class="input-field w-full text-center"></td>
-                    <td id="cbrStress200">—</td>
-                </tr>
-                <tr>
-                    <td class="p-3 border">0.500</td>
-                    <td class="p-3 border">12.70</td>
-                    <td><input id="cbrLoad500" type="number" step="1" class="input-field w-full text-center"></td>
-                    <td id="cbrStress500">—</td>
-                </tr>
-            </tbody>
-        </table>
+            <!-- حساب الانتفاش -->
+            <div class="flex gap-4 justify-center">
+                <button onclick="calculateCBRSwell()" class="btn-green text-white px-8 py-3 rounded-lg font-bold shadow-lg">حساب الانتفاش</button>
+            </div>
+        </div>
+
+        <!-- 3️⃣ جدول الضغط–الاختراق -->
+        <div class="section-card p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span class="bg-yellow-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">3️⃣</span>
+                قراءات الضغط–الاختراق — Load-Penetration Data (9.3)
+            </h3>
+            
+            <div class="overflow-x-auto mb-6">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="table-header-orange">
+                            <th class="p-3 text-center border border-orange-800">Penetration (in)</th>
+                            <th class="p-3 text-center border border-orange-800">Penetration (mm)</th>
+                            <th class="p-3 text-center border border-orange-800 w-32">Load (lbf)</th>
+                            <th class="p-3 text-center border border-orange-800 w-32">Stress (psi)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="p-3 border">0.025</td>
+                            <td class="p-3 border">0.64</td>
+                            <td><input id="cbrLoad025" type="number" step="1" class="input-field w-full text-center"></td>
+                            <td id="cbrStress025" class="p-3 border text-center font-bold">—</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 border">0.050</td>
+                            <td class="p-3 border">1.27</td>
+                            <td><input id="cbrLoad050" type="number" step="1" class="input-field w-full text-center"></td>
+                            <td id="cbrStress050" class="p-3 border text-center font-bold">—</td>
+                        </tr>
+                        <tr class="bg-yellow-50">
+                            <td class="p-3 border font-bold">0.100</td>
+                            <td class="p-3 border font-bold">2.54</td>
+                            <td><input id="cbrLoad100" type="number" step="1" class="input-field w-full text-center"></td>
+                            <td id="cbrStress100" class="p-3 border text-center font-bold text-orange-700">—</td>
+                        </tr>
+                        <tr class="bg-yellow-50">
+                            <td class="p-3 border font-bold">0.200</td>
+                            <td class="p-3 border font-bold">5.08</td>
+                            <td><input id="cbrLoad200" type="number" step="1" class="input-field w-full text-center"></td>
+                            <td id="cbrStress200" class="p-3 border text-center font-bold text-orange-700">—</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 border">0.500</td>
+                            <td class="p-3 border">12.70</td>
+                            <td><input id="cbrLoad500" type="number" step="1" class="input-field w-full text-center"></td>
+                            <td id="cbrStress500" class="p-3 border text-center font-bold">—</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- حساب الضغط -->
+            <div class="flex gap-4 justify-center mb-6">
+                <button onclick="calculateCBRStress()" class="btn-orange text-white px-8 py-3 rounded-lg font-bold shadow-lg">حساب الضغط</button>
+            </div>
+        </div>
+
+        <!-- 4️⃣ نتائج CBR -->
+        <div class="section-card p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">4️⃣</span>
+                نتائج CBR النهائية
+            </h3>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-xl border-2 border-orange-200">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">CBR @ 0.1" (1000 psi)</h4>
+                    <div id="cbrValue100" class="text-4xl font-bold text-orange-700">—</div>
+                    <p class="text-xs text-gray-600 mt-2">California Bearing Ratio</p>
+                </div>
+                <div class="bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-xl border-2 border-red-200">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">CBR @ 0.2" (1500 psi)</h4>
+                    <div id="cbrValue200" class="text-4xl font-bold text-red-700">—</div>
+                    <p class="text-xs text-gray-600 mt-2">إذا كان أقل من 0.1"</p>
+                </div>
+                <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border-2 border-purple-200">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">CBR النهائي</h4>
+                    <div id="cbrFinal" class="text-4xl font-bold text-purple-700">—</div>
+                    <p class="text-xs text-gray-600 mt-2">الأكبر بين 0.1" و 0.2"</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generate JSON -->
+        <div class="flex gap-4 justify-center">
+            <button onclick="generateCBRJSON()" class="bg-green-600 text-white px-8 py-3 rounded-lg font-bold shadow-lg">JSON Report</button>
+        </div>
     </div>
 </div>
+
         <!-- ============================================= -->
         <!-- USCS CLASSIFICATION SECTION -->
         <div id="uscsSection" class="hidden section-card p-6 mb-6">
