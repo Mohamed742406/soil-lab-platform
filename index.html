@@ -2774,6 +2774,125 @@
                     <svg class="w-8 h-8 text-emerald-600 fill-none stroke-currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                               d="M19 21V5a2 2 0 00-2-2H7a2
+                                                    </path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">🛣️ اختبار CBR — California Bearing Ratio</h2>
+                    <p class="text-gray-600">ASTM D1883-16 | نسبة تحمل كاليفورنيا لتربة مدموكة في المعمل</p>
+                </div>
+            </div>
+
+            <!-- Quick Summary -->
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span class="bg-emerald-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">📋</span>
+                ملخص سريع — Quick Summary
+            </h3>
+            <ul class="list-disc ps-5 text-sm text-gray-700 space-y-2 mb-6">
+                <li>دمك التربة في قالب CBR إلى كثافة محددة (100% أو 95% من γd,max)</li>
+                <li>نقع 96±2 ساعة + قياس الانتفاش تحت أوزان الرصف</li>
+                <li>ضغط بمكبس قياسي + تسجيل الأحمال عند 0.025-0.500 in</li>
+                <li>حساب CBR عند 0.1 و0.2 in اختراق (1000/1500 psi معيار)</li>
+            </ul>
+        </div>
+
+        <!-- ✅ 1️⃣ جدول الكثافة -->
+        <div class="section-card p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">1️⃣</span>
+                بيانات الكثافة قبل النقع — Dry Density Data (10.3)
+            </h3>
+            
+            <!-- Test Settings -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Sample ID</label>
+                    <input id="cbrSampleId" type="text" class="input-field w-full" placeholder="CBR-001">
+                                    </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">طريقة الدمك</label>
+                    <select id="cbrMethod" class="input-field w-full">
+                        <option>D698 (Standard Proctor)</option>
+                        <option>D1557 (Modified Proctor)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- جدول الكثافة -->
+            <div class="overflow-x-auto mb-6">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="table-header">
+                            <th class="p-3 text-center border border-blue-800">البيان</th>
+                            <th class="p-3 text-center border border-blue-800 w-28">% MDD</th>
+                            <th class="p-3 text-center border border-blue-800 w-28">Vm (cm³)</th>
+                            <th class="p-3 text-center border border-blue-800 w-28">Mm (g)</th>
+                            <th class="p-3 text-center border border-blue-800 w-28">Mm+ws (g)</th>
+                            <th class="p-3 text-center border border-blue-800 w-28">w_ac (%)</th>
+                            <th class="p-3 text-center border border-blue-800 w-28">ρd (g/cm³)</th>
+                            <th class="p-3 text-center border border-blue-800 w-28">γd (kN/m³)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="p-3 border font-semibold text-right bg-blue-50">العينة 1</td>
+                            <td><input id="cbrPct1" type="number" step="0.1" value="100" class="input-field w-full text-center"></td>
+                            <td><input id="cbrVm1" type="number" step="1" value="2250" class="input-field w-full text-center"></td>
+                            <td><input id="cbrMm1" type="number" step="0.1" value="4800" class="input-field w-full text-center"></td>
+                            <td><input id="cbrMmws1" type="number" step="0.1" value="7050" class="input-field w-full text-center"></td>
+                            <td><input id="cbrWac1" type="number" step="0.1" value="12.0" class="input-field w-full text-center"></td>
+                            <td id="cbrRho1" class="font-bold text-blue-700 bg-blue-50 p-3 text-center border">—</td>
+                            <td id="cbrGamma1" class="font-bold text-green-700 bg-green-50 p-3 text-center border">—</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- أزرار الحساب -->
+            <div class="flex flex-wrap gap-4 justify-center mb-6">
+                <button onclick="calculateCBRDensity()" class="btn-orange text-white px-8 py-3 rounded-lg font-bold shadow-lg flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3
+                </div>
+                <div>
+                    <label class
+                                        </div>
+
+            <!-- 2️⃣ قسم الانتفاش -->
+            <div class="section-card p-6 mb-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2️⃣</span>
+                    الانتفاش أثناء النقع — Swell During Soaking (8.2.5 & 10.4)
+                </h3>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Initial Height hi (mm)</label>
+                        <input id="cbrHi" type="number" step="0.1" value="127" class="input-field w-full">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Initial Dial Reading</label>
+                        <input id="cbrDialInitial" type="number" step="0.01" value="0" class="input-field w-full">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Final Dial Reading</label>
+                        <input id="cbrDialFinal" type="number" step="0.01" value="0" class="input-field w-full">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Swell s (%)</label>
+                        <div id="cbrSwellResult" class="font-bold text-green-700 text-2xl bg-green-50 p-4 rounded-lg text-center border-2 border-green-200">0.0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3️⃣ Placeholder للضغط-الاختراق -->
+            <div class="section-card p-6 mb-6 text-center bg-yellow-50 border-2 border-dashed border-yellow-300 rounded-xl">
+                <h3 class="text-xl font-bold text-yellow-700 mb-2">3️⃣ الضغط–الاختراق — Load-Penetration</h3>
+                <p class="text-yellow-600">سيتم إضافة الجدول في الخطوة القادمة</p>
+            </div>
+        </div>
+    </div>
+</div>
 
         <!-- ============================================= -->
         <!-- USCS CLASSIFICATION SECTION -->
@@ -6481,6 +6600,56 @@ function toggleD422Glossary() {
     content.classList.add('hidden');    // يخفي الدليل
     icon.textContent = '+';             // علامة زائد عند الإغلاق
   }
+}
+// =============================================
+// CBR DENSITY CALCULATIONS - ASTM D1883 (10.3)
+// =============================================
+function calculateCBRDensity() {
+    // Density calculation ρd = Msac / Vm (10.3)
+    const Mm = parseFloat(document.getElementById('cbrMm1').value) || 0;
+    const Mmws = parseFloat(document.getElementById('cbrMmws1').value) || 0;
+    const wac = parseFloat(document.getElementById('cbrWac1').value) || 0;
+    const Vm = parseFloat(document.getElementById('cbrVm1').value) || 0;
+
+    // Msac = (Mmws - Mm) / (1 + wac/100)
+    const Msac = (Mmws - Mm) / (1 + wac / 100);
+    
+    // ρd = Msac / Vm [g/cm³]
+    const rho_d = Msac / Vm;
+    
+    // γd = 9.8066 × ρd [kN/m³]
+    const gamma_d = 9.8066 * rho_d;
+
+    // Update results
+    document.getElementById('cbrRho1').textContent = rho_d.toFixed(3);
+    document.getElementById('cbrGamma1').textContent = gamma_d.toFixed(1);
+
+    // Success message
+    const msg = document.createElement('div');
+    msg.className = 'validation-success mt-4 p-4 rounded-lg';
+    msg.innerHTML = `✅ تم حساب الكثافة بنجاح!<br>ρd = ${rho_d.toFixed(3)} g/cm³ | γd = ${gamma_d.toFixed(1)} kN/m³`;
+    document.querySelector('.section-card:last-child').appendChild(msg);
+}
+
+// CBR Reset
+function resetCBR() {
+    document.querySelectorAll('#sectionCBR input[type="number"], #sectionCBR input[type="text"]').forEach(input => {
+        input.value = '';
+    });
+    document.querySelectorAll('#cbrRho1, #cbrGamma1, #cbrSwellResult').forEach(el => {
+        el.textContent = '—';
+    });
+    document.querySelectorAll('.validation-success, .validation-warning').forEach(el => el.remove());
+}
+
+// CBR Demo Data
+function loadCBRDemo() {
+    document.getElementById('cbrSampleId').value = 'CBR-S1';
+    document.getElementById('cbrVm1').value = '2250';
+    document.getElementById('cbrMm1').value = '4800';
+    document.getElementById('cbrMmws1').value = '7050';
+    document.getElementById('cbrWac1').value = '12.0';
+    calculateCBRDensity();
 }
 
 </script>
