@@ -2764,9 +2764,10 @@
   </div>
 </div>
 
-<!-- ✅ CBR SECTION - ASTM D1883 - كامل ومُصحح -->
+<!-- CBR SECTION - ASTM D1883 -->
 <div id="sectionCBR" class="hidden">
     <div class="container mx-auto px-4 py-6">
+
         <!-- Page Title -->
         <div class="section-card p-6 mb-6">
             <div class="flex items-center gap-4 mb-6">
@@ -2774,227 +2775,156 @@
                     <span class="text-2xl">🛣️</span>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800">اختبار CBR — California Bearing Ratio</h2>
-                    <p class="text-gray-600">ASTM D1883-16 | نسبة تحمل كاليفورنيا لتربة مدموكة في المعمل</p>
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        اختبار CBR — California Bearing Ratio
+                    </h2>
+                    <p class="text-gray-600">
+                        ASTM D1883 | California Bearing Ratio of Laboratory-Compacted Soils
+                    </p>
                 </div>
             </div>
 
             <!-- Quick Summary -->
-            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span class="bg-emerald-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">📋</span>
-                ملخص سريع
-            </h3>
-            <ul class="list-disc ps-5 text-sm text-gray-700 space-y-2 mb-6">
-                <li>دمك التربة في قالب CBR إلى كثافة محددة (100% أو 95% من γd,max)</li>
-                <li>نقع 96±2 ساعة + قياس الانتفاش تحت أوزان الرصف</li>
-                <li>ضغط بمكبس قياسي + تسجيل الأحمال عند 0.025-0.500 in</li>
-                <li>حساب CBR عند 0.1 و0.2 in اختراق (1000/1500 psi معيار)</li>
+            <h3 class="text-lg font-bold text-gray-800 mb-4">ملخص سريع</h3>
+            <ul class="list-disc ps-5 text-sm text-gray-700 space-y-2">
+                <li>دمك التربة في قالب CBR حتى كثافة محددة</li>
+                <li>نقع العينة وقياس الانتفاش تحت أوزان الرصف</li>
+                <li>اختراق بمعدل قياسي وتسجيل الأحمال</li>
+                <li>حساب CBR عند 0.1 و0.2 بوصة اختراق</li>
             </ul>
         </div>
-
-        <!-- ✅ 1️⃣ جدول الكثافة -->
-        <div class="section-card p-6 mb-6">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">1️⃣</span>
-                بيانات الكثافة قبل النقع — Dry Density Data (10.3)
-            </h3>
-            
-            <!-- Test Settings -->
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Sample ID</label>
-                    <input id="cbrSampleId" type="text" class="input-field w-full" placeholder="CBR-001">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Test Date</label>
-                    <input id="cbrTestDate" type="date" class="input-field w-full">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">طريقة الدمك</label>
-                    <select id="cbrMethod" class="input-field w-full">
-                        <option>D698 (Standard Proctor)</option>
-                        <option>D1557 (Modified Proctor)</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- جدول الكثافة -->
-            <div class="overflow-x-auto mb-6">
-                <table class="w-full border-collapse">
-                    <thead>
-                        <tr class="table-header">
-                            <th class="p-3 text-center border border-blue-800">البيان</th>
-                            <th class="p-3 text-center border border-blue-800 w-28">% MDD</th>
-                            <th class="p-3 text-center border border-blue-800 w-28">Vm (cm³)</th>
-                            <th class="p-3 text-center border border-blue-800 w-28">Mm (g)</th>
-                            <th class="p-3 text-center border border-blue-800 w-28">Mm+ws (g)</th>
-                            <th class="p-3 text-center border border-blue-800 w-28">w_ac (%)</th>
-                            <th class="p-3 text-center border border-blue-800 w-28">ρd (g/cm³)</th>
-                            <th class="p-3 text-center border border-blue-800 w-28">γd (kN/m³)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="p-3 border font-semibold text-right bg-blue-50">العينة 1</td>
-                            <td><input id="cbrPct1" type="number" step="0.1" value="100" class="input-field w-full text-center"></td>
-                            <td><input id="cbrVm1" type="number" step="1" value="2250" class="input-field w-full text-center"></td>
-                            <td><input id="cbrMm1" type="number" step="0.1" value="4800" class="input-field w-full text-center"></td>
-                            <td><input id="cbrMmws1" type="number" step="0.1" value="7050" class="input-field w-full text-center"></td>
-                            <td><input id="cbrWac1" type="number" step="0.1" value="12.0" class="input-field w-full text-center"></td>
-                            <td id="cbrRho1" class="font-bold text-blue-700 bg-blue-50 p-3 text-center border">—</td>
-                            <td id="cbrGamma1" class="font-bold text-green-700 bg-green-50 p-3 text-center border">—</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- ✅ أزرار الحساب (الأولى الصحيحة) -->
-            <div class="flex flex-wrap gap-4 justify-center mb-6">
-                <button onclick="calculateCBRDensity()" class="btn-orange text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01"></path>
-                    </svg>
-                    حساب الكثافة
-                </button>
-                <button onclick="resetCBR()" class="btn-secondary text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9"></path>
-                    </svg>
-                    إعادة تعيين
-                </button>
-                <button onclick="loadCBRDemo()" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5"></path>
-                    </svg>
-                    Demo Data
-                </button>
-            </div>
-        </div>
-
-     <!-- 2️⃣ قسم الانتفاش -->
+<!-- Step 1: CBR Test Type Selection -->
 <div class="section-card p-6 mb-6">
-    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-        <span class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2️⃣</span>
-        الانتفاش أثناء النقع — Swell During Soaking (8.2.5 & 10.4)
+    <h3 class="text-lg font-bold text-gray-800 mb-4">
+        1️⃣ نوع اختبار CBR
     </h3>
-    
-    <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-        <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Initial Height hi (mm)</label>
-            <input id="cbrHi" type="number" step="0.1" value="127" class="input-field w-full">
-        </div>
-        <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Initial Dial Reading</label>
-            <input id="cbrDialInitial" type="number" step="0.01" value="0" class="input-field w-full">
-        </div>
-        <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Final Dial Reading</label>
-            <input id="cbrDialFinal" type="number" step="0.01" value="0" class="input-field w-full">
-        </div>
-        <div class="col-span-2">
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Swell s (%)</label>
-            <div id="cbrSwellResult" class="font-bold text-green-700 text-2xl bg-green-50 p-4 rounded-lg text-center border-2 border-green-200">0.0%</div>
-        </div>
-    </div>
 
-    <!-- حساب الانتفاش -->
-    <div class="flex gap-4 justify-center">
-        <button onclick="calculateCBRSwell()" class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-bold shadow-lg transition-colors">حساب الانتفاش</button>
+    <p class="text-sm text-gray-600 mb-4">
+        اختر طريقة إجراء اختبار CBR حسب متطلبات المشروع والمواصفة.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-6">
+        <label class="flex items-center gap-3 cursor-pointer p-4 border rounded-lg hover:bg-gray-50">
+            <input type="radio" name="cbr_test_type" value="single" checked>
+            <span class="font-semibold text-gray-800">
+                عينة واحدة (Single CBR Test)
+            </span>
+        </label>
+
+        <label class="flex items-center gap-3 cursor-pointer p-4 border rounded-lg hover:bg-gray-50">
+            <input type="radio" name="cbr_test_type" value="three">
+            <span class="font-semibold text-gray-800">
+                ثلاث عينات بجهود دمك مختلفة (56 / 25 / 10 ضغطة)
+            </span>
+        </label>
     </div>
 </div>
+       <!-- Step 2: Project & Sample Information -->
+<div class="section-card p-6 mb-6">
+    <h3 class="text-lg font-bold text-gray-800 mb-4">
+        2️⃣ بيانات المشروع والعينة
+    </h3>
 
-
-        <!-- 3️⃣ جدول الضغط–الاختراق -->
-        <div class="section-card p-6 mb-6">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span class="bg-yellow-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">3️⃣</span>
-                قراءات الضغط–الاختراق — Load-Penetration Data (9.3)
-            </h3>
-            
-            <div class="overflow-x-auto mb-6">
-                <table class="w-full border-collapse">
-                    <thead>
-                        <tr class="table-header-orange">
-                            <th class="p-3 text-center border border-orange-800">Penetration (in)</th>
-                            <th class="p-3 text-center border border-orange-800">Penetration (mm)</th>
-                            <th class="p-3 text-center border border-orange-800 w-32">Load (lbf)</th>
-                            <th class="p-3 text-center border border-orange-800 w-32">Stress (psi)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="p-3 border">0.025</td>
-                            <td class="p-3 border">0.64</td>
-                            <td><input id="cbrLoad025" type="number" step="1" class="input-field w-full text-center"></td>
-                            <td id="cbrStress025" class="p-3 border text-center font-bold">—</td>
-                        </tr>
-                        <tr>
-                            <td class="p-3 border">0.050</td>
-                            <td class="p-3 border">1.27</td>
-                            <td><input id="cbrLoad050" type="number" step="1" class="input-field w-full text-center"></td>
-                            <td id="cbrStress050" class="p-3 border text-center font-bold">—</td>
-                        </tr>
-                        <tr class="bg-yellow-50">
-                            <td class="p-3 border font-bold">0.100</td>
-                            <td class="p-3 border font-bold">2.54</td>
-                            <td><input id="cbrLoad100" type="number" step="1" class="input-field w-full text-center"></td>
-                            <td id="cbrStress100" class="p-3 border text-center font-bold text-orange-700">—</td>
-                        </tr>
-                        <tr class="bg-yellow-50">
-                            <td class="p-3 border font-bold">0.200</td>
-                            <td class="p-3 border font-bold">5.08</td>
-                            <td><input id="cbrLoad200" type="number" step="1" class="input-field w-full text-center"></td>
-                            <td id="cbrStress200" class="p-3 border text-center font-bold text-orange-700">—</td>
-                        </tr>
-                        <tr>
-                            <td class="p-3 border">0.500</td>
-                            <td class="p-3 border">12.70</td>
-                            <td><input id="cbrLoad500" type="number" step="1" class="input-field w-full text-center"></td>
-                            <td id="cbrStress500" class="p-3 border text-center font-bold">—</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- حساب الضغط -->
-            <div class="flex gap-4 justify-center mb-6">
-                <button onclick="calculateCBRStress()" class="btn-orange text-white px-8 py-3 rounded-lg font-bold shadow-lg">حساب الضغط</button>
-            </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">
+                Project Name
+            </label>
+            <input type="text" class="input-field w-full" placeholder="اسم المشروع">
         </div>
 
-        <!-- 4️⃣ نتائج CBR -->
-        <div class="section-card p-6 mb-6">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">4️⃣</span>
-                نتائج CBR النهائية
-            </h3>
-            
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-xl border-2 border-orange-200">
-                    <h4 class="text-sm font-semibold text-gray-700 mb-2">CBR @ 0.1" (1000 psi)</h4>
-                    <div id="cbrValue100" class="text-4xl font-bold text-orange-700">—</div>
-                    <p class="text-xs text-gray-600 mt-2">California Bearing Ratio</p>
-                </div>
-                <div class="bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-xl border-2 border-red-200">
-                    <h4 class="text-sm font-semibold text-gray-700 mb-2">CBR @ 0.2" (1500 psi)</h4>
-                    <div id="cbrValue200" class="text-4xl font-bold text-red-700">—</div>
-                    <p class="text-xs text-gray-600 mt-2">إذا كان أقل من 0.1"</p>
-                </div>
-                <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border-2 border-purple-200">
-                    <h4 class="text-sm font-semibold text-gray-700 mb-2">CBR النهائي</h4>
-                    <div id="cbrFinal" class="text-4xl font-bold text-purple-700">—</div>
-                    <p class="text-xs text-gray-600 mt-2">الأكبر بين 0.1" و 0.2"</p>
-                </div>
-            </div>
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">
+                Client / Consultant
+            </label>
+            <input type="text" class="input-field w-full" placeholder="المالك / الاستشاري">
         </div>
 
-        <!-- Generate JSON -->
-        <div class="flex gap-4 justify-center">
-            <button onclick="generateCBRJSON()" class="bg-green-600 text-white px-8 py-3 rounded-lg font-bold shadow-lg">JSON Report</button>
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">
+                Laboratory
+            </label>
+            <input type="text" class="input-field w-full" placeholder="اسم المعمل">
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">
+                Sample ID
+            </label>
+            <input type="text" class="input-field w-full" placeholder="CBR-01">
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">
+                Test Date
+            </label>
+            <input type="date" class="input-field w-full">
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">
+                Soil Description
+            </label>
+            <input type="text" class="input-field w-full" placeholder="وصف التربة">
+        </div>
+    </div>
+</div> 
+        <!-- Step 3: CBR Test Setup -->
+<div class="section-card p-6 mb-6">
+    <h3 class="text-lg font-bold text-gray-800 mb-4">
+        3️⃣ إعدادات اختبار CBR
+    </h3>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">
+                حالة العينة
+            </label>
+            <select class="input-field w-full">
+                <option value="soaked">Soaked (منقوعة)</option>
+                <option value="unsoaked">Unsoaked (غير منقوعة)</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">
+                قطر القالب
+            </label>
+            <select class="input-field w-full">
+                <option value="152">152 mm</option>
+                <option value="102">102 mm</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">
+                ارتفاع القالب
+            </label>
+            <input type="number" class="input-field w-full" placeholder="mm">
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">
+                عدد أوزان الرصف (Surcharge)
+            </label>
+            <input type="number" class="input-field w-full" placeholder="عدد الأوزان">
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">
+                وزن وزن الرصف الواحد
+            </label>
+            <input type="number" class="input-field w-full" placeholder="kg">
         </div>
     </div>
 </div>
+        <!-- Placeholder -->
+        <div class="section-card p-6 text-center text-gray-500 italic">
+            سيتم استكمال خطوات اختبار CBR هنا تدريجيًا
+        </div>
 
+    </div>
+</div>
         <!-- ============================================= -->
         <!-- USCS CLASSIFICATION SECTION -->
         <div id="uscsSection" class="hidden section-card p-6 mb-6">
