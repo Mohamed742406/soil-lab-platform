@@ -3083,48 +3083,82 @@
     </footer>
 
 <script>
- // =============================================
-    // 1. TAB SWITCHING (نظام التنقل المحدث)
+// =============================================
+    // 1. TAB SWITCHING (النظام المحدث والشامل)
     // =============================================
     let currentTab = 'D6913';
 
     function switchTab(tab) {
         currentTab = tab;
 
-        // قائمة بجميع معرفات التبويبات والأقسام (بما فيها CBR الجديد)
+        // قائمة التبويبات (بما فيها CBR)
         const tabs = ['D6913', 'D422', 'D4318', 'SoilClass', 'D1557', 'D2216', 'D854', 'CBR'];
 
         tabs.forEach(t => {
             const btn = document.getElementById('tab' + t);
             const sec = document.getElementById('section' + t);
 
-            // تحديث حالة الأزرار (نشط / غير نشط)
+            // تحديث حالة الأزرار
             if (btn) {
                 btn.className = (t === tab) 
                     ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' 
                     : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
             }
 
-            // إظهار القسم المطلوب وإخفاء الباقي
+            // إظهار/إخفاء الأقسام
             if (sec) {
                 sec.classList.toggle('hidden', t !== tab);
             }
         });
 
-        // تشغيل القراءة التلقائية للتصنيف عند فتح تبويب التصنيف
+        // تشغيل القراءة التلقائية للتصنيف عند الحاجة
+        if (tab === 'SoilClass' && typeof autoReadDataForClassification === 'function') {
+            autoReadDataForClassification();
+        }
+    }
+
+   <script>
+    // =============================================
+    // 1. نظام التنقل والتبويبات (TAB SWITCHING)
+    // =============================================
+    let currentTab = 'D6913';
+
+    function switchTab(tab) {
+        currentTab = tab;
+
+        // قائمة بجميع الأقسام (بما فيها CBR)
+        const tabs = ['D6913', 'D422', 'D4318', 'SoilClass', 'D1557', 'D2216', 'D854', 'CBR'];
+
+        tabs.forEach(t => {
+            const btn = document.getElementById('tab' + t);
+            const sec = document.getElementById('section' + t);
+
+            // تحديث الأزرار
+            if (btn) {
+                btn.className = (t === tab) 
+                    ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' 
+                    : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+            }
+
+            // تحديث الأقسام
+            if (sec) {
+                sec.classList.toggle('hidden', t !== tab);
+            }
+        });
+
+        // قراءة تلقائية لبيانات التصنيف
         if (tab === 'SoilClass' && typeof autoReadDataForClassification === 'function') {
             autoReadDataForClassification();
         }
     }
 
     // =============================================
-    // 2. CBR MODULE LOGIC (كود اختبار CBR الجديد)
+    // 2. كود اختبار CBR الجديد (CBR MODULE)
     // =============================================
     let cbrMode = 'single';
     let cbrData = [];
     let cbrCharts = {};
 
-    // تهيئة الوضع (عينة واحدة أو متعدد)
     function initCBRMode(mode) {
         cbrMode = mode;
         document.getElementById('cbrModeSelection').classList.add('hidden');
@@ -3132,12 +3166,11 @@
         renderCBRSpecimens();
     }
 
-    // رسم جداول الإدخال بناءً على عدد العينات
     function renderCBRSpecimens() {
         const container = document.getElementById('cbrSpecimensContainer');
+        if (!container) return; // حماية من الأخطاء
         container.innerHTML = '';
         
-        // عينة واحدة (للوضع الفردي) أو 3 عينات (للوضع المتعدد)
         const specimens = cbrMode === 'single' ? [1] : [1, 2, 3];
         const blows = cbrMode === 'single' ? [56] : [56, 25, 10]; 
 
@@ -3205,9 +3238,9 @@
         });
     }
 
-    // إظهار/إخفاء قسم الانتفاش
     function toggleCBRSwell() {
-        const isSoaked = document.getElementById('cbr_condition').value === 'soaked';
+        const conditionEl = document.getElementById('cbr_condition');
+        const isSoaked = conditionEl ? conditionEl.value === 'soaked' : false;
         const specimens = cbrMode === 'single' ? [1] : [1, 2, 3];
         specimens.forEach(num => {
             const el = document.getElementById(`cbr_swellGroup_${num}`);
@@ -3215,16 +3248,14 @@
         });
     }
 
-    // الحسابات الرئيسية لـ CBR
     function calculateCBR() {
         cbrData = [];
         const specimens = cbrMode === 'single' ? [1] : [1, 2, 3];
         const blows = cbrMode === 'single' ? [56] : [56, 25, 10];
         const pens = [0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.3, 0.4, 0.5];
-        const pistonArea = 3.039; // مساحة المكبس بالبوصة المربعة
+        const pistonArea = 3.039;
 
         specimens.forEach((num, index) => {
-            // 1. حساب الكثافة
             const Mm = parseFloat(document.getElementById(`cbr_moldMass_${num}`).value) || 0;
             const Mmw = parseFloat(document.getElementById(`cbr_wetSoilMold_${num}`).value) || 0;
             const Vm = parseFloat(document.getElementById(`cbr_moldVol_${num}`).value) || 2310;
@@ -3238,25 +3269,25 @@
                 dryDensity_pcf = dryDensity_gcm3 * 62.428;
             }
 
-            // 2. حساب الانتفاش
             let swellPercent = 0;
-            if (document.getElementById('cbr_condition').value === 'soaked') {
+            const conditionEl = document.getElementById('cbr_condition');
+            if (conditionEl && conditionEl.value === 'soaked') {
                 const h1 = parseFloat(document.getElementById(`cbr_swellH1_${num}`).value) || 127;
                 const h2 = parseFloat(document.getElementById(`cbr_swellH2_${num}`).value) || h1;
                 swellPercent = ((h2 - h1) / h1) * 100;
-                document.getElementById(`cbr_swellResult_${num}`).value = swellPercent.toFixed(2) + '%';
+                const resEl = document.getElementById(`cbr_swellResult_${num}`);
+                if(resEl) resEl.value = swellPercent.toFixed(2) + '%';
             }
 
-            // 3. حساب الضغط و CBR
             let points = [];
             pens.forEach(p => {
-                const loadInput = document.getElementById(`cbr_load_${num}_${p.toString().replace('.','_')}`);
-                const load = parseFloat(loadInput.value) || 0;
+                const inputId = `cbr_load_${num}_${p.toString().replace('.','_')}`;
+                const loadInput = document.getElementById(inputId);
+                const load = loadInput ? (parseFloat(loadInput.value) || 0) : 0;
                 const stress = load / pistonArea;
                 points.push({ x: p, y: stress });
             });
 
-            // الحصول على الضغط عند 0.1 و 0.2
             const getStress = (depth) => points.find(pt => pt.x === depth)?.y || 0;
             const stress01 = getStress(0.1);
             const stress02 = getStress(0.2);
@@ -3280,111 +3311,117 @@
         displayCBRResults();
     }
 
-    // عرض النتائج
     function displayCBRResults() {
-        document.getElementById('cbrResultsSection').classList.remove('hidden');
+        const resultsSec = document.getElementById('cbrResultsSection');
+        if(resultsSec) resultsSec.classList.remove('hidden');
 
-        // تعبئة الجدول
         const tableBody = document.getElementById('cbrSummaryTableBody');
-        tableBody.innerHTML = cbrData.map(d => `
-            <tr class="hover:bg-gray-50 border-t">
-                <td class="p-2">${d.specimen}</td>
-                <td class="p-2 font-semibold">${d.blows}</td>
-                <td class="p-2 text-blue-700 font-mono">${d.dryDensity_pcf.toFixed(1)}</td>
-                <td class="p-2">${d.cbr01.toFixed(1)}%</td>
-                <td class="p-2">${d.cbr02.toFixed(1)}%</td>
-                <td class="p-2 font-bold text-green-700 bg-green-50">${d.finalCBR.toFixed(1)}%</td>
-                <td class="p-2">${d.swellPercent.toFixed(2)}%</td>
-            </tr>
-        `).join('');
+        if(tableBody) {
+            tableBody.innerHTML = cbrData.map(d => `
+                <tr class="hover:bg-gray-50 border-t">
+                    <td class="p-2">${d.specimen}</td>
+                    <td class="p-2 font-semibold">${d.blows}</td>
+                    <td class="p-2 text-blue-700 font-mono">${d.dryDensity_pcf.toFixed(1)}</td>
+                    <td class="p-2">${d.cbr01.toFixed(1)}%</td>
+                    <td class="p-2">${d.cbr02.toFixed(1)}%</td>
+                    <td class="p-2 font-bold text-green-700 bg-green-50">${d.finalCBR.toFixed(1)}%</td>
+                    <td class="p-2">${d.swellPercent.toFixed(2)}%</td>
+                </tr>
+            `).join('');
+        }
 
-        // تعبئة كروت الملخص
         const maxCBR = Math.max(...cbrData.map(d => d.finalCBR));
         const designDensity = Math.max(...cbrData.map(d => d.dryDensity_pcf));
         
-        document.getElementById('cbrSummaryCards').innerHTML = `
-            <div class="bg-green-100 p-4 rounded-xl border border-green-200 text-center shadow-sm">
-                <h4 class="text-sm font-bold text-green-800">أعلى قيمة CBR</h4>
-                <div class="text-3xl font-bold text-green-700 mt-2">${maxCBR.toFixed(1)}%</div>
-            </div>
-            <div class="bg-blue-100 p-4 rounded-xl border border-blue-200 text-center shadow-sm">
-                <h4 class="text-sm font-bold text-blue-800">أقصى كثافة جافة (pcf)</h4>
-                <div class="text-3xl font-bold text-blue-700 mt-2">${designDensity.toFixed(1)}</div>
-            </div>
-        `;
+        const summaryCards = document.getElementById('cbrSummaryCards');
+        if(summaryCards) {
+            summaryCards.innerHTML = `
+                <div class="bg-green-100 p-4 rounded-xl border border-green-200 text-center shadow-sm">
+                    <h4 class="text-sm font-bold text-green-800">أعلى قيمة CBR</h4>
+                    <div class="text-3xl font-bold text-green-700 mt-2">${maxCBR.toFixed(1)}%</div>
+                </div>
+                <div class="bg-blue-100 p-4 rounded-xl border border-blue-200 text-center shadow-sm">
+                    <h4 class="text-sm font-bold text-blue-800">أقصى كثافة جافة (pcf)</h4>
+                    <div class="text-3xl font-bold text-blue-700 mt-2">${designDensity.toFixed(1)}</div>
+                </div>
+            `;
+        }
 
         renderCBRCharts();
     }
 
-    // رسم المنحنيات
     function renderCBRCharts() {
-        // 1. Stress-Penetration Chart
-        const ctx1 = document.getElementById('cbrStressChart').getContext('2d');
-        if (cbrCharts.stress) cbrCharts.stress.destroy();
-
-        cbrCharts.stress = new Chart(ctx1, {
-            type: 'line',
-            data: {
-                datasets: cbrData.map((d, i) => ({
-                    label: `Specimen ${d.specimen} (${d.blows} blows)`,
-                    data: d.points,
-                    borderColor: ['#3b82f6', '#10b981', '#f59e0b'][i],
-                    tension: 0.4
-                }))
-            },
-            options: {
-                scales: {
-                    x: { type: 'linear', title: {display: true, text: 'Penetration (in)'} },
-                    y: { title: {display: true, text: 'Stress (psi)'} }
+        const ctx1 = document.getElementById('cbrStressChart');
+        if (ctx1) {
+            if (cbrCharts.stress) cbrCharts.stress.destroy();
+            cbrCharts.stress = new Chart(ctx1.getContext('2d'), {
+                type: 'line',
+                data: {
+                    datasets: cbrData.map((d, i) => ({
+                        label: `Specimen ${d.specimen} (${d.blows} blows)`,
+                        data: d.points,
+                        borderColor: ['#3b82f6', '#10b981', '#f59e0b'][i],
+                        tension: 0.4
+                    }))
+                },
+                options: {
+                    scales: {
+                        x: { type: 'linear', title: {display: true, text: 'Penetration (in)'} },
+                        y: { title: {display: true, text: 'Stress (psi)'} }
+                    }
                 }
-            }
-        });
+            });
+        }
 
-        // 2. CBR vs Density Chart
-        const ctx2 = document.getElementById('cbrDensityChart').getContext('2d');
-        if (cbrCharts.density) cbrCharts.density.destroy();
-
-        const sortedData = [...cbrData].sort((a,b) => a.dryDensity_pcf - b.dryDensity_pcf);
-
-        cbrCharts.density = new Chart(ctx2, {
-            type: 'line',
-            data: {
-                datasets: [{
-                    label: 'CBR vs Dry Density',
-                    data: sortedData.map(d => ({ x: d.dryDensity_pcf, y: d.finalCBR })),
-                    borderColor: '#8b5cf6',
-                    backgroundColor: 'rgba(139, 92, 246, 0.2)',
-                    fill: true,
-                    pointRadius: 6
-                }]
-            },
-            options: {
-                scales: {
-                    x: { type: 'linear', title: {display: true, text: 'Dry Density (pcf)'} },
-                    y: { title: {display: true, text: 'CBR (%)'} }
+        const ctx2 = document.getElementById('cbrDensityChart');
+        if (ctx2) {
+            if (cbrCharts.density) cbrCharts.density.destroy();
+            const sortedData = [...cbrData].sort((a,b) => a.dryDensity_pcf - b.dryDensity_pcf);
+            cbrCharts.density = new Chart(ctx2.getContext('2d'), {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'CBR vs Dry Density',
+                        data: sortedData.map(d => ({ x: d.dryDensity_pcf, y: d.finalCBR })),
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                        fill: true,
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: { type: 'linear', title: {display: true, text: 'Dry Density (pcf)'} },
+                        y: { title: {display: true, text: 'CBR (%)'} }
+                    }
                 }
-            }
-        });
+            });
+        }
         
-        // إخفاء رسم الكثافة إذا كانت عينة واحدة
-        if (cbrMode === 'single') {
-            document.getElementById('cbrDensityChartCard').classList.add('hidden');
-        } else {
-            document.getElementById('cbrDensityChartCard').classList.remove('hidden');
+        const densityCard = document.getElementById('cbrDensityChartCard');
+        if(densityCard) {
+            if (cbrMode === 'single') {
+                densityCard.classList.add('hidden');
+            } else {
+                densityCard.classList.remove('hidden');
+            }
         }
     }
 
-    // إعادة التعيين
     function resetCBR() {
         cbrData = [];
-        document.getElementById('cbrResultsSection').classList.add('hidden');
-        document.getElementById('cbrMainContent').classList.add('hidden');
-        document.getElementById('cbrModeSelection').classList.remove('hidden');
+        const resSec = document.getElementById('cbrResultsSection');
+        const mainContent = document.getElementById('cbrMainContent');
+        const modeSel = document.getElementById('cbrModeSelection');
+        
+        if(resSec) resSec.classList.add('hidden');
+        if(mainContent) mainContent.classList.add('hidden');
+        if(modeSel) modeSel.classList.remove('hidden');
+        
         if (cbrCharts.stress) cbrCharts.stress.destroy();
         if (cbrCharts.density) cbrCharts.density.destroy();
     }
 
-    // تحميل بيانات تجريبية
     function loadCBRDemo() {
         const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
         
@@ -3403,63 +3440,16 @@
     }
 
     // =========================================================
-// TAB SWITCHING
-// =============================================
-let currentTab = 'D6913';
-
-function switchTab(tab) {
-    currentTab = tab;
-
-    // Update tab buttons
-    document.getElementById('tabD6913').className =
-        tab === 'D6913'
-            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-    document.getElementById('tabD422').className =
-        tab === 'D422'
-            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-    document.getElementById('tabD4318').className =
-        tab === 'D4318'
-            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-    document.getElementById('tabSoilClass').className =
-        tab === 'SoilClass'
-            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-    document.getElementById('tabD1557').className =
-        tab === 'D1557'
-            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-    document.getElementById('tabD2216').className =
-        tab === 'D2216'
-            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-    document.getElementById('tabD854').className =
-        tab === 'D854'
-            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
-            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
-
-    // Show/hide sections
-    document.getElementById('sectionD6913').classList.toggle('hidden', tab !== 'D6913');
-    document.getElementById('sectionD422').classList.toggle('hidden', tab !== 'D422');
-    document.getElementById('sectionD4318').classList.toggle('hidden', tab !== 'D4318');
-    document.getElementById('sectionSoilClass').classList.toggle('hidden', tab !== 'SoilClass');
-    document.getElementById('sectionD1557').classList.toggle('hidden', tab !== 'D1557');
-    document.getElementById('sectionD2216').classList.toggle('hidden', tab !== 'D2216');
-    document.getElementById('sectionD854').classList.toggle('hidden', tab !== 'D854');
-
-    // When switching to SoilClass, auto-read data
-    if (tab === 'SoilClass') {
-        autoReadDataForClassification();
-    }
-}
+    // الجزء الثالث: الدوال القديمة (OLD FUNCTIONS)
+    // =========================================================
+    // ⚠️⚠️ تنبيه هام: ضع هنا باقي الدوال القديمة (للاختبارات الأخرى)
+    // التي كانت موجودة في ملفك الأصلي مثل: 
+    // - const ALL_SIEVES = [...]
+    // - function calculate() { ... }
+    // - function calculateProctor() { ... }
+    // - function calculateD4318() { ... }
+    // ولكن لا تنسخ (let currentTab) أو (function switchTab) مرة أخرى!
+    // =========================================================
 
         // =============================================
         // D6913 SIEVE DATA DEFINITIONS
