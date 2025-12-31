@@ -2996,45 +2996,103 @@
                     </label>
                 </div>
             </div>
+           <div id="sectionCBR" class="hidden">
+            <div class="section-card p-6 mb-6 text-center border-b-4 border-red-500">
+                <h2 class="text-3xl font-bold text-gray-800">🧪 منصة اختبار CBR</h2>
+                <h3 class="text-xl text-gray-600 mt-1">California Bearing Ratio Testing Platform</h3>
+                <p class="text-sm text-gray-500 mt-2 font-mono bg-gray-100 inline-block px-2 py-1 rounded">ASTM D1883 | AASHTO T 193</p>
+            </div>
 
-            <div class="section-card p-6 mb-6">
+            <div class="section-card p-6 mb-6" id="cbr_mode_selection">
                 <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <span class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
-                    معلومات المشروع والعينة — General Information
+                    <span class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
+                    اختر نوع الاختبار — Select Test Mode
                 </h3>
                 
+                <div class="grid md:grid-cols-2 gap-6">
+                    <label class="cursor-pointer relative group">
+                        <input type="radio" name="cbrMode" value="single" class="peer sr-only" checked onchange="toggleCBRMode()">
+                        <div class="p-6 rounded-xl border-2 border-gray-200 hover:border-red-400 peer-checked:border-red-600 peer-checked:bg-red-50 transition-all text-center h-full">
+                            <div class="text-4xl mb-3">☝️</div>
+                            <h4 class="text-xl font-bold text-gray-800 mb-2">عينة واحدة (Single Point)</h4>
+                            <p class="text-sm text-gray-600">56 ضربة (قياسي)</p>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer relative group">
+                        <input type="radio" name="cbrMode" value="multi" class="peer sr-only" onchange="toggleCBRMode()">
+                        <div class="p-6 rounded-xl border-2 border-gray-200 hover:border-red-400 peer-checked:border-red-600 peer-checked:bg-red-50 transition-all text-center h-full">
+                            <div class="text-4xl mb-3">📚</div>
+                            <h4 class="text-xl font-bold text-gray-800 mb-2">3 عينات (Multiple Points)</h4>
+                            <p class="text-sm text-gray-600">10, 25, 56 ضربة</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section-card p-6 mb-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">📝 معلومات العينة</h3>
                 <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div><label class="block text-sm font-bold mb-1">المشروع</label><input type="text" class="input-field w-full border border-gray-300 rounded p-2"></div>
+                    <div><label class="block text-sm font-bold mb-1">نوع التربة</label><input type="text" class="input-field w-full border border-gray-300 rounded p-2"></div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">رقم العينة/الموقع</label>
-                        <input type="text" id="cbr_project_id" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2" placeholder="e.g., Loc-A1">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">نوع التربة</label>
-                        <input type="text" id="cbr_soil_type" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2" placeholder="e.g., Silty Sand">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">طريقة الدمك</label>
-                        <select id="cbr_compaction_method" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
-                            <option value="D1557">Modified Proctor (D1557)</option>
-                            <option value="D698">Standard Proctor (D698)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">حالة العينة</label>
-                        <select id="cbr_condition" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2" onchange="toggleSwellSection()">
-                            <option value="soaked">مشبعة (Soaked) - 96 hrs</option>
+                        <label class="block text-sm font-bold mb-1">حالة العينة</label>
+                        <select id="cbr_condition" class="input-field w-full border border-gray-300 rounded p-2" onchange="renderCBRTables()">
+                            <option value="soaked">مشبعة (Soaked)</option>
                             <option value="unsoaked">غير مشبعة (Unsoaked)</option>
                         </select>
                     </div>
                 </div>
             </div>
             
-            <div id="cbr_dynamic_content">
-                <div class="text-center p-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                    <p class="text-gray-500">جاري تحميل الجداول...</p>
-                </div>
-            </div>
+            <div id="cbr_dynamic_content"></div>
         </div>
+        ```
+
+---
+
+### الخطوة 2: إصلاح الجافاسكريبت (Switch Tab Logic)
+
+المشكلة الأكبر غالباً هنا. دالة `switchTab` القديمة لا "ترى" القسم الجديد.
+اذهب لداخل وسم `<script>` واستبدل دالة `switchTab` بهذا الكود المحدث:
+
+```javascript
+    // دالة التنقل بين التبويبات - مُحدثة لتشمل CBR
+    function switchTab(tab) {
+        // أسماء كل الأقسام في الصفحة
+        const sections = ['D6913', 'D422', 'D4318', 'SoilClass', 'D1557', 'D2216', 'D854', 'CBR'];
+        
+        sections.forEach(id => {
+            // 1. التعامل مع الأزرار
+            const btn = document.getElementById('tab' + id);
+            if (btn) {
+                if (id === tab) {
+                    btn.className = 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+                } else {
+                    btn.className = 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+                }
+            }
+
+            // 2. التعامل مع أقسام الصفحة (الإظهار والإخفاء)
+            const sectionDiv = document.getElementById('section' + id);
+            if (sectionDiv) {
+                if (id === tab) {
+                    sectionDiv.classList.remove('hidden'); // أظهر القسم المطلوب
+                } else {
+                    sectionDiv.classList.add('hidden');    // أخفِ الباقي
+                }
+            }
+        });
+
+        // تشغيل كود CBR الخاص عند فتح التبويب
+        if (tab === 'CBR') {
+            setTimeout(renderCBRTables, 100); // تأخير بسيط لضمان التحميل
+        }
+        
+        if (tab === 'SoilClass' && typeof autoReadDataForClassification === 'function') {
+            autoReadDataForClassification();
+        }
+    }
     </main>
 
     <!-- Footer -->
