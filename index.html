@@ -2953,6 +2953,120 @@
                 </div>
             </details>
         </div>
+                                <div id="sectionCBR" class="hidden">
+            <div class="section-card p-6 mb-6">
+                <div class="flex items-center gap-4">
+                    <div class="bg-yellow-100 p-4 rounded-full">
+                        <span class="text-2xl">🚜</span>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">اختبار نسبة التحمل كاليفورنيا — California Bearing Ratio</h2>
+                        <p class="text-gray-600">ASTM D1883 | قياس مقاومة التربة للأحمال وتحديد صلاحيتها للطرق</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card p-6 mb-6 text-center" id="cbrModeSelection">
+                <h3 class="text-lg font-bold text-gray-800 mb-6">اختر نوع الاختبار</h3>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <button onclick="initCBRMode('single')" class="bg-white border-2 border-blue-200 hover:border-blue-500 rounded-xl p-6 w-64 transition-all shadow-sm hover:shadow-md cursor-pointer">
+                        <div class="text-4xl mb-3">🧪</div>
+                        <h4 class="text-xl font-bold text-gray-800 mb-2">عينة واحدة</h4>
+                        <p class="text-xs text-gray-400">للاختبار السريع (56 ضربة)</p>
+                    </button>
+                    <button onclick="initCBRMode('multi')" class="bg-white border-2 border-green-200 hover:border-green-500 rounded-xl p-6 w-64 transition-all shadow-sm hover:shadow-md cursor-pointer">
+                        <div class="text-4xl mb-3">📊</div>
+                        <h4 class="text-xl font-bold text-gray-800 mb-2">3 عينات (متعدد)</h4>
+                        <p class="text-xs text-gray-400">لدراسة تأثير جهود الدمك</p>
+                    </button>
+                </div>
+            </div>
+
+            <div id="cbrMainContent" class="hidden">
+                
+                <div class="section-card p-6 mb-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <span class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
+                        بيانات العينة والاختبار
+                    </h3>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">رقم العينة</label>
+                            <input type="text" id="cbr_sampleId" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">طريقة الدمك</label>
+                            <select id="cbr_compactionMethod" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
+                                <option value="D1557">Modified (D1557) — معدل</option>
+                                <option value="D698">Standard (D698) — قياسي</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">حالة العينة</label>
+                            <select id="cbr_condition" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2" onchange="toggleCBRSwell()">
+                                <option value="soaked">Soaked — مشبعة (منقوعة)</option>
+                                <option value="unsoaked">Unsoaked — غير مشبعة</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="cbrSpecimensContainer" class="space-y-6"></div>
+
+                <div class="flex flex-wrap gap-4 justify-center mt-8 mb-6">
+                    <button onclick="calculateCBR()" class="btn-primary text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        احسب النتائج
+                    </button>
+                    <button onclick="resetCBR()" class="btn-secondary text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        إعادة تعيين
+                    </button>
+                    <button onclick="loadCBRDemo()" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
+                        📝 مثال تجريبي
+                    </button>
+                </div>
+
+                <div id="cbrResultsSection" class="hidden space-y-6">
+                    <div class="grid md:grid-cols-2 gap-4" id="cbrSummaryCards"></div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="section-card p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">📈 منحنى الضغط والاختراق (Stress-Penetration)</h3>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="cbrStressChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="section-card p-6" id="cbrDensityChartCard">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">📊 الكثافة الجافة مقابل CBR</h3>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="cbrDensityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-card p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">📋 جدول النتائج التفصيلي</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm border-collapse text-center">
+                                <thead class="bg-gray-800 text-white">
+                                    <tr>
+                                        <th class="p-3 border">#</th>
+                                        <th class="p-3 border">الضربات</th>
+                                        <th class="p-3 border">الكثافة الجافة (pcf)</th>
+                                        <th class="p-3 border">CBR @ 0.1"</th>
+                                        <th class="p-3 border">CBR @ 0.2"</th>
+                                        <th class="p-3 border bg-green-700">CBR المعتمد</th>
+                                        <th class="p-3 border">الانتفاش %</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cbrSummaryTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -2968,8 +3082,327 @@
         </div>
     </footer>
 
-    <script>
-     // =============================================
+<script>
+ // =============================================
+    // 1. TAB SWITCHING (نظام التنقل المحدث)
+    // =============================================
+    let currentTab = 'D6913';
+
+    function switchTab(tab) {
+        currentTab = tab;
+
+        // قائمة بجميع معرفات التبويبات والأقسام (بما فيها CBR الجديد)
+        const tabs = ['D6913', 'D422', 'D4318', 'SoilClass', 'D1557', 'D2216', 'D854', 'CBR'];
+
+        tabs.forEach(t => {
+            const btn = document.getElementById('tab' + t);
+            const sec = document.getElementById('section' + t);
+
+            // تحديث حالة الأزرار (نشط / غير نشط)
+            if (btn) {
+                btn.className = (t === tab) 
+                    ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap' 
+                    : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+            }
+
+            // إظهار القسم المطلوب وإخفاء الباقي
+            if (sec) {
+                sec.classList.toggle('hidden', t !== tab);
+            }
+        });
+
+        // تشغيل القراءة التلقائية للتصنيف عند فتح تبويب التصنيف
+        if (tab === 'SoilClass' && typeof autoReadDataForClassification === 'function') {
+            autoReadDataForClassification();
+        }
+    }
+
+    // =============================================
+    // 2. CBR MODULE LOGIC (كود اختبار CBR الجديد)
+    // =============================================
+    let cbrMode = 'single';
+    let cbrData = [];
+    let cbrCharts = {};
+
+    // تهيئة الوضع (عينة واحدة أو متعدد)
+    function initCBRMode(mode) {
+        cbrMode = mode;
+        document.getElementById('cbrModeSelection').classList.add('hidden');
+        document.getElementById('cbrMainContent').classList.remove('hidden');
+        renderCBRSpecimens();
+    }
+
+    // رسم جداول الإدخال بناءً على عدد العينات
+    function renderCBRSpecimens() {
+        const container = document.getElementById('cbrSpecimensContainer');
+        container.innerHTML = '';
+        
+        // عينة واحدة (للوضع الفردي) أو 3 عينات (للوضع المتعدد)
+        const specimens = cbrMode === 'single' ? [1] : [1, 2, 3];
+        const blows = cbrMode === 'single' ? [56] : [56, 25, 10]; 
+
+        specimens.forEach((num, index) => {
+            const blowCount = blows[index];
+            const isSoaked = document.getElementById('cbr_condition').value === 'soaked';
+            
+            const html = `
+            <div class="section-card p-6 border-t-4 border-blue-500 relative">
+                <div class="absolute top-0 left-0 bg-blue-500 text-white px-3 py-1 text-sm font-bold rounded-br-lg">
+                    العينة ${num} (${blowCount} ضربة)
+                </div>
+                
+                <div class="grid lg:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-gray-50 p-4 rounded border">
+                        <h5 class="font-bold mb-3 border-b pb-2">أوزان الكثافة</h5>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <label class="self-center">وزن القالب (g)</label>
+                            <input type="number" id="cbr_moldMass_${num}" class="input-field border rounded p-1" placeholder="مثال: 4200">
+                            <label class="self-center">وزن رطب+قالب (g)</label>
+                            <input type="number" id="cbr_wetSoilMold_${num}" class="input-field border rounded p-1" placeholder="مثال: 8500">
+                            <label class="self-center">حجم القالب (cm³)</label>
+                            <input type="number" id="cbr_moldVol_${num}" class="input-field border rounded p-1" value="2310">
+                            <label class="self-center">محتوى الرطوبة %</label>
+                            <input type="number" id="cbr_wc_${num}" class="input-field border rounded p-1" placeholder="مثال: 12">
+                        </div>
+                    </div>
+
+                    <div id="cbr_swellGroup_${num}" class="bg-blue-50 p-4 rounded border ${isSoaked ? '' : 'hidden'}">
+                        <h5 class="font-bold mb-3 border-b border-blue-200 pb-2">بيانات الانتفاش (Swell)</h5>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <label class="self-center">الارتفاع الأولي (mm)</label>
+                            <input type="number" id="cbr_swellH1_${num}" class="input-field border rounded p-1" value="127">
+                            <label class="self-center">الارتفاع النهائي (mm)</label>
+                            <input type="number" id="cbr_swellH2_${num}" class="input-field border rounded p-1">
+                            <label class="self-center font-bold text-blue-700">نسبة الانتفاش %</label>
+                            <input type="text" id="cbr_swellResult_${num}" readonly class="bg-white border rounded p-1 text-center font-bold text-blue-700" value="—">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h5 class="font-bold mb-2 text-sm">قراءات الاختراق (Penetration) - أدخل الحمل (Load in lbf)</h5>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm border text-center">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="p-1 border min-w-[50px]">Pen (in)</th>
+                                    ${[0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.3, 0.4, 0.5].map(p => `<th class="p-1 border bg-gray-50">${p}</th>`).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="p-1 border font-bold">Load</td>
+                                    ${[0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.3, 0.4, 0.5].map(p => 
+                                        `<td class="p-1 border"><input type="number" id="cbr_load_${num}_${p.toString().replace('.','_')}" class="w-full text-center bg-transparent focus:outline-none" placeholder="-"></td>`
+                                    ).join('')}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>`;
+            container.insertAdjacentHTML('beforeend', html);
+        });
+    }
+
+    // إظهار/إخفاء قسم الانتفاش
+    function toggleCBRSwell() {
+        const isSoaked = document.getElementById('cbr_condition').value === 'soaked';
+        const specimens = cbrMode === 'single' ? [1] : [1, 2, 3];
+        specimens.forEach(num => {
+            const el = document.getElementById(`cbr_swellGroup_${num}`);
+            if(el) el.classList.toggle('hidden', !isSoaked);
+        });
+    }
+
+    // الحسابات الرئيسية لـ CBR
+    function calculateCBR() {
+        cbrData = [];
+        const specimens = cbrMode === 'single' ? [1] : [1, 2, 3];
+        const blows = cbrMode === 'single' ? [56] : [56, 25, 10];
+        const pens = [0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.3, 0.4, 0.5];
+        const pistonArea = 3.039; // مساحة المكبس بالبوصة المربعة
+
+        specimens.forEach((num, index) => {
+            // 1. حساب الكثافة
+            const Mm = parseFloat(document.getElementById(`cbr_moldMass_${num}`).value) || 0;
+            const Mmw = parseFloat(document.getElementById(`cbr_wetSoilMold_${num}`).value) || 0;
+            const Vm = parseFloat(document.getElementById(`cbr_moldVol_${num}`).value) || 2310;
+            const w = parseFloat(document.getElementById(`cbr_wc_${num}`).value) || 0;
+
+            let dryDensity_pcf = 0;
+            if (Vm > 0) {
+                const wetMass = Mmw - Mm;
+                const wetDensity_gcm3 = wetMass / Vm;
+                const dryDensity_gcm3 = wetDensity_gcm3 / (1 + w/100);
+                dryDensity_pcf = dryDensity_gcm3 * 62.428;
+            }
+
+            // 2. حساب الانتفاش
+            let swellPercent = 0;
+            if (document.getElementById('cbr_condition').value === 'soaked') {
+                const h1 = parseFloat(document.getElementById(`cbr_swellH1_${num}`).value) || 127;
+                const h2 = parseFloat(document.getElementById(`cbr_swellH2_${num}`).value) || h1;
+                swellPercent = ((h2 - h1) / h1) * 100;
+                document.getElementById(`cbr_swellResult_${num}`).value = swellPercent.toFixed(2) + '%';
+            }
+
+            // 3. حساب الضغط و CBR
+            let points = [];
+            pens.forEach(p => {
+                const loadInput = document.getElementById(`cbr_load_${num}_${p.toString().replace('.','_')}`);
+                const load = parseFloat(loadInput.value) || 0;
+                const stress = load / pistonArea;
+                points.push({ x: p, y: stress });
+            });
+
+            // الحصول على الضغط عند 0.1 و 0.2
+            const getStress = (depth) => points.find(pt => pt.x === depth)?.y || 0;
+            const stress01 = getStress(0.1);
+            const stress02 = getStress(0.2);
+
+            const cbr01 = (stress01 / 1000) * 100;
+            const cbr02 = (stress02 / 1500) * 100;
+            const finalCBR = Math.max(cbr01, cbr02);
+
+            cbrData.push({
+                specimen: num,
+                blows: blows[index],
+                dryDensity_pcf: dryDensity_pcf,
+                swellPercent: swellPercent,
+                points: points,
+                cbr01: cbr01,
+                cbr02: cbr02,
+                finalCBR: finalCBR
+            });
+        });
+
+        displayCBRResults();
+    }
+
+    // عرض النتائج
+    function displayCBRResults() {
+        document.getElementById('cbrResultsSection').classList.remove('hidden');
+
+        // تعبئة الجدول
+        const tableBody = document.getElementById('cbrSummaryTableBody');
+        tableBody.innerHTML = cbrData.map(d => `
+            <tr class="hover:bg-gray-50 border-t">
+                <td class="p-2">${d.specimen}</td>
+                <td class="p-2 font-semibold">${d.blows}</td>
+                <td class="p-2 text-blue-700 font-mono">${d.dryDensity_pcf.toFixed(1)}</td>
+                <td class="p-2">${d.cbr01.toFixed(1)}%</td>
+                <td class="p-2">${d.cbr02.toFixed(1)}%</td>
+                <td class="p-2 font-bold text-green-700 bg-green-50">${d.finalCBR.toFixed(1)}%</td>
+                <td class="p-2">${d.swellPercent.toFixed(2)}%</td>
+            </tr>
+        `).join('');
+
+        // تعبئة كروت الملخص
+        const maxCBR = Math.max(...cbrData.map(d => d.finalCBR));
+        const designDensity = Math.max(...cbrData.map(d => d.dryDensity_pcf));
+        
+        document.getElementById('cbrSummaryCards').innerHTML = `
+            <div class="bg-green-100 p-4 rounded-xl border border-green-200 text-center shadow-sm">
+                <h4 class="text-sm font-bold text-green-800">أعلى قيمة CBR</h4>
+                <div class="text-3xl font-bold text-green-700 mt-2">${maxCBR.toFixed(1)}%</div>
+            </div>
+            <div class="bg-blue-100 p-4 rounded-xl border border-blue-200 text-center shadow-sm">
+                <h4 class="text-sm font-bold text-blue-800">أقصى كثافة جافة (pcf)</h4>
+                <div class="text-3xl font-bold text-blue-700 mt-2">${designDensity.toFixed(1)}</div>
+            </div>
+        `;
+
+        renderCBRCharts();
+    }
+
+    // رسم المنحنيات
+    function renderCBRCharts() {
+        // 1. Stress-Penetration Chart
+        const ctx1 = document.getElementById('cbrStressChart').getContext('2d');
+        if (cbrCharts.stress) cbrCharts.stress.destroy();
+
+        cbrCharts.stress = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                datasets: cbrData.map((d, i) => ({
+                    label: `Specimen ${d.specimen} (${d.blows} blows)`,
+                    data: d.points,
+                    borderColor: ['#3b82f6', '#10b981', '#f59e0b'][i],
+                    tension: 0.4
+                }))
+            },
+            options: {
+                scales: {
+                    x: { type: 'linear', title: {display: true, text: 'Penetration (in)'} },
+                    y: { title: {display: true, text: 'Stress (psi)'} }
+                }
+            }
+        });
+
+        // 2. CBR vs Density Chart
+        const ctx2 = document.getElementById('cbrDensityChart').getContext('2d');
+        if (cbrCharts.density) cbrCharts.density.destroy();
+
+        const sortedData = [...cbrData].sort((a,b) => a.dryDensity_pcf - b.dryDensity_pcf);
+
+        cbrCharts.density = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: 'CBR vs Dry Density',
+                    data: sortedData.map(d => ({ x: d.dryDensity_pcf, y: d.finalCBR })),
+                    borderColor: '#8b5cf6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                    fill: true,
+                    pointRadius: 6
+                }]
+            },
+            options: {
+                scales: {
+                    x: { type: 'linear', title: {display: true, text: 'Dry Density (pcf)'} },
+                    y: { title: {display: true, text: 'CBR (%)'} }
+                }
+            }
+        });
+        
+        // إخفاء رسم الكثافة إذا كانت عينة واحدة
+        if (cbrMode === 'single') {
+            document.getElementById('cbrDensityChartCard').classList.add('hidden');
+        } else {
+            document.getElementById('cbrDensityChartCard').classList.remove('hidden');
+        }
+    }
+
+    // إعادة التعيين
+    function resetCBR() {
+        cbrData = [];
+        document.getElementById('cbrResultsSection').classList.add('hidden');
+        document.getElementById('cbrMainContent').classList.add('hidden');
+        document.getElementById('cbrModeSelection').classList.remove('hidden');
+        if (cbrCharts.stress) cbrCharts.stress.destroy();
+        if (cbrCharts.density) cbrCharts.density.destroy();
+    }
+
+    // تحميل بيانات تجريبية
+    function loadCBRDemo() {
+        const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+        
+        setVal('cbr_moldMass_1', 4200);
+        setVal('cbr_wetSoilMold_1', 8650);
+        setVal('cbr_wc_1', 11.5);
+        
+        const loads = [50, 160, 380, 860, 1250, 1580, 1850, 2050, 2600, 2950, 3200];
+        const pens = [0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.3, 0.4, 0.5];
+        
+        pens.forEach((p, i) => {
+            setVal(`cbr_load_1_${p.toString().replace('.','_')}`, loads[i]);
+        });
+        
+        setTimeout(calculateCBR, 200);
+    }
+
+    // =========================================================
 // TAB SWITCHING
 // =============================================
 let currentTab = 'D6913';
