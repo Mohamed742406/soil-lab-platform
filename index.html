@@ -2951,6 +2951,270 @@
                 </div>
             </details>
         </div>
+                                // =============================================
+    // 1. دالة التنقل (عشان الزر يفتح القسم الجديد)
+    // =============================================
+    let currentTab = 'D6913';
+
+    function switchTab(tab) {
+        currentTab = tab;
+        // قائمة بأسماء كل التبويبات (تأكد إن IDs في HTML مطابقة للأسماء دي)
+        const tabs = ['D6913', 'D422', 'D4318', 'SoilClass', 'D1557', 'D2216', 'D854', 'CBR'];
+        
+        tabs.forEach(t => {
+            const btn = document.getElementById('tab' + t);
+            const section = document.getElementById('section' + t);
+            
+            if (btn) {
+                // تلوين الزر النشط
+                btn.className = (t === tab)
+                    ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
+                    : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+            }
+            
+            if (section) {
+                // إظهار القسم المطلوب وإخفاء الباقي
+                section.classList.toggle('hidden', t !== tab);
+            }
+        });
+
+        // تشغيل كود CBR أول ما تفتح التبويب
+        if (tab === 'CBR') setTimeout(renderCBRTables, 50);
+        
+        // تشغيل كود التصنيف القديم
+        if (tab === 'SoilClass' && typeof autoReadDataForClassification === 'function') {
+            autoReadDataForClassification();
+        }
+    }
+
+    // =============================================
+    // 2. كود الـ CBR (رسم الجداول والحسابات)
+    // =============================================
+    let cbrMode = 'single';
+
+    function toggleCBRMode() {
+        const radios = document.getElementsByName('cbrMode');
+        for (const r of radios) {
+            if (r.checked) {
+                cbrMode = r.value;
+                break;
+            }
+        }
+        renderCBRTables();
+    }
+
+    // دالة رسم الجداول
+    function renderCBRTables() {
+        const container = document.getElementById('cbr_dynamic_content');
+        if (!container) return;
+
+        const specimens = cbrMode === 'single' 
+            ? [{ id: 1, label: 'العينة 1 (56 ضربة)', blows: 56 }] 
+            : [
+                { id: 1, label: 'العينة 1 (56 ضربة)', blows: 56 },
+                { id: 2, label: 'العينة 2 (25 ضربة)', blows: 25 },
+                { id: 3, label: 'العينة 3 (10 ضربات)', blows: 10 }
+              ];
+
+        const isSoaked = document.getElementById('cbr_condition').value === 'soaked';
+        let html = '';
+
+        // 1. جدول الكثافة
+        html += `
+            <div class="section-card p-6 mb-6">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2"><span class="bg-orange-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span> بيانات الكثافة</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full border text-center text-sm">
+                        <thead class="bg-orange-600 text-white"><tr><th class="p-2 border">البيان</th>${specimens.map(s => `<th class="p-2 border">${s.label}</th>`).join('')}</tr></thead>
+                        <tbody>
+                            <tr><td class="p-2 border font-bold bg-gray-50">وزن القالب (g)</td>${specimens.map(s => `<td class="p-2 border"><input type="number" id="cbr_mold_${s.id}" class="input-field w-full border rounded p-1"></td>`).join('')}</tr>
+                            <tr><td class="p-2 border font-bold bg-gray-50">القالب + رطب (g)</td>${specimens.map(s => `<td class="p-2 border"><input type="number" id="cbr_mold_wet_${s.id}" class="input-field w-full border rounded p-1"></td>`).join('')}</tr>
+                            <tr><td class="p-2 border font-bold bg-gray-50">حجم القالب (cm³)</td>${specimens.map(s => `<td class="p-2 border"><input type="number" id="cbr_vol_${s.id}" value="2310" class="input-field w-full border rounded p-1 bg-gray-100 text-center"></td>`).join('')}</tr>
+                            <tr><td class="p-2 border font-bold bg-gray-50">محتوى الرطوبة (%)</td>${specimens.map(s => `<td class="p-2 border"><input type="number" id="cbr_wc_${s.id}" class="input-field w-full border rounded p-1"></td>`).join('')}</tr>
+                            <tr><td class="p-2 border font-bold bg-orange-100">الكثافة الجافة</td>${specimens.map(s => `<td class="p-2 border font-bold text-orange-800" id="cbr_dd_${s.id}">—</td>`).join('')}</tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+
+        // 2. جدول الانتفاش (لو مشبعة)
+        if (isSoaked) {
+            html += `
+                <div class="section-card p-6 mb-6 border-l-4 border-blue-400">
+                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2"><span class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">4</span> بيانات الانتفاش</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border text-center text-sm">
+                            <thead class="bg-blue-600 text-white"><tr><th class="p-2 border">العينة</th><th class="p-2 border">ارتفاع أولي</th><th class="p-2 border">ارتفاع نهائي</th><th class="p-2 border">انتفاش %</th></tr></thead>
+                            <tbody>
+                                ${specimens.map(s => `
+                                    <tr>
+                                        <td class="p-2 border font-bold bg-gray-50">${s.label}</td>
+                                        <td class="p-2 border"><input type="number" id="cbr_h1_${s.id}" class="input-field w-full border rounded p-1"></td>
+                                        <td class="p-2 border"><input type="number" id="cbr_h2_${s.id}" class="input-field w-full border rounded p-1"></td>
+                                        <td class="p-2 border font-bold text-blue-700" id="cbr_swell_pct_${s.id}">—</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 3. جدول الاختراق
+        const pens = [0.64, 1.27, 1.91, 2.54, 3.81, 5.08, 7.62, 10.16, 12.70];
+        const penLabels = ["0.025", "0.050", "0.075", "0.100", "0.150", "0.200", "0.300", "0.400", "0.500"];
+        
+        html += `
+            <div class="section-card p-6 mb-6">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2"><span class="bg-purple-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">5</span> بيانات الاختراق (أدخل الحمل kN)</h3>
+                <div class="grid md:grid-cols-${specimens.length} gap-4">
+                    ${specimens.map(s => `
+                        <div class="border rounded bg-white overflow-hidden">
+                            <div class="bg-gray-100 p-2 font-bold text-center border-b">${s.label}</div>
+                            <table class="w-full text-center text-xs">
+                                <thead class="bg-gray-50"><tr><th class="p-1 border">mm (in)</th><th class="p-1 border">Load (kN)</th><th class="p-1 border">Stress</th></tr></thead>
+                                <tbody>
+                                    ${pens.map((p, i) => `
+                                        <tr class="${(p===2.54||p===5.08)?'bg-yellow-50':''}">
+                                            <td class="p-1 border font-mono">${p} (${penLabels[i]})</td>
+                                            <td class="p-1 border"><input type="number" id="cbr_load_${s.id}_${i}" class="input-field w-full border rounded px-1 text-center"></td>
+                                            <td class="p-1 border text-gray-500" id="cbr_stress_${s.id}_${i}">—</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="mt-6 text-center">
+                    <button onclick="calculateCBR()" class="bg-red-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-red-700 shadow-lg transition-all transform hover:scale-105">🚀 احسب النتائج</button>
+                </div>
+                <div id="cbr_results_area" class="mt-6 hidden"></div>
+            </div>
+        `;
+
+        container.innerHTML = html;
+    }
+
+    // دالة الحسابات النهائية
+    function calculateCBR() {
+        const resultsArea = document.getElementById('cbr_results_area');
+        resultsArea.innerHTML = '';
+        resultsArea.classList.remove('hidden');
+
+        const specimens = cbrMode === 'single' 
+            ? [{ id: 1, blows: 56, label: 'العينة 1' }] 
+            : [{ id: 1, blows: 56, label: 'العينة 1' }, { id: 2, blows: 25, label: 'العينة 2' }, { id: 3, blows: 10, label: 'العينة 3' }];
+
+        const pistonArea = 1935; // mm²
+        const stdStress254 = 6.9; // MPa
+        const stdStress508 = 10.3; // MPa
+        
+        let chartsData = [];
+        let finalResults = [];
+
+        specimens.forEach(s => {
+            // الكثافة
+            const mold = parseFloat(document.getElementById(`cbr_mold_${s.id}`).value) || 0;
+            const moldWet = parseFloat(document.getElementById(`cbr_mold_wet_${s.id}`).value) || 0;
+            const vol = parseFloat(document.getElementById(`cbr_vol_${s.id}`).value) || 2310;
+            const wc = parseFloat(document.getElementById(`cbr_wc_${s.id}`).value) || 0;
+            
+            let dd = 0;
+            if(moldWet > mold) {
+                dd = ((moldWet - mold)/vol) / (1 + wc/100);
+                document.getElementById(`cbr_dd_${s.id}`).textContent = dd.toFixed(3);
+            }
+
+            // الانتفاش
+            const h1El = document.getElementById(`cbr_h1_${s.id}`);
+            const h2El = document.getElementById(`cbr_h2_${s.id}`);
+            if (h1El && h2El) {
+                const h1 = parseFloat(h1El.value) || 0;
+                const h2 = parseFloat(h2El.value) || 0;
+                if(h1 > 0) {
+                    const pct = ((h2 - h1)/h1) * 100;
+                    document.getElementById(`cbr_swell_pct_${s.id}`).textContent = pct.toFixed(2) + '%';
+                }
+            }
+
+            // الضغط
+            let points = [];
+            let stress254 = 0, stress508 = 0;
+            const pens = [0.64, 1.27, 1.91, 2.54, 3.81, 5.08, 7.62, 10.16, 12.70];
+            
+            pens.forEach((p, i) => {
+                const load = parseFloat(document.getElementById(`cbr_load_${s.id}_${i}`).value) || 0;
+                const stress = (load * 1000) / pistonArea;
+                document.getElementById(`cbr_stress_${s.id}_${i}`).textContent = stress.toFixed(3);
+                points.push({x: p, y: stress});
+                if(p === 2.54) stress254 = stress;
+                if(p === 5.08) stress508 = stress;
+            });
+
+            const cbr254 = (stress254 / stdStress254) * 100;
+            const cbr508 = (stress508 / stdStress508) * 100;
+            const final = Math.max(cbr254, cbr508);
+
+            finalResults.push({ id: s.id, blows: s.blows, cbr: final, dd: dd });
+            
+            chartsData.push({
+                label: s.label,
+                data: points,
+                borderColor: s.id===1 ? 'red' : s.id===2 ? 'orange' : 'blue',
+                fill: false,
+                tension: 0.4
+            });
+        });
+
+        // عرض النتائج
+        let resHTML = `
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white p-4 rounded shadow border-t-4 border-purple-500">
+                    <h4 class="font-bold mb-4">النتائج النهائية (Final Results)</h4>
+                    <table class="w-full text-center border text-sm">
+                        <thead class="bg-gray-100"><tr><th>العينة</th><th>Final CBR %</th></tr></thead>
+                        <tbody>
+                            ${finalResults.map(r => `<tr><td class="p-2 border">${r.blows} ضربة</td><td class="p-2 border font-bold text-green-700 text-lg">${r.cbr.toFixed(1)}%</td></tr>`).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="bg-white p-4 rounded shadow border-t-4 border-blue-500">
+                    <h4 class="font-bold mb-4">منحنى الاختراق (Stress vs Penetration)</h4>
+                    <div style="height:250px"><canvas id="cbrChart"></canvas></div>
+                </div>
+            </div>
+        `;
+        
+        if(cbrMode === 'multi') {
+            resHTML += `
+                <div class="bg-white p-4 rounded shadow border-t-4 border-green-500 mt-6">
+                    <h4 class="font-bold mb-4">منحنى التصميم (Design CBR vs Density)</h4>
+                    <div style="height:300px"><canvas id="designChart"></canvas></div>
+                </div>
+            `;
+        }
+
+        resultsArea.innerHTML = resHTML;
+
+        // رسم المنحنيات
+        new Chart(document.getElementById('cbrChart'), {
+            type: 'line',
+            data: { datasets: chartsData },
+            options: { responsive: true, maintainAspectRatio: false, scales: { x: {title:{display:true, text:'Penetration (mm)'}}, y: {title:{display:true, text:'Stress (MPa)'}} } }
+        });
+
+        if(cbrMode === 'multi') {
+            const designPoints = finalResults.map(r => ({x: r.dd, y: r.cbr})).sort((a,b) => a.x - b.x);
+            new Chart(document.getElementById('designChart'), {
+                type: 'line',
+                data: { datasets: [{ label: 'Design Curve', data: designPoints, borderColor: 'green', fill: true, backgroundColor: 'rgba(0,255,0,0.1)' }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { x: {title:{display:true, text:'Dry Density (g/cm³)'}}, y: {title:{display:true, text:'CBR %'}} } }
+            });
+        }
+    }
     </main>
 
     <!-- Footer -->
@@ -2967,7 +3231,7 @@
     </footer>
 
     <script>
-     // =============================================
+  // =============================================
 // TAB SWITCHING
 // =============================================
 let currentTab = 'D6913';
@@ -2975,7 +3239,7 @@ let currentTab = 'D6913';
 function switchTab(tab) {
     currentTab = tab;
 
-    // Update tab buttons
+    // 1. تحديث أزرار التبويبات (تم إضافة زر CBR في الآخر)
     document.getElementById('tabD6913').className =
         tab === 'D6913'
             ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
@@ -3011,7 +3275,14 @@ function switchTab(tab) {
             ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
             : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
 
-    // Show/hide sections
+    // >>> إضافة زر CBR الجديد هنا <<<
+    document.getElementById('tabCBR').className =
+        tab === 'CBR'
+            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
+            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+
+
+    // 2. إظهار/إخفاء الأقسام (تم إضافة قسم CBR في الآخر)
     document.getElementById('sectionD6913').classList.toggle('hidden', tab !== 'D6913');
     document.getElementById('sectionD422').classList.toggle('hidden', tab !== 'D422');
     document.getElementById('sectionD4318').classList.toggle('hidden', tab !== 'D4318');
@@ -3019,13 +3290,22 @@ function switchTab(tab) {
     document.getElementById('sectionD1557').classList.toggle('hidden', tab !== 'D1557');
     document.getElementById('sectionD2216').classList.toggle('hidden', tab !== 'D2216');
     document.getElementById('sectionD854').classList.toggle('hidden', tab !== 'D854');
+    
+    // >>> إضافة قسم CBR الجديد هنا <<<
+    document.getElementById('sectionCBR').classList.toggle('hidden', tab !== 'CBR');
 
-    // When switching to SoilClass, auto-read data
-    if (tab === 'SoilClass') {
+
+    // 3. تشغيل دوال خاصة عند الفتح
+    
+    // >>> تشغيل دالة CBR <<<
+    if (tab === 'CBR') {
+        setTimeout(renderCBRTables, 50);
+    }
+
+    if (tab === 'SoilClass' && typeof autoReadDataForClassification === 'function') {
         autoReadDataForClassification();
     }
 }
-
         // =============================================
         // D6913 SIEVE DATA DEFINITIONS
         // =============================================
