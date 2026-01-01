@@ -2950,68 +2950,9 @@
                     </table>
                 </div>
             </details>
-        </div>
-                                <div id="sectionCBR" class="hidden">
-            <div class="section-card p-6 mb-6 text-center border-b-4 border-red-500">
-                <h2 class="text-3xl font-bold text-gray-800">🧪 منصة اختبار CBR</h2>
-                <h3 class="text-xl text-gray-600 mt-1">California Bearing Ratio Testing Platform</h3>
-                <p class="text-sm text-gray-500 mt-2 font-mono bg-gray-100 inline-block px-2 py-1 rounded">ASTM D1883 | AASHTO T 193</p>
             </div>
-
-            <div class="section-card p-6 mb-6" id="cbr_mode_selection">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <span class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
-                    اختر نوع الاختبار — Select Test Mode
-                </h3>
-                
-                <div class="grid md:grid-cols-2 gap-6">
-                    <label class="cursor-pointer relative group">
-                        <input type="radio" name="cbrMode" value="single" class="peer sr-only" checked onchange="toggleCBRMode()">
-                        <div class="p-6 rounded-xl border-2 border-gray-200 hover:border-red-400 peer-checked:border-red-600 peer-checked:bg-red-50 transition-all text-center h-full">
-                            <div class="text-4xl mb-3">☝️</div>
-                            <h4 class="text-xl font-bold text-gray-800 mb-2">عينة واحدة (Single Point)</h4>
-                            <p class="text-sm text-gray-600">56 ضربة (قياسي)</p>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative group">
-                        <input type="radio" name="cbrMode" value="multi" class="peer sr-only" onchange="toggleCBRMode()">
-                        <div class="p-6 rounded-xl border-2 border-gray-200 hover:border-red-400 peer-checked:border-red-600 peer-checked:bg-red-50 transition-all text-center h-full">
-                            <div class="text-4xl mb-3">📚</div>
-                            <h4 class="text-xl font-bold text-gray-800 mb-2">3 عينات (Multiple Points)</h4>
-                            <p class="text-sm text-gray-600">10, 25, 56 ضربة</p>
-                        </div>
-                    </label>
-                </div>
-            </div>
-
-            <div class="section-card p-6 mb-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <span class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
-                    معلومات العينة
-                </h3>
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div><label class="block text-sm font-bold mb-1">المشروع</label><input type="text" class="input-field w-full border border-gray-300 rounded p-2"></div>
-                    <div><label class="block text-sm font-bold mb-1">نوع التربة</label><input type="text" class="input-field w-full border border-gray-300 rounded p-2"></div>
-                    <div>
-                        <label class="block text-sm font-bold mb-1">طريقة الدمك</label>
-                        <select class="input-field w-full border border-gray-300 rounded p-2">
-                            <option value="D1557">Modified Proctor</option>
-                            <option value="D698">Standard Proctor</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold mb-1">حالة العينة</label>
-                        <select id="cbr_condition" class="input-field w-full border border-gray-300 rounded p-2" onchange="renderCBRTables()">
-                            <option value="soaked">مشبعة (Soaked)</option>
-                            <option value="unsoaked">غير مشبعة (Unsoaked)</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="cbr_dynamic_content"></div>
-        </div>
+           </div>
+         </div>                        
    <!-- ============================================= -->
     <!-- CBR SECTION - ASTM D1883 -->
     <!-- ============================================= -->
@@ -3144,6 +3085,8 @@
                         </tbody>
                     </table>
                 </div>
+              </div>
+
             <!-- ============================================= -->
             <!-- 2️⃣ جدول الحسابات التلقائية -->
             <!-- ============================================= -->
