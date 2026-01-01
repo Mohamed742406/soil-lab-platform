@@ -2971,21 +2971,21 @@
                     </p>
                 </div>
             </div>
-             <!-- ============================================= -->
+            <!-- ============================================= -->
             <!-- أزرار التحكم -->
             <!-- ============================================= -->
-            <div class="flex gap-4 mb-6 justify-center">
-                <button onclick="calculateCBRAll()" class="btn btn--primary btn--lg flex items-center gap-2">
-                    <span>🧮</span>
-                    <span>احسب النتائج</span>
+            <div class="flex gap-4 mb-6 justify-center flex-wrap">
+                <button onclick="loadDemoCBR()" class="btn btn--primary btn--lg flex items-center gap-2">
+                    <span>📊</span>
+                    <span>تحميل مثال Demo</span>
                 </button>
                 <button onclick="resetCBRForm()" class="btn btn--secondary btn--lg flex items-center gap-2">
-                    <span>🔄</span>
-                    <span>إعادة تعيين</span>
+                    <span>🗑️</span>
+                    <span>مسح كل البيانات</span>
                 </button>
-                <button onclick="exportCBRPDF()" class="btn btn--outline btn--lg flex items-center gap-2">
-                    <span>📄</span>
-                    <span>تحميل PDF</span>
+                <button onclick="calculateCBRAll()" class="btn btn--success btn--lg flex items-center gap-2">
+                    <span>🧮</span>
+                    <span>احسب النتائج</span>
                 </button>
             </div>
 
@@ -6796,7 +6796,7 @@ function toggleD422Glossary() {
     icon.textContent = '+';             // علامة زائد عند الإغلاق
   }
 }
-      // =============================================
+       // =============================================
   // CBR CALCULATIONS - ASTM D1883
   // =============================================
 
@@ -6830,38 +6830,31 @@ function toggleD422Glossary() {
       }
   }
 
-   function updateCBRPercentage() {
+  function updateCBRPercentage() {
       const standardPressure_01 = 1029;
       
       try {
-          // قراءة الضغط من جدول الاختراق (جدول 3) بشكل دقيق
           const cbrSection = document.getElementById('sectionCBR');
           if (!cbrSection) return;
           
           const cards = cbrSection.querySelectorAll('.section-card');
-          if (cards.length < 3) return; // تأكد إن في 3 جداول على الأقل
+          if (cards.length < 3) return;
           
-          const penetrationTable = cards[2]; // الجدول الثالث فقط داخل sectionCBR
+          const penetrationTable = cards[2];
           const rows = penetrationTable.querySelectorAll('tbody tr');
           if (rows.length < 2) return;
           
-          // الصف الثاني (0.100")
           const row_01 = rows[1];
           const cells = row_01.querySelectorAll('td');
           
-          // قراءة الضغط من العمود الثالث (E1)، الخامس (E2)، السابع (E3)
           const pressure_01_E1 = parseFloat(cells[2]?.textContent?.trim() || 510);
           const pressure_01_E2 = parseFloat(cells[4]?.textContent?.trim() || 421);
           const pressure_01_E3 = parseFloat(cells[6]?.textContent?.trim() || 353);
           
-          console.log('Pressures:', pressure_01_E1, pressure_01_E2, pressure_01_E3); // للتصحيح
-          
-          // حساب CBR%
           const cbr_01_E1 = isNaN(pressure_01_E1) ? 0 : (pressure_01_E1 / standardPressure_01) * 100;
           const cbr_01_E2 = isNaN(pressure_01_E2) ? 0 : (pressure_01_E2 / standardPressure_01) * 100;
           const cbr_01_E3 = isNaN(pressure_01_E3) ? 0 : (pressure_01_E3 / standardPressure_01) * 100;
           
-          // تحديث جدول النتائج
           const el_01_E1 = document.getElementById('cbrValue01_E1');
           const el_01_E2 = document.getElementById('cbrValue01_E2');
           const el_01_E3 = document.getElementById('cbrValue01_E3');
@@ -6894,9 +6887,68 @@ function toggleD422Glossary() {
           input.addEventListener('input', updateCBRCalculations);
       });
   }
+
+  // =============================================
+  // CBR DEMO DATA - بيانات تجريبية
+  // =============================================
+  
+  const CBR_DEMO_DATA = {
+      E1: { stress: 56, Mm: 1200, Mw: 3600, Vm: 2310, w: 12.0, hi: 127, hf: 129 },
+      E2: { stress: 25, Mm: 1200, Mw: 3450, Vm: 2310, w: 12.5, hi: 127, hf: 130 },
+      E3: { stress: 10, Mm: 1200, Mw: 3280, Vm: 2310, w: 13.0, hi: 127, hf: 131 }
+  };
+
   // =============================================
   // CBR CONTROL BUTTONS - زرار التحكم
   // =============================================
+
+  function loadDemoCBR() {
+      // تحميل البيانات التجريبية
+      for (let suffix in CBR_DEMO_DATA) {
+          const data = CBR_DEMO_DATA[suffix];
+          
+          document.getElementById(`cbrStress${suffix}`).value = data.stress;
+          document.getElementById(`cbrMm${suffix}`).value = data.Mm;
+          document.getElementById(`cbrMw${suffix}`).value = data.Mw;
+          document.getElementById(`cbrVm${suffix}`).value = data.Vm;
+          document.getElementById(`cbrWater${suffix}`).value = data.w;
+          document.getElementById(`cbrHeightInit${suffix}`).value = data.hi;
+          document.getElementById(`cbrHeightFin${suffix}`).value = data.hf;
+      }
+      
+      // حساب النتائج تلقائياً
+      setTimeout(() => {
+          updateCBRCalculations();
+      }, 100);
+      
+      // رسالة نجاح
+      const btn = event.target;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<span>✅</span><span>تم التحميل!</span>';
+      btn.style.opacity = '0.8';
+      
+      setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.style.opacity = '1';
+      }, 2000);
+  }
+
+  function resetCBRForm() {
+      // مسح جميع البيانات (inputs)
+      const allInputs = document.querySelectorAll('#sectionCBR input[type="number"]');
+      allInputs.forEach(input => {
+          input.value = '';
+      });
+      
+      // مسح جميع القيم المحسوبة (outputs)
+      const outputs = document.querySelectorAll('#sectionCBR span[id^="cbr"]');
+      outputs.forEach(el => {
+          el.textContent = '—';
+      });
+      
+      // رسالة نجاح
+      alert('🗑️ تم مسح جميع البيانات بنجاح!');
+  }
 
   function calculateCBRAll() {
       updateCBRCalculations();
@@ -6913,77 +6965,8 @@ function toggleD422Glossary() {
       }, 2000);
   }
 
-  function resetCBRForm() {
-      // إعادة تعيين جدول 1
-      document.getElementById('cbrStressE1').value = 56;
-      document.getElementById('cbrStressE2').value = 25;
-      document.getElementById('cbrStressE3').value = 10;
-      
-      document.getElementById('cbrMmE1').value = 1200;
-      document.getElementById('cbrMmE2').value = 1200;
-      document.getElementById('cbrMmE3').value = 1200;
-      
-      document.getElementById('cbrMwE1').value = 3600;
-      document.getElementById('cbrMwE2').value = 3450;
-      document.getElementById('cbrMwE3').value = 3280;
-      
-      document.getElementById('cbrVmE1').value = 2310;
-      document.getElementById('cbrVmE2').value = 2310;
-      document.getElementById('cbrVmE3').value = 2310;
-      
-      document.getElementById('cbrWaterE1').value = 12.0;
-      document.getElementById('cbrWaterE2').value = 12.5;
-      document.getElementById('cbrWaterE3').value = 13.0;
-      
-      document.getElementById('cbrHeightInitE1').value = 127;
-      document.getElementById('cbrHeightInitE2').value = 127;
-      document.getElementById('cbrHeightInitE3').value = 127;
-      
-      document.getElementById('cbrHeightFinE1').value = 129;
-      document.getElementById('cbrHeightFinE2').value = 130;
-      document.getElementById('cbrHeightFinE3').value = 131;
-      
-      // إعادة تعيين جدول 3 (الاختراق)
-      const penetrationInputs = document.querySelectorAll('#sectionCBR .section-card input[type="number"]');
-      penetrationInputs.forEach(input => {
-          if (input.value === '2.5' || input.value === '2.1' || input.value === '1.8') input.value = '2.5';
-          if (input.value === '5.2' || input.value === '4.3' || input.value === '3.6') input.value = '5.2';
-          if (input.value === '7.8' || input.value === '6.5' || input.value === '5.4') input.value = '7.8';
-          if (input.value === '10.5' || input.value === '8.7' || input.value === '7.2') input.value = '10.5';
-      });
-      
-      // إعادة تعيين القيم المحسوبة
-      document.getElementById('cbrRhoDryE1').textContent = '0.928';
-      document.getElementById('cbrRhoDryE2').textContent = '0.866';
-      document.getElementById('cbrRhoDryE3').textContent = '0.797';
-      
-      document.getElementById('cbrPCFE1').textContent = '58.0';
-      document.getElementById('cbrPCFE2').textContent = '54.1';
-      document.getElementById('cbrPCFE3').textContent = '49.8';
-      
-      document.getElementById('cbrKNm3E1').textContent = '91.1';
-      document.getElementById('cbrKNm3E2').textContent = '84.9';
-      document.getElementById('cbrKNm3E3').textContent = '78.2';
-      
-      document.getElementById('cbrSwellE1').textContent = '1.57%';
-      document.getElementById('cbrSwellE2').textContent = '2.36%';
-      document.getElementById('cbrSwellE3').textContent = '3.15%';
-      
-      document.getElementById('cbrValue01_E1').textContent = '49.5%';
-      document.getElementById('cbrValue01_E2').textContent = '40.9%';
-      document.getElementById('cbrValue01_E3').textContent = '34.4%';
-      
-      document.getElementById('cbrFinal_E1').textContent = '49.5%';
-      document.getElementById('cbrFinal_E2').textContent = '40.9%';
-      document.getElementById('cbrFinal_E3').textContent = '34.4%';
-      
-      // رسالة نجاح
-      alert('✅ تم إعادة تعيين جميع البيانات');
-  }
-
   function exportCBRPDF() {
       alert('📄 سيتم إضافة خاصية تحميل PDF قريباً!');
-      // سيتم استخدام library مثل jsPDF أو html2pdf
   }
 
 </script>
