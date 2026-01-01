@@ -3330,13 +3330,15 @@ function switchTab(tab) {
     document.getElementById('sectionCBR').classList.toggle('hidden', tab !== 'CBR');
 
 
-    // 3. تشغيل دوال خاصة عند الفتح
-    
-    // >>> تشغيل دالة CBR <<<
+        // >>> تشغيل دالة CBR <<<
     if (tab === 'CBR') {
-    // renderCBRTables سيتم إضافتها لاحقاً
-    // setTimeout(renderCBRTables, 50);
-}
+        setTimeout(() => {
+            if (typeof initCBR === 'function') {
+                initCBR();
+            }
+        }, 100);
+    }
+
     if (tab === 'SoilClass' && typeof autoReadDataForClassification === 'function') {
         autoReadDataForClassification();
     }
@@ -6776,6 +6778,88 @@ function toggleD422Glossary() {
     icon.textContent = '+';             // علامة زائد عند الإغلاق
   }
 }
+      // =============================================
+  // CBR CALCULATIONS - ASTM D1883
+  // =============================================
+
+  function calculateCBRDensityAndSwell() {
+      for (let i = 1; i <= 3; i++) {
+          const suffix = i === 1 ? 'E1' : i === 2 ? 'E2' : 'E3';
+          
+          const Mm = parseFloat(document.getElementById(`cbrMm${suffix}`)?.value || 1200);
+          const Mw = parseFloat(document.getElementById(`cbrMw${suffix}`)?.value || 3600);
+          const Vm = parseFloat(document.getElementById(`cbrVm${suffix}`)?.value || 2310);
+          const w = parseFloat(document.getElementById(`cbrWater${suffix}`)?.value || 12);
+          const hi = parseFloat(document.getElementById(`cbrHeightInit${suffix}`)?.value || 127);
+          const hf = parseFloat(document.getElementById(`cbrHeightFin${suffix}`)?.value || 129);
+          
+          const Ms = Mw - Mm;
+          const rhoWet = Ms / Vm;
+          const rhoDry = rhoWet / (1 + w / 100);
+          const PCF = rhoDry * 62.4;
+          const kNm3 = rhoDry * 9.81;
+          const swell = ((hf - hi) / hi) * 100;
+          
+          const el_rhoDry = document.getElementById(`cbrRhoDry${suffix}`);
+          const el_PCF = document.getElementById(`cbrPCF${suffix}`);
+          const el_kNm3 = document.getElementById(`cbrKNm3${suffix}`);
+          const el_swell = document.getElementById(`cbrSwell${suffix}`);
+          
+          if (el_rhoDry) el_rhoDry.textContent = rhoDry.toFixed(3);
+          if (el_PCF) el_PCF.textContent = PCF.toFixed(1);
+          if (el_kNm3) el_kNm3.textContent = kNm3.toFixed(1);
+          if (el_swell) el_swell.textContent = swell.toFixed(2) + '%';
+      }
+  }
+
+  function updateCBRPercentage() {
+      const standardPressure_01 = 1029;
+      
+      const penetrationRows = document.querySelectorAll('#sectionCBR tbody tr');
+      
+      if (penetrationRows.length >= 2) {
+          const row_01 = penetrationRows[1];
+          const cells_01 = row_01.querySelectorAll('td');
+          
+          const pressure_01_E1 = parseFloat(cells_01[2]?.textContent || 510);
+          const pressure_01_E2 = parseFloat(cells_01[4]?.textContent || 421);
+          const pressure_01_E3 = parseFloat(cells_01[6]?.textContent || 353);
+          
+          const cbr_01_E1 = (pressure_01_E1 / standardPressure_01) * 100;
+          const cbr_01_E2 = (pressure_01_E2 / standardPressure_01) * 100;
+          const cbr_01_E3 = (pressure_01_E3 / standardPressure_01) * 100;
+          
+          const el_01_E1 = document.getElementById('cbrValue01_E1');
+          const el_01_E2 = document.getElementById('cbrValue01_E2');
+          const el_01_E3 = document.getElementById('cbrValue01_E3');
+          const el_final_E1 = document.getElementById('cbrFinal_E1');
+          const el_final_E2 = document.getElementById('cbrFinal_E2');
+          const el_final_E3 = document.getElementById('cbrFinal_E3');
+          
+          if (el_01_E1) el_01_E1.textContent = cbr_01_E1.toFixed(1) + '%';
+          if (el_01_E2) el_01_E2.textContent = cbr_01_E2.toFixed(1) + '%';
+          if (el_01_E3) el_01_E3.textContent = cbr_01_E3.toFixed(1) + '%';
+          if (el_final_E1) el_final_E1.textContent = cbr_01_E1.toFixed(1) + '%';
+          if (el_final_E2) el_final_E2.textContent = cbr_01_E2.toFixed(1) + '%';
+          if (el_final_E3) el_final_E3.textContent = cbr_01_E3.toFixed(1) + '%';
+      }
+  }
+
+  function updateCBRCalculations() {
+      calculateCBRDensityAndSwell();
+      updateCBRPercentage();
+  }
+
+  function initCBR() {
+      updateCBRCalculations();
+      
+      const inputs = document.querySelectorAll('#sectionCBR input[type="number"]');
+      inputs.forEach(input => {
+          input.addEventListener('change', updateCBRCalculations);
+          input.addEventListener('input', updateCBRCalculations);
+      });
+  }
+
 </script>
 </body>
 </html>
