@@ -6939,21 +6939,26 @@ function toggleD422Glossary() {
       }, 2000);
   }
 
-  function resetCBRForm() {
-      // مسح جميع البيانات (inputs)
+   function resetCBRForm() {
+      // مسح جميع البيانات (inputs) - جدول 1 فقط
       const allInputs = document.querySelectorAll('#sectionCBR input[type="number"]');
       allInputs.forEach(input => {
           input.value = '';
       });
       
-      // مسح جميع القيم المحسوبة (outputs)
+      // مسح جميع القيم المحسوبة (outputs) - جدول 2 و 4 فقط
       const outputs = document.querySelectorAll('#sectionCBR span[id^="cbr"]');
       outputs.forEach(el => {
           el.textContent = '—';
       });
       
+      // ملاحظة: جدول 3 (الاختراق) لا يتم مسحه - بيانات ثابتة
+      // الضغط E1: 245, 510, 765, 1029
+      // الضغط E2: 206, 421, 637, 853
+      // الضغط E3: 176, 353, 529, 706
+      
       // رسالة نجاح
-      alert('🗑️ تم مسح جميع البيانات بنجاح!');
+      alert('🗑️ تم مسح جميع بيانات الإدخال والنتائج!\n💾 بيانات الاختراق محفوظة (ثابتة)');
   }
 
   function calculateCBRAll() {
