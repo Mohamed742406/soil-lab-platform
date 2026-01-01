@@ -6939,271 +6939,150 @@ function toggleD422Glossary() {
     icon.textContent = '+';             // علامة زائد عند الإغلاق
   }
 }
- // =============================================
-  // CBR CALCULATIONS - ASTM D1883
-  // =============================================
+ // ===== CBR DYNAMIC COLUMNS & CALCULATIONS =====
+let cbrCurrentTemplate = 1;
+let cbrData = { E1: {}, E2: {}, E3: {} };
 
- function calculateCBRDensityAndSwell() {
-    for (let i = 1; i <= 3; i++) {
-        const suffix = i === 1 ? 'E1' : i === 2 ? 'E2' : 'E3';
-        
-        const Mm_val = document.getElementById(`cbrMm${suffix}`)?.value;
-        const Mw_val = document.getElementById(`cbrMw${suffix}`)?.value;
-        const Vm_val = document.getElementById(`cbrVm${suffix}`)?.value;
-        const w_val = document.getElementById(`cbrWater${suffix}`)?.value;
-        const hi_val = document.getElementById(`cbrHeightInit${suffix}`)?.value;
-        const hf_val = document.getElementById(`cbrHeightFin${suffix}`)?.value;
-        
-        // إذا أي حقل فارغ - لا تحسب، اترك النتائج فارغة
-        if (!Mm_val || !Mw_val || !Vm_val || !w_val || !hi_val || !hf_val) {
-            document.getElementById(`cbrRhoDry${suffix}`).textContent = '';
-            document.getElementById(`cbrPCF${suffix}`).textContent = '';
-            document.getElementById(`cbrKNm3${suffix}`).textContent = '';
-            document.getElementById(`cbrSwell${suffix}`).textContent = '';
-            continue;
-        }
-        
-        const Mm = parseFloat(Mm_val);
-        const Mw = parseFloat(Mw_val);
-        const Vm = parseFloat(Vm_val);
-        const w = parseFloat(w_val);
-        const hi = parseFloat(hi_val);
-        const hf = parseFloat(hf_val);
-        
-        const Ms = Mw - Mm;
-        const rhoWet = Ms / Vm;
-        const rhoDry = rhoWet / (1 + w / 100);
-        const PCF = rhoDry * 62.4;
-        const kNm3 = rhoDry * 9.81;
-        const swell = ((hf - hi) / hi) * 100;
-        
-        const el_rhoDry = document.getElementById(`cbrRhoDry${suffix}`);
-        const el_PCF = document.getElementById(`cbrPCF${suffix}`);
-        const el_kNm3 = document.getElementById(`cbrKNm3${suffix}`);
-        const el_swell = document.getElementById(`cbrSwell${suffix}`);
-        
-        if (el_rhoDry) el_rhoDry.textContent = rhoDry.toFixed(3);
-        if (el_PCF) el_PCF.textContent = PCF.toFixed(1);
-        if (el_kNm3) el_kNm3.textContent = kNm3.toFixed(1);
-        if (el_swell) el_swell.textContent = swell.toFixed(2) + '%';
-    }
+function handleCBRTemplateChange(templateCount) {
+  cbrCurrentTemplate = parseInt(templateCount);
+  document.body.setAttribute('data-cbr-template', cbrCurrentTemplate);
+  updateCBRCalculations();
 }
 
- function updateCBRPercentage() {
-    const standardPressure_01 = 1029;
-    const standardPressure_02 = 1500;
-    
-    try {
-        // احصل على القيم من جدول 3 (inputs)
-        const penetrationData = {
-            E1: { 
-                pressure_01: parseFloat(document.getElementById('penetration100_E1_pressure')?.value) || 0,
-                pressure_02: parseFloat(document.getElementById('penetration200_E1_pressure')?.value) || 0
-            },
-            E2: { 
-                pressure_01: parseFloat(document.getElementById('penetration100_E2_pressure')?.value) || 0,
-                pressure_02: parseFloat(document.getElementById('penetration200_E2_pressure')?.value) || 0
-            },
-            E3: { 
-                pressure_01: parseFloat(document.getElementById('penetration100_E3_pressure')?.value) || 0,
-                pressure_02: parseFloat(document.getElementById('penetration200_E3_pressure')?.value) || 0
-            }
-        };
-        
-        // إذا جميع القيم صفر - اترك النتائج فارغة
-        const allZero = Object.values(penetrationData).every(data => 
-            data.pressure_01 === 0 && data.pressure_02 === 0
-        );
-        
-        if (allZero) {
-            for (let suffix of ['E1', 'E2', 'E3']) {
-                document.getElementById(`cbrValue01_${suffix}`).textContent = '';
-                document.getElementById(`cbrValue02_${suffix}`).textContent = '';
-                document.getElementById(`cbrFinal_${suffix}`).textContent = '';
-            }
-            return;
-        }
-        
-        // حساب CBR لكل عينة
-        for (let suffix in penetrationData) {
-            const data = penetrationData[suffix];
-            
-            const cbr_01 = data.pressure_01 > 0 ? (data.pressure_01 / standardPressure_01) * 100 : 0;
-            const cbr_02 = data.pressure_02 > 0 ? (data.pressure_02 / standardPressure_02) * 100 : 0;
-            
-            // تحديث جدول 4
-            const el_01 = document.getElementById(`cbrValue01_${suffix}`);
-            const el_02 = document.getElementById(`cbrValue02_${suffix}`);
-            const el_final = document.getElementById(`cbrFinal_${suffix}`);
-            
-            if (el_01) el_01.textContent = cbr_01.toFixed(1) + '%';
-            if (el_02) el_02.textContent = cbr_02.toFixed(1) + '%';
-            if (el_final) el_final.textContent = cbr_01.toFixed(1) + '%';
-        }
-    } catch (error) {
-        console.error('Error in updateCBRPercentage:', error);
-    }
-}
+function initCBRDynamicColumns() {
+  const radioButtons = document.querySelectorAll('input[name="cbrTemplateCount"]');
+  radioButtons.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      handleCBRTemplateChange(e.target.value);
+    });
+  });
 
-  function updateCBRCalculations() {
-      calculateCBRDensityAndSwell();
-      updateCBRPercentage();
-  }
+  document.body.setAttribute('data-cbr-template', '1');
 
- function initCBR() {
-    // لا تحسب شيء عند الفتح
-    // فقط أضف event listeners للـ inputs
-    
-    const inputs = document.querySelectorAll('#sectionCBR input[type="number"]');
+  const cbrSection = document.getElementById('sectionCBR');
+  if (cbrSection) {
+    const inputs = cbrSection.querySelectorAll('input[type="number"]');
     inputs.forEach(input => {
-        input.addEventListener('change', updateCBRCalculations);
-        input.addEventListener('input', updateCBRCalculations);
+      input.addEventListener('input', updateCBRCalculations);
+      input.addEventListener('change', updateCBRCalculations);
     });
+  }
 }
 
-  // =============================================
-  // CBR DEMO DATA - بيانات تجريبية
-  // =============================================
+function calculateCBRDensityAndSwell() {
+  const suffixes = ['E1', 'E2', 'E3'];
   
-  const CBR_DEMO_DATA = {
-      E1: { 
-          stress: 56, Mm: 1200, Mw: 3600, Vm: 2310, w: 12.0, hi: 127, hf: 129,
-          // بيانات الاختراق
-          p050_reading: 175, p050_pressure: 245,
-          p100_reading: 365, p100_pressure: 510,
-          p150_reading: 547, p150_pressure: 765,
-          p200_reading: 737, p200_pressure: 1029
-      },
-      E2: { 
-          stress: 25, Mm: 1200, Mw: 3450, Vm: 2310, w: 12.5, hi: 127, hf: 130,
-          p050_reading: 147, p050_pressure: 206,
-          p100_reading: 301, p100_pressure: 421,
-          p150_reading: 456, p150_pressure: 637,
-          p200_reading: 611, p200_pressure: 853
-      },
-      E3: { 
-          stress: 10, Mm: 1200, Mw: 3280, Vm: 2310, w: 13.0, hi: 127, hf: 131,
-          p050_reading: 126, p050_pressure: 176,
-          p100_reading: 252, p100_pressure: 353,
-          p150_reading: 379, p150_pressure: 529,
-          p200_reading: 506, p200_pressure: 706
-      }
-  };
+  for (let suffix of suffixes) {
+    const Mm = parseFloat(document.getElementById(`cbrMm${suffix}`)?.value) || 0;
+    const Mw = parseFloat(document.getElementById(`cbrMw${suffix}`)?.value) || 0;
+    const Vm = parseFloat(document.getElementById(`cbrVm${suffix}`)?.value) || 0;
+    const w = parseFloat(document.getElementById(`cbrWater${suffix}`)?.value) || 0;
+    const hi = parseFloat(document.getElementById(`cbrHeightInit${suffix}`)?.value) || 0;
+    const hf = parseFloat(document.getElementById(`cbrHeightFin${suffix}`)?.value) || 0;
 
-  // =============================================
-  // CBR CONTROL BUTTONS - زرار التحكم
-  // =============================================
+    if (!Mm || !Mw || !Vm || w === '' || !hi || !hf) {
+      document.getElementById(`cbrRhoDry${suffix}`).textContent = '-';
+      document.getElementById(`cbrPCF${suffix}`).textContent = '-';
+      document.getElementById(`cbrKNm3${suffix}`).textContent = '-';
+      document.getElementById(`cbrSwell${suffix}`).textContent = '-';
+      continue;
+    }
 
-  function loadDemoCBR() {
-      // تحميل البيانات التجريبية في جدول 1
-      for (let suffix in CBR_DEMO_DATA) {
-          const data = CBR_DEMO_DATA[suffix];
-          
-          document.getElementById(`cbrStress${suffix}`).value = data.stress;
-          document.getElementById(`cbrMm${suffix}`).value = data.Mm;
-          document.getElementById(`cbrMw${suffix}`).value = data.Mw;
-          document.getElementById(`cbrVm${suffix}`).value = data.Vm;
-          document.getElementById(`cbrWater${suffix}`).value = data.w;
-          document.getElementById(`cbrHeightInit${suffix}`).value = data.hi;
-          document.getElementById(`cbrHeightFin${suffix}`).value = data.hf;
-      }
-      
-      // تحميل بيانات الاختراق من جدول 3
-      for (let suffix in CBR_DEMO_DATA) {
-          const data = CBR_DEMO_DATA[suffix];
-          
-          // 0.050"
-          document.getElementById(`penetration050_${suffix}_reading`).value = data.p050_reading;
-          document.getElementById(`penetration050_${suffix}_pressure`).value = data.p050_pressure;
-          
-          // 0.100"
-          document.getElementById(`penetration100_${suffix}_reading`).value = data.p100_reading;
-          document.getElementById(`penetration100_${suffix}_pressure`).value = data.p100_pressure;
-          
-          // 0.150"
-          document.getElementById(`penetration150_${suffix}_reading`).value = data.p150_reading;
-          document.getElementById(`penetration150_${suffix}_pressure`).value = data.p150_pressure;
-          
-          // 0.200"
-          document.getElementById(`penetration200_${suffix}_reading`).value = data.p200_reading;
-          document.getElementById(`penetration200_${suffix}_pressure`).value = data.p200_pressure;
-      }
-      
-      // حساب النتائج تلقائياً
-      setTimeout(() => {
-          updateCBRCalculations();
-      }, 100);
-      
-      // رسالة نجاح
-      const btn = event.target;
-      const originalText = btn.innerHTML;
-      btn.innerHTML = '<span>✅</span><span>تم التحميل!</span>';
-      btn.style.opacity = '0.8';
-      
-      setTimeout(() => {
-          btn.innerHTML = originalText;
-          btn.style.opacity = '1';
-      }, 2000);
+    const Ms = Mw - Mm;
+    const rhoWet = Ms / Vm;
+    const rhoDry = rhoWet / (1 + w / 100);
+    const PCF = rhoDry * 62.4;
+    const kNm3 = rhoDry * 9.81;
+    const swell = ((hf - hi) / hi) * 100;
+
+    cbrData[suffix] = { Mm, Mw, Vm, w, hi, hf, Ms, rhoWet, rhoDry, PCF, kNm3, swell };
+
+    document.getElementById(`cbrRhoDry${suffix}`).textContent = rhoDry.toFixed(3);
+    document.getElementById(`cbrPCF${suffix}`).textContent = PCF.toFixed(1);
+    document.getElementById(`cbrKNm3${suffix}`).textContent = kNm3.toFixed(2);
+    document.getElementById(`cbrSwell${suffix}`).textContent = swell.toFixed(2);
   }
-
-  function resetCBRForm() {
-    // مسح جميع البيانات (inputs) من جدول 1
-    const allInputs = document.querySelectorAll('#sectionCBR input[type="number"]');
-    allInputs.forEach(input => {
-        input.value = '';
-    });
-    
-    // مسح جميع الـ spans من جدول 2
-    document.getElementById('cbrRhoDryE1').textContent = '';
-    document.getElementById('cbrRhoDryE2').textContent = '';
-    document.getElementById('cbrRhoDryE3').textContent = '';
-    
-    document.getElementById('cbrPCFE1').textContent = '';
-    document.getElementById('cbrPCFE2').textContent = '';
-    document.getElementById('cbrPCFE3').textContent = '';
-    
-    document.getElementById('cbrKNm3E1').textContent = '';
-    document.getElementById('cbrKNm3E2').textContent = '';
-    document.getElementById('cbrKNm3E3').textContent = '';
-    
-    document.getElementById('cbrSwellE1').textContent = '';
-    document.getElementById('cbrSwellE2').textContent = '';
-    document.getElementById('cbrSwellE3').textContent = '';
-    
-    // مسح جميع الـ spans من جدول 4
-    document.getElementById('cbrValue01_E1').textContent = '';
-    document.getElementById('cbrValue01_E2').textContent = '';
-    document.getElementById('cbrValue01_E3').textContent = '';
-    
-    document.getElementById('cbrValue02_E1').textContent = '';
-    document.getElementById('cbrValue02_E2').textContent = '';
-    document.getElementById('cbrValue02_E3').textContent = '';
-    
-    document.getElementById('cbrFinal_E1').textContent = '';
-    document.getElementById('cbrFinal_E2').textContent = '';
-    document.getElementById('cbrFinal_E3').textContent = '';
-    
-    alert('🗑️ تم مسح جميع البيانات!');
 }
 
-  function calculateCBRAll() {
-      updateCBRCalculations();
-      
-      // إظهار رسالة نجاح
-      const btn = event.target.closest('button');
-      const originalText = btn.innerHTML;
-      btn.innerHTML = '<span>✅</span><span>تم الحساب!</span>';
-      btn.style.opacity = '0.8';
-      
-      setTimeout(() => {
-          btn.innerHTML = originalText;
-          btn.style.opacity = '1';
-      }, 2000);
-  }
+function updateCBRPercentage() {
+  const standardPressure01 = 1029;
+  const standardPressure02 = 1500;
+  const suffixes = ['E1', 'E2', 'E3'];
 
-  function exportCBRPDF() {
-      alert('📄 سيتم إضافة خاصية تحميل PDF قريباً!');
+  for (let suffix of suffixes) {
+    const pressure01 = parseFloat(document.getElementById(`penetration100${suffix}pressure`)?.value) || 0;
+    const pressure02 = parseFloat(document.getElementById(`penetration200${suffix}pressure`)?.value) || 0;
+
+    const cbr01 = pressure01 > 0 ? (pressure01 / standardPressure01) * 100 : 0;
+    const cbr02 = pressure02 > 0 ? (pressure02 / standardPressure02) * 100 : 0;
+    const cbrFinal = Math.max(cbr01, cbr02);
+
+    document.getElementById(`cbrValue01${suffix}`).textContent = cbr01 > 0 ? cbr01.toFixed(1) : '-';
+    document.getElementById(`cbrValue02${suffix}`).textContent = cbr02 > 0 ? cbr02.toFixed(1) : '-';
+    document.getElementById(`cbrFinal${suffix}`).textContent = cbrFinal > 0 ? cbrFinal.toFixed(1) : '-';
+
+    cbrData[suffix] = { ...cbrData[suffix], pressure01, pressure02, cbr01, cbr02, cbrFinal };
   }
+}
+
+function updateCBRCalculations() {
+  calculateCBRDensityAndSwell();
+  updateCBRPercentage();
+}
+
+const CBR_DEMO_DATA = {
+  E1: { stress: 56, Mm: 1200, Mw: 3600, Vm: 2310, w: 12.0, hi: 127, hf: 129, p050reading: 175, p050pressure: 245, p100reading: 365, p100pressure: 510, p150reading: 547, p150pressure: 765, p200reading: 737, p200pressure: 1029 },
+  E2: { stress: 25, Mm: 1200, Mw: 3450, Vm: 2310, w: 12.5, hi: 127, hf: 130, p050reading: 147, p050pressure: 206, p100reading: 301, p100pressure: 421, p150reading: 456, p150pressure: 637, p200reading: 611, p200pressure: 853 },
+  E3: { stress: 10, Mm: 1200, Mw: 3280, Vm: 2310, w: 13.0, hi: 127, hf: 131, p050reading: 126, p050pressure: 176, p100reading: 252, p100pressure: 353, p150reading: 379, p150pressure: 529, p200reading: 506, p200pressure: 706 }
+};
+
+function loadDemoCBR() {
+  for (let suffix in CBR_DEMO_DATA) {
+    const data = CBR_DEMO_DATA[suffix];
+    document.getElementById(`cbrStress${suffix}`).value = data.stress;
+    document.getElementById(`cbrMm${suffix}`).value = data.Mm;
+    document.getElementById(`cbrMw${suffix}`).value = data.Mw;
+    document.getElementById(`cbrVm${suffix}`).value = data.Vm;
+    document.getElementById(`cbrWater${suffix}`).value = data.w;
+    document.getElementById(`cbrHeightInit${suffix}`).value = data.hi;
+    document.getElementById(`cbrHeightFin${suffix}`).value = data.hf;
+    document.getElementById(`penetration050${suffix}reading`).value = data.p050reading;
+    document.getElementById(`penetration050${suffix}pressure`).value = data.p050pressure;
+    document.getElementById(`penetration100${suffix}reading`).value = data.p100reading;
+    document.getElementById(`penetration100${suffix}pressure`).value = data.p100pressure;
+    document.getElementById(`penetration150${suffix}reading`).value = data.p150reading;
+    document.getElementById(`penetration150${suffix}pressure`).value = data.p150pressure;
+    document.getElementById(`penetration200${suffix}reading`).value = data.p200reading;
+    document.getElementById(`penetration200${suffix}pressure`).value = data.p200pressure;
+  }
+  document.getElementById('cbr_template_3').checked = true;
+  handleCBRTemplateChange('3');
+  updateCBRCalculations();
+}
+
+function resetCBRForm() {
+  const cbrSection = document.getElementById('sectionCBR');
+  if (cbrSection) {
+    const inputs = cbrSection.querySelectorAll('input[type="number"]');
+    inputs.forEach(input => input.value = '');
+    const spans = cbrSection.querySelectorAll('span');
+    spans.forEach(span => {
+      if (span.id && (span.id.includes('cbrRhoDry') || span.id.includes('cbrPCF') || span.id.includes('cbrKNm3') || span.id.includes('cbrSwell') || span.id.includes('cbrValue') || span.id.includes('cbrFinal'))) {
+        span.textContent = '-';
+      }
+    });
+  }
+  document.getElementById('cbr_template_1').checked = true;
+  handleCBRTemplateChange('1');
+}
+
+function calculateCBRAll() {
+  updateCBRCalculations();
+}
+
+if (document.getElementById('sectionCBR')) {
+  initCBRDynamicColumns();
+}
 
 </script>
 </body>
