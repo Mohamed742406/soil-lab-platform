@@ -6843,59 +6843,58 @@ function toggleD422Glossary() {
         if (el_swell) el_swell.textContent = swell.toFixed(2) + '%';
     }
 }
+
  function updateCBRPercentage() {
     const standardPressure_01 = 1029;
+    const standardPressure_02 = 1500;
     
     try {
-        const cbrSection = document.getElementById('sectionCBR');
-        if (!cbrSection) return;
+        // احصل على القيم من جدول 3 (inputs)
+        const penetrationData = {
+            E1: { 
+                pressure_01: parseFloat(document.getElementById('penetration100_E1_pressure')?.value) || 0,
+                pressure_02: parseFloat(document.getElementById('penetration200_E1_pressure')?.value) || 0
+            },
+            E2: { 
+                pressure_01: parseFloat(document.getElementById('penetration100_E2_pressure')?.value) || 0,
+                pressure_02: parseFloat(document.getElementById('penetration200_E2_pressure')?.value) || 0
+            },
+            E3: { 
+                pressure_01: parseFloat(document.getElementById('penetration100_E3_pressure')?.value) || 0,
+                pressure_02: parseFloat(document.getElementById('penetration200_E3_pressure')?.value) || 0
+            }
+        };
         
-        const cards = cbrSection.querySelectorAll('.section-card');
-        if (cards.length < 3) return;
+        // إذا جميع القيم صفر - اترك النتائج فارغة
+        const allZero = Object.values(penetrationData).every(data => 
+            data.pressure_01 === 0 && data.pressure_02 === 0
+        );
         
-        const penetrationTable = cards[2];
-        const rows = penetrationTable.querySelectorAll('tbody tr');
-        if (rows.length < 2) return;
-        
-        const row_01 = rows[1];
-        const cells = row_01.querySelectorAll('td');
-        
-        const pressure_01_E1_text = cells[2]?.textContent?.trim();
-        const pressure_01_E2_text = cells[4]?.textContent?.trim();
-        const pressure_01_E3_text = cells[6]?.textContent?.trim();
-        
-        // إذا أي قيمة فارغة - اترك النتائج فارغة
-        if (!pressure_01_E1_text || !pressure_01_E2_text || !pressure_01_E3_text) {
-            document.getElementById('cbrValue01_E1').textContent = '';
-            document.getElementById('cbrValue01_E2').textContent = '';
-            document.getElementById('cbrValue01_E3').textContent = '';
-            document.getElementById('cbrFinal_E1').textContent = '';
-            document.getElementById('cbrFinal_E2').textContent = '';
-            document.getElementById('cbrFinal_E3').textContent = '';
+        if (allZero) {
+            for (let suffix of ['E1', 'E2', 'E3']) {
+                document.getElementById(`cbrValue01_${suffix}`).textContent = '';
+                document.getElementById(`cbrValue02_${suffix}`).textContent = '';
+                document.getElementById(`cbrFinal_${suffix}`).textContent = '';
+            }
             return;
         }
         
-        const pressure_01_E1 = parseFloat(pressure_01_E1_text);
-        const pressure_01_E2 = parseFloat(pressure_01_E2_text);
-        const pressure_01_E3 = parseFloat(pressure_01_E3_text);
-        
-        const cbr_01_E1 = isNaN(pressure_01_E1) ? 0 : (pressure_01_E1 / standardPressure_01) * 100;
-        const cbr_01_E2 = isNaN(pressure_01_E2) ? 0 : (pressure_01_E2 / standardPressure_01) * 100;
-        const cbr_01_E3 = isNaN(pressure_01_E3) ? 0 : (pressure_01_E3 / standardPressure_01) * 100;
-        
-        const el_01_E1 = document.getElementById('cbrValue01_E1');
-        const el_01_E2 = document.getElementById('cbrValue01_E2');
-        const el_01_E3 = document.getElementById('cbrValue01_E3');
-        const el_final_E1 = document.getElementById('cbrFinal_E1');
-        const el_final_E2 = document.getElementById('cbrFinal_E2');
-        const el_final_E3 = document.getElementById('cbrFinal_E3');
-        
-        if (el_01_E1) el_01_E1.textContent = cbr_01_E1.toFixed(1) + '%';
-        if (el_01_E2) el_01_E2.textContent = cbr_01_E2.toFixed(1) + '%';
-        if (el_01_E3) el_01_E3.textContent = cbr_01_E3.toFixed(1) + '%';
-        if (el_final_E1) el_final_E1.textContent = cbr_01_E1.toFixed(1) + '%';
-        if (el_final_E2) el_final_E2.textContent = cbr_01_E2.toFixed(1) + '%';
-        if (el_final_E3) el_final_E3.textContent = cbr_01_E3.toFixed(1) + '%';
+        // حساب CBR لكل عينة
+        for (let suffix in penetrationData) {
+            const data = penetrationData[suffix];
+            
+            const cbr_01 = data.pressure_01 > 0 ? (data.pressure_01 / standardPressure_01) * 100 : 0;
+            const cbr_02 = data.pressure_02 > 0 ? (data.pressure_02 / standardPressure_02) * 100 : 0;
+            
+            // تحديث جدول 4
+            const el_01 = document.getElementById(`cbrValue01_${suffix}`);
+            const el_02 = document.getElementById(`cbrValue02_${suffix}`);
+            const el_final = document.getElementById(`cbrFinal_${suffix}`);
+            
+            if (el_01) el_01.textContent = cbr_01.toFixed(1) + '%';
+            if (el_02) el_02.textContent = cbr_02.toFixed(1) + '%';
+            if (el_final) el_final.textContent = cbr_01.toFixed(1) + '%';
+        }
     } catch (error) {
         console.error('Error in updateCBRPercentage:', error);
     }
@@ -6916,14 +6915,34 @@ function toggleD422Glossary() {
         input.addEventListener('input', updateCBRCalculations);
     });
 }
+
   // =============================================
   // CBR DEMO DATA - بيانات تجريبية
   // =============================================
   
   const CBR_DEMO_DATA = {
-      E1: { stress: 56, Mm: 1200, Mw: 3600, Vm: 2310, w: 12.0, hi: 127, hf: 129 },
-      E2: { stress: 25, Mm: 1200, Mw: 3450, Vm: 2310, w: 12.5, hi: 127, hf: 130 },
-      E3: { stress: 10, Mm: 1200, Mw: 3280, Vm: 2310, w: 13.0, hi: 127, hf: 131 }
+      E1: { 
+          stress: 56, Mm: 1200, Mw: 3600, Vm: 2310, w: 12.0, hi: 127, hf: 129,
+          // بيانات الاختراق
+          p050_reading: 175, p050_pressure: 245,
+          p100_reading: 365, p100_pressure: 510,
+          p150_reading: 547, p150_pressure: 765,
+          p200_reading: 737, p200_pressure: 1029
+      },
+      E2: { 
+          stress: 25, Mm: 1200, Mw: 3450, Vm: 2310, w: 12.5, hi: 127, hf: 130,
+          p050_reading: 147, p050_pressure: 206,
+          p100_reading: 301, p100_pressure: 421,
+          p150_reading: 456, p150_pressure: 637,
+          p200_reading: 611, p200_pressure: 853
+      },
+      E3: { 
+          stress: 10, Mm: 1200, Mw: 3280, Vm: 2310, w: 13.0, hi: 127, hf: 131,
+          p050_reading: 126, p050_pressure: 176,
+          p100_reading: 252, p100_pressure: 353,
+          p150_reading: 379, p150_pressure: 529,
+          p200_reading: 506, p200_pressure: 706
+      }
   };
 
   // =============================================
@@ -6944,10 +6963,26 @@ function toggleD422Glossary() {
           document.getElementById(`cbrHeightFin${suffix}`).value = data.hf;
       }
       
-      // ملاحظة: جدول 3 (الاختراق) بيانات ثابتة - مش محتاجة تعديل
-      // الضغط E1: 245, 510, 765, 1029
-      // الضغط E2: 206, 421, 637, 853
-      // الضغط E3: 176, 353, 529, 706
+      // تحميل بيانات الاختراق من جدول 3
+      for (let suffix in CBR_DEMO_DATA) {
+          const data = CBR_DEMO_DATA[suffix];
+          
+          // 0.050"
+          document.getElementById(`penetration050_${suffix}_reading`).value = data.p050_reading;
+          document.getElementById(`penetration050_${suffix}_pressure`).value = data.p050_pressure;
+          
+          // 0.100"
+          document.getElementById(`penetration100_${suffix}_reading`).value = data.p100_reading;
+          document.getElementById(`penetration100_${suffix}_pressure`).value = data.p100_pressure;
+          
+          // 0.150"
+          document.getElementById(`penetration150_${suffix}_reading`).value = data.p150_reading;
+          document.getElementById(`penetration150_${suffix}_pressure`).value = data.p150_pressure;
+          
+          // 0.200"
+          document.getElementById(`penetration200_${suffix}_reading`).value = data.p200_reading;
+          document.getElementById(`penetration200_${suffix}_pressure`).value = data.p200_pressure;
+      }
       
       // حساب النتائج تلقائياً
       setTimeout(() => {
@@ -6965,6 +7000,7 @@ function toggleD422Glossary() {
           btn.style.opacity = '1';
       }, 2000);
   }
+
   function resetCBRForm() {
     // مسح جميع البيانات (inputs) من جدول 1
     const allInputs = document.querySelectorAll('#sectionCBR input[type="number"]');
@@ -7004,6 +7040,7 @@ function toggleD422Glossary() {
     
     alert('🗑️ تم مسح جميع البيانات!');
 }
+
   function calculateCBRAll() {
       updateCBRCalculations();
       
