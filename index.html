@@ -6936,44 +6936,44 @@ function toggleD422Glossary() {
       }, 2000);
   }
   function resetCBRForm() {
-      // مسح جميع البيانات (inputs)
-      const allInputs = document.querySelectorAll('#sectionCBR input[type="number"]');
-      allInputs.forEach(input => {
-          input.value = '';
-      });
-      
-      // إعادة تعيين جميع Outputs للقيم الافتراضية (كما في Demo)
-      document.getElementById('cbrRhoDryE1').textContent = '0.928';
-      document.getElementById('cbrRhoDryE2').textContent = '0.866';
-      document.getElementById('cbrRhoDryE3').textContent = '0.797';
-      
-      document.getElementById('cbrPCFE1').textContent = '58.0';
-      document.getElementById('cbrPCFE2').textContent = '54.1';
-      document.getElementById('cbrPCFE3').textContent = '49.8';
-      
-      document.getElementById('cbrKNm3E1').textContent = '91.1';
-      document.getElementById('cbrKNm3E2').textContent = '84.9';
-      document.getElementById('cbrKNm3E3').textContent = '78.2';
-      
-      document.getElementById('cbrSwellE1').textContent = '1.57%';
-      document.getElementById('cbrSwellE2').textContent = '2.36%';
-      document.getElementById('cbrSwellE3').textContent = '3.15%';
-      
-      document.getElementById('cbrValue01_E1').textContent = '49.5%';
-      document.getElementById('cbrValue01_E2').textContent = '40.9%';
-      document.getElementById('cbrValue01_E3').textContent = '34.4%';
-      
-      document.getElementById('cbrValue02_E1').textContent = '68.6%';
-      document.getElementById('cbrValue02_E2').textContent = '56.9%';
-      document.getElementById('cbrValue02_E3').textContent = '47.0%';
-      
-      document.getElementById('cbrFinal_E1').textContent = '49.5%';
-      document.getElementById('cbrFinal_E2').textContent = '40.9%';
-      document.getElementById('cbrFinal_E3').textContent = '34.4%';
-      
-      alert('🗑️ تم مسح جميع بيانات الإدخال!\n💾 النتائج أعيدت للقيم الافتراضية');
-  }
-
+    // مسح جميع البيانات (inputs) من جدول 1
+    const allInputs = document.querySelectorAll('#sectionCBR input[type="number"]');
+    allInputs.forEach(input => {
+        input.value = '';
+    });
+    
+    // مسح جميع الـ spans من جدول 2
+    document.getElementById('cbrRhoDryE1').textContent = '';
+    document.getElementById('cbrRhoDryE2').textContent = '';
+    document.getElementById('cbrRhoDryE3').textContent = '';
+    
+    document.getElementById('cbrPCFE1').textContent = '';
+    document.getElementById('cbrPCFE2').textContent = '';
+    document.getElementById('cbrPCFE3').textContent = '';
+    
+    document.getElementById('cbrKNm3E1').textContent = '';
+    document.getElementById('cbrKNm3E2').textContent = '';
+    document.getElementById('cbrKNm3E3').textContent = '';
+    
+    document.getElementById('cbrSwellE1').textContent = '';
+    document.getElementById('cbrSwellE2').textContent = '';
+    document.getElementById('cbrSwellE3').textContent = '';
+    
+    // مسح جميع الـ spans من جدول 4
+    document.getElementById('cbrValue01_E1').textContent = '';
+    document.getElementById('cbrValue01_E2').textContent = '';
+    document.getElementById('cbrValue01_E3').textContent = '';
+    
+    document.getElementById('cbrValue02_E1').textContent = '';
+    document.getElementById('cbrValue02_E2').textContent = '';
+    document.getElementById('cbrValue02_E3').textContent = '';
+    
+    document.getElementById('cbrFinal_E1').textContent = '';
+    document.getElementById('cbrFinal_E2').textContent = '';
+    document.getElementById('cbrFinal_E3').textContent = '';
+    
+    alert('🗑️ تم مسح جميع البيانات!');
+}
   function calculateCBRAll() {
       updateCBRCalculations();
       
