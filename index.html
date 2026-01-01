@@ -3144,11 +3144,63 @@
                         </tbody>
                     </table>
                 </div>
+            <!-- ============================================= -->
+            <!-- 2️⃣ جدول الحسابات التلقائية -->
+            <!-- ============================================= -->
+            <div class="section-card p-6 mb-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
+                    الحسابات التلقائية - الكثافة الجافة والانتفاش
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse bg-white rounded-lg shadow-sm">
+                        <thead>
+                            <tr class="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
+                                <th class="p-3 border border-blue-700 text-left">المعامل</th>
+                                <th class="p-3 border border-blue-700 text-center font-bold">E1</th>
+                                <th class="p-3 border border-blue-700 text-center font-bold">E2</th>
+                                <th class="p-3 border border-blue-700 text-center font-bold">E3</th>
+                                <th class="p-3 border border-blue-700 text-center">الوحدة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hover:bg-gray-50 bg-red-50">
+                                <td class="p-3 border border-gray-300 font-semibold">الكثافة الجافة (ρd)</td>
+                                <td class="p-3 border border-gray-300 text-center font-bold text-red-700"><span id="cbrRhoDryE1">0.928</span></td>
+                                <td class="p-3 border border-gray-300 text-center font-bold text-red-700"><span id="cbrRhoDryE2">0.866</span></td>
+                                <td class="p-3 border border-gray-300 text-center font-bold text-red-700"><span id="cbrRhoDryE3">0.797</span></td>
+                                <td class="p-3 border border-gray-300 text-center">g/cm³</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3 border border-gray-300 font-semibold">الكثافة (PCF)</td>
+                                <td class="p-3 border border-gray-300 text-center font-bold text-blue-700"><span id="cbrPCFE1">58.0</span></td>
+                                <td class="p-3 border border-gray-300 text-center font-bold text-blue-700"><span id="cbrPCFE2">54.1</span></td>
+                                <td class="p-3 border border-gray-300 text-center font-bold text-blue-700"><span id="cbrPCFE3">49.8</span></td>
+                                <td class="p-3 border border-gray-300 text-center">PCF</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 bg-green-50">
+                                <td class="p-3 border border-gray-300 font-semibold">الكثافة (kN/m³)</td>
+                                <td class="p-3 border border-gray-300 text-center font-bold text-green-700"><span id="cbrKNm3E1">91.1</span></td>
+                                <td class="p-3 border border-gray-300 text-center font-bold text-green-700"><span id="cbrKNm3E2">84.9</span></td>
+                                <td class="p-3 border border-gray-300 text-center font-bold text-green-700"><span id="cbrKNm3E3">78.2</span></td>
+                                <td class="p-3 border border-gray-300 text-center">kN/m³</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 bg-yellow-50">
+                                <td class="p-3 border border-gray-300 font-semibold">الانتفاش (% من hi)</td>
+                                <td class="p-3 border border-gray-300 text-center font-bold text-yellow-700"><span id="cbrSwellE1">1.57%</span></td>
+                                <td class="p-3 border border-gray-300 text-center font-bold text-yellow-700"><span id="cbrSwellE2">2.36%</span></td>
+                                <td class="p-3 border border-gray-300 text-center font-bold text-yellow-700"><span id="cbrSwellE3">3.15%</span></td>
+                                <td class="p-3 border border-gray-300 text-center">%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
     </main>
+
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-6">
