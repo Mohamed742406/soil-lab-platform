@@ -6938,27 +6938,43 @@ function toggleD422Glossary() {
           btn.style.opacity = '1';
       }, 2000);
   }
-
-   function resetCBRForm() {
-      // مسح جميع البيانات (inputs) - جدول 1 فقط
+  function resetCBRForm() {
+      // مسح جميع البيانات (inputs)
       const allInputs = document.querySelectorAll('#sectionCBR input[type="number"]');
       allInputs.forEach(input => {
           input.value = '';
       });
       
-      // مسح جميع القيم المحسوبة (outputs) - جدول 2 و 4 فقط
-      const outputs = document.querySelectorAll('#sectionCBR span[id^="cbr"]');
-      outputs.forEach(el => {
-          el.textContent = '—';
-      });
+      // إعادة تعيين جميع Outputs للقيم الافتراضية (كما في Demo)
+      document.getElementById('cbrRhoDryE1').textContent = '0.928';
+      document.getElementById('cbrRhoDryE2').textContent = '0.866';
+      document.getElementById('cbrRhoDryE3').textContent = '0.797';
       
-      // ملاحظة: جدول 3 (الاختراق) لا يتم مسحه - بيانات ثابتة
-      // الضغط E1: 245, 510, 765, 1029
-      // الضغط E2: 206, 421, 637, 853
-      // الضغط E3: 176, 353, 529, 706
+      document.getElementById('cbrPCFE1').textContent = '58.0';
+      document.getElementById('cbrPCFE2').textContent = '54.1';
+      document.getElementById('cbrPCFE3').textContent = '49.8';
       
-      // رسالة نجاح
-      alert('🗑️ تم مسح جميع بيانات الإدخال والنتائج!\n💾 بيانات الاختراق محفوظة (ثابتة)');
+      document.getElementById('cbrKNm3E1').textContent = '91.1';
+      document.getElementById('cbrKNm3E2').textContent = '84.9';
+      document.getElementById('cbrKNm3E3').textContent = '78.2';
+      
+      document.getElementById('cbrSwellE1').textContent = '1.57%';
+      document.getElementById('cbrSwellE2').textContent = '2.36%';
+      document.getElementById('cbrSwellE3').textContent = '3.15%';
+      
+      document.getElementById('cbrValue01_E1').textContent = '49.5%';
+      document.getElementById('cbrValue01_E2').textContent = '40.9%';
+      document.getElementById('cbrValue01_E3').textContent = '34.4%';
+      
+      document.getElementById('cbrValue02_E1').textContent = '68.6%';
+      document.getElementById('cbrValue02_E2').textContent = '56.9%';
+      document.getElementById('cbrValue02_E3').textContent = '47.0%';
+      
+      document.getElementById('cbrFinal_E1').textContent = '49.5%';
+      document.getElementById('cbrFinal_E2').textContent = '40.9%';
+      document.getElementById('cbrFinal_E3').textContent = '34.4%';
+      
+      alert('🗑️ تم مسح جميع بيانات الإدخال!\n💾 النتائج أعيدت للقيم الافتراضية');
   }
 
   function calculateCBRAll() {
