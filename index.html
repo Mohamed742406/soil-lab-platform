@@ -13,6 +13,13 @@
         .tab-inactive { background: #e5e7eb; color: #6b7280; }
         .tab-clickable { cursor: pointer; transition: all 0.2s; }
         .tab-clickable:hover { background: linear-gradient(135deg, #60a5fa, #3b82f6); color: white; }
+        @media print {
+          body > * { display: none !important; }
+          #cbrReportModal { display: block !important; position: static !important; background: none !important; }
+          #cbrReportModal > div { box-shadow: none !important; margin: 0 !important; border-radius: 0 !important; }
+          #cbrReportModal > div > div:first-child { display: none !important; }
+          #cbrReportContent iframe { height: 100vh !important; }
+        }
         .input-field { 
             transition: all 0.2s;
             text-align: center;
@@ -114,6 +121,80 @@
             font-size: 2rem;
             font-weight: bold;
             color: #c2410c;
+        }
+        /* ===== CBR INLINE STYLES (no Tailwind dependency) ===== */
+        #sectionCBR { font-family:'Cairo',sans-serif; }
+        #sectionCBR .cbr-card { background:white; border-radius:12px; box-shadow:0 4px 6px -1px rgba(0,0,0,.1); border:1px solid #e5e7eb; padding:24px; margin-bottom:24px; }
+        #sectionCBR .cbr-card-amber { background:#fffbeb; border:2px solid #fcd34d !important; }
+        #sectionCBR .cbr-card-green { background:linear-gradient(135deg,#ecfdf5,#f0fdfa); border:2px solid #6ee7b7 !important; }
+        #sectionCBR .cbr-card-blue  { background:#eff6ff; border:2px solid #93c5fd !important; }
+        #sectionCBR .cbr-card-title { font-size:1.05rem; font-weight:700; color:#1f2937; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+        #sectionCBR .cbr-num { width:30px; height:30px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-weight:800; color:white; font-size:.85rem; flex-shrink:0; }
+        #sectionCBR .bg-orange { background:linear-gradient(135deg,#f97316,#ea580c); }
+        #sectionCBR .bg-blue   { background:linear-gradient(135deg,#3b82f6,#1d4ed8); }
+        #sectionCBR .bg-purple { background:linear-gradient(135deg,#a855f7,#7c3aed); }
+        #sectionCBR .bg-red    { background:linear-gradient(135deg,#ef4444,#dc2626); }
+        #sectionCBR .bg-green  { background:linear-gradient(135deg,#22c55e,#16a34a); }
+        #sectionCBR .bg-teal   { background:linear-gradient(135deg,#14b8a6,#0d9488); }
+        #sectionCBR .cbr-hdr-row { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+        #sectionCBR .cbr-unit-box { background:white; border:2px solid #93c5fd; border-radius:10px; padding:10px 14px; display:flex; align-items:center; gap:12px; }
+        #sectionCBR .cbr-unit-box label { display:flex; align-items:center; gap:6px; cursor:pointer; font-size:.85rem; font-weight:600; }
+        #sectionCBR .cbr-tmpl-options { display:flex; flex-wrap:wrap; gap:12px; background:white; padding:14px; border-radius:8px; border:1px solid #6ee7b7; margin-top:10px; }
+        #sectionCBR .cbr-tmpl-lbl { display:flex; align-items:center; gap:8px; cursor:pointer; padding:8px 14px; border-radius:8px; border:2px solid transparent; transition:all .2s; }
+        #sectionCBR .cbr-tmpl-lbl:hover { background:#f0fdf4; border-color:#6ee7b7; }
+        #sectionCBR .cbr-btn-row { display:flex; gap:10px; margin-bottom:24px; justify-content:center; flex-wrap:wrap; }
+        #sectionCBR .cbr-btn { padding:9px 20px; border:none; border-radius:8px; font-size:.88rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:inherit; transition:all .25s; box-shadow:0 2px 6px rgba(0,0,0,.15); color:white; }
+        #sectionCBR .cbr-btn:hover { transform:translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,.22); }
+        #sectionCBR .cbr-btn-demo   { background:linear-gradient(135deg,#10b981,#059669); }
+        #sectionCBR .cbr-btn-reset  { background:linear-gradient(135deg,#6b7280,#4b5563); }
+        #sectionCBR .cbr-btn-calc   { background:linear-gradient(135deg,#22c55e,#16a34a); }
+        #sectionCBR .cbr-btn-report { background:linear-gradient(135deg,#2563eb,#1d4ed8); }
+        #sectionCBR .cbr-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+        #sectionCBR .cbr-grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+        #sectionCBR .cbr-grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+        #sectionCBR .cbr-field label { font-size:.7rem; color:#6b7280; font-weight:600; display:block; margin-bottom:3px; }
+        #sectionCBR .cbr-field input { width:100%; padding:7px 10px; border:1.5px solid #d1d5db; border-radius:7px; font-size:.85rem; font-family:inherit; }
+        #sectionCBR .cbr-field input:focus { border-color:#3b82f6; outline:none; box-shadow:0 0 0 2px rgba(59,130,246,.25); }
+        #sectionCBR .cbr-hint { font-size:.72rem; color:#92400e; margin-top:8px; line-height:1.5; }
+        #sectionCBR table { width:100%; border-collapse:collapse; font-size:.82rem; }
+        #sectionCBR table thead th { padding:10px 8px; border:1px solid rgba(0,0,0,.15); text-align:center; color:white; font-weight:700; }
+        #sectionCBR table tbody td { padding:8px; border:1px solid #d1d5db; text-align:center; }
+        #sectionCBR table tbody tr:hover td { background:#f9fafb !important; }
+        #sectionCBR table input[type=number], #sectionCBR table input[type=text] { width:78px; padding:5px 4px; border:1.5px solid #d1d5db; border-radius:6px; text-align:center; font-size:.8rem; font-family:inherit; background:white; }
+        #sectionCBR table input[type=number]:focus, #sectionCBR table input[type=text]:focus { border-color:#3b82f6; outline:none; }
+        #sectionCBR .cbr-result-val { font-weight:700; font-size:1rem; }
+        #sectionCBR .text-red    { color:#dc2626; }
+        #sectionCBR .text-blue   { color:#1d4ed8; }
+        #sectionCBR .text-green  { color:#16a34a; }
+        #sectionCBR .text-amber  { color:#d97706; }
+        #sectionCBR .text-purple { color:#7c3aed; }
+        #sectionCBR .text-gray   { color:#4b5563; }
+        #sectionCBR .cbr-summary { background:linear-gradient(135deg,#eff6ff,#dbeafe); border:2px solid #93c5fd; border-radius:12px; padding:16px; margin:14px 0; display:flex; gap:0; }
+        #sectionCBR .cbr-summary-item { flex:1; text-align:center; padding:8px; border-left:1px solid #bfdbfe; }
+        #sectionCBR .cbr-summary-item:last-child { border-left:none; }
+        #sectionCBR .cbr-summary-val { font-size:1.7rem; font-weight:900; color:#1d4ed8; line-height:1; }
+        #sectionCBR .cbr-summary-lbl { font-size:.68rem; color:#475569; margin-top:4px; line-height:1.3; }
+        #sectionCBR .cbr-chart-wrap { background:linear-gradient(to bottom,#f8fafc,#e2e8f0); border-radius:12px; padding:20px; margin-top:20px; overflow:hidden; }
+        #sectionCBR .cbr-chart-wrap canvas { display:block; }
+        #sectionCBR .cbr-proctor-box { background:#f0f9ff; border:1.5px solid #bae6fd; border-radius:8px; padding:12px; margin-top:12px; }
+        #sectionCBR .cbr-proctor-box label { font-size:.7rem; color:#0369a1; display:block; margin-bottom:3px; font-weight:600; }
+        #sectionCBR .cbr-proctor-box input { width:100%; border:1px solid #bae6fd; border-radius:5px; padding:6px; font-family:inherit; font-size:.85rem; text-align:center; }
+        #sectionCBR .cbr-compaction-result { background:#f0fdf4; border:1px solid #86efac; border-radius:8px; padding:10px 14px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-top:10px; font-size:.85rem; font-weight:600; color:#166534; }
+        #sectionCBR .cbr-th-orange { background:linear-gradient(135deg,#ea580c,#c2410c); }
+        #sectionCBR .cbr-th-blue   { background:linear-gradient(135deg,#1d4ed8,#1e3a8a); }
+        #sectionCBR .cbr-th-purple { background:linear-gradient(135deg,#7c3aed,#5b21b6); }
+        #sectionCBR .cbr-th-red    { background:linear-gradient(135deg,#dc2626,#991b1b); }
+        #sectionCBR .cbr-row-std   { background:#fef9c3; }
+        #sectionCBR .cbr-row-blue  { background:#eff6ff; }
+        #sectionCBR .cbr-row-green { background:#f0fdf4; }
+        #sectionCBR .cbr-row-red   { background:#fef2f2; }
+        #sectionCBR .cbr-row-amber { background:#fffbeb; }
+        #sectionCBR .overflow-x { overflow-x:auto; }
+        @media(max-width:640px) {
+            #sectionCBR .cbr-grid-4 { grid-template-columns:1fr 1fr; }
+            #sectionCBR .cbr-grid-3 { grid-template-columns:1fr; }
+            #sectionCBR .cbr-summary { flex-direction:column; }
+            #sectionCBR .cbr-summary-item { border-left:none; border-top:1px solid #bfdbfe; }
         }
         
 
@@ -2951,464 +3032,521 @@
                      </div>
                  </details>
                 
+  </div><!-- close uscsSection -->
+</div><!-- close sectionD854 -->
+
   <!-- ===== CBR SECTION - ASTM D1883 ===== -->
-<!-- ===== STEP 2: Template Selection + Dynamic Tables ===== -->
 
-<div id="sectionCBR" class="hidden">
-  <div class="section-card p-6 mb-6">
-    <div class="flex items-center gap-4 mb-4">
-      <div class="bg-emerald-100 p-4 rounded-full">
-        <span class="text-2xl">📊</span>
-      </div>
+<div id="sectionCBR" class="hidden" style="padding:0 0 40px 0;">
+
+<!-- ① HEADER ─────────────────────────────────────────────── -->
+<div class="cbr-card" style="margin-bottom:20px;">
+  <div class="cbr-hdr-row">
+    <div style="display:flex;align-items:center;gap:16px;">
+      <div style="background:#d1fae5;padding:16px;border-radius:50%;font-size:2rem;line-height:1;">🚜</div>
       <div>
-        <h2 class="text-2xl font-bold text-gray-800">CBR - ASTM D1883</h2>
-        <p class="text-gray-600 text-sm">California Bearing Ratio Test - نسبة تحمل كاليفورنيا</p>
+        <h2 style="font-size:1.4rem;font-weight:900;color:#1e3a5f;margin:0;">CBR — ASTM D1883</h2>
+        <p style="color:#6b7280;font-size:.82rem;margin:2px 0 0;">California Bearing Ratio · نسبة تحمل كاليفورنيا</p>
+        <p style="color:#2563eb;font-size:.72rem;margin:3px 0 0;">3 قوالب: 56·25·10 ضربة | كثافة · انتفاش · اختراق · معامل حلقة | رسوم بيانية | تقرير احترافي</p>
+      </div>
+    </div>
+    <!-- Unit System Toggle -->
+    <div class="cbr-unit-box">
+      <span style="font-size:.82rem;font-weight:700;color:#374151;">وحدات القياس:</span>
+      <label class="cbr-unit-box" style="border:none;padding:0;gap:6px;">
+        <input type="radio" name="cbrUnitSystem" value="metric" checked id="cbrUnitMetric" onchange="updateCBRUnitsDisplay()" style="accent-color:#2563eb;width:16px;height:16px;">
+        <span style="color:#1d4ed8;font-weight:700;font-size:.82rem;">🌍 متري SI</span>
+      </label>
+      <label class="cbr-unit-box" style="border:none;padding:0;gap:6px;">
+        <input type="radio" name="cbrUnitSystem" value="imperial" id="cbrUnitImperial" onchange="updateCBRUnitsDisplay()" style="accent-color:#dc2626;width:16px;height:16px;">
+        <span style="color:#dc2626;font-weight:700;font-size:.82rem;">🇺🇸 أمريكي</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- ② TEMPLATE SELECTION ─────────────────────────────────── -->
+<div class="cbr-card cbr-card-green" style="margin-bottom:20px;">
+  <div class="cbr-card-title">
+    <span class="cbr-num" style="background:linear-gradient(135deg,#10b981,#059669);">🎯</span>
+    عدد القوالب — Number of Specimens
+  </div>
+  <div class="cbr-tmpl-options">
+    <label class="cbr-tmpl-lbl">
+      <input type="radio" name="cbrTemplateCount" value="1" checked id="cbr_template_1" style="accent-color:#10b981;width:18px;height:18px;">
+      <div><span style="font-weight:700;display:block;">1 قالب</span><span style="font-size:.72rem;color:#6b7280;">E1 — 56 ضربة</span></div>
+    </label>
+    <label class="cbr-tmpl-lbl">
+      <input type="radio" name="cbrTemplateCount" value="2" id="cbr_template_2" style="accent-color:#3b82f6;width:18px;height:18px;">
+      <div><span style="font-weight:700;display:block;">2 قوالب</span><span style="font-size:.72rem;color:#6b7280;">E1(56) · E2(25)</span></div>
+    </label>
+    <label class="cbr-tmpl-lbl">
+      <input type="radio" name="cbrTemplateCount" value="3" id="cbr_template_3" style="accent-color:#7c3aed;width:18px;height:18px;">
+      <div><span style="font-weight:700;display:block;">3 قوالب ✅ كاملة</span><span style="font-size:.72rem;color:#6b7280;">E1(56) · E2(25) · E3(10)</span></div>
+    </label>
+  </div>
+</div>
+
+<!-- ③ BUTTONS ───────────────────────────────────────────── -->
+<div class="cbr-btn-row">
+  <button class="cbr-btn cbr-btn-demo"   onclick="loadDemoCBR()">📋 بيانات تجريبية</button>
+  <button class="cbr-btn cbr-btn-reset"  onclick="resetCBRForm()">🔄 مسح الكل</button>
+  <button class="cbr-btn cbr-btn-calc"   onclick="calculateCBRAll()">🧮 احسب الكل</button>
+  <button class="cbr-btn cbr-btn-report" onclick="generateCBRReport()">📄 تقرير احترافي</button>
+</div>
+
+<!-- ④ PROJECT INFO ──────────────────────────────────────── -->
+<div class="cbr-card" style="margin-bottom:20px;border-right:4px solid #3b82f6;">
+  <div class="cbr-card-title" style="margin-bottom:10px;">📋 بيانات المشروع — Project Information</div>
+  <div class="cbr-grid-4">
+    <div class="cbr-field"><label>اسم المشروع / Project Name</label><input type="text" id="cbr_projectName" placeholder="Project Name..."></div>
+    <div class="cbr-field"><label>رقم العينة / Sample ID</label><input type="text" id="cbr_sampleId" placeholder="S-001"></div>
+    <div class="cbr-field"><label>تاريخ الاختبار / Test Date</label><input type="date" id="cbr_testDate"></div>
+    <div class="cbr-field"><label>اسم المهندس / Engineer</label><input type="text" id="cbr_engineer" placeholder="Engineer..."></div>
+  </div>
+</div>
+
+<!-- ⑤ RING FACTOR ───────────────────────────────────────── -->
+<div class="cbr-card cbr-card-amber" style="margin-bottom:20px;">
+  <div class="cbr-card-title">
+    <span class="cbr-num" style="background:linear-gradient(135deg,#f59e0b,#d97706);">⚙️</span>
+    معامل الحلقة — Load Ring Calibration
+  </div>
+  <div class="cbr-grid-4">
+    <div class="cbr-field"><label>رقم الحلقة / Ring No.</label><input type="text" id="cbr_ringNo" placeholder="R-01"></div>
+    <div class="cbr-field"><label>معامل الحلقة (kN/div)</label><input type="number" id="cbr_ringFactor" step="0.0001" placeholder="0.2500" oninput="recalcPressuresFromReadings()"></div>
+    <div class="cbr-field"><label>مساحة الكباسة (cm²)</label><input type="number" id="cbr_pistonArea" step="0.01" value="19.35" oninput="recalcPressuresFromReadings()"></div>
+    <div class="cbr-field"><label>تاريخ المعايرة</label><input type="date" id="cbr_calibDate"></div>
+  </div>
+  <p class="cbr-hint">💡 الضغط (kPa) = قراءة العداد (div) × معامل الحلقة (kN/div) ÷ مساحة الكباسة (m²) — أو أدخل الضغط مباشرةً في عمود الضغط</p>
+</div>
+
+<!-- ⑥ PROCTOR REFERENCE (for %Compaction) ──────────────── -->
+<div class="cbr-card cbr-card-blue" style="margin-bottom:20px;">
+  <div class="cbr-card-title">
+    <span class="cbr-num" style="background:linear-gradient(135deg,#0ea5e9,#0369a1);">📏</span>
+    مرجع الدمك — Proctor Reference (لحساب % الدمك)
+    <span style="font-size:.72rem;color:#6b7280;font-weight:400;margin-right:8px;">اختياري — Optional</span>
+  </div>
+  <div class="cbr-grid-3">
+    <div class="cbr-proctor-box cbr-field"><label>MDD — الكثافة الجافة القصوى (g/cm³)</label><input type="number" id="cbr_MDD" step="0.001" placeholder="1.850" oninput="calcCompactionPercent()"></div>
+    <div class="cbr-proctor-box cbr-field"><label>OMC — المحتوى المائي الأمثل (%)</label><input type="number" id="cbr_OMC" step="0.1"   placeholder="12.5"  oninput="calcCompactionPercent()"></div>
+    <div class="cbr-proctor-box cbr-field"><label>معيار الدمك / Standard</label>
+      <select id="cbr_proctorStd" style="width:100%;border:1px solid #bae6fd;border-radius:5px;padding:6px;font-family:inherit;font-size:.85rem;" onchange="calcCompactionPercent()">
+        <option value="D1557">D1557 — Modified Proctor</option>
+        <option value="D698">D698  — Standard Proctor</option>
+      </select>
+    </div>
+  </div>
+  <div id="cbr_compactionResult" class="cbr-compaction-result" style="display:none;"></div>
+</div>
+
+<!-- ⑦ TABLE 1 — COMPACTION DATA ────────────────────────── -->
+<div class="cbr-card" style="margin-bottom:20px;">
+  <div class="cbr-card-title">
+    <span class="cbr-num bg-orange">1</span>
+    بيانات الدمك — Compaction Data
+  </div>
+  <div class="overflow-x">
+    <table>
+      <thead>
+        <tr class="cbr-th-orange">
+          <th style="text-align:right;min-width:200px;">المتغير / Variable</th>
+          <th class="cbr-col-e1">E1 — 56 ضربة</th>
+          <th class="cbr-col-e2" style="display:none;">E2 — 25 ضربة</th>
+          <th class="cbr-col-e3" style="display:none;">E3 — 10 ضربات</th>
+          <th>الوحدة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="text-align:right;font-weight:600;">عدد الضربات / Blows per Layer</td>
+          <td class="cbr-col-e1"><input type="number" id="cbrStressE1" value="56" min="0"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="cbrStressE2" value="25" min="0"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="cbrStressE3" value="10" min="0"></td>
+          <td>blows</td>
+        </tr>
+        <tr class="cbr-row-blue">
+          <td style="text-align:right;font-weight:600;">Mm — كتلة القالب الفارغ</td>
+          <td class="cbr-col-e1"><input type="number" id="cbrMmE1" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="cbrMmE2" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="cbrMmE3" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td>g</td>
+        </tr>
+        <tr>
+          <td style="text-align:right;font-weight:600;">Mw — كتلة القالب + تربة رطبة</td>
+          <td class="cbr-col-e1"><input type="number" id="cbrMwE1" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="cbrMwE2" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="cbrMwE3" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td>g</td>
+        </tr>
+        <tr class="cbr-row-blue">
+          <td style="text-align:right;font-weight:600;">Vm — حجم القالب</td>
+          <td class="cbr-col-e1"><input type="number" id="cbrVmE1" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="cbrVmE2" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="cbrVmE3" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td>cm³</td>
+        </tr>
+        <tr class="cbr-row-green">
+          <td style="text-align:right;font-weight:600;">w% — المحتوى المائي</td>
+          <td class="cbr-col-e1"><input type="number" id="cbrWaterE1" step="0.1" min="0" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="cbrWaterE2" step="0.1" min="0" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="cbrWaterE3" step="0.1" min="0" oninput="updateCBRCalculations()"></td>
+          <td>%</td>
+        </tr>
+        <tr>
+          <td style="text-align:right;font-weight:600;">hi — الارتفاع الابتدائي (قبل النقع)</td>
+          <td class="cbr-col-e1"><input type="number" id="cbrHeightInitE1" step="0.01" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="cbrHeightInitE2" step="0.01" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="cbrHeightInitE3" step="0.01" oninput="updateCBRCalculations()"></td>
+          <td>mm</td>
+        </tr>
+        <tr class="cbr-row-amber">
+          <td style="text-align:right;font-weight:600;">hf — الارتفاع النهائي (بعد النقع)</td>
+          <td class="cbr-col-e1"><input type="number" id="cbrHeightFinE1" step="0.01" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="cbrHeightFinE2" step="0.01" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="cbrHeightFinE3" step="0.01" oninput="updateCBRCalculations()"></td>
+          <td>mm</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ⑧ TABLE 2 — DENSITY & SWELL RESULTS ───────────────── -->
+<div class="cbr-card" style="margin-bottom:20px;">
+  <div class="cbr-card-title">
+    <span class="cbr-num bg-blue">2</span>
+    الكثافة والانتفاش — Density &amp; Swell Results
+  </div>
+  <div class="overflow-x">
+    <table>
+      <thead>
+        <tr class="cbr-th-blue">
+          <th style="text-align:right;min-width:240px;">المتغير</th>
+          <th class="cbr-col-e1">E1 — 56 ضربة</th>
+          <th class="cbr-col-e2" style="display:none;">E2 — 25 ضربة</th>
+          <th class="cbr-col-e3" style="display:none;">E3 — 10 ضربات</th>
+          <th>الوحدة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="cbr-row-red">
+          <td style="text-align:right;font-weight:600;">ρd — الكثافة الجافة (g/cm³)</td>
+          <td class="cbr-col-e1"><span id="cbrRhoDryE1" class="cbr-result-val text-red">-</span></td>
+          <td class="cbr-col-e2" style="display:none;"><span id="cbrRhoDryE2" class="cbr-result-val text-red">-</span></td>
+          <td class="cbr-col-e3" style="display:none;"><span id="cbrRhoDryE3" class="cbr-result-val text-red">-</span></td>
+          <td><span id="cbrDensityUnitLabel">g/cm³</span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right;font-weight:600;">PCF — وزن الوحدة الأمريكي</td>
+          <td class="cbr-col-e1"><span id="cbrPCFE1" class="cbr-result-val text-blue">-</span></td>
+          <td class="cbr-col-e2" style="display:none;"><span id="cbrPCFE2" class="cbr-result-val text-blue">-</span></td>
+          <td class="cbr-col-e3" style="display:none;"><span id="cbrPCFE3" class="cbr-result-val text-blue">-</span></td>
+          <td>lb/ft³</td>
+        </tr>
+        <tr class="cbr-row-green">
+          <td style="text-align:right;font-weight:600;">γd — وزن الوحدة الجافة (kN/m³)</td>
+          <td class="cbr-col-e1"><span id="cbrKNm3E1" class="cbr-result-val text-green">-</span></td>
+          <td class="cbr-col-e2" style="display:none;"><span id="cbrKNm3E2" class="cbr-result-val text-green">-</span></td>
+          <td class="cbr-col-e3" style="display:none;"><span id="cbrKNm3E3" class="cbr-result-val text-green">-</span></td>
+          <td>kN/m³</td>
+        </tr>
+        <tr class="cbr-row-amber">
+          <td style="text-align:right;font-weight:600;">Swell% — نسبة الانتفاش</td>
+          <td class="cbr-col-e1"><span id="cbrSwellE1" class="cbr-result-val text-amber">-</span></td>
+          <td class="cbr-col-e2" style="display:none;"><span id="cbrSwellE2" class="cbr-result-val text-amber">-</span></td>
+          <td class="cbr-col-e3" style="display:none;"><span id="cbrSwellE3" class="cbr-result-val text-amber">-</span></td>
+          <td>%</td>
+        </tr>
+        <tr>
+          <td style="text-align:right;font-weight:600;">% الدمك — % Compaction</td>
+          <td class="cbr-col-e1"><span id="cbrCompE1" class="cbr-result-val text-purple">-</span></td>
+          <td class="cbr-col-e2" style="display:none;"><span id="cbrCompE2" class="cbr-result-val text-purple">-</span></td>
+          <td class="cbr-col-e3" style="display:none;"><span id="cbrCompE3" class="cbr-result-val text-purple">-</span></td>
+          <td>%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- Density Chart -->
+  <div class="cbr-chart-wrap" id="cbrDensityChartContainer" style="display:none;">
+    <h4 style="text-align:center;font-weight:700;color:#374151;margin-bottom:12px;">📊 الكثافة الجافة مقابل عدد الضربات — Dry Density vs Blows</h4>
+    <div style="position:relative;height:260px;width:100%;">
+      <canvas id="cbrDensityChart"></canvas>
+    </div>
+  </div>
+  <!-- Swell Chart -->
+  <div class="cbr-chart-wrap" id="cbrSwellChartContainer" style="display:none;margin-top:16px;">
+    <h4 style="text-align:center;font-weight:700;color:#374151;margin-bottom:12px;">📊 نسبة الانتفاش مقابل عدد الضربات — Swell% vs Blows</h4>
+    <div style="position:relative;height:240px;width:100%;">
+      <canvas id="cbrSwellChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ⑨ TABLE 3 — PENETRATION DATA (11 points per ASTM D1883) ── -->
+<div class="cbr-card" style="margin-bottom:20px;">
+  <div class="cbr-card-title">
+    <span class="cbr-num bg-purple">3</span>
+    بيانات الاختراق الكاملة — Full Penetration Data (ASTM D1883)
+    <span style="font-size:.72rem;color:#6b7280;font-weight:400;margin-right:8px;">سرعة الاختراق ≈ 0.05 in/min (1.27 mm/min)</span>
+  </div>
+  <p style="font-size:.72rem;color:#6b7280;margin-bottom:10px;">💡 أدخل قراءة العداد → يُحسب الضغط تلقائياً بمعامل الحلقة ÷ مساحة الكباسة — أو أدخل الضغط مباشرةً | ★ = نقاط قياسية لحساب CBR</p>
+  <div class="overflow-x">
+    <table>
+      <thead>
+        <tr class="cbr-th-purple">
+          <th style="min-width:55px;">#</th>
+          <th style="min-width:180px;text-align:right;">الاختراق / Penetration</th>
+          <th class="cbr-col-e1" style="min-width:75px;">E1 قراءة</th>
+          <th class="cbr-col-e1" style="min-width:80px;">E1 ضغط (kPa)</th>
+          <th class="cbr-col-e2" style="display:none;min-width:75px;">E2 قراءة</th>
+          <th class="cbr-col-e2" style="display:none;min-width:80px;">E2 ضغط (kPa)</th>
+          <th class="cbr-col-e3" style="display:none;min-width:75px;">E3 قراءة</th>
+          <th class="cbr-col-e3" style="display:none;min-width:80px;">E3 ضغط (kPa)</th>
+        </tr>
+      </thead>
+      <tbody id="penTableBody">
+        <!-- Row 1 -->
+        <tr>
+          <td style="font-weight:700;color:#6b7280;">1</td>
+          <td style="text-align:right;font-weight:600;">0.025″ &nbsp;<span style="color:#6b7280;font-size:.75rem;">(0.64 mm)</span></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration025E1reading" step="0.1" oninput="autoCalcPressure('025','E1')"></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration025E1pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration025E2reading" step="0.1" oninput="autoCalcPressure('025','E2')"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration025E2pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration025E3reading" step="0.1" oninput="autoCalcPressure('025','E3')"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration025E3pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+        </tr>
+        <!-- Row 2 -->
+        <tr style="background:#f9fafb;">
+          <td style="font-weight:700;color:#6b7280;">2</td>
+          <td style="text-align:right;font-weight:600;">0.050″ &nbsp;<span style="color:#6b7280;font-size:.75rem;">(1.27 mm)</span></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration050E1reading" step="0.1" oninput="autoCalcPressure('050','E1')"></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration050E1pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration050E2reading" step="0.1" oninput="autoCalcPressure('050','E2')"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration050E2pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration050E3reading" step="0.1" oninput="autoCalcPressure('050','E3')"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration050E3pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+        </tr>
+        <!-- Row 3 -->
+        <tr>
+          <td style="font-weight:700;color:#6b7280;">3</td>
+          <td style="text-align:right;font-weight:600;">0.075″ &nbsp;<span style="color:#6b7280;font-size:.75rem;">(1.91 mm)</span></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration075E1reading" step="0.1" oninput="autoCalcPressure('075','E1')"></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration075E1pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration075E2reading" step="0.1" oninput="autoCalcPressure('075','E2')"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration075E2pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration075E3reading" step="0.1" oninput="autoCalcPressure('075','E3')"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration075E3pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+        </tr>
+        <!-- Row 4 — STANDARD 1 -->
+        <tr class="cbr-row-std">
+          <td style="font-weight:800;color:#92400e;">4</td>
+          <td style="text-align:right;font-weight:800;color:#92400e;">★ 0.100″ &nbsp;<span style="font-size:.75rem;">(2.54 mm) — CBR Standard 1</span></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration100E1reading" step="0.1" style="border-color:#f59e0b;background:#fffbeb;" oninput="autoCalcPressure('100','E1')"></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration100E1pressure" step="0.1" style="border-color:#f59e0b;background:#fffbeb;" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration100E2reading" step="0.1" style="border-color:#f59e0b;background:#fffbeb;" oninput="autoCalcPressure('100','E2')"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration100E2pressure" step="0.1" style="border-color:#f59e0b;background:#fffbeb;" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration100E3reading" step="0.1" style="border-color:#f59e0b;background:#fffbeb;" oninput="autoCalcPressure('100','E3')"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration100E3pressure" step="0.1" style="border-color:#f59e0b;background:#fffbeb;" oninput="updateCBRCalculations()"></td>
+        </tr>
+        <!-- Row 5 -->
+        <tr style="background:#f9fafb;">
+          <td style="font-weight:700;color:#6b7280;">5</td>
+          <td style="text-align:right;font-weight:600;">0.125″ &nbsp;<span style="color:#6b7280;font-size:.75rem;">(3.18 mm)</span></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration125E1reading" step="0.1" oninput="autoCalcPressure('125','E1')"></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration125E1pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration125E2reading" step="0.1" oninput="autoCalcPressure('125','E2')"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration125E2pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration125E3reading" step="0.1" oninput="autoCalcPressure('125','E3')"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration125E3pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+        </tr>
+        <!-- Row 6 -->
+        <tr>
+          <td style="font-weight:700;color:#6b7280;">6</td>
+          <td style="text-align:right;font-weight:600;">0.150″ &nbsp;<span style="color:#6b7280;font-size:.75rem;">(3.81 mm)</span></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration150E1reading" step="0.1" oninput="autoCalcPressure('150','E1')"></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration150E1pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration150E2reading" step="0.1" oninput="autoCalcPressure('150','E2')"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration150E2pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration150E3reading" step="0.1" oninput="autoCalcPressure('150','E3')"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration150E3pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+        </tr>
+        <!-- Row 7 -->
+        <tr style="background:#f9fafb;">
+          <td style="font-weight:700;color:#6b7280;">7</td>
+          <td style="text-align:right;font-weight:600;">0.175″ &nbsp;<span style="color:#6b7280;font-size:.75rem;">(4.45 mm)</span></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration175E1reading" step="0.1" oninput="autoCalcPressure('175','E1')"></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration175E1pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration175E2reading" step="0.1" oninput="autoCalcPressure('175','E2')"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration175E2pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration175E3reading" step="0.1" oninput="autoCalcPressure('175','E3')"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration175E3pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+        </tr>
+        <!-- Row 8 — STANDARD 2 -->
+        <tr class="cbr-row-std">
+          <td style="font-weight:800;color:#991b1b;">8</td>
+          <td style="text-align:right;font-weight:800;color:#991b1b;">★ 0.200″ &nbsp;<span style="font-size:.75rem;">(5.08 mm) — CBR Standard 2</span></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration200E1reading" step="0.1" style="border-color:#ef4444;background:#fef2f2;" oninput="autoCalcPressure('200','E1')"></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration200E1pressure" step="0.1" style="border-color:#ef4444;background:#fef2f2;" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration200E2reading" step="0.1" style="border-color:#ef4444;background:#fef2f2;" oninput="autoCalcPressure('200','E2')"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration200E2pressure" step="0.1" style="border-color:#ef4444;background:#fef2f2;" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration200E3reading" step="0.1" style="border-color:#ef4444;background:#fef2f2;" oninput="autoCalcPressure('200','E3')"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration200E3pressure" step="0.1" style="border-color:#ef4444;background:#fef2f2;" oninput="updateCBRCalculations()"></td>
+        </tr>
+        <!-- Row 9 -->
+        <tr>
+          <td style="font-weight:700;color:#6b7280;">9</td>
+          <td style="text-align:right;font-weight:600;">0.300″ &nbsp;<span style="color:#6b7280;font-size:.75rem;">(7.62 mm)</span></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration300E1reading" step="0.1" oninput="autoCalcPressure('300','E1')"></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration300E1pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration300E2reading" step="0.1" oninput="autoCalcPressure('300','E2')"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration300E2pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration300E3reading" step="0.1" oninput="autoCalcPressure('300','E3')"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration300E3pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+        </tr>
+        <!-- Row 10 -->
+        <tr style="background:#f9fafb;">
+          <td style="font-weight:700;color:#6b7280;">10</td>
+          <td style="text-align:right;font-weight:600;">0.400″ &nbsp;<span style="color:#6b7280;font-size:.75rem;">(10.16 mm)</span></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration400E1reading" step="0.1" oninput="autoCalcPressure('400','E1')"></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration400E1pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration400E2reading" step="0.1" oninput="autoCalcPressure('400','E2')"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration400E2pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration400E3reading" step="0.1" oninput="autoCalcPressure('400','E3')"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration400E3pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+        </tr>
+        <!-- Row 11 -->
+        <tr>
+          <td style="font-weight:700;color:#6b7280;">11</td>
+          <td style="text-align:right;font-weight:600;">0.500″ &nbsp;<span style="color:#6b7280;font-size:.75rem;">(12.70 mm)</span></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration500E1reading" step="0.1" oninput="autoCalcPressure('500','E1')"></td>
+          <td class="cbr-col-e1"><input type="number" id="penetration500E1pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration500E2reading" step="0.1" oninput="autoCalcPressure('500','E2')"></td>
+          <td class="cbr-col-e2" style="display:none;"><input type="number" id="penetration500E2pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration500E3reading" step="0.1" oninput="autoCalcPressure('500','E3')"></td>
+          <td class="cbr-col-e3" style="display:none;"><input type="number" id="penetration500E3pressure" step="0.1" oninput="updateCBRCalculations()"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── CURVE CORRECTION SECTION ────────────────────── -->
+  <div style="margin-top:16px;background:#fef3c7;border:2px solid #f59e0b;border-radius:10px;padding:14px;">
+    <div style="font-weight:700;color:#92400e;font-size:.9rem;margin-bottom:10px;">
+      🔧 تصحيح المنحنى — Curve Correction (ASTM D1883 Fig. 1 &amp; 2)
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div>
+        <label style="font-size:.72rem;color:#92400e;font-weight:700;display:block;margin-bottom:3px;">نوع المنحنى / Curve Type</label>
+        <select id="cbr_curveType" onchange="applyCurveCorrection()" style="width:100%;border:1.5px solid #f59e0b;border-radius:6px;padding:6px;font-family:inherit;font-size:.82rem;background:white;">
+          <option value="none">لا يلزم تصحيح — No Correction Required</option>
+          <option value="concave">مقعّر للأعلى — Concave Upward (تصحيح نقطة الأصل)</option>
+        </select>
+      </div>
+      <div id="correctionXGroup" style="display:none;">
+        <label style="font-size:.72rem;color:#92400e;font-weight:700;display:block;margin-bottom:3px;">قيمة X — Correction X (inches)</label>
+        <input type="number" id="cbr_correctionX" step="0.001" placeholder="0.050" style="width:100%;border:1.5px solid #f59e0b;border-radius:6px;padding:6px;font-family:inherit;font-size:.85rem;" oninput="applyCurveCorrection()">
+      </div>
+      <div id="correctionResults" style="background:white;border-radius:6px;padding:8px;border:1px solid #f59e0b;display:none;">
+        <div style="font-size:.7rem;color:#92400e;font-weight:700;">نتائج التصحيح:</div>
+        <div id="correctedP01Text" style="font-size:.78rem;margin-top:4px;">—</div>
+        <div id="correctedP02Text" style="font-size:.78rem;margin-top:2px;">—</div>
       </div>
     </div>
   </div>
 
-  <!-- ===== TEMPLATE SELECTION ===== -->
-  <div class="section-card p-6 mb-6 bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-200">
-    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-      <span class="bg-emerald-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">🎯</span>
-      اختر عدد القوالب (Templates)
-    </h3>
-    
-    <div class="flex flex-wrap gap-6 bg-white p-4 rounded-lg border border-emerald-300">
-      <!-- Template 1 -->
-      <label class="flex items-center gap-3 cursor-pointer p-4 rounded-lg hover:bg-emerald-50 transition-all">
-        <input type="radio" name="cbrTemplateCount" value="1" checked class="w-5 h-5 text-emerald-600" id="cbr_template_1">
-        <div>
-          <span class="font-semibold text-gray-800 block">1 قالب</span>
-          <span class="text-xs text-gray-500">عينة واحدة (E1)</span>
-        </div>
-      </label>
-
-      <!-- Template 2 -->
-      <label class="flex items-center gap-3 cursor-pointer p-4 rounded-lg hover:bg-blue-50 transition-all">
-        <input type="radio" name="cbrTemplateCount" value="2" class="w-5 h-5 text-blue-600" id="cbr_template_2">
-        <div>
-          <span class="font-semibold text-gray-800 block">عينتان</span>
-          <span class="text-xs text-gray-500">(E1 و E2)</span>
-        </div>
-      </label>
-
-      <!-- Template 3 -->
-      <label class="flex items-center gap-3 cursor-pointer p-4 rounded-lg hover:bg-purple-50 transition-all">
-        <input type="radio" name="cbrTemplateCount" value="3" class="w-5 h-5 text-purple-600" id="cbr_template_3">
-        <div>
-          <span class="font-semibold text-gray-800 block">3 عينات</span>
-          <span class="text-xs text-gray-500">(E1 و E2 و E3)</span>
-        </div>
-      </label>
+  <!-- ── PENETRATION CHART ─────────────────────────── -->
+  <div class="cbr-chart-wrap" style="margin-top:16px;">
+    <h4 style="text-align:center;font-weight:700;color:#374151;margin-bottom:12px;">📊 منحنيات الاختراق — Penetration Curves (Pressure vs Penetration) | ASTM D1883</h4>
+    <div style="position:relative;height:350px;width:100%;">
+      <canvas id="cbrPenetrationChart"></canvas>
     </div>
   </div>
+</div>
 
-  <!-- ===== CONTROL BUTTONS ===== -->
-  <div class="flex gap-4 mb-6 justify-center flex-wrap">
-    <button onclick="loadDemoCBR()" class="btn btn--primary btn--lg flex items-center gap-2">
-      <span>📋</span>
-      <span>Demo</span>
-    </button>
-    <button onclick="resetCBRForm()" class="btn btn--secondary btn--lg flex items-center gap-2">
-      <span>🔄</span>
-      <span>مسح</span>
-    </button>
-    <button onclick="calculateCBRAll()" class="btn btn--success btn--lg flex items-center gap-2">
-      <span>🧮</span>
-      <span>احسب</span>
-    </button>
+<!-- ⑩ TABLE 4 — CBR RESULTS ──────────────────────────── -->
+<div class="cbr-card" style="margin-bottom:20px;">
+  <div class="cbr-card-title">
+    <span class="cbr-num bg-red">4</span>
+    نتائج CBR النهائية — Final CBR Results
   </div>
-
-  <!-- ===== TABLE 1: COMPACTION DATA (INPUT) ===== -->
-<div class="section-card p-6 mb-6">
-  <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-    <span class="bg-orange-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
-    بيانات الدمك (Compaction Data)
-  </h3>
-  <div class="overflow-x-auto">
-    <table class="w-full border-collapse bg-white rounded-lg shadow-sm" id="cbrTable1">
+  <div class="overflow-x">
+    <table>
       <thead>
-        <tr class="bg-gradient-to-r from-orange-600 to-orange-500 text-white">
-          <th class="p-3 border border-orange-700 text-left">المتغير</th>
-          <th class="p-3 border border-orange-700 text-center cbr-col-e1">E1</th>
-          <th class="p-3 border border-orange-700 text-center cbr-col-e2" style="display:none;">E2</th>
-          <th class="p-3 border border-orange-700 text-center cbr-col-e3" style="display:none;">E3</th>
-          <th class="p-3 border border-orange-700 text-center">الوحدة</th>
+        <tr class="cbr-th-red">
+          <th style="text-align:right;min-width:260px;">المتغير</th>
+          <th class="cbr-col-e1">E1 — 56 ضربة</th>
+          <th class="cbr-col-e2" style="display:none;">E2 — 25 ضربة</th>
+          <th class="cbr-col-e3" style="display:none;">E3 — 10 ضربات</th>
         </tr>
       </thead>
       <tbody>
-        <!-- Stress -->
-        <tr class="hover:bg-gray-50">
-          <td class="p-3 border border-gray-300 font-semibold">Stress (σ)</td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e1">
-            <input type="number" id="cbrStressE1" class="input-field w-20" value="" min="0">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e2" style="display:none;">
-            <input type="number" id="cbrStressE2" class="input-field w-20" value="" min="0">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e3" style="display:none;">
-            <input type="number" id="cbrStressE3" class="input-field w-20" value="" min="0">
-          </td>
-          <td class="p-3 border border-gray-300 text-center font-semibold">kPa</td>
+        <tr class="cbr-row-amber">
+          <td style="text-align:right;font-weight:600;">CBR @ 0.1″ — 2.54mm (Standard 1000 kPa)</td>
+          <td class="cbr-col-e1"><span id="cbrValue01E1" class="cbr-result-val text-amber">-</span> %</td>
+          <td class="cbr-col-e2" style="display:none;"><span id="cbrValue01E2" class="cbr-result-val text-amber">-</span> %</td>
+          <td class="cbr-col-e3" style="display:none;"><span id="cbrValue01E3" class="cbr-result-val text-amber">-</span> %</td>
         </tr>
-
-        <!-- Mm -->
-        <tr class="hover:bg-gray-50">
-          <td class="p-3 border border-gray-300 font-semibold">Mm (g)</td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e1">
-            <input type="number" id="cbrMmE1" class="input-field w-20" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e2" style="display:none;">
-            <input type="number" id="cbrMmE2" class="input-field w-20" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e3" style="display:none;">
-            <input type="number" id="cbrMmE3" class="input-field w-20" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center font-semibold">g</td>
+        <tr>
+          <td style="text-align:right;font-weight:600;">CBR @ 0.2″ — 5.08mm (Standard 1500 kPa)</td>
+          <td class="cbr-col-e1"><span id="cbrValue02E1" class="cbr-result-val text-red">-</span> %</td>
+          <td class="cbr-col-e2" style="display:none;"><span id="cbrValue02E2" class="cbr-result-val text-red">-</span> %</td>
+          <td class="cbr-col-e3" style="display:none;"><span id="cbrValue02E3" class="cbr-result-val text-red">-</span> %</td>
         </tr>
-
-        <!-- Mw -->
-        <tr class="hover:bg-gray-50 bg-blue-50">
-          <td class="p-3 border border-gray-300 font-semibold">Mw (g)</td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e1">
-            <input type="number" id="cbrMwE1" class="input-field w-20" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e2" style="display:none;">
-            <input type="number" id="cbrMwE2" class="input-field w-20" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e3" style="display:none;">
-            <input type="number" id="cbrMwE3" class="input-field w-20" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center font-semibold">g</td>
+        <tr class="cbr-row-blue">
+          <td style="text-align:right;font-weight:800;font-size:1rem;">✅ CBR النهائي (الأعلى من 0.1″ و0.2″)</td>
+          <td class="cbr-col-e1"><span id="cbrFinalE1" style="font-size:1.6rem;font-weight:900;color:#1d4ed8;">-</span> <span style="font-size:.75rem;color:#6b7280;">%</span></td>
+          <td class="cbr-col-e2" style="display:none;"><span id="cbrFinalE2" style="font-size:1.6rem;font-weight:900;color:#1d4ed8;">-</span> <span style="font-size:.75rem;color:#6b7280;">%</span></td>
+          <td class="cbr-col-e3" style="display:none;"><span id="cbrFinalE3" style="font-size:1.6rem;font-weight:900;color:#1d4ed8;">-</span> <span style="font-size:.75rem;color:#6b7280;">%</span></td>
         </tr>
-
-        <!-- Vm -->
-        <tr class="hover:bg-gray-50">
-          <td class="p-3 border border-gray-300 font-semibold">Vm (cm³)</td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e1">
-            <input type="number" id="cbrVmE1" class="input-field w-20" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e2" style="display:none;">
-            <input type="number" id="cbrVmE2" class="input-field w-20" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e3" style="display:none;">
-            <input type="number" id="cbrVmE3" class="input-field w-20" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center font-semibold">cm³</td>
-        </tr>
-
-        <!-- Water Content (w) -->
-        <tr class="hover:bg-gray-50 bg-green-50">
-          <td class="p-3 border border-gray-300 font-semibold">w (%)</td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e1">
-            <input type="number" id="cbrWaterE1" class="input-field w-20" value="" step="0.1" min="0">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e2" style="display:none;">
-            <input type="number" id="cbrWaterE2" class="input-field w-20" value="" step="0.1" min="0">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e3" style="display:none;">
-            <input type="number" id="cbrWaterE3" class="input-field w-20" value="" step="0.1" min="0">
-          </td>
-          <td class="p-3 border border-gray-300 text-center font-semibold">%</td>
-        </tr>
-
-        <!-- Initial Height (hi) -->
-        <tr class="hover:bg-gray-50">
-          <td class="p-3 border border-gray-300 font-semibold">hi (mm)</td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e1">
-            <input type="number" id="cbrHeightInitE1" class="input-field w-20" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e2" style="display:none;">
-            <input type="number" id="cbrHeightInitE2" class="input-field w-20" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e3" style="display:none;">
-            <input type="number" id="cbrHeightInitE3" class="input-field w-20" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center font-semibold">mm</td>
-        </tr>
-
-        <!-- Final Height (hf) -->
-        <tr class="hover:bg-gray-50 bg-yellow-50">
-          <td class="p-3 border border-gray-300 font-semibold">hf (mm)</td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e1">
-            <input type="number" id="cbrHeightFinE1" class="input-field w-20" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e2" style="display:none;">
-            <input type="number" id="cbrHeightFinE2" class="input-field w-20" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e3" style="display:none;">
-            <input type="number" id="cbrHeightFinE3" class="input-field w-20" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center font-semibold">mm</td>
+        <tr style="background:#f9fafb;">
+          <td style="text-align:right;font-weight:600;">ρd عند الاختبار (g/cm³)</td>
+          <td class="cbr-col-e1"><span id="cbrDdAtTestE1" class="cbr-result-val text-gray">-</span></td>
+          <td class="cbr-col-e2" style="display:none;"><span id="cbrDdAtTestE2" class="cbr-result-val text-gray">-</span></td>
+          <td class="cbr-col-e3" style="display:none;"><span id="cbrDdAtTestE3" class="cbr-result-val text-gray">-</span></td>
         </tr>
       </tbody>
     </table>
   </div>
-</div>
 
-  <!-- ===== TABLE 2: CALCULATED VALUES ===== -->
-  <div class="section-card p-6 mb-6">
-    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-      <span class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
-      القيم المحسوبة (Calculated Values)
-    </h3>
-    <div class="overflow-x-auto">
-      <table class="w-full border-collapse bg-white rounded-lg shadow-sm" id="cbrTable2">
-        <thead>
-          <tr class="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
-            <th class="p-3 border border-blue-700 text-left">المتغير</th>
-            <th class="p-3 border border-blue-700 text-center cbr-col-e1">E1</th>
-            <th class="p-3 border border-blue-700 text-center cbr-col-e2" style="display:none;">E2</th>
-            <th class="p-3 border border-blue-700 text-center cbr-col-e3" style="display:none;">E3</th>
-            <th class="p-3 border border-blue-700 text-center">الوحدة</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Dry Density -->
-          <tr class="hover:bg-gray-50 bg-red-50">
-            <td class="p-3 border border-gray-300 font-semibold">ρd (الكثافة الجافة)</td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-red-700 cbr-col-e1">
-              <span id="cbrRhoDryE1">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-red-700 cbr-col-e2" style="display:none;">
-              <span id="cbrRhoDryE2">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-red-700 cbr-col-e3" style="display:none;">
-              <span id="cbrRhoDryE3">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-semibold">g/cm³</td>
-          </tr>
-
-          <!-- PCF -->
-          <tr class="hover:bg-gray-50">
-            <td class="p-3 border border-gray-300 font-semibold">PCF (Pounds per Cubic Foot)</td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-blue-700 cbr-col-e1">
-              <span id="cbrPCFE1">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-blue-700 cbr-col-e2" style="display:none;">
-              <span id="cbrPCFE2">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-blue-700 cbr-col-e3" style="display:none;">
-              <span id="cbrPCFE3">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-semibold">PCF</td>
-          </tr>
-
-          <!-- kN/m³ -->
-          <tr class="hover:bg-gray-50 bg-green-50">
-            <td class="p-3 border border-gray-300 font-semibold">γd (kN/m³)</td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-green-700 cbr-col-e1">
-              <span id="cbrKNm3E1">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-green-700 cbr-col-e2" style="display:none;">
-              <span id="cbrKNm3E2">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-green-700 cbr-col-e3" style="display:none;">
-              <span id="cbrKNm3E3">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-semibold">kN/m³</td>
-          </tr>
-
-          <!-- Swell -->
-          <tr class="hover:bg-gray-50 bg-yellow-50">
-            <td class="p-3 border border-gray-300 font-semibold">نسبة الانتفاش (%)</td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-yellow-700 cbr-col-e1">
-              <span id="cbrSwellE1">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-yellow-700 cbr-col-e2" style="display:none;">
-              <span id="cbrSwellE2">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-yellow-700 cbr-col-e3" style="display:none;">
-              <span id="cbrSwellE3">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-semibold">%</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <!-- Summary Cards -->
+  <div class="cbr-summary" id="cbrSummaryBox" style="display:none;margin-top:16px;">
+    <div class="cbr-summary-item"><div class="cbr-summary-val" id="sumCBR_E1">-</div><div class="cbr-summary-lbl">CBR% — E1 (56 ضربة)</div></div>
+    <div class="cbr-summary-item cbr-col-e2" style="display:none;"><div class="cbr-summary-val" id="sumCBR_E2">-</div><div class="cbr-summary-lbl">CBR% — E2 (25 ضربة)</div></div>
+    <div class="cbr-summary-item cbr-col-e3" style="display:none;"><div class="cbr-summary-val" id="sumCBR_E3">-</div><div class="cbr-summary-lbl">CBR% — E3 (10 ضربات)</div></div>
   </div>
 
- <!-- ===== TABLE 3: PENETRATION DATA (INPUT) ===== -->
-<div class="section-card p-6 mb-6">
-  <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-    <span class="bg-purple-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">3</span>
-    بيانات الاختراق (Penetration Data)
-  </h3>
-  <div class="overflow-x-auto">
-    <table class="w-full border-collapse bg-white rounded-lg shadow-sm" id="cbrTable3">
-      <thead>
-        <tr class="bg-gradient-to-r from-purple-600 to-purple-500 text-white">
-          <th class="p-3 border border-purple-700 text-left">Penetration (inch)</th>
-          <th class="p-3 border border-purple-700 text-center cbr-col-e1">E1 Reading</th>
-          <th class="p-3 border border-purple-700 text-center cbr-col-e1">E1 Pressure</th>
-          <th class="p-3 border border-purple-700 text-center cbr-col-e2" style="display:none;">E2 Reading</th>
-          <th class="p-3 border border-purple-700 text-center cbr-col-e2" style="display:none;">E2 Pressure</th>
-          <th class="p-3 border border-purple-700 text-center cbr-col-e3" style="display:none;">E3 Reading</th>
-          <th class="p-3 border border-purple-700 text-center cbr-col-e3" style="display:none;">E3 Pressure</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- 0.050" -->
-        <tr class="hover:bg-gray-50">
-          <td class="p-3 border border-gray-300 font-semibold">0.050"</td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e1">
-            <input type="number" id="penetration050E1reading" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e1">
-            <input type="number" id="penetration050E1pressure" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e2" style="display:none;">
-            <input type="number" id="penetration050E2reading" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e2" style="display:none;">
-            <input type="number" id="penetration050E2pressure" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e3" style="display:none;">
-            <input type="number" id="penetration050E3reading" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e3" style="display:none;">
-            <input type="number" id="penetration050E3pressure" class="input-field w-16" value="" step="0.1">
-          </td>
-        </tr>
-
-        <!-- 0.100" -->
-        <tr class="hover:bg-gray-50 bg-yellow-50">
-          <td class="p-3 border border-gray-300 font-semibold font-bold">0.100" (Standard 1)</td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e1">
-            <input type="number" id="penetration100E1reading" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center font-bold cbr-col-e1">
-            <input type="number" id="penetration100E1pressure" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e2" style="display:none;">
-            <input type="number" id="penetration100E2reading" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center font-bold cbr-col-e2" style="display:none;">
-            <input type="number" id="penetration100E2pressure" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e3" style="display:none;">
-            <input type="number" id="penetration100E3reading" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center font-bold cbr-col-e3" style="display:none;">
-            <input type="number" id="penetration100E3pressure" class="input-field w-16" value="" step="0.1">
-          </td>
-        </tr>
-
-        <!-- 0.150" -->
-        <tr class="hover:bg-gray-50">
-          <td class="p-3 border border-gray-300 font-semibold">0.150"</td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e1">
-            <input type="number" id="penetration150E1reading" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e1">
-            <input type="number" id="penetration150E1pressure" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e2" style="display:none;">
-            <input type="number" id="penetration150E2reading" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e2" style="display:none;">
-            <input type="number" id="penetration150E2pressure" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e3" style="display:none;">
-            <input type="number" id="penetration150E3reading" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e3" style="display:none;">
-            <input type="number" id="penetration150E3pressure" class="input-field w-16" value="" step="0.1">
-          </td>
-        </tr>
-
-        <!-- 0.200" -->
-        <tr class="hover:bg-gray-50 bg-yellow-50">
-          <td class="p-3 border border-gray-300 font-semibold font-bold">0.200" (Standard 2)</td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e1">
-            <input type="number" id="penetration200E1reading" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center font-bold cbr-col-e1">
-            <input type="number" id="penetration200E1pressure" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e2" style="display:none;">
-            <input type="number" id="penetration200E2reading" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center font-bold cbr-col-e2" style="display:none;">
-            <input type="number" id="penetration200E2pressure" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center cbr-col-e3" style="display:none;">
-            <input type="number" id="penetration200E3reading" class="input-field w-16" value="" step="0.1">
-          </td>
-          <td class="p-3 border border-gray-300 text-center font-bold cbr-col-e3" style="display:none;">
-            <input type="number" id="penetration200E3pressure" class="input-field w-16" value="" step="0.1">
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-  <!-- ===== TABLE 4: CBR RESULTS ===== -->
-  <div class="section-card p-6 mb-6">
-    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-      <span class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">4</span>
-      النتائج النهائية (CBR Results)
-    </h3>
-    <div class="overflow-x-auto">
-      <table class="w-full border-collapse bg-white rounded-lg shadow-sm" id="cbrTable4">
-        <thead>
-          <tr class="bg-gradient-to-r from-red-600 to-red-500 text-white">
-            <th class="p-3 border border-red-700 text-left">المتغير</th>
-            <th class="p-3 border border-red-700 text-center cbr-col-e1">E1 (%)</th>
-            <th class="p-3 border border-red-700 text-center cbr-col-e2" style="display:none;">E2 (%)</th>
-            <th class="p-3 border border-red-700 text-center cbr-col-e3" style="display:none;">E3 (%)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- CBR @ 0.1" -->
-          <tr class="hover:bg-gray-50 bg-orange-50">
-            <td class="p-3 border border-gray-300 font-semibold">CBR @ 0.1" (1029 kPa)</td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-red-700 cbr-col-e1">
-              <span id="cbrValue01E1">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-red-700 cbr-col-e2" style="display:none;">
-              <span id="cbrValue01E2">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-red-700 cbr-col-e3" style="display:none;">
-              <span id="cbrValue01E3">-</span>
-            </td>
-          </tr>
-
-          <!-- CBR @ 0.2" -->
-          <tr class="hover:bg-gray-50">
-            <td class="p-3 border border-gray-300 font-semibold">CBR @ 0.2" (1500 kPa)</td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-red-700 cbr-col-e1">
-              <span id="cbrValue02E1">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-red-700 cbr-col-e2" style="display:none;">
-              <span id="cbrValue02E2">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-red-700 cbr-col-e3" style="display:none;">
-              <span id="cbrValue02E3">-</span>
-            </td>
-          </tr>
-
-          <!-- Final CBR -->
-          <tr class="hover:bg-gray-50 bg-blue-50">
-            <td class="p-3 border border-gray-300 font-semibold text-lg font-bold">CBR النهائي</td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-2xl text-blue-700 cbr-col-e1">
-              <span id="cbrFinalE1">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-2xl text-blue-700 cbr-col-e2" style="display:none;">
-              <span id="cbrFinalE2">-</span>
-            </td>
-            <td class="p-3 border border-gray-300 text-center font-bold text-2xl text-blue-700 cbr-col-e3" style="display:none;">
-              <span id="cbrFinalE3">-</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+  <!-- CBR vs Density Chart -->
+  <div class="cbr-chart-wrap" id="cbrVsDensityChartContainer" style="display:none;margin-top:16px;">
+    <h4 style="text-align:center;font-weight:700;color:#374151;margin-bottom:12px;">📊 CBR% مقابل الكثافة الجافة — CBR% vs Dry Density</h4>
+    <div style="position:relative;height:300px;width:100%;">
+      <canvas id="cbrVsDensityChart"></canvas>
     </div>
   </div>
 </div>
+
+</div><!-- END sectionCBR -->
+
+<!-- ===== CBR REPORT MODAL ===== -->
+<div id="cbrReportModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:9999;overflow-y:auto;">
+  <div style="max-width:860px;margin:20px auto;background:white;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+    <div style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);color:white;padding:14px 20px;border-radius:12px 12px 0 0;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:1rem;font-weight:700;font-family:Cairo,sans-serif;">📄 التقرير الاحترافي — Professional CBR Report | ASTM D1883</span>
+      <div style="display:flex;gap:8px;">
+        <button onclick="document.querySelector('#cbrReportContent iframe').contentWindow.print()" style="background:#10b981;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-family:Cairo,sans-serif;font-weight:600;font-size:.85rem;">🖨️ طباعة</button>
+        <button onclick="document.getElementById('cbrReportModal').style.display='none'" style="background:#ef4444;color:white;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:1.1rem;line-height:1;">✕</button>
+      </div>
+    </div>
+    <div id="cbrReportContent" style="padding:0;"></div>
+  </div>
+</div>
+
 <!-- ===== END CBR SECTION ===== -->
+
+
     </main>
 
 
@@ -6938,147 +7076,863 @@ function toggleD422Glossary() {
     icon.textContent = '+';             // علامة زائد عند الإغلاق
   }
 }
- // ===== CBR DYNAMIC COLUMNS & CALCULATIONS =====
+// ===== CBR MODULE — ASTM D1883 (11 points, fixed chart, curve correction) =====
 let cbrCurrentTemplate = 1;
-let cbrData = { E1: {}, E2: {}, E3: {} };
+let cbrData = { E1:{}, E2:{}, E3:{} };
+let cbrPenChart = null, cbrDensChart = null, cbrVsChart = null, cbrSwChart = null;
 
-function handleCBRTemplateChange(templateCount) {
-  cbrCurrentTemplate = parseInt(templateCount);
-  document.body.setAttribute('data-cbr-template', cbrCurrentTemplate);
+const CBR_STD_P01 = 1000; // kPa @ 0.1"
+const CBR_STD_P02 = 1500; // kPa @ 0.2"
+// All 11 penetration points per ASTM D1883
+const CBR_PENS   = ['025','050','075','100','125','150','175','200','300','400','500'];
+const CBR_PEN_MM = [0.635, 1.27, 1.91, 2.54, 3.18, 3.81, 4.45, 5.08, 7.62, 10.16, 12.70];
+const CBR_PEN_IN = [0.025, 0.050,0.075,0.100,0.125,0.150,0.175,0.200,0.300,0.400, 0.500];
+
+// ── Column Visibility ────────────────────────────────────────
+function handleCBRTemplateChange(n) {
+  cbrCurrentTemplate = parseInt(n);
+  ['e1','e2','e3'].forEach((e,i) => {
+    const show = (i+1) <= cbrCurrentTemplate;
+    document.querySelectorAll('.cbr-col-'+e).forEach(el => el.style.display = show ? '' : 'none');
+  });
   updateCBRCalculations();
 }
 
 function initCBRDynamicColumns() {
-  const radioButtons = document.querySelectorAll('input[name="cbrTemplateCount"]');
-  radioButtons.forEach(radio => {
-    radio.addEventListener('change', (e) => {
-      handleCBRTemplateChange(e.target.value);
-    });
-  });
-
-  document.body.setAttribute('data-cbr-template', '1');
-
-  const cbrSection = document.getElementById('sectionCBR');
-  if (cbrSection) {
-    const inputs = cbrSection.querySelectorAll('input[type="number"]');
-    inputs.forEach(input => {
-      input.addEventListener('input', updateCBRCalculations);
-      input.addEventListener('change', updateCBRCalculations);
-    });
-  }
+  document.querySelectorAll('input[name="cbrTemplateCount"]').forEach(r =>
+    r.addEventListener('change', e => handleCBRTemplateChange(e.target.value))
+  );
+  handleCBRTemplateChange(1);
 }
 
-function calculateCBRDensityAndSwell() {
-  const suffixes = ['E1', 'E2', 'E3'];
-  
-  for (let suffix of suffixes) {
-    const Mm = parseFloat(document.getElementById(`cbrMm${suffix}`)?.value) || 0;
-    const Mw = parseFloat(document.getElementById(`cbrMw${suffix}`)?.value) || 0;
-    const Vm = parseFloat(document.getElementById(`cbrVm${suffix}`)?.value) || 0;
-    const w = parseFloat(document.getElementById(`cbrWater${suffix}`)?.value) || 0;
-    const hi = parseFloat(document.getElementById(`cbrHeightInit${suffix}`)?.value) || 0;
-    const hf = parseFloat(document.getElementById(`cbrHeightFin${suffix}`)?.value) || 0;
+// ── Ring Factor → Auto-pressure ─────────────────────────────
+function autoCalcPressure(pen, suf) {
+  const rf   = parseFloat(document.getElementById('cbr_ringFactor')?.value) || 0;
+  const area = parseFloat(document.getElementById('cbr_pistonArea')?.value) || 19.35;
+  const r    = parseFloat(document.getElementById('penetration'+pen+suf+'reading')?.value);
+  if (rf > 0 && area > 0 && !isNaN(r)) {
+    const kPa = (r * rf) / (area * 1e-4);
+    const el = document.getElementById('penetration'+pen+suf+'pressure');
+    if (el) el.value = kPa.toFixed(1);
+  }
+  updateCBRCalculations();
+}
 
-    if (!Mm || !Mw || !Vm || w === '' || !hi || !hf) {
-      document.getElementById(`cbrRhoDry${suffix}`).textContent = '-';
-      document.getElementById(`cbrPCF${suffix}`).textContent = '-';
-      document.getElementById(`cbrKNm3${suffix}`).textContent = '-';
-      document.getElementById(`cbrSwell${suffix}`).textContent = '-';
-      continue;
+function recalcPressuresFromReadings() {
+  ['E1','E2','E3'].forEach(s => CBR_PENS.forEach(p => autoCalcPressure(p,s)));
+}
+
+// ── Curve Correction (D1883 Fig.1 — concave upward) ─────────
+function applyCurveCorrection() {
+  const type = document.getElementById('cbr_curveType')?.value || 'none';
+  const xGrp = document.getElementById('correctionXGroup');
+  const resGrp = document.getElementById('correctionResults');
+  if (type === 'concave') {
+    if (xGrp) xGrp.style.display = 'block';
+    if (resGrp) resGrp.style.display = 'block';
+  } else {
+    if (xGrp) xGrp.style.display = 'none';
+    if (resGrp) resGrp.style.display = 'none';
+  }
+  updateCBRCalculations();
+}
+
+// Get corrected pressure at a given penetration (inches) using linear interpolation
+// For concave-upward curve: shift X axis by +X (correction offset)
+function getCorrectedPressure(suf, targetPen_in) {
+  const corrType = document.getElementById('cbr_curveType')?.value || 'none';
+  const X = corrType === 'concave' ? (parseFloat(document.getElementById('cbr_correctionX')?.value) || 0) : 0;
+
+  // Build data array from all available pressure inputs
+  const raw = CBR_PENS.map((pen, i) => {
+    const p = parseFloat(document.getElementById('penetration'+pen+suf+'pressure')?.value);
+    return isNaN(p) ? null : { pen: CBR_PEN_IN[i], p };
+  }).filter(Boolean);
+
+  if (raw.length < 2) return null;
+
+  // Apply correction: shift penetration by -X (move curve left)
+  const corrected = raw.map(pt => ({ pen: pt.pen - X, p: pt.p })).filter(pt => pt.pen >= 0);
+  if (corrected.length < 2) return null;
+
+  // Linear interpolation
+  for (let i = 0; i < corrected.length - 1; i++) {
+    if (targetPen_in >= corrected[i].pen && targetPen_in <= corrected[i+1].pen) {
+      const t = (targetPen_in - corrected[i].pen) / (corrected[i+1].pen - corrected[i].pen);
+      return corrected[i].p + t * (corrected[i+1].p - corrected[i].p);
+    }
+  }
+  // Extrapolate if beyond range
+  if (targetPen_in <= corrected[0].pen) return corrected[0].p;
+  return corrected[corrected.length-1].p;
+}
+
+// ── Density, Swell, % Compaction ────────────────────────────
+function calculateCBRDensityAndSwell() {
+  const isImperial = document.getElementById('cbrUnitImperial')?.checked === true;
+  const MDD = parseFloat(document.getElementById('cbr_MDD')?.value) || 0;
+
+  // Update table unit labels
+  const densLbl = document.getElementById('cbrDensityUnitLabel');
+  if (densLbl) densLbl.textContent = isImperial ? 'kg/m³' : 'g/cm³';
+  // Update row headers dynamically
+  const pcfRow = document.querySelector('[data-cbr-row="pcf"]');
+  if (pcfRow) pcfRow.textContent = isImperial ? 'PCF — وزن الوحدة (lb/ft³)' : 'PCF — وزن الوحدة الأمريكي (lb/ft³)';
+
+  ['E1','E2','E3'].forEach(suf => {
+    const Mm = parseFloat(document.getElementById('cbrMm'+suf)?.value)||0;
+    const Mw = parseFloat(document.getElementById('cbrMw'+suf)?.value)||0;
+    const Vm = parseFloat(document.getElementById('cbrVm'+suf)?.value)||0;
+    const w  = parseFloat(document.getElementById('cbrWater'+suf)?.value);
+    const hi = parseFloat(document.getElementById('cbrHeightInit'+suf)?.value)||0;
+    const hf = parseFloat(document.getElementById('cbrHeightFin'+suf)?.value)||0;
+
+    const clear = id => { const el=document.getElementById(id); if(el) el.textContent='-'; };
+    if (!Mm||!Mw||!Vm||isNaN(w)||!hi||!hf) {
+      ['cbrRhoDry','cbrPCF','cbrKNm3','cbrSwell','cbrComp','cbrDdAtTest'].forEach(id=>clear(id+suf));
+      cbrData[suf] = {};
+      return;
     }
 
-    const Ms = Mw - Mm;
-    const rhoWet = Ms / Vm;
-    const rhoDry = rhoWet / (1 + w / 100);
-    const PCF = rhoDry * 62.4;
-    const kNm3 = rhoDry * 9.81;
-    const swell = ((hf - hi) / hi) * 100;
+    const Ms      = Mw - Mm;
+    const rhoWet  = Ms / Vm;           // g/cm³
+    const rhoDry  = rhoWet / (1 + w/100);
+    const PCF     = rhoDry * 62.428;   // lb/ft³
+    const kNm3    = rhoDry * 9.8066;   // kN/m³
+    const kgm3    = rhoDry * 1000;     // kg/m³
+    const swell   = ((hf - hi) / hi) * 100;
+    const compPct = MDD > 0 ? (rhoDry / MDD) * 100 : null;
 
-    cbrData[suffix] = { Mm, Mw, Vm, w, hi, hf, Ms, rhoWet, rhoDry, PCF, kNm3, swell };
+    cbrData[suf] = { Mm,Mw,Vm,w,hi,hf,Ms,rhoWet,rhoDry,PCF,kNm3,kgm3,swell,compPct };
 
-    document.getElementById(`cbrRhoDry${suffix}`).textContent = rhoDry.toFixed(3);
-    document.getElementById(`cbrPCF${suffix}`).textContent = PCF.toFixed(1);
-    document.getElementById(`cbrKNm3${suffix}`).textContent = kNm3.toFixed(2);
-    document.getElementById(`cbrSwell${suffix}`).textContent = swell.toFixed(2);
-  }
+    const set = (id,val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+
+    // ρd row — show g/cm³ always as main, but add kg/m³ if imperial selected
+    if (isImperial) {
+      set('cbrRhoDry'+suf, kgm3.toFixed(1)+' kg/m³');
+    } else {
+      set('cbrRhoDry'+suf, rhoDry.toFixed(3)+' g/cm³');
+    }
+
+    set('cbrPCF'+suf,      PCF.toFixed(1));
+    set('cbrKNm3'+suf,     isImperial ? PCF.toFixed(1)+' pcf' : kNm3.toFixed(2)+' kN/m³');
+    set('cbrSwell'+suf,    swell.toFixed(2));
+    set('cbrDdAtTest'+suf, rhoDry.toFixed(3));
+    set('cbrComp'+suf,     compPct !== null ? compPct.toFixed(1)+' %' : '—');
+  });
 }
 
+// ── CBR % (with optional curve correction) ──────────────────
 function updateCBRPercentage() {
-  const standardPressure01 = 1029;
-  const standardPressure02 = 1500;
-  const suffixes = ['E1', 'E2', 'E3'];
+  const corrType = document.getElementById('cbr_curveType')?.value || 'none';
+  const X = corrType === 'concave' ? (parseFloat(document.getElementById('cbr_correctionX')?.value)||0) : 0;
+  let anyResult = false;
 
-  for (let suffix of suffixes) {
-    const pressure01 = parseFloat(document.getElementById(`penetration100${suffix}pressure`)?.value) || 0;
-    const pressure02 = parseFloat(document.getElementById(`penetration200${suffix}pressure`)?.value) || 0;
+  ['E1','E2','E3'].forEach(suf => {
+    let p01, p02;
+    if (corrType === 'concave' && X > 0) {
+      p01 = getCorrectedPressure(suf, 0.100) || 0;
+      p02 = getCorrectedPressure(suf, 0.200) || 0;
+      // Show corrected values in correction box
+      const el01 = document.getElementById('correctedP01Text');
+      const el02 = document.getElementById('correctedP02Text');
+      if (el01) el01.textContent = `@ 0.1"+X=${(0.1+X).toFixed(3)}" → P = ${p01.toFixed(1)} kPa`;
+      if (el02) el02.textContent = `@ 0.2"+X=${(0.2+X).toFixed(3)}" → P = ${p02.toFixed(1)} kPa`;
+    } else {
+      p01 = parseFloat(document.getElementById('penetration100'+suf+'pressure')?.value)||0;
+      p02 = parseFloat(document.getElementById('penetration200'+suf+'pressure')?.value)||0;
+    }
 
-    const cbr01 = pressure01 > 0 ? (pressure01 / standardPressure01) * 100 : 0;
-    const cbr02 = pressure02 > 0 ? (pressure02 / standardPressure02) * 100 : 0;
-    const cbrFinal = Math.max(cbr01, cbr02);
+    const cbr01 = p01 > 0 ? (p01/CBR_STD_P01)*100 : null;
+    const cbr02 = p02 > 0 ? (p02/CBR_STD_P02)*100 : null;
+    const cbrFinal = (cbr01!==null||cbr02!==null) ? Math.max(cbr01??0, cbr02??0) : null;
+    cbrData[suf] = {...cbrData[suf], p01,p02,cbr01,cbr02,cbrFinal};
 
-    document.getElementById(`cbrValue01${suffix}`).textContent = cbr01 > 0 ? cbr01.toFixed(1) : '-';
-    document.getElementById(`cbrValue02${suffix}`).textContent = cbr02 > 0 ? cbr02.toFixed(1) : '-';
-    document.getElementById(`cbrFinal${suffix}`).textContent = cbrFinal > 0 ? cbrFinal.toFixed(1) : '-';
+    const set = (id,val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+    set('cbrValue01'+suf, cbr01!==null ? cbr01.toFixed(1) : '-');
+    set('cbrValue02'+suf, cbr02!==null ? cbr02.toFixed(1) : '-');
+    set('cbrFinal'+suf,   cbrFinal!==null ? cbrFinal.toFixed(1) : '-');
+    const sc = document.getElementById('sumCBR_'+suf);
+    if (sc) sc.textContent = cbrFinal!==null ? cbrFinal.toFixed(1)+'%' : '-';
+    if (cbrFinal!==null) anyResult = true;
+  });
 
-    cbrData[suffix] = { ...cbrData[suffix], pressure01, pressure02, cbr01, cbr02, cbrFinal };
-  }
+  const box = document.getElementById('cbrSummaryBox');
+  if (box) box.style.display = anyResult ? 'flex' : 'none';
 }
 
+// ── % Compaction result bar ──────────────────────────────────
+function calcCompactionPercent() {
+  calculateCBRDensityAndSwell();
+  const MDD = parseFloat(document.getElementById('cbr_MDD')?.value)||0;
+  const box = document.getElementById('cbr_compactionResult');
+  if (!box) return;
+  if (!MDD) { box.style.display='none'; return; }
+
+  const lines = ['E1','E2','E3'].slice(0,cbrCurrentTemplate).map(suf => {
+    const d = cbrData[suf];
+    if (!d?.rhoDry) return null;
+    const pct = (d.rhoDry/MDD)*100;
+    return `E${suf.slice(1)}: ${pct.toFixed(1)}% ${pct>=95?'✅':'⚠️'}`;
+  }).filter(Boolean);
+
+  if (lines.length) {
+    box.style.display='flex';
+    box.innerHTML = `<span>نسبة الدمك / % Compaction: &nbsp;</span><strong>${lines.join(' &nbsp;|&nbsp; ')}</strong><span style="font-size:.72rem;color:#166534;">&nbsp;(المعيار: ≥95%)</span>`;
+  } else box.style.display='none';
+}
+
+// ── Charts ────────────────────────────────────────────────────
+function drawCBRPenetrationChart() {
+  const ctx = document.getElementById('cbrPenetrationChart')?.getContext('2d');
+  if (!ctx) return;
+  if (cbrPenChart) { cbrPenChart.destroy(); cbrPenChart = null; }
+
+  const isImperial = document.getElementById('cbrUnitImperial')?.checked === true;
+  const COLORS = ['#3b82f6','#10b981','#f97316'];
+  const NAMES  = ['E1 — 56 ضربة','E2 — 25 ضربة','E3 — 10 ضربات'];
+  const corrType = document.getElementById('cbr_curveType')?.value || 'none';
+  const X = corrType==='concave' ? (parseFloat(document.getElementById('cbr_correctionX')?.value)||0) : 0;
+
+  // Convert pressure: kPa → psi if imperial (1 kPa = 0.14504 psi)
+  const pConv = isImperial ? 0.14504 : 1;
+  const pUnit = isImperial ? 'psi' : 'kPa';
+  // Convert penetration: mm → inches if imperial
+  const xConv = isImperial ? (1/25.4) : 1;
+  const xUnit = isImperial ? 'in' : 'mm';
+  const stdP01 = isImperial ? 1000*pConv : 1000; // 145.04 psi or 1000 kPa
+  const stdP02 = isImperial ? 1500*pConv : 1500;
+
+  const datasets = [];
+  let yMaxData = 0;
+
+  ['E1','E2','E3'].forEach((suf,i) => {
+    if (i >= cbrCurrentTemplate) return;
+
+    const rawPts = CBR_PENS.map((pen,j) => {
+      const p = parseFloat(document.getElementById('penetration'+pen+suf+'pressure')?.value);
+      if (isNaN(p)) return null;
+      const py = p * pConv;
+      const px = CBR_PEN_MM[j] * xConv;
+      if (py > yMaxData) yMaxData = py;
+      return { x: px, y: py };
+    }).filter(Boolean);
+
+    if (!rawPts.length) return;
+
+    datasets.push({
+      label: NAMES[i], data: rawPts,
+      borderColor: COLORS[i], backgroundColor: COLORS[i]+'25',
+      borderWidth: 2.5, pointRadius: 5, pointHoverRadius: 8,
+      fill: false, tension: 0.35, spanGaps: false
+    });
+
+    // Corrected curve
+    if (corrType === 'concave' && X > 0) {
+      const corrPts = CBR_PENS.map((pen,j) => {
+        const p = parseFloat(document.getElementById('penetration'+pen+suf+'pressure')?.value);
+        const newX = CBR_PEN_IN[j] - X;
+        if (isNaN(p) || newX < 0) return null;
+        return { x: newX * (isImperial ? 1 : 25.4), y: p * pConv };
+      }).filter(Boolean);
+      if (corrPts.length) {
+        datasets.push({
+          label: NAMES[i]+' (مصحح)',
+          data: corrPts, borderColor: COLORS[i], backgroundColor:'transparent',
+          borderWidth:2, borderDash:[6,3], pointRadius:3, fill:false, tension:0.3
+        });
+      }
+    }
+  });
+
+  // Y axis max — use actual data max + 20%, minimum 200
+  const yMax = yMaxData > 0 ? Math.ceil((yMaxData * 1.20) / 100) * 100 : (isImperial ? 300 : 2000);
+  const xMax = isImperial ? 0.55 : 14;
+
+  // Standard reference lines — use actual yMax so they don't inflate the scale
+  if (datasets.length > 0 && yMaxData > 0) {
+    datasets.push({
+      label: isImperial ? '★ 0.1" — 145 psi std' : '★ 0.1" — 1000 kPa std',
+      data:[{x: isImperial?0.100:2.54, y:0},{x: isImperial?0.100:2.54, y:yMax}],
+      borderColor:'#dc2626', borderDash:[5,4], borderWidth:1.5,
+      pointRadius:0, fill:false, tension:0
+    });
+    datasets.push({
+      label: isImperial ? '★ 0.2" — 218 psi std' : '★ 0.2" — 1500 kPa std',
+      data:[{x: isImperial?0.200:5.08, y:0},{x: isImperial?0.200:5.08, y:yMax}],
+      borderColor:'#f59e0b', borderDash:[5,4], borderWidth:1.5,
+      pointRadius:0, fill:false, tension:0
+    });
+  } else {
+    // Empty state — show axes only
+    datasets.push({
+      label:'أدخل بيانات الاختراق',
+      data:[{x:0,y:0},{x:xMax,y:0}],
+      borderColor:'#e2e8f0', borderWidth:1, pointRadius:0, fill:false
+    });
+  }
+
+  const xLabel = isImperial
+    ? 'الاختراق — Penetration (inches)'
+    : 'الاختراق — Penetration (mm)';
+  const yLabel = isImperial
+    ? 'الضغط — Pressure (psi)'
+    : 'الضغط — Pressure (kPa)';
+
+  const xTickLabels_mm = {
+    0:'0', 0.635:'0.025"', 1.27:'0.05"', 1.91:'0.075"',
+    2.54:'0.1"', 3.18:'0.125"', 3.81:'0.15"', 4.45:'0.175"',
+    5.08:'0.2"', 7.62:'0.3"', 10.16:'0.4"', 12.70:'0.5"'
+  };
+  const xTickLabels_in = {
+    0:'0', 0.025:'0.025"', 0.05:'0.05"', 0.075:'0.075"',
+    0.1:'0.1"', 0.125:'0.125"', 0.15:'0.15"', 0.175:'0.175"',
+    0.2:'0.2"', 0.3:'0.3"', 0.4:'0.4"', 0.5:'0.5"'
+  };
+  const xTickLabels = isImperial ? xTickLabels_in : xTickLabels_mm;
+
+  cbrPenChart = new Chart(ctx, {
+    type: 'line',
+    data: { datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      parsing: false,
+      scales: {
+        x: {
+          type: 'linear', min: 0, max: xMax,
+          title: { display:true, text: xLabel, font:{size:12,weight:'bold'}, color:'#374151' },
+          grid: { color:'rgba(0,0,0,0.07)' },
+          ticks: {
+            callback: v => {
+              // round to avoid floating point issues
+              const key = Object.keys(xTickLabels).find(k => Math.abs(parseFloat(k)-v) < 0.001);
+              return key !== undefined ? xTickLabels[key] : '';
+            },
+            maxTicksLimit: 13
+          }
+        },
+        y: {
+          min: 0, max: yMax,
+          title: { display:true, text: yLabel, font:{size:12,weight:'bold'}, color:'#374151' },
+          grid: { color:'rgba(0,0,0,0.07)' }
+        }
+      },
+      plugins: {
+        legend: { position:'top', labels:{ font:{size:11}, boxWidth:14, usePointStyle:true } },
+        tooltip: {
+          callbacks: {
+            label: c => {
+              const xv = c.parsed.x;
+              const yv = c.parsed.y;
+              const xIn = isImperial ? xv.toFixed(3)+'"' : (xv/25.4).toFixed(3)+'"';
+              const xMm = isImperial ? (xv*25.4).toFixed(2)+'mm' : xv.toFixed(2)+'mm';
+              return `${c.dataset.label}: ${yv.toFixed(1)} ${pUnit} @ ${xIn} (${xMm})`;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function drawCBRDensityChart() {
+  const ctr = document.getElementById('cbrDensityChartContainer');
+  const ctx = document.getElementById('cbrDensityChart')?.getContext('2d');
+  if (!ctx) return;
+  const isImperial = document.getElementById('cbrUnitImperial')?.checked === true;
+
+  // Build 3 mold data points — always show all available specimens
+  const specData = [
+    { suf:'E3', blows:10, color:'#f97316' },
+    { suf:'E2', blows:25, color:'#10b981' },
+    { suf:'E1', blows:56, color:'#3b82f6' }
+  ];
+
+  const availablePts = specData.map(s => {
+    const d = cbrData[s.suf];
+    if (!d?.rhoDry) return null;
+    const yVal = isImperial ? d.PCF : d.rhoDry;
+    return { x: s.blows, y: yVal, color: s.color, label: s.blows+' blows' };
+  }).filter(Boolean);
+
+  if (!availablePts.length) { ctr.style.display='none'; return; }
+  ctr.style.display = 'block';
+  if (cbrDensChart) { cbrDensChart.destroy(); cbrDensChart = null; }
+
+  const yLabel = isImperial ? 'وزن الوحدة الجاف — Dry Unit Weight (pcf)' : 'الكثافة الجافة — Dry Density (g/cm³)';
+
+  // Line connecting points + individual colored points per specimen
+  const lineDataset = {
+    label: isImperial ? 'γd (pcf)' : 'ρd (g/cm³)',
+    data: availablePts.map(p=>({x:p.x, y:p.y})),
+    borderColor: '#6366f1',
+    backgroundColor: '#6366f122',
+    borderWidth: 2.5,
+    pointRadius: availablePts.map(() => 8),
+    pointBackgroundColor: availablePts.map(p => p.color),
+    pointBorderColor: availablePts.map(p => p.color),
+    fill: true, tension: 0.3
+  };
+
+  // MDD reference line if available
+  const MDD = parseFloat(document.getElementById('cbr_MDD')?.value)||0;
+  const mddDatasets = [];
+  if (MDD > 0) {
+    const mddY = isImperial ? MDD * 62.428 : MDD;
+    mddDatasets.push({
+      label: isImperial ? `MDD = ${(MDD*62.428).toFixed(1)} pcf` : `MDD = ${MDD} g/cm³`,
+      data:[{x:5,y:mddY},{x:60,y:mddY}],
+      borderColor:'#dc2626', borderDash:[6,3], borderWidth:2,
+      pointRadius:0, fill:false
+    });
+  }
+
+  cbrDensChart = new Chart(ctx, {
+    type: 'line',
+    data: { datasets: [lineDataset, ...mddDatasets] },
+    options: {
+      responsive: true, maintainAspectRatio: false, parsing: false,
+      scales: {
+        x: {
+          type:'linear', min:5, max:60,
+          title: { display:true, text:'عدد الضربات لكل طبقة — Blows per Layer', font:{weight:'bold',size:12} },
+          ticks: { callback: v => [10,25,56].includes(v) ? v+' ضربة' : '' }
+        },
+        y: { title: { display:true, text: yLabel, font:{weight:'bold',size:12} } }
+      },
+      plugins: {
+        legend: { position:'top', labels:{ font:{size:11}, usePointStyle:true } },
+        tooltip: {
+          callbacks: {
+            label: c => {
+              const unit = isImperial ? 'pcf' : 'g/cm³';
+              return `${c.dataset.label}: ${c.parsed.y.toFixed(isImperial?1:3)} ${unit} @ ${c.parsed.x} blows`;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function drawCBRvsDensityChart() {
+  const ctr = document.getElementById('cbrVsDensityChartContainer');
+  const ctx = document.getElementById('cbrVsDensityChart')?.getContext('2d');
+  if (!ctx) return;
+  const isImperial = document.getElementById('cbrUnitImperial')?.checked === true;
+
+  const allPts = ['E3','E2','E1'].map((s,i)=>{
+    const d=cbrData[s];
+    if (!d?.rhoDry || d?.cbrFinal==null) return null;
+    const xVal = isImperial ? d.PCF : d.rhoDry;
+    return { x:xVal, y:d.cbrFinal, blows:[10,25,56][i] };
+  }).filter(Boolean);
+
+  if (!allPts.length){ctr.style.display='none';return;}
+  ctr.style.display='block';
+  if (cbrVsChart) { cbrVsChart.destroy(); cbrVsChart = null; }
+
+  const xLabel = isImperial ? 'وزن الوحدة الجاف — Dry Unit Weight (pcf)' : 'الكثافة الجافة — Dry Density (g/cm³)';
+
+  cbrVsChart = new Chart(ctx,{
+    type:'line',
+    data:{datasets:[{
+      label: isImperial ? 'CBR% vs γd (pcf)' : 'CBR% vs ρd (g/cm³)',
+      data: allPts.map(p=>({x:p.x,y:p.y})),
+      borderColor:'#10b981', backgroundColor:'#10b98118',
+      pointRadius:9, pointBorderWidth:2,
+      pointBackgroundColor:['#f97316','#10b981','#3b82f6'].slice(0,allPts.length),
+      fill:true, tension:0.35
+    }]},
+    options:{
+      responsive:true, maintainAspectRatio:false, parsing:false,
+      scales:{
+        x:{ type:'linear', title:{display:true, text: xLabel, font:{weight:'bold',size:12}} },
+        y:{ beginAtZero:false, title:{display:true, text:'CBR %', font:{weight:'bold',size:12}} }
+      },
+      plugins:{
+        legend:{position:'top'},
+        tooltip:{
+          callbacks:{
+            label: c => {
+              const u = isImperial ? 'pcf' : 'g/cm³';
+              const pt = allPts.find(p=>Math.abs(p.x-c.parsed.x)<0.01);
+              return `CBR=${c.parsed.y.toFixed(1)}% @ ${c.parsed.x.toFixed(isImperial?1:3)} ${u}${pt?' ('+pt.blows+' blows)':''}`;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function drawCBRSwellChart() {
+  const ctr = document.getElementById('cbrSwellChartContainer');
+  const ctx = document.getElementById('cbrSwellChart')?.getContext('2d');
+  if (!ctx) return;
+  const sufOrder=['E3','E2','E1']; const blows=[10,25,56];
+  const pts=blows.map((b,i)=>{const d=cbrData[sufOrder[i]]; return d?.swell!=null?{b,s:d.swell}:null;}).filter(Boolean);
+  if (!pts.length){ctr.style.display='none';return;}
+  ctr.style.display='block';
+  if (cbrSwChart) { cbrSwChart.destroy(); cbrSwChart = null; }
+  cbrSwChart = new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:pts.map(p=>p.b+' ضربة'),
+      datasets:[{label:'Swell %',data:pts.map(p=>parseFloat(p.s.toFixed(2))),
+        backgroundColor:['#fbbf24','#f97316','#ef4444'].slice(0,pts.length),
+        borderColor:['#d97706','#ea580c','#dc2626'].slice(0,pts.length),borderWidth:2}]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      scales:{y:{beginAtZero:true,title:{display:true,text:'Swell %',font:{weight:'bold',size:12}}}},
+      plugins:{legend:{display:false},
+        tooltip:{callbacks:{label: c=>`Swell = ${c.parsed.y.toFixed(2)} %`}}
+      }
+    }
+  });
+}
+
+// ── Main Trigger ─────────────────────────────────────────────
 function updateCBRCalculations() {
   calculateCBRDensityAndSwell();
   updateCBRPercentage();
+  calcCompactionPercent();
+  drawCBRPenetrationChart();
+  drawCBRDensityChart();
+  drawCBRvsDensityChart();
+  drawCBRSwellChart();
 }
 
-const CBR_DEMO_DATA = {
-  E1: { stress: 56, Mm: 1200, Mw: 3600, Vm: 2310, w: 12.0, hi: 127, hf: 129, p050reading: 175, p050pressure: 245, p100reading: 365, p100pressure: 510, p150reading: 547, p150pressure: 765, p200reading: 737, p200pressure: 1029 },
-  E2: { stress: 25, Mm: 1200, Mw: 3450, Vm: 2310, w: 12.5, hi: 127, hf: 130, p050reading: 147, p050pressure: 206, p100reading: 301, p100pressure: 421, p150reading: 456, p150pressure: 637, p200reading: 611, p200pressure: 853 },
-  E3: { stress: 10, Mm: 1200, Mw: 3280, Vm: 2310, w: 13.0, hi: 127, hf: 131, p050reading: 126, p050pressure: 176, p100reading: 252, p100pressure: 353, p150reading: 379, p150pressure: 529, p200reading: 506, p200pressure: 706 }
+function updateCBRUnitsDisplay() {
+  // Recalculate everything with new unit system
+  calculateCBRDensityAndSwell();
+  updateCBRPercentage();
+  calcCompactionPercent();
+  // Redraw all charts with correct units
+  drawCBRPenetrationChart();
+  drawCBRDensityChart();
+  drawCBRvsDensityChart();
+  drawCBRSwellChart();
+}
+function calculateCBRAll()       { updateCBRCalculations(); }
+
+// ── Demo Data (all 11 D1883 points) ─────────────────────────
+const CBR_DEMO = {
+  E1:{stress:56,Mm:4050,Mw:6510,Vm:2310,w:12.0,hi:127.0,hf:128.6,
+      p025:{r:88, p:58 }, p050:{r:175,p:245}, p075:{r:272,p:381},
+      p100:{r:365,p:511}, p125:{r:455,p:637}, p150:{r:547,p:766},
+      p175:{r:641,p:898}, p200:{r:737,p:1031},p300:{r:980,p:1372},
+      p400:{r:1150,p:1610},p500:{r:1270,p:1778}},
+  E2:{stress:25,Mm:4050,Mw:6370,Vm:2310,w:12.5,hi:127.0,hf:129.5,
+      p025:{r:74, p:49 }, p050:{r:147,p:206}, p075:{r:223,p:312},
+      p100:{r:301,p:421}, p125:{r:378,p:529}, p150:{r:456,p:638},
+      p175:{r:533,p:746}, p200:{r:611,p:855}, p300:{r:820,p:1148},
+      p400:{r:950,p:1330},p500:{r:1050,p:1470}},
+  E3:{stress:10,Mm:4050,Mw:6210,Vm:2310,w:13.0,hi:127.0,hf:130.8,
+      p025:{r:63, p:42 }, p050:{r:126,p:176}, p075:{r:190,p:266},
+      p100:{r:252,p:353}, p125:{r:315,p:441}, p150:{r:379,p:530},
+      p175:{r:442,p:619}, p200:{r:506,p:708}, p300:{r:690,p:966},
+      p400:{r:820,p:1148},p500:{r:910,p:1274}}
 };
 
 function loadDemoCBR() {
-  for (let suffix in CBR_DEMO_DATA) {
-    const data = CBR_DEMO_DATA[suffix];
-    document.getElementById(`cbrStress${suffix}`).value = data.stress;
-    document.getElementById(`cbrMm${suffix}`).value = data.Mm;
-    document.getElementById(`cbrMw${suffix}`).value = data.Mw;
-    document.getElementById(`cbrVm${suffix}`).value = data.Vm;
-    document.getElementById(`cbrWater${suffix}`).value = data.w;
-    document.getElementById(`cbrHeightInit${suffix}`).value = data.hi;
-    document.getElementById(`cbrHeightFin${suffix}`).value = data.hf;
-    document.getElementById(`penetration050${suffix}reading`).value = data.p050reading;
-    document.getElementById(`penetration050${suffix}pressure`).value = data.p050pressure;
-    document.getElementById(`penetration100${suffix}reading`).value = data.p100reading;
-    document.getElementById(`penetration100${suffix}pressure`).value = data.p100pressure;
-    document.getElementById(`penetration150${suffix}reading`).value = data.p150reading;
-    document.getElementById(`penetration150${suffix}pressure`).value = data.p150pressure;
-    document.getElementById(`penetration200${suffix}reading`).value = data.p200reading;
-    document.getElementById(`penetration200${suffix}pressure`).value = data.p200pressure;
+  const g = id => document.getElementById(id);
+  if(g('cbr_projectName')) g('cbr_projectName').value='مشروع طريق دائري — Ring Road Project';
+  if(g('cbr_sampleId'))    g('cbr_sampleId').value='S-CBR-2025-01';
+  if(g('cbr_engineer'))    g('cbr_engineer').value='م. محمد القصبي';
+  if(g('cbr_testDate'))    g('cbr_testDate').value=new Date().toISOString().slice(0,10);
+  if(g('cbr_ringNo'))      g('cbr_ringNo').value='R-04';
+  if(g('cbr_ringFactor'))  g('cbr_ringFactor').value='0.2500';
+  if(g('cbr_pistonArea'))  g('cbr_pistonArea').value='19.35';
+  if(g('cbr_MDD'))         g('cbr_MDD').value='1.920';
+  if(g('cbr_OMC'))         g('cbr_OMC').value='12.0';
+
+  // All 11 penetration keys
+  const penKey = {
+    p025:'025', p050:'050', p075:'075', p100:'100', p125:'125',
+    p150:'150', p175:'175', p200:'200', p300:'300', p400:'400', p500:'500'
+  };
+
+  for (let suf in CBR_DEMO) {
+    const d = CBR_DEMO[suf];
+    const s = (id,v) => { const el=g(id); if(el) el.value=v; };
+    s('cbrStress'+suf,d.stress); s('cbrMm'+suf,d.Mm); s('cbrMw'+suf,d.Mw);
+    s('cbrVm'+suf,d.Vm); s('cbrWater'+suf,d.w);
+    s('cbrHeightInit'+suf,d.hi); s('cbrHeightFin'+suf,d.hf);
+    for (let pk in penKey) {
+      const pen=penKey[pk];
+      if (d[pk]) {
+        s('penetration'+pen+suf+'reading',  d[pk].r);
+        s('penetration'+pen+suf+'pressure', d[pk].p);
+      }
+    }
   }
-  document.getElementById('cbr_template_3').checked = true;
+  g('cbr_template_3').checked=true;
   handleCBRTemplateChange('3');
   updateCBRCalculations();
 }
 
 function resetCBRForm() {
-  const cbrSection = document.getElementById('sectionCBR');
-  if (cbrSection) {
-    const inputs = cbrSection.querySelectorAll('input[type="number"]');
-    inputs.forEach(input => input.value = '');
-    const spans = cbrSection.querySelectorAll('span');
-    spans.forEach(span => {
-      if (span.id && (span.id.includes('cbrRhoDry') || span.id.includes('cbrPCF') || span.id.includes('cbrKNm3') || span.id.includes('cbrSwell') || span.id.includes('cbrValue') || span.id.includes('cbrFinal'))) {
-        span.textContent = '-';
-      }
+  const sec=document.getElementById('sectionCBR');
+  if(sec) {
+    sec.querySelectorAll('input[type=number],input[type=text],input[type=date]').forEach(el=>{
+      if(el.id!=='cbr_pistonArea') el.value='';
     });
+    const pistonEl=document.getElementById('cbr_pistonArea');
+    if(pistonEl) pistonEl.value='19.35';
+    sec.querySelectorAll('span[id]').forEach(el=>{if(/cbr|Cbr/.test(el.id)) el.textContent='-';});
   }
-  document.getElementById('cbr_template_1').checked = true;
+  document.getElementById('cbr_template_1').checked=true;
   handleCBRTemplateChange('1');
+  [cbrPenChart,cbrDensChart,cbrVsChart,cbrSwChart].forEach(c=>{if(c){c.destroy();}});
+  cbrPenChart=cbrDensChart=cbrVsChart=cbrSwChart=null;
+  ['cbrDensityChartContainer','cbrVsDensityChartContainer','cbrSwellChartContainer','cbr_compactionResult','cbrSummaryBox']
+    .forEach(id=>{const el=document.getElementById(id); if(el) el.style.display='none';});
+  cbrData={E1:{},E2:{},E3:{}};
 }
 
-function calculateCBRAll() {
-  updateCBRCalculations();
+// ── Professional 2-Page Report ───────────────────────────────
+function generateCBRReport() {
+  const isImperial = document.getElementById('cbrUnitImperial')?.checked === true;
+  const isMetric = !isImperial;
+  const g  = id => document.getElementById(id)?.value||'—';
+  const proj     = g('cbr_projectName');
+  const sampleId = g('cbr_sampleId');
+  const engineer = g('cbr_engineer');
+  const testDate = g('cbr_testDate');
+  const ringNo   = g('cbr_ringNo');
+  const rf       = g('cbr_ringFactor');
+  const area     = g('cbr_pistonArea');
+  const calibDt  = g('cbr_calibDate');
+  const MDD      = g('cbr_MDD');
+  const OMC      = g('cbr_OMC');
+  const proctorStd = document.getElementById('cbr_proctorStd')?.value||'D1557';
+  const n = cbrCurrentTemplate;
+  const suffs = ['E1','E2','E3'].slice(0,n);
+  const blowsMap={E1:56,E2:25,E3:10};
+  const now = new Date().toLocaleString('ar-SA');
+
+  let densityRows='', cbrRows='', penRows='';
+  suffs.forEach(suf=>{
+    const d=cbrData[suf]||{};
+    const rd   = d.rhoDry!=null ? d.rhoDry.toFixed(3) : '—';
+    const rdSI = d.rhoDry!=null ? (d.rhoDry*1000).toFixed(1) : '—';
+    const kn   = d.kNm3!=null   ? d.kNm3.toFixed(2)  : '—';
+    const pcf  = d.PCF!=null    ? d.PCF.toFixed(1)    : '—';
+    const sw   = d.swell!=null  ? d.swell.toFixed(2)  : '—';
+    const cp   = d.compPct!=null? d.compPct.toFixed(1): '—';
+    densityRows += `<tr>
+      <td>${blowsMap[suf]} ضربة (${suf})</td>
+      <td>${rd} g/cm³</td><td>${rdSI} kg/m³</td>
+      <td>${kn}</td><td>${pcf}</td><td>${sw}</td><td>${cp}</td></tr>`;
+
+    const c01=d.cbr01!=null?d.cbr01.toFixed(1):'—';
+    const c02=d.cbr02!=null?d.cbr02.toFixed(1):'—';
+    const cf =d.cbrFinal!=null?d.cbrFinal.toFixed(1):'—';
+    cbrRows += `<tr>
+      <td>${blowsMap[suf]} ضربة (${suf})</td>
+      <td>${c01} %</td><td>${c02} %</td>
+      <td><b style="color:#1d4ed8;font-size:1.15em">${cf} %</b></td></tr>`;
+
+    const pens=[['025',0.64],['050',1.27],['075',1.91],['100',2.54],['125',3.18],
+              ['150',3.81],['175',4.45],['200',5.08],['300',7.62],['400',10.16],['500',12.70]];
+    pens.forEach(([pen,mm])=>{
+      const rEl=document.getElementById('penetration'+pen+suf+'reading');
+      const pEl=document.getElementById('penetration'+pen+suf+'pressure');
+      const isStd=(pen==='100'||pen==='200');
+      penRows+=`<tr style="${isStd?'background:#fef9c3;font-weight:700':''}">
+        <td>${suf}</td><td>${mm} mm</td><td>${rEl?.value||'—'}</td><td>${pEl?.value||'—'} kPa</td></tr>`;
+    });
+  });
+
+  const summaryHtml = suffs.map(suf=>{
+    const d=cbrData[suf]||{};
+    const cf=d.cbrFinal!=null?d.cbrFinal.toFixed(1):'—';
+    const rd=d.rhoDry!=null?d.rhoDry.toFixed(3):'—';
+    const sw=d.swell!=null?d.swell.toFixed(2):'—';
+    return `<div style="flex:1;text-align:center;padding:12px;border-left:1px solid #bfdbfe;">
+      <div style="font-size:2rem;font-weight:900;color:#1d4ed8;line-height:1">${cf}%</div>
+      <div style="font-size:.7rem;color:#475569;margin-top:4px">CBR — ${blowsMap[suf]} ضربة<br>ρd=${rd} g/cm³ | Swell=${sw}%</div>
+    </div>`;
+  }).join('');
+
+  const reportHTML=`<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head><meta charset="UTF-8">
+<title>تقرير CBR — ${proj}</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+*{font-family:'Cairo',sans-serif;margin:0;padding:0;box-sizing:border-box;}
+body{background:#f1f5f9;color:#1e293b;}
+.page{width:210mm;min-height:295mm;margin:0 auto 24px;background:white;padding:14mm 15mm;
+  box-shadow:0 4px 20px rgba(0,0,0,.15);page-break-after:always;position:relative;}
+.page:last-child{page-break-after:avoid;}
+.hdr{display:flex;align-items:center;justify-content:space-between;
+  border-bottom:3px solid #1d4ed8;padding-bottom:12px;margin-bottom:16px;}
+.hdr-left{display:flex;align-items:center;gap:12px;}
+.hdr-icon{font-size:2.2rem;background:#dbeafe;padding:10px;border-radius:50%;}
+.hdr h1{font-size:1.2rem;font-weight:900;color:#1e3a5f;margin:0;}
+.hdr p{font-size:.72rem;color:#64748b;margin:2px 0 0;}
+.badge{background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:white;
+  padding:8px 14px;border-radius:8px;text-align:center;font-size:.75rem;font-weight:700;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.info-card{border:1px solid #e2e8f0;border-radius:7px;padding:8px 12px;background:#f8fafc;}
+.info-card .lbl{font-size:.65rem;color:#64748b;font-weight:700;text-transform:uppercase;}
+.info-card .val{font-size:.9rem;font-weight:800;color:#1e3a5f;margin-top:2px;}
+.ring-bar{background:#fffbeb;border:1.5px solid #fcd34d;border-radius:7px;padding:8px 12px;
+  margin-bottom:12px;font-size:.75rem;color:#92400e;}
+.sec-title{background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;
+  padding:7px 13px;border-radius:6px;font-size:.85rem;font-weight:700;margin:14px 0 8px;}
+table{width:100%;border-collapse:collapse;font-size:.76rem;}
+th{background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:7px 6px;
+  text-align:center;border:1px solid #1e3a5f;}
+td{padding:5px 7px;border:1px solid #cbd5e1;text-align:center;}
+tr:nth-child(even) td{background:#f1f5f9;}
+.summary-bar{background:linear-gradient(135deg,#eff6ff,#dbeafe);border:2px solid #93c5fd;
+  border-radius:10px;padding:14px;margin:14px 0;display:flex;}
+.note{border-right:4px solid #3b82f6;background:#eff6ff;border-radius:0 7px 7px 0;
+  padding:9px 13px;margin:10px 0;font-size:.74rem;color:#1e40af;}
+.warn{border-right:4px solid #f59e0b;background:#fffbeb;border-radius:0 7px 7px 0;
+  padding:9px 13px;margin:10px 0;font-size:.74rem;color:#92400e;}
+.sign-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+.sign-box{border:1.5px dashed #94a3b8;border-radius:8px;padding:18px;
+  text-align:center;color:#94a3b8;font-size:.75rem;}
+.footer{position:absolute;bottom:10mm;left:15mm;right:15mm;
+  border-top:1px solid #e2e8f0;padding-top:7px;
+  display:flex;justify-content:space-between;font-size:.62rem;color:#94a3b8;}
+.p2-hdr{background:linear-gradient(135deg,#1e3a5f,#1d4ed8);color:white;
+  border-radius:10px;padding:12px 16px;margin-bottom:14px;
+  display:flex;justify-content:space-between;align-items:center;}
+.p2-hdr h2{font-size:1rem;font-weight:900;}
+.chart-ph{border:2px dashed #94a3b8;border-radius:8px;height:120px;
+  display:flex;align-items:center;justify-content:center;
+  color:#94a3b8;font-size:.78rem;background:#f8fafc;margin:6px 0;}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0;}
+@media print{body{background:white;}.page{margin:0;box-shadow:none;}}
+</style></head><body>
+
+<!-- PAGE 1 ═══════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-icon">🔬</div>
+      <div>
+        <h1>تقرير اختبار نسبة التحمل — CBR Test Report</h1>
+        <p>منصة الاختبارات المعملية للتربة | م. محمد القصبي | ASTM D1883</p>
+      </div>
+    </div>
+    <div class="badge">ASTM D1883<br>CBR Test</div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card"><div class="lbl">اسم المشروع / Project</div><div class="val">${proj}</div></div>
+    <div class="info-card"><div class="lbl">رقم العينة / Sample ID</div><div class="val">${sampleId}</div></div>
+    <div class="info-card"><div class="lbl">تاريخ الاختبار / Test Date</div><div class="val">${testDate}</div></div>
+    <div class="info-card"><div class="lbl">المهندس / Engineer</div><div class="val">${engineer}</div></div>
+    <div class="info-card"><div class="lbl">عدد القوالب / Specimens</div><div class="val">${n} قوالب: 10·25·56 ضربة</div></div>
+    <div class="info-card"><div class="lbl">مرجع الدمك / Proctor Ref</div><div class="val">MDD=${MDD} g/cm³ | OMC=${OMC}% | ${proctorStd}</div></div>
+  </div>
+
+  <div class="ring-bar">⚙️ معامل الحلقة: &nbsp;<b>Ring No: ${ringNo}</b> &nbsp;|&nbsp;
+    <b>Ring Factor: ${rf} kN/div</b> &nbsp;|&nbsp;
+    <b>Piston Area: ${area} cm²</b> &nbsp;|&nbsp;
+    <b>Calib. Date: ${calibDt}</b>
+  </div>
+
+  <div class="sec-title">📊 الكثافة والانتفاش — Density &amp; Swell Summary</div>
+  <table>
+    <thead><tr>
+      <th>القالب</th><th>ρd (g/cm³)</th><th>ρd (kg/m³)</th>
+      <th>γd (kN/m³)</th><th>PCF (lb/ft³)</th><th>Swell %</th><th>% Compaction</th>
+    </tr></thead>
+    <tbody>${densityRows||'<tr><td colspan="7">لا توجد بيانات</td></tr>'}</tbody>
+  </table>
+
+  <div class="sec-title">🎯 نتائج CBR — Final CBR Results</div>
+  <table>
+    <thead><tr>
+      <th>القالب</th><th>CBR @ 0.1″ (1000 kPa)</th>
+      <th>CBR @ 0.2″ (1500 kPa)</th><th>CBR النهائي ✅</th>
+    </tr></thead>
+    <tbody>${cbrRows||'<tr><td colspan="4">لا توجد بيانات</td></tr>'}</tbody>
+  </table>
+
+  <div class="summary-bar">${summaryHtml}</div>
+
+  <div class="footer">
+    <span>تاريخ الطباعة: ${now}</span>
+    <span>ASTM D1883 — California Bearing Ratio Test</span>
+    <span>صفحة 1 من 2</span>
+  </div>
+</div>
+
+<!-- PAGE 2 ═══════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="p2-hdr">
+    <div>
+      <h2>بيانات الاختراق التفصيلية — Detailed Penetration Data</h2>
+      <p style="font-size:.72rem;opacity:.8">المشروع: ${proj} | العينة: ${sampleId} | ASTM D1883</p>
+    </div>
+    <div style="text-align:center;font-size:.8rem;">🚜 CBR Test<br>Page 2 / 2</div>
+  </div>
+
+  <div class="sec-title">📋 جدول الاختراق الكامل — Full Penetration Table</div>
+  <table>
+    <thead><tr><th>القالب</th><th>الاختراق</th><th>قراءة العداد</th><th>الضغط (kPa)</th></tr></thead>
+    <tbody>${penRows||'<tr><td colspan="4">لا توجد بيانات</td></tr>'}</tbody>
+  </table>
+
+  <div class="sec-title">📈 مساحة الرسوم البيانية — Charts Area</div>
+  <div class="charts-grid">
+    <div class="chart-ph">📊 منحنى الاختراق<br>Penetration Curve<br><small>E1 · E2 · E3</small></div>
+    <div class="chart-ph">📊 CBR% vs Dry Density<br>نسبة CBR مقابل الكثافة</div>
+    <div class="chart-ph">📊 Dry Density vs Blows<br>الكثافة مقابل الضربات</div>
+    <div class="chart-ph">📊 Swell% vs Blows<br>الانتفاش مقابل الضربات</div>
+  </div>
+
+  <div class="note">📌 <b>ملاحظات المواصفة ASTM D1883:</b> يُعتمد الأعلى من CBR@0.1″ أو CBR@0.2″.
+    في حالة المنحنى المقعّر (concave upward) يُعاد رسم المنحنى من نقطة الأصل المصححة.
+    قيمة التصميم تُؤخذ من القالب المناسب لكثافة التصميم بالرجوع لمنحنى CBR vs ρd.
+  </div>
+  <div class="warn">⚠️ <b>معايير القبول:</b> Swell% ≤ 2% للطبقة الأساسية | نسبة الدمك ≥ 95% من MDD.
+    القيم المرجعية: CBR ≥ 80% طبقة أساسية فوقية | CBR ≥ 30% طبقة أساسية سفلية | CBR ≥ 8% دراسة هندسية.
+  </div>
+
+  <div class="sign-grid">
+    <div class="sign-box">🖊️ توقيع المهندس المسؤول<br><b>${engineer}</b><br>التاريخ: ___________</div>
+    <div class="sign-box">🔏 ختم وتوقيع مدير المعمل<br>Lab Manager Stamp<br>&nbsp;</div>
+  </div>
+
+  <div class="footer">
+    <span>تاريخ الطباعة: ${now}</span>
+    <span>منصة الاختبارات المعملية | م. محمد القصبي</span>
+    <span>صفحة 2 من 2</span>
+  </div>
+</div>
+
+<div style="text-align:center;padding:16px;background:#f1f5f9;">
+  <button onclick="window.print()" style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);
+    color:white;padding:11px 30px;border:none;border-radius:8px;
+    font-size:1rem;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;">
+    🖨️ طباعة التقرير
+  </button>
+</div>
+</body></html>`;
+
+  const modal   = document.getElementById('cbrReportModal');
+  const content = document.getElementById('cbrReportContent');
+  const iframe  = document.createElement('iframe');
+  iframe.style.cssText='width:100%;height:82vh;border:none;border-radius:0 0 12px 12px;';
+  content.innerHTML='';
+  content.appendChild(iframe);
+  modal.style.display='block';
+  const doc = iframe.contentDocument||iframe.contentWindow.document;
+  doc.open(); doc.write(reportHTML); doc.close();
 }
 
+// ── Init ─────────────────────────────────────────────────────
 if (document.getElementById('sectionCBR')) {
   initCBRDynamicColumns();
 }
