@@ -5231,7 +5231,8 @@ if (gradationChart) {
             document.getElementById('Ac_input').value = '2.0';
             document.getElementById('rhoW_input').value = '1.000';
 
-            document.getElementById('proctor_notes').value = 'بيانات تجريبية مع تصحيح Oversize (15%)';
+            const proctorNotes = document.getElementById('proctor_notes');
+            if (proctorNotes) proctorNotes.value = 'بيانات تجريبية مع تصحيح Oversize (15%)';
             setTimeout(() => calculateProctor(), 100);
         }
 
@@ -7267,7 +7268,6 @@ const CBR_PEN_MM = [0.635, 1.27, 1.91, 2.54, 3.18, 3.81, 4.45, 5.08, 7.62, 10.16
 const CBR_PEN_IN = [0.025, 0.050,0.075,0.100,0.125,0.150,0.175,0.200,0.300,0.400, 0.500];
 
 // ── Column Visibility ────────────────────────────────────────
-function handleCBRTemplateChange(n) {
 // unitSystem: 'kN' (default) → pressure in kPa/MPa, standard 6.9/10.3 MPa
 //             'kg'           → pressure in kg/cm², standard 70/105 kg/cm²
 let cbrUnitSystem = 'kN';
@@ -7334,6 +7334,15 @@ function onCBRUnitSystemChange() {
   updateCBRCalculations();
 }
 
+function handleCBRTemplateChange(n) {
+  cbrCurrentTemplate = parseInt(n);
+  ['e1','e2','e3'].forEach((e,i) => {
+    const show = (i+1) <= cbrCurrentTemplate;
+    document.querySelectorAll('.cbr-col-'+e).forEach(el => el.style.display = show ? '' : 'none');
+  });
+  updateCBRCalculations();
+}
+
 // ── Ring Factor → Auto-pressure ─────────────────────────────
 // Supports both kN/div (→ kPa) and kg/div (→ kg/cm²)
 function autoCalcPressure(pen, suf) {
@@ -7360,36 +7369,12 @@ function autoCalcPressure(pen, suf) {
 function recalcPressuresFromReadings() {
   ['E1','E2','E3'].forEach(s => CBR_PENS.forEach(p => autoCalcPressure(p,s)));
 }
-  cbrCurrentTemplate = parseInt(n);
-  ['e1','e2','e3'].forEach((e,i) => {
-    const show = (i+1) <= cbrCurrentTemplate;
-    document.querySelectorAll('.cbr-col-'+e).forEach(el => el.style.display = show ? '' : 'none');
-  });
-  updateCBRCalculations();
-}
 
 function initCBRDynamicColumns() {
   document.querySelectorAll('input[name="cbrTemplateCount"]').forEach(r =>
     r.addEventListener('change', e => handleCBRTemplateChange(e.target.value))
   );
   handleCBRTemplateChange(1);
-}
-
-// ── Ring Factor → Auto-pressure ─────────────────────────────
-function autoCalcPressure(pen, suf) {
-  const rf   = parseFloat(document.getElementById('cbr_ringFactor')?.value) || 0;
-  const area = parseFloat(document.getElementById('cbr_pistonArea')?.value) || 19.35;
-  const r    = parseFloat(document.getElementById('penetration'+pen+suf+'reading')?.value);
-  if (rf > 0 && area > 0 && !isNaN(r)) {
-    const kPa = (r * rf) / (area * 1e-4);
-    const el = document.getElementById('penetration'+pen+suf+'pressure');
-    if (el) el.value = kPa.toFixed(1);
-  }
-  updateCBRCalculations();
-}
-
-function recalcPressuresFromReadings() {
-  ['E1','E2','E3'].forEach(s => CBR_PENS.forEach(p => autoCalcPressure(p,s)));
 }
 
 // ── Curve Correction (D1883 Fig.1 — concave upward) ─────────
@@ -8062,7 +8047,7 @@ function resetCBRForm() {
 }
 
 // ── Professional 2-Page Report ───────────────────────────────
-function generateCBRReport() {
+async function generateCBRReport() {
   const isImperial  = document.getElementById('cbrUnitImperial')?.checked === true;
   const ringUS      = getCBRUnitSystem(); // 'kN' or 'kg'
   const isSoaked    = document.getElementById('cbr_soaked')?.checked !== false;
@@ -8134,32 +8119,54 @@ function generateCBRReport() {
       <td style="font-weight:900;color:#1d4ed8;font-size:1.1em">${cf} % ${useP}</td>
     </tr>`;
 
-    // Penetration table — D1883 §9.3 — 11 points
-    const pens = [
-      ['025','0.025″','0.64 mm'], ['050','0.050″','1.27 mm'],
-      ['075','0.075″','1.91 mm'], ['100','0.100″','2.54 mm ★'],
-      ['125','0.125″','3.18 mm'], ['150','0.150″','3.81 mm'],
-      ['175','0.175″','4.45 mm'], ['200','0.200″','5.08 mm ★'],
-      ['300','0.300″','7.62 mm'], ['400','0.400″','10.16 mm'],
-      ['500','0.500″','12.70 mm']
-    ];
-    pens.forEach(([pen, inStr, mmStr]) => {
-      const rEl   = document.getElementById('penetration'+pen+suf+'reading');
-      const pEl   = document.getElementById('penetration'+pen+suf+'pressure');
-      const pKPa  = pEl?.value || '—';
-      const pPsi  = pKPa !== '—' && pKPa !== '' ? (parseFloat(pKPa)/6.89476).toFixed(1) : '—';
-      const isSt  = pen==='100' || pen==='200';
-      const bg    = isSt ? 'background:#fef9c3;' : '';
-      const fw    = isSt ? 'font-weight:700;' : '';
-      penRows += `<tr style="${bg}">
-        <td style="${fw}">${suf}</td>
-        <td style="${fw}">${inStr}</td>
-        <td style="${fw}">${mmStr}</td>
-        <td>${rEl?.value||'—'}</td>
-        <td style="${fw}">${pPsi} psi</td>
-        <td style="${fw}">${pKPa} kPa</td>
-      </tr>`;
+  }); // end suffs.forEach (density + CBR rows)
+
+  // ── Penetration table — side-by-side columns per specimen ──
+  // One row per penetration depth, columns: Depth | E1 reading | E1 kPa | E2 reading | E2 kPa | ...
+  const pens = [
+    ['025','0.025″','0.64'], ['050','0.050″','1.27'],
+    ['075','0.075″','1.91'], ['100','0.100″','2.54'],
+    ['125','0.125″','3.18'], ['150','0.150″','3.81'],
+    ['175','0.175″','4.45'], ['200','0.200″','5.08'],
+    ['300','0.300″','7.62'], ['400','0.400″','10.16'],
+    ['500','0.500″','12.70']
+  ];
+  const isKgMode = ringUS === 'kg';
+  const pLabel = isKgMode ? 'kg/cm²' : 'kPa';
+
+  // Build header row for penetration table
+  let penHeader = `<tr>
+    <th rowspan="2">Pen. (in)<br>الاختراق</th>
+    <th rowspan="2">Pen. (mm)<br>الاختراق</th>`;
+  suffs.forEach(suf => {
+    penHeader += `<th colspan="2" style="background:linear-gradient(135deg,${suf==='E1'?'#1e3a5f,#2d5a87':suf==='E2'?'#065f46,#047857':'#7c2d12,#b45309'});">
+      ${suf} — ${blowsMap[suf]} blows</th>`;
+  });
+  penHeader += `</tr><tr>`;
+  suffs.forEach(() => {
+    penHeader += `<th>Dial Reading<br>(div)</th><th>${pLabel}<br>الضغط</th>`;
+  });
+  penHeader += `</tr>`;
+
+  pens.forEach(([pen, inStr, mmStr]) => {
+    const isSt = pen === '100' || pen === '200';
+    const rowBg = isSt ? 'background:#fef9c3;' : '';
+    const fw    = isSt ? 'font-weight:700;' : '';
+    let row = `<tr style="${rowBg}">
+      <td style="${fw}">${inStr}${isSt?' ★':''}</td>
+      <td style="${fw}">${mmStr}${isSt?' ★':''}</td>`;
+    suffs.forEach(suf => {
+      const rEl  = document.getElementById('penetration'+pen+suf+'reading');
+      const pEl  = document.getElementById('penetration'+pen+suf+'pressure');
+      const rVal = rEl?.value || '—';
+      const pVal = pEl?.value || '—';
+      const pNum = parseFloat(pVal);
+      const pDisplay = (!isNaN(pNum) && pVal !== '—') ? pNum.toFixed(isKgMode ? 4 : 1) : '—';
+      row += `<td style="${fw}">${rVal}</td>
+              <td style="${fw}${isSt?'color:#1d4ed8;':''}">${pDisplay}</td>`;
     });
+    row += `</tr>`;
+    penRows += row;
   });
 
   // ── Summary cards ──────────────────────────────────────────────
@@ -8181,288 +8188,402 @@ function generateCBRReport() {
   }).join('');
 
   // ── Ensure all charts are rendered & visible for capture ────
-  // Temporarily show hidden chart containers so canvas is rendered
   const hiddenContainers = ['cbrDensityChartContainer','cbrVsDensityChartContainer','cbrSwellChartContainer'];
   const prevDisplay = {};
   hiddenContainers.forEach(id => {
     const el = document.getElementById(id);
     if (el) { prevDisplay[id] = el.style.display; el.style.display = 'block'; }
   });
-  // Force charts to redraw at current size
+
+  // Show loading indicator
+  const modal   = document.getElementById('cbrReportModal');
+  const content = document.getElementById('cbrReportContent');
+  modal.style.display = 'block';
+  content.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:18px;color:#1e3a5f;">
+    <div style="font-size:2.5rem;">⏳</div>
+    <div style="font-size:1.1rem;font-weight:700;">جاري تجهيز التقرير...</div>
+    <div style="font-size:.85rem;color:#64748b;">يتم رسم الرسوم البيانية — Please wait</div>
+  </div>`;
+
+  // Force all charts to redraw — call twice to ensure hidden charts get rendered
+  updateCBRCalculations();
+  await new Promise(resolve => setTimeout(resolve, 200));
   updateCBRCalculations();
 
+  // Force Chart.js instances to resize now that containers are visible
+  // Set explicit pixel dimensions on the canvas elements before resize
+  const chartSizes = {
+    'cbrPenetrationChart': {w: 900, h: 380},
+    'cbrDensityChart':     {w: 700, h: 320},
+    'cbrVsDensityChart':   {w: 700, h: 320},
+    'cbrSwellChart':       {w: 700, h: 320},
+  };
+  Object.entries(chartSizes).forEach(([id, {w, h}]) => {
+    const c = document.getElementById(id);
+    if (c) { c.style.width = w+'px'; c.style.height = h+'px'; }
+  });
+
+  [cbrPenChart, cbrDensChart, cbrVsChart, cbrSwChart].forEach(ch => {
+    if (ch) { try { ch.resize(); ch.update('none'); } catch(e){} }
+  });
+
+  // Wait generously for all Chart.js animations to complete
+  await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  await new Promise(resolve => setTimeout(resolve, 1200));
+
   // ── Capture charts as base64 images ─────────────────────────
-  function getCanvasImg(id, fallbackLabel) {
+  function getCanvasImg(id, targetW = 900, targetH = 320) {
     const canvas = document.getElementById(id);
-    if (!canvas) return null;
-    try { return canvas.toDataURL('image/png'); }
-    catch(e) { return null; }
+    if (!canvas || canvas.width === 0 || canvas.height === 0) return null;
+    try {
+      const offscreen = document.createElement('canvas');
+      // Use max of actual size vs target — never downscale
+      offscreen.width  = Math.max(canvas.width,  targetW);
+      offscreen.height = Math.max(canvas.height, targetH);
+      const ctx2 = offscreen.getContext('2d');
+      ctx2.fillStyle = '#ffffff';
+      ctx2.fillRect(0, 0, offscreen.width, offscreen.height);
+      // Scale to fill the offscreen canvas
+      ctx2.drawImage(canvas, 0, 0, offscreen.width, offscreen.height);
+      return offscreen.toDataURL('image/png');
+    } catch(e) { return null; }
   }
 
-  const imgPen     = getCanvasImg('cbrPenetrationChart');
-  const imgCBRvsDd = getCanvasImg('cbrVsDensityChart');
-  const imgDensity = getCanvasImg('cbrDensityChart');
-  const imgSwell   = getCanvasImg('cbrSwellChart');
+  const imgPen     = getCanvasImg('cbrPenetrationChart', 900, 380);
+  const imgCBRvsDd = getCanvasImg('cbrVsDensityChart',   700, 320);
+  const imgDensity = getCanvasImg('cbrDensityChart',     700, 320);
+  const imgSwell   = getCanvasImg('cbrSwellChart',       700, 320);
 
-  function chartBox(img, title, subtitle) {
+  function chartBox(img, title, height='200px') {
     if (img) {
-      return `<div style="border:1px solid #e2e8f0;border-radius:7px;overflow:hidden;background:white;">
-        <div style="background:#1e3a5f;color:white;padding:5px 10px;font-size:.68rem;font-weight:700;">${title}</div>
+      return `<div style="border:1px solid #cbd5e1;border-radius:7px;overflow:hidden;background:white;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+        <div style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:5px 10px;font-size:.68rem;font-weight:700;">${title}</div>
         <img src="${img}" style="width:100%;display:block;" alt="${title}">
       </div>`;
     }
-    return `<div style="border:1.5px dashed #94a3b8;border-radius:7px;height:130px;
+    return `<div style="border:1.5px dashed #94a3b8;border-radius:7px;height:${height};
       display:flex;flex-direction:column;align-items:center;justify-content:center;
       color:#94a3b8;font-size:.72rem;background:#f8fafc;gap:4px;">
-      <span style="font-size:1.2rem;">📊</span>${title}<br><small style="color:#cbd5e1">${subtitle}</small>
+      <span style="font-size:1.5rem;">📊</span>${title}<br><small style="color:#cbd5e1">احسب أولاً ثم أنشئ التقرير</small>
     </div>`;
   }
 
   const chartSection = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;">
-      ${chartBox(imgPen,     '📈 Stress-Penetration Curves — منحنيات الاختراق (§10.1)', 'E1·E2·E3')}
-      ${chartBox(imgCBRvsDd, '📊 CBR% vs Dry Unit Weight (Fig.6)', 'Design value')}
+    <div style="margin:8px 0;">
+      ${chartBox(imgPen, '📈 منحنيات الإجهاد-الاختراق — Stress-Penetration Curves (ASTM D1883-16 §10.1, Fig.4–5) | الوحدات: ${ringUS==="kg"?"kg/cm²":"kPa"} vs mm', '220px')}
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;">
-      ${chartBox(imgDensity, '📉 Dry Density vs Blows', '56·25·10 blows/layer')}
-      ${chartBox(imgSwell,   '📏 Swell% vs Blows (§10.4)', 's = (S/hᵢ)×100')}
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:8px 0;">
+      ${chartBox(imgCBRvsDd, '📊 CBR% vs Dry Unit Weight — تصميم CBR (Fig.6)', '170px')}
+      ${chartBox(imgDensity, '📉 Dry Density vs Blows — الكثافة الجافة', '170px')}
+      ${chartBox(imgSwell,   '📏 Swell% vs Blows (§10.4) — الانتفاش', '170px')}
     </div>`;
 
   // ── Report HTML ────────────────────────────────────────────────
   const reportHTML = `<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <title>CBR Report — ${proj}</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
 *{font-family:'Cairo',sans-serif;margin:0;padding:0;box-sizing:border-box;}
-body{background:#f1f5f9;color:#1e293b;font-size:13px;}
-.page{width:210mm;min-height:295mm;margin:0 auto 20px;background:white;
-  padding:12mm 14mm 18mm;box-shadow:0 4px 20px rgba(0,0,0,.15);
+body{background:#f1f5f9;color:#111;font-size:11.5px;}
+.page{width:210mm;min-height:297mm;margin:0 auto 20px;background:white;
+  padding:10mm 12mm 14mm;box-shadow:0 4px 20px rgba(0,0,0,.18);
   page-break-after:always;position:relative;}
 .page:last-child{page-break-after:avoid;}
 
-/* ── Header ── */
-.hdr{display:flex;align-items:center;justify-content:space-between;
-  border-bottom:3px solid #1d4ed8;padding-bottom:10px;margin-bottom:14px;}
-.hdr-icon{font-size:2rem;background:#dbeafe;padding:10px;border-radius:50%;margin-left:10px;}
-.hdr h1{font-size:1.15rem;font-weight:900;color:#1e3a5f;margin:0;}
-.hdr p{font-size:.68rem;color:#64748b;margin:2px 0 0;}
-.badge{background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:white;
-  padding:7px 12px;border-radius:7px;text-align:center;font-size:.72rem;font-weight:700;white-space:nowrap;}
+/* Header */
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;border:2px solid #111;padding:8px 12px;margin-bottom:0;}
+.hdr-left{display:flex;flex-direction:column;justify-content:center;}
+.hdr-company{font-size:1.3rem;font-weight:900;letter-spacing:0.03em;color:#111;}
+.hdr-sub{font-size:.72rem;color:#444;margin-top:2px;}
+.hdr-right{text-align:right;}
+.hdr-page{font-size:.82rem;font-weight:700;color:#111;}
+.hdr-title{font-size:1.05rem;font-weight:900;text-align:center;background:#f3f4f6;border:2px solid #111;border-top:0;padding:6px;margin-bottom:0;letter-spacing:.04em;}
 
-/* ── Info Grid ── */
-.info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;}
-.info-card{border:1px solid #e2e8f0;border-radius:6px;padding:6px 10px;background:#f8fafc;}
-.info-card .lbl{font-size:.6rem;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.03em;}
-.info-card .val{font-size:.82rem;font-weight:800;color:#1e3a5f;margin-top:2px;}
+/* Info table */
+.info-table{width:100%;border-collapse:collapse;border:1.5px solid #111;margin-bottom:0;}
+.info-table td{border:1px solid #555;padding:4px 7px;font-size:.78rem;}
+.info-table .lbl{font-weight:700;white-space:nowrap;width:140px;background:#f9fafb;}
+.info-table .val{min-width:120px;}
 
-/* ── Condition Bar ── */
-.cond-bar{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
-.cond-pill{border-radius:20px;padding:4px 10px;font-size:.68rem;font-weight:700;}
-.pill-blue{background:#dbeafe;color:#1d4ed8;border:1px solid #93c5fd;}
-.pill-amber{background:#fef3c7;color:#92400e;border:1px solid #fcd34d;}
-.pill-green{background:#dcfce7;color:#166534;border:1px solid #86efac;}
-.pill-gray{background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;}
+/* Section headers */
+.sec-hdr{background:#e5e7eb;border:1.5px solid #111;border-top:0;
+  padding:5px 10px;font-size:.85rem;font-weight:900;letter-spacing:.02em;margin-bottom:0;}
+.sec-hdr-inline{display:flex;align-items:center;gap:6px;}
 
-/* ── Tables ── */
-.sec-title{background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;
-  padding:6px 12px;border-radius:5px;font-size:.82rem;font-weight:700;
-  margin:12px 0 7px;display:flex;align-items:center;gap:6px;}
-table{width:100%;border-collapse:collapse;font-size:.72rem;}
-th{background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;
-  padding:6px 5px;text-align:center;border:1px solid #1e3a5f;font-size:.7rem;}
-td{padding:5px 6px;border:1px solid #cbd5e1;text-align:center;vertical-align:middle;}
-tr:nth-child(even) td{background:#f8fafc;}
-tr:hover td{background:#eff6ff!important;}
+/* Data table */
+.data-table{width:100%;border-collapse:collapse;border:1.5px solid #111;border-top:0;}
+.data-table th{background:#e5e7eb;border:1px solid #555;padding:5px 4px;
+  text-align:center;font-size:.72rem;font-weight:800;line-height:1.3;}
+.data-table td{border:1px solid #888;padding:4px 5px;text-align:center;
+  font-size:.75rem;vertical-align:middle;line-height:1.4;}
+.data-table tr:nth-child(even) td{background:#fafafa;}
+.data-table td.hl{background:#fef9c3;font-weight:700;}
+.data-table td.cbr-val{background:#dbeafe;font-weight:900;font-size:.9rem;color:#1d4ed8;}
 
-/* ── Summary Banner ── */
-.summary-bar{background:linear-gradient(135deg,#eff6ff,#dbeafe);
-  border:2px solid #93c5fd;border-radius:10px;padding:12px;
-  margin:12px 0;display:flex;align-items:stretch;}
+/* Summary box */
+.summary-box{border:2px solid #1d4ed8;border-radius:8px;background:linear-gradient(135deg,#eff6ff,#dbeafe);
+  display:flex;align-items:stretch;margin:10px 0;}
+.sum-card{flex:1;text-align:center;padding:10px 8px;border-right:1px solid #93c5fd;}
+.sum-card:last-child{border-right:none;}
+.sum-cbr{font-size:1.85rem;font-weight:900;color:#1d4ed8;line-height:1;}
+.sum-lbl{font-size:.66rem;font-weight:700;color:#1e40af;margin-top:3px;}
+.sum-detail{font-size:.62rem;color:#475569;margin-top:4px;line-height:1.5;}
 
-/* ── Note/Warn boxes ── */
-.note{border-right:4px solid #3b82f6;background:#eff6ff;
-  border-radius:0 6px 6px 0;padding:7px 11px;margin:8px 0;
-  font-size:.7rem;color:#1e40af;line-height:1.5;}
-.warn{border-right:4px solid #f59e0b;background:#fffbeb;
-  border-radius:0 6px 6px 0;padding:7px 11px;margin:8px 0;
-  font-size:.7rem;color:#92400e;line-height:1.5;}
-.std-note{background:#f0fdf4;border:1.5px solid #86efac;border-radius:6px;
-  padding:7px 11px;margin:8px 0;font-size:.7rem;color:#166534;}
+/* Note boxes */
+.note{border-right:4px solid #3b82f6;background:#eff6ff;border-radius:0 6px 6px 0;
+  padding:6px 10px;margin:8px 0;font-size:.68rem;color:#1e40af;line-height:1.5;}
+.warn{border-right:4px solid #f59e0b;background:#fffbeb;border-radius:0 6px 6px 0;
+  padding:6px 10px;margin:8px 0;font-size:.68rem;color:#92400e;line-height:1.5;}
 
-/* ── Sign ── */
-.sign-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+/* Chart container */
+.chart-wrap{border:1.5px solid #111;border-top:0;}
+.chart-hdr{background:#e5e7eb;border-bottom:1px solid #555;padding:5px 10px;font-size:.78rem;font-weight:700;}
+.chart-img{width:100%;display:block;}
+.chart-placeholder{height:200px;display:flex;align-items:center;justify-content:center;
+  background:#f8fafc;color:#94a3b8;font-size:.82rem;flex-direction:column;gap:6px;}
+.chart-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:0;}
+
+/* Signatures */
+.sign-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
 .sign-box{border:1.5px dashed #94a3b8;border-radius:7px;padding:16px;
-  text-align:center;color:#94a3b8;font-size:.72rem;}
+  text-align:center;color:#64748b;font-size:.72rem;line-height:2;}
 
-/* ── Footer ── */
-.footer{position:absolute;bottom:8mm;left:14mm;right:14mm;
-  border-top:1px solid #e2e8f0;padding-top:6px;
+/* Footer */
+.footer{position:absolute;bottom:8mm;left:12mm;right:12mm;
+  border-top:1px solid #cbd5e1;padding-top:5px;
   display:flex;justify-content:space-between;font-size:.6rem;color:#94a3b8;}
 
-/* ── Chart placeholders ── */
+/* Condition pills */
+.pill{display:inline-block;border-radius:20px;padding:3px 9px;font-size:.65rem;font-weight:700;margin:2px 2px;}
+.p-blue{background:#dbeafe;color:#1d4ed8;border:1px solid #93c5fd;}
+.p-amber{background:#fef3c7;color:#92400e;border:1px solid #fcd34d;}
+.p-green{background:#dcfce7;color:#166534;border:1px solid #86efac;}
+.p-gray{background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;}
+.p-red{background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;}
 
 @media print{
   body{background:white;}
-  .page{margin:0;box-shadow:none;}
+  .page{margin:0;box-shadow:none;padding:8mm 10mm 12mm;}
   .no-print{display:none!important;}
 }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════ PAGE 1 ═══════════════════════════════ -->
+<!-- ═══════════════════════════════════════ PAGE 1 ═══════════════════════════════════════ -->
 <div class="page">
 
-  <!-- Header -->
+  <!-- Company Header -->
   <div class="hdr">
-    <div style="display:flex;align-items:center;">
-      <div class="hdr-icon">🔬</div>
-      <div>
-        <h1>California Bearing Ratio Test Report — تقرير CBR</h1>
-        <p>ASTM D1883-16 | منصة الاختبارات المعملية للتربة | م. محمد القصبي</p>
-      </div>
+    <div class="hdr-left">
+      <div class="hdr-company">MATERIALS AND DESIGN</div>
+      <div class="hdr-sub">القصبي للمواد والتصميم — ELKASABY FOR MATERIALS AND DESIGN</div>
+      <div class="hdr-sub" style="font-size:.65rem;color:#64748b;">ISO/IEC 17025:2017 Accredited Laboratory</div>
     </div>
-    <div class="badge">ASTM D1883−16<br>California Bearing Ratio<br><span style="font-size:.65rem;opacity:.85">${unitSystem}</span></div>
+    <div class="hdr-right">
+      <div class="hdr-page">Page 1 of 2</div>
+      <div style="font-size:.65rem;color:#64748b;margin-top:3px;">Generated: ${now}</div>
+    </div>
   </div>
 
-  <!-- Info grid (D1883 §11.2) -->
-  <div class="info-grid">
-    <div class="info-card"><div class="lbl">Project / المشروع</div><div class="val">${proj}</div></div>
-    <div class="info-card"><div class="lbl">Sample ID / رقم العينة</div><div class="val">${sampleId}</div></div>
-    <div class="info-card"><div class="lbl">Test Date / تاريخ الاختبار</div><div class="val">${testDate}</div></div>
-    <div class="info-card"><div class="lbl">Engineer / المهندس</div><div class="val">${engineer}</div></div>
-    <div class="info-card"><div class="lbl">Specimens / عدد القوالب</div><div class="val">${n} specimens: 56·25·10 blows/layer</div></div>
-    <div class="info-card"><div class="lbl">Proctor Reference / مرجع الدمك</div><div class="val">MDD = ${MDD} g/cm³ | OMC = ${OMC}% | ${proctorStd}</div></div>
-  </div>
+  <!-- Report Title -->
+  <div class="hdr-title">CBR TEST REPORT (ASTM D1883–16)</div>
 
-  <!-- Condition pills (D1883 §11.3.1 / §11.3.2) -->
-  <div class="cond-bar">
-    <span class="cond-pill ${isSoaked?'pill-blue':'pill-amber'}">${isSoaked?'💧 Soaked — منقوع (§1.6)':'🏜️ Unsoaked — جاف'}</span>
-    <span class="cond-pill pill-green">⏱ Immersion: ${immHrs} hrs (std: 96±2 hrs §8.2.5)</span>
-    <span class="cond-pill pill-amber">⚖️ Surcharge: ${srchKg} kg (${srchLbf} lbf §9.1)</span>
-    <span class="cond-pill pill-gray">🔩 Ring No: ${ringNo} | RF: ${rf} kN/div | A: ${area} cm² (3.0 in² §6.8)</span>
-  </div>
+  <!-- 1. Project Info -->
+  <div class="sec-hdr">1. PROJECT INFORMATION — بيانات المشروع</div>
+  <table class="info-table">
+    <tr>
+      <td class="lbl">Project Name</td><td class="val">${proj}</td>
+      <td class="lbl">Report Date</td><td class="val">${now.split('،')[0]}</td>
+    </tr>
+    <tr>
+      <td class="lbl">Client / Contractor</td><td class="val">—</td>
+      <td class="lbl">Test Date</td><td class="val">${testDate}</td>
+    </tr>
+    <tr>
+      <td class="lbl">Sample ID</td><td class="val">${sampleId}</td>
+      <td class="lbl">Engineer</td><td class="val">${engineer}</td>
+    </tr>
+    <tr>
+      <td class="lbl">Condition</td>
+      <td class="val"><span class="${isSoaked?'pill p-blue':'pill p-amber'}">${isSoaked?'💧 Soaked — منقوع':'🏜️ Unsoaked — جاف'}</span></td>
+      <td class="lbl">Proctor Reference</td>
+      <td class="val">${proctorStd} | MDD = ${MDD} g/cm³ | OMC = ${OMC}%</td>
+    </tr>
+    <tr>
+      <td class="lbl">Immersion Period</td><td class="val">${immHrs} hrs (Standard: 96±2 hrs §8.2.5)</td>
+      <td class="lbl">Surcharge Weight</td><td class="val">${srchKg} kg (${srchLbf} lbf) §9.1</td>
+    </tr>
+    <tr>
+      <td class="lbl">Specimens</td>
+      <td colspan="3" class="val">${n} molds — ${['E1 (56 blows/layer)','E2 (25 blows/layer)','E3 (10 blows/layer)'].slice(0,n).join(' | ')}</td>
+    </tr>
+  </table>
 
-  <!-- Standard pressures note -->
-  <div class="std-note">
-    📐 <strong>Standard Stresses (D1883 §10.2) — Ring Unit: ${ringUS}/div:</strong>
-    &nbsp; @ 0.1″ (2.54 mm) = <strong>${ringUS==='kg' ? '70 kg/cm²' : '1000 psi = 6.9 MPa = 6895 kPa'}</strong>
+  <!-- 2. Equipment Traceability -->
+  <div class="sec-hdr" style="margin-top:10px;">2. EQUIPMENT TRACEABILITY (ISO 17025) — بيانات الأجهزة</div>
+  <table class="info-table">
+    <tr>
+      <td class="lbl">CBR Machine ID</td><td class="val">—</td>
+      <td class="lbl">Load Ring Coefficient</td><td class="val">${rf} ${ringUS}/div</td>
+    </tr>
+    <tr>
+      <td class="lbl">Piston Area</td><td class="val">${area} cm² (3.0 in²) — dia. 1.954″ (49.63mm) §6.8</td>
+      <td class="lbl">Zero Correction</td><td class="val">Applied: ${document.getElementById('cbr_curveType')?.value !== 'none' ? '☑ Yes' : '☐ No'}</td>
+    </tr>
+    <tr>
+      <td class="lbl">Ring No.</td><td class="val">${ringNo}</td>
+      <td class="lbl">Calibration Date</td><td class="val">${calibDt}</td>
+    </tr>
+    <tr>
+      <td class="lbl">Unit System</td>
+      <td colspan="3" class="val">${unitSystem}</td>
+    </tr>
+  </table>
+
+  <!-- Standard Pressures -->
+  <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:6px 10px;margin:8px 0;font-size:.72rem;color:#166534;">
+    📐 <strong>Standard Stresses (D1883 §10.2):</strong>
+    &nbsp;@ 0.1″ (2.54 mm) = <strong>${ringUS==='kg' ? '70 kg/cm²' : '1000 psi = 6.9 MPa = 6895 kPa'}</strong>
     &nbsp;|&nbsp; @ 0.2″ (5.08 mm) = <strong>${ringUS==='kg' ? '105 kg/cm²' : '1500 psi = 10.3 MPa = 10342 kPa'}</strong>
-    &nbsp;|&nbsp; CBR = (Unit Stress / Standard Stress) × 100
+    &nbsp;|&nbsp; CBR (%) = (Unit Stress ÷ Standard Stress) × 100
   </div>
 
-  <!-- Density & Swell (D1883 §10.3 / §10.4 / §11.3.3–11.3.5) -->
-  <div class="sec-title">📊 Unit Weight &amp; Swell — الكثافة والانتفاش (§10.3, §10.4, §11.3.3–11.3.5)</div>
-  <table>
+  <!-- 3. Density, Swell & Compaction -->
+  <div class="sec-hdr" style="margin-top:8px;">3. UNIT WEIGHT, SWELL & COMPACTION — الكثافة والانتفاش ونسبة الدمك (§10.3, §10.4)</div>
+  <table class="data-table">
     <thead><tr>
       <th>Specimen<br>القالب</th>
-      <th>Dry Unit Wt. (Primary)<br>وزن الوحدة الجاف</th>
-      <th style="font-size:.65rem;">All Units (g/cm³ | kN/m³ | pcf)</th>
+      <th>Dry Unit Weight (Primary)<br>الكثافة الجافة</th>
+      <th style="font-size:.65rem;">All Units<br>g/cm³ | kN/m³ | pcf</th>
       <th>Swell %<br>انتفاش</th>
       <th>% Compaction<br>نسبة الدمك</th>
       <th>w% Top 1″<br>After Soak (§9.4)</th>
     </tr></thead>
-    <tbody>${densityRows || '<tr><td colspan="6" style="color:#94a3b8">لا توجد بيانات — No data</td></tr>'}</tbody>
+    <tbody>${densityRows || '<tr><td colspan="6" style="color:#94a3b8;padding:12px;">لا توجد بيانات — No data entered</td></tr>'}</tbody>
   </table>
 
-  <!-- CBR Results (D1883 §10.2 / §11.3.7) -->
-  <div class="sec-title">🎯 Bearing Ratio Results — نتائج CBR (§10.2, §11.3.7)</div>
-  <table>
+  <!-- 4. CBR Results -->
+  <div class="sec-hdr" style="margin-top:8px;">4. CBR VALUE CALCULATION — حسابات نسبة التحمل (§10.2, §11.3.7)</div>
+  <table class="data-table">
     <thead><tr>
       <th>Specimen<br>القالب</th>
-      <th>Stress @ 0.1″<br>ضغط 2.54mm</th>
+      <th>Stress @ 0.1″ (2.54mm)<br>ضغط</th>
       <th>CBR @ 0.1″<br>(Std: 1000 psi)</th>
-      <th>Stress @ 0.2″<br>ضغط 5.08mm</th>
+      <th>Stress @ 0.2″ (5.08mm)<br>ضغط</th>
       <th>CBR @ 0.2″<br>(Std: 1500 psi)</th>
       <th>Final CBR ✅<br>النهائي</th>
     </tr></thead>
-    <tbody>${cbrRows || '<tr><td colspan="6" style="color:#94a3b8">لا توجد بيانات — No data</td></tr>'}</tbody>
+    <tbody>${cbrRows || '<tr><td colspan="6" style="color:#94a3b8;padding:12px;">لا توجد بيانات — No data entered</td></tr>'}</tbody>
   </table>
 
-  <!-- Summary banner -->
-  <div class="summary-bar">${summaryHtml || '<div style="flex:1;text-align:center;color:#94a3b8;padding:10px">لا توجد نتائج — No results</div>'}</div>
+  <!-- Summary Banner -->
+  <div class="summary-box">${summaryHtml || '<div style="flex:1;text-align:center;color:#94a3b8;padding:14px;">لا توجد نتائج — No results</div>'}</div>
 
-  <!-- Footer -->
+  <!-- Acceptance note -->
+  <div class="warn">
+    ⚠️ <b>Acceptance Criteria — معايير القبول:</b>
+    Swell ≤ 2% (base) | Compaction ≥ 95% MDD | CBR ≥ 80% (upper base) | CBR ≥ 30% (sub-base) | CBR ≥ 8% (subgrade)
+  </div>
+
   <div class="footer">
     <span>طباعة: ${now}</span>
-    <span>ASTM D1883-16 — Standard: 1000 psi @ 0.1″ | 1500 psi @ 0.2″</span>
-    <span>صفحة 1 / 2 — Page 1 of 2</span>
+    <span>ASTM D1883-16 | Std: 1000 psi @ 0.1″ | 1500 psi @ 0.2″</span>
+    <span>Page 1 / 2 — صفحة 1 / 2</span>
   </div>
 </div>
 
-<!-- ═══════════════════════════════ PAGE 2 ═══════════════════════════════ -->
+<!-- ═══════════════════════════════════════ PAGE 2 ═══════════════════════════════════════ -->
 <div class="page">
 
   <!-- Page 2 Header -->
-  <div style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);color:white;
-    border-radius:9px;padding:11px 15px;margin-bottom:12px;
-    display:flex;justify-content:space-between;align-items:center;">
-    <div>
-      <div style="font-size:1rem;font-weight:900;">Penetration Data &amp; Charts — بيانات الاختراق والرسوم البيانية</div>
-      <div style="font-size:.68rem;opacity:.8;">Project: ${proj} | Sample: ${sampleId} | D1883-16 §9.3 &amp; §10.1</div>
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-company">MATERIALS AND DESIGN</div>
+      <div class="hdr-sub">Penetration Data &amp; Load-Penetration Curves — بيانات الاختراق والرسوم البيانية</div>
     </div>
-    <div style="text-align:center;font-size:.75rem;opacity:.9;">🚜 CBR Test<br>Page 2 / 2</div>
+    <div class="hdr-right">
+      <div class="hdr-page">Page 2 of 2</div>
+      <div style="font-size:.65rem;color:#64748b;">Project: ${proj} | Sample: ${sampleId}</div>
+    </div>
+  </div>
+  <div class="hdr-title">PENETRATION DATA &amp; CHARTS — ASTM D1883-16 §9.3 &amp; §10.1</div>
+
+  <!-- 5. Load-Penetration Curves (PROMINENT - matches reference) -->
+  <div class="sec-hdr" style="margin-top:0;">5. LOAD-PENETRATION CURVES (ASTM D1883-16 §10.1, Fig.4–5)</div>
+  <div class="chart-wrap">
+    ${imgPen
+      ? `<div class="chart-hdr">📈 Stress vs Penetration — منحنيات الاختراق | Unit: ${ringUS==='kg'?'kg/cm²':'kPa'} vs mm | Standard lines: 2.54mm (0.1″) &amp; 5.08mm (0.2″)</div>
+         <img src="${imgPen}" class="chart-img" style="max-height:220px;object-fit:contain;background:white;" alt="Penetration Chart">`
+      : `<div class="chart-hdr">📈 Stress vs Penetration Chart</div>
+         <div class="chart-placeholder"><span style="font-size:2rem;">📊</span>
+         أدخل بيانات الاختراق واحسب أولاً<br><small>Enter penetration data and click Calculate first</small></div>`
+    }
   </div>
 
-  <!-- Penetration table (D1883 §9.3 — 11 required points) -->
-  <div class="sec-title">📋 Load-Penetration Data — بيانات الاختراق الكاملة (§9.3 — 11 نقطة)</div>
-  <p style="font-size:.65rem;color:#6b7280;margin-bottom:6px;">
-    سرعة الاختراق = 0.05 in/min (1.27 mm/min) §9.3 | ★ = نقاط معيارية لحساب CBR | 
-    Piston: 1.954″ dia (49.63mm) = 3.0 in² (19.35 cm²) §6.8
+  <!-- Secondary charts: CBR vs Density + Density vs Blows + Swell -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;">
+    <div style="border:1.5px solid #111;border-radius:4px;overflow:hidden;">
+      <div class="chart-hdr" style="border:none;border-bottom:1px solid #555;">📊 CBR% vs Dry Unit Weight</div>
+      ${imgCBRvsDd
+        ? `<img src="${imgCBRvsDd}" style="width:100%;display:block;max-height:160px;object-fit:contain;background:white;" alt="CBR vs Density">`
+        : `<div class="chart-placeholder" style="height:130px;"><span>📊</span><small>احسب أولاً</small></div>`}
+    </div>
+    <div style="border:1.5px solid #111;border-radius:4px;overflow:hidden;">
+      <div class="chart-hdr" style="border:none;border-bottom:1px solid #555;">📉 Dry Density vs Blows</div>
+      ${imgDensity
+        ? `<img src="${imgDensity}" style="width:100%;display:block;max-height:160px;object-fit:contain;background:white;" alt="Density vs Blows">`
+        : `<div class="chart-placeholder" style="height:130px;"><span>📉</span><small>احسب أولاً</small></div>`}
+    </div>
+    <div style="border:1.5px solid #111;border-radius:4px;overflow:hidden;">
+      <div class="chart-hdr" style="border:none;border-bottom:1px solid #555;">📏 Swell% vs Blows (§10.4)</div>
+      ${imgSwell
+        ? `<img src="${imgSwell}" style="width:100%;display:block;max-height:160px;object-fit:contain;background:white;" alt="Swell vs Blows">`
+        : `<div class="chart-placeholder" style="height:130px;"><span>📏</span><small>احسب أولاً</small></div>`}
+    </div>
+  </div>
+
+  <!-- 6. Penetration Raw Data Table -->
+  <div class="sec-hdr" style="margin-top:8px;">6. PENETRATION TEST DATA (§9.3 — 11 Required Points) — بيانات الاختراق الكاملة</div>
+  <p style="font-size:.63rem;color:#6b7280;padding:3px 6px;border:1px solid #e2e8f0;border-top:0;">
+    Rate of penetration = 0.05 in/min (1.27 mm/min) §9.3 | ★ = Standard points for CBR | Piston: 1.954″ dia (49.63mm) = 3.0 in² (${area} cm²) §6.8
   </p>
-  <table>
-    <thead><tr>
-      <th>Spec<br>قالب</th>
-      <th>Penetration (in)<br>الاختراق</th>
-      <th>Penetration (mm)<br>الاختراق</th>
-      <th>Dial Reading<br>قراءة العداد</th>
-      <th>Stress (psi)<br>الضغط psi</th>
-      <th>Stress (kPa)<br>الضغط kPa</th>
-    </tr></thead>
-    <tbody>${penRows || '<tr><td colspan="6" style="color:#94a3b8">لا توجد بيانات</td></tr>'}</tbody>
+  <table class="data-table">
+    <thead>${penHeader}</thead>
+    <tbody>${penRows || '<tr><td colspan="8" style="color:#94a3b8;padding:10px;">لا توجد بيانات</td></tr>'}</tbody>
   </table>
 
-  <!-- Charts area — real captured images -->
-  <div class="sec-title">📈 Stress-Penetration Curves &amp; Charts — الرسوم البيانية (§10.1, Fig.4–6)</div>
-  ${chartSection}
-
-  <!-- Notes per D1883 §10.2 -->
-  <div class="note">
-    📌 <b>D1883-16 §10.2 — Bearing Ratio Calculation:</b><br>
-    • Standard stresses: <b>1000 psi (6.9 MPa)</b> @ 0.1″ and <b>1500 psi (10.3 MPa)</b> @ 0.2″<br>
-    • The bearing ratio is normally reported at <b>0.1″ (2.5mm)</b> penetration.<br>
-    • If ratio @ 0.2″ is greater → rerun test; if confirmed → use 0.2″ value.<br>
-    • If curve is concave upward → adjust zero point per <b>Fig.4 &amp; Fig.5</b> (project tangent line to penetration axis, measure offset X, add X to 0.1″ and 0.2″).
-  </div>
-  <div class="warn">
-    ⚠️ <b>Acceptance Criteria — معايير القبول:</b>
-    Swell ≤ 2% (base course) |
-    % Compaction ≥ 95% MDD |
-    CBR ≥ 80% (upper base) | CBR ≥ 30% (sub-base) | CBR ≥ 8% (subgrade min.)
+  <!-- ASTM Notes -->
+  <div class="note" style="margin-top:8px;">
+    📌 <b>D1883-16 §10.2 — Bearing Ratio Calculation:</b>
+    Standard stresses: <b>1000 psi (6.9 MPa)</b> @ 0.1″ and <b>1500 psi (10.3 MPa)</b> @ 0.2″.
+    Normally reported at 0.1″. If value @ 0.2″ > value @ 0.1″ → rerun; if confirmed → use 0.2″.
+    Concave upward curve → adjust zero point per Fig.4 &amp; Fig.5 (project tangent, add offset X to both penetrations).
   </div>
 
-  <!-- Signatures (D1883 §11.2.5) -->
+  <!-- Signatures -->
   <div class="sign-grid">
     <div class="sign-box">
-      🖊️ Technician / المهندس المسؤول<br>
-      <b>${engineer}</b><br>
-      Date: ____________________
+      🔬 Quality Manager / مدير الجودة<br>
+      <br>
+      Signature: ______________________<br>
+      Date: ____________________________
     </div>
     <div class="sign-box">
-      🔏 Lab Manager Stamp<br>
-      ختم وتوقيع مدير المعمل<br>
-      &nbsp;
+      ⚙️ Technical Manager / المدير الفني<br>
+      <br>
+      Signature: ______________________<br>
+      Date: ____________________________
     </div>
   </div>
 
-  <!-- Footer -->
   <div class="footer">
     <span>طباعة: ${now}</span>
     <span>ASTM D1883-16 | منصة الاختبارات المعملية للتربة | م. محمد القصبي</span>
-    <span>صفحة 2 / 2 — Page 2 of 2</span>
+    <span>Page 2 / 2 — صفحة 2 / 2</span>
   </div>
 </div>
 
@@ -8470,7 +8591,7 @@ tr:hover td{background:#eff6ff!important;}
 <div class="no-print" style="text-align:center;padding:16px;background:#f1f5f9;">
   <button onclick="window.print()" style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);
     color:white;padding:11px 30px;border:none;border-radius:8px;
-    font-size:1rem;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;">
+    font-size:1rem;font-weight:700;cursor:pointer;">
     🖨️ طباعة التقرير — Print Report
   </button>
 </div>
@@ -8483,14 +8604,19 @@ tr:hover td{background:#eff6ff!important;}
     const el = document.getElementById(id);
     if (el && prevDisplay[id] !== undefined) el.style.display = prevDisplay[id];
   });
+  // Restore canvas natural sizing
+  Object.keys(chartSizes).forEach(id => {
+    const c = document.getElementById(id);
+    if (c) { c.style.width = ''; c.style.height = ''; }
+  });
+  [cbrPenChart, cbrDensChart, cbrVsChart, cbrSwChart].forEach(ch => {
+    if (ch) { try { ch.resize(); } catch(e){} }
+  });
 
-  const modal   = document.getElementById('cbrReportModal');
-  const content = document.getElementById('cbrReportContent');
   const iframe  = document.createElement('iframe');
   iframe.style.cssText = 'width:100%;height:82vh;border:none;border-radius:0 0 12px 12px;';
   content.innerHTML = '';
   content.appendChild(iframe);
-  modal.style.display = 'block';
   const doc = iframe.contentDocument || iframe.contentWindow.document;
   doc.open(); doc.write(reportHTML); doc.close();
 }
