@@ -1078,51 +1078,110 @@
         <div id="sectionD1557" class="hidden">
             <!-- Page Title -->
             <div class="section-card p-6 mb-6">
-                <div class="flex items-center gap-4">
-                    <div class="bg-orange-100 p-4 rounded-full">
-                        <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                        </svg>
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-orange-100 p-4 rounded-full">
+                            <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">اختبار الدمك المعدل — Modified Proctor Compaction</h2>
+                            <p class="text-gray-600">ASTM D1557-12(2021) | طاقة الدمك: 2700 kN·m/m³ | 5 طبقات × 25 ضربة</p>
+                        </div>
+                    </div>
+                    <button onclick="generateProctorReport()" class="bg-gradient-to-r from-blue-700 to-blue-900 text-white px-6 py-3 rounded-lg font-bold shadow-lg flex items-center gap-2 hover:from-blue-800 hover:to-blue-950 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        📄 تقرير ASTM D1557
+                    </button>
+                </div>
+            </div>
+
+            <!-- PROJECT & SAMPLE INFO (NEW — matches report form) -->
+            <div class="section-card p-6 mb-6" style="border-right:4px solid #1d4ed8;">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">📋</span>
+                    بيانات المشروع والعينة — Project &amp; Sample Information (§11 Report)
+                </h3>
+                <div class="grid md:grid-cols-3 gap-3 mb-3">
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Project Name / اسم المشروع</label><input type="text" id="prc_projectName" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Project Name"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Report No. / رقم التقرير</label><input type="text" id="prc_reportNo" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="RPT-001"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Report Date / تاريخ التقرير</label><input type="date" id="prc_reportDate" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Client / Contractor</label><input type="text" id="prc_client" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Client Name"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Sample ID / رقم العينة</label><input type="text" id="proctor_sampleId" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="P-001"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Sample Date / تاريخ العينة</label><input type="date" id="prc_sampleDate" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Test Date / تاريخ الاختبار</label><input type="date" id="proctor_testDate" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Location / Boring No.</label><input type="text" id="prc_location" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="BH-01"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Depth (m) / العمق</label><input type="number" id="prc_depth" step="0.1" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="1.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Sample Mass (kg)</label><input type="number" id="prc_sampleMass" step="0.1" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="25"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">As-Received Water Content (%)</label><input type="number" id="prc_asReceivedWC" step="0.1" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="8.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Tested By / المهندس</label><input type="text" id="prc_testedBy" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="م. محمد"></div>
+                </div>
+            </div>
+
+            <!-- SECTION 2 — TEST METHOD -->
+            <div class="section-card p-6 mb-6" style="border-right:4px solid #f59e0b;">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="bg-amber-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">2</span>
+                    طريقة الاختبار — Test Method (D1557 Method)
+                </h3>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">الطريقة / Method</label>
+                        <select id="proctor_method" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            <option value="A">Method A — No.4 sieve, 4-in mold</option>
+                            <option value="B">Method B — No.4 sieve, 4-in mold (3/8-in)</option>
+                            <option value="C" selected>Method C — 3/4-in sieve, 6-in mold</option>
+                        </select>
                     </div>
                     <div>
-                        <h2 class="text-2xl font-bold text-gray-800">اختبار الدمك المعدل — Modified Proctor Compaction</h2>
-                        <p class="text-gray-600">ASTM D1557-12(2021) | طاقة الدمك: 2700 kN·m/m³ | 5 طبقات × 25 ضربة</p>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">التحضير / Preparation</label>
+                        <select id="prc_preparation" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            <option value="moist">Moist Method (preferred)</option>
+                            <option value="dry">Dry Method</option>
+                        </select>
                     </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">المطرقة / Rammer</label>
+                        <select id="prc_rammer" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            <option value="manual">Manual</option>
+                            <option value="mechanical" selected>Mechanical</option>
+                        </select>
+                    </div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">No. of Layers / عدد الطبقات</label><input type="number" id="prc_layers" value="5" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Blows/Layer / ضربات لكل طبقة</label><input type="number" id="prc_blows" value="56" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Mold Volume (cm³)</label><input type="number" id="moldVol_value" step="0.01" min="0" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="2124">
+                        <select id="moldVol_unit" class="input-field border-2 border-gray-300 rounded-lg px-2 py-1 text-xs mt-1 w-full">
+                            <option value="cm3">cm³</option>
+                            <option value="m3">m³</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Oversize & Sieve -->
+                <div class="grid md:grid-cols-3 gap-3 mb-3">
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Sieve for Method</label>
+                        <select id="prc_sieveMethod" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            <option value="No4">No.4 (4.75mm)</option>
+                            <option value="38in">3/8-in (9.5mm)</option>
+                            <option value="34in" selected>3/4-in (19.0mm)</option>
+                        </select>
+                    </div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">PC% Oversize (%)</label><input type="number" id="prc_oversizePc" step="0.1" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="0"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Test Fraction (%)</label><input type="number" id="prc_testFraction" step="0.1" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="100"></div>
+                </div>
+                <!-- Oversize correction toggle -->
+                <div class="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-lg p-3">
+                    <input type="checkbox" id="prc_oversizeApplied" class="w-5 h-5 accent-amber-600">
+                    <label for="prc_oversizeApplied" class="text-sm font-semibold text-amber-800 cursor-pointer">Oversize Correction Applied (D4718) / تطبيق تصحيح المقاس الكبير</label>
                 </div>
             </div>
 
             <!-- Settings Section -->
             <div class="section-card p-6 mb-6">
                 <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <span class="bg-orange-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
+                    <span class="bg-orange-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">3</span>
                     إعدادات الاختبار — Test Settings
                 </h3>
-                
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">رقم العينة (Sample ID)</label>
-                        <input type="text" id="proctor_sampleId" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2" placeholder="مثال: P-001">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">تاريخ الاختبار</label>
-                        <input type="date" id="proctor_testDate" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">
-                            الطريقة (Method)
-                            <span class="text-xs text-gray-500 block">حسب حجم القالب والمادة</span>
-                        </label>
-                        <select id="proctor_method" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
-                            <option value="A">Method A — قالب 4 in (101.6 mm)</option>
-                            <option value="B">Method B — قالب 4 in (101.6 mm)</option>
-                            <option value="C">Method C — قالب 6 in (152.4 mm)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">ملاحظات</label>
-                        <input type="text" id="proctor_notes" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2" placeholder="ملاحظات إضافية...">
-                    </div>
-                </div>
 
                 <!-- Unit Selection -->
                 <div class="bg-gradient-to-r from-orange-50 to-amber-50 p-4 rounded-lg mb-4">
@@ -1133,61 +1192,55 @@
                     <div class="flex flex-wrap gap-4">
                         <label class="flex items-center gap-3 bg-white px-4 py-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-orange-400 transition-all">
                             <input type="radio" name="unitSystem" value="g_cm3" checked onchange="onProctorUnitChange()" class="w-5 h-5 text-orange-600">
-                            <div>
-                                <span class="font-semibold text-gray-800">g/cm³</span>
-                                <p class="text-xs text-gray-500">الكثافة الجافة (ρd)</p>
-                            </div>
+                            <div><span class="font-semibold text-gray-800">g/cm³</span><p class="text-xs text-gray-500">الكثافة الجافة (ρd)</p></div>
                         </label>
                         <label class="flex items-center gap-3 bg-white px-4 py-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-orange-400 transition-all">
                             <input type="radio" name="unitSystem" value="kg_m3" onchange="onProctorUnitChange()" class="w-5 h-5 text-orange-600">
-                            <div>
-                                <span class="font-semibold text-gray-800">kg/m³</span>
-                                <p class="text-xs text-gray-500">الكثافة الجافة (ρd)</p>
-                            </div>
+                            <div><span class="font-semibold text-gray-800">kg/m³</span><p class="text-xs text-gray-500">الكثافة الجافة (ρd)</p></div>
                         </label>
                         <label class="flex items-center gap-3 bg-white px-4 py-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-orange-400 transition-all">
                             <input type="radio" name="unitSystem" value="kN_m3" onchange="onProctorUnitChange()" class="w-5 h-5 text-orange-600">
-                            <div>
-                                <span class="font-semibold text-gray-800">kN/m³</span>
-                                <p class="text-xs text-gray-500">وزن الوحدة الجاف (γd)</p>
-                            </div>
+                            <div><span class="font-semibold text-gray-800">kN/m³</span><p class="text-xs text-gray-500">وزن الوحدة الجاف (γd)</p></div>
                         </label>
                     </div>
                 </div>
 
-                <!-- Mold Data -->
-                <div class="grid md:grid-cols-3 gap-4">
+                <!-- Mold Data + Equipment -->
+                <div class="grid md:grid-cols-4 gap-4">
                     <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">
-                            <span class="glossary-term">Mmd</span> — كتلة القالب (Mold Mass)
-                        </label>
+                        <label class="block text-sm font-bold text-gray-700 mb-2"><span class="glossary-term">Mmd</span> — كتلة القالب (g)</label>
                         <div class="flex items-center gap-2">
-                            <input type="number" id="moldMass_g" step="0.1" min="0" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2" placeholder="مثال: 4250">
+                            <input type="number" id="moldMass_g" step="0.1" min="0" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2" placeholder="4250">
                             <span class="text-gray-600 font-semibold">g</span>
                         </div>
                     </div>
-                    
-                    <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">
-                            <span class="glossary-term">V</span> — حجم القالب (Mold Volume)
-                        </label>
-                        <div class="flex items-center gap-2">
-                            <input type="number" id="moldVol_value" step="0.01" min="0" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2" placeholder="مثال: 943.3">
-                            <select id="moldVol_unit" class="input-field border-2 border-gray-300 rounded-lg px-2 py-2">
-                                <option value="cm3">cm³</option>
-                                <option value="m3">m³</option>
-                            </select>
-                        </div>
-                    </div>
-                    
                     <div class="bg-green-50 border border-green-200 p-4 rounded-lg">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">
-                            <span class="glossary-term">Gs</span> — الكثافة النوعية (Specific Gravity)
-                            <span class="text-xs text-gray-500 block">لمنحنى التشبع 100%</span>
-                        </label>
-                        <div class="flex items-center gap-2">
-                            <input type="number" id="Gs_input" step="0.01" min="2" max="3" value="2.65" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
-                        </div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2"><span class="glossary-term">Gs</span> — الكثافة النوعية</label>
+                        <input type="number" id="Gs_input" step="0.01" min="2" max="3" value="2.65" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-lg">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Balance ID / رقم الميزان</label>
+                        <input type="text" id="prc_balanceId" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="BAL-01">
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-lg">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Mould ID / رقم القالب</label>
+                        <input type="text" id="prc_mouldId" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="M-01">
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-lg">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Rammer ID</label>
+                        <input type="text" id="prc_rammerId" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="RAM-01">
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-lg">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Oven ID</label>
+                        <input type="text" id="prc_ovenId" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="OVN-01">
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-lg">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Calibration Due</label>
+                        <input type="date" id="prc_calibDue" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-lg">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Mould Diam (mm)</label>
+                        <input type="number" id="prc_mouldDiam" value="152.4" step="0.1" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm">
                     </div>
                 </div>
             </div>
@@ -3111,10 +3164,23 @@
   <div class="cbr-card-title">
     <span class="cbr-num" style="background:linear-gradient(135deg,#f59e0b,#d97706);">⚙️</span>
     معامل الحلقة — Load Ring Calibration
+    <!-- ── Unit System Toggle ── -->
+    <div style="margin-right:auto;display:flex;align-items:center;gap:8px;background:white;border:2px solid #f59e0b;border-radius:8px;padding:5px 12px;">
+      <span style="font-size:.75rem;font-weight:700;color:#92400e;">وحدة الحلقة:</span>
+      <select id="cbr_unitSystem" onchange="onCBRUnitSystemChange()"
+        style="border:1.5px solid #fcd34d;border-radius:6px;padding:4px 8px;font-family:inherit;font-size:.82rem;font-weight:700;background:#fffbeb;color:#92400e;cursor:pointer;">
+        <option value="kN" selected>kN/div → kPa / MPa</option>
+        <option value="kg">kg/div → kg/cm²</option>
+      </select>
+      <span id="cbr_unitBadge" style="background:#f59e0b;color:white;border-radius:4px;padding:2px 8px;font-size:.7rem;font-weight:700;">kN</span>
+    </div>
   </div>
   <div class="cbr-grid-4">
     <div class="cbr-field"><label>رقم الحلقة / Ring No.</label><input type="text" id="cbr_ringNo" placeholder="R-01"></div>
-    <div class="cbr-field"><label>معامل الحلقة (kN/div)</label><input type="number" id="cbr_ringFactor" step="0.0001" placeholder="0.2500" oninput="recalcPressuresFromReadings()"></div>
+    <div class="cbr-field">
+      <label id="cbr_ringFactorLabel">معامل الحلقة (kN/div)</label>
+      <input type="number" id="cbr_ringFactor" step="0.0001" placeholder="0.2500" oninput="recalcPressuresFromReadings()">
+    </div>
     <div class="cbr-field">
       <label>مساحة الكباسة — Piston Area (D1883 §6.8)</label>
       <div style="display:flex;gap:4px;align-items:center;">
@@ -3125,7 +3191,18 @@
     </div>
     <div class="cbr-field"><label>تاريخ المعايرة</label><input type="date" id="cbr_calibDate"></div>
   </div>
-  <p class="cbr-hint">💡 الضغط (kPa) = قراءة العداد (div) × معامل الحلقة (kN/div) ÷ مساحة الكباسة (m²) — أو أدخل الضغط مباشرةً في عمود الضغط</p>
+  <!-- Dynamic formula hint -->
+  <p class="cbr-hint" id="cbr_formulaHint">
+    💡 <span id="cbr_formulaText">الضغط (kPa) = قراءة العداد (div) × معامل الحلقة (kN/div) ÷ مساحة الكباسة (m²)</span>
+    &nbsp;—&nbsp; أو أدخل الضغط مباشرةً في عمود الضغط
+  </p>
+  <!-- Standard pressures info bar -->
+  <div id="cbr_stdPressureBar" style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:7px 12px;margin-top:8px;font-size:.72rem;color:#1d4ed8;">
+    📐 <strong>الضغط المعياري:</strong>
+    <span id="cbr_std01Label">@ 0.1″ = <b>1000 psi = 6.9 MPa = 6895 kPa</b></span>
+    &nbsp;|&nbsp;
+    <span id="cbr_std02Label">@ 0.2″ = <b>1500 psi = 10.3 MPa = 10342 kPa</b></span>
+  </div>
 </div>
 
 <!-- ⑥ D1883 TEST CONDITIONS ─────────────────────────────── -->
@@ -3302,7 +3379,7 @@
       </thead>
       <tbody>
         <tr class="cbr-row-red">
-          <td style="text-align:right;font-weight:600;">ρd — الكثافة الجافة (g/cm³)</td>
+          <td style="text-align:right;font-weight:600;" id="cbr_rdRowLabel">ρd — الكثافة الجافة (g/cm³)</td>
           <td class="cbr-col-e1"><span id="cbrRhoDryE1" class="cbr-result-val text-red">-</span></td>
           <td class="cbr-col-e2" style="display:none;"><span id="cbrRhoDryE2" class="cbr-result-val text-red">-</span></td>
           <td class="cbr-col-e3" style="display:none;"><span id="cbrRhoDryE3" class="cbr-result-val text-red">-</span></td>
@@ -3316,11 +3393,11 @@
           <td>lb/ft³</td>
         </tr>
         <tr class="cbr-row-green">
-          <td style="text-align:right;font-weight:600;">γd — وزن الوحدة الجافة (kN/m³)</td>
+          <td style="text-align:right;font-weight:600;" id="cbr_gdRowLabel">γd — وزن الوحدة الجافة (kN/m³)</td>
           <td class="cbr-col-e1"><span id="cbrKNm3E1" class="cbr-result-val text-green">-</span></td>
           <td class="cbr-col-e2" style="display:none;"><span id="cbrKNm3E2" class="cbr-result-val text-green">-</span></td>
           <td class="cbr-col-e3" style="display:none;"><span id="cbrKNm3E3" class="cbr-result-val text-green">-</span></td>
-          <td>kN/m³</td>
+          <td id="cbr_gdUnit">kN/m³</td>
         </tr>
         <tr class="cbr-row-amber">
           <td style="text-align:right;font-weight:600;">Swell% — نسبة الانتفاش</td>
@@ -3370,11 +3447,11 @@
           <th style="min-width:55px;">#</th>
           <th style="min-width:180px;text-align:right;">الاختراق / Penetration</th>
           <th class="cbr-col-e1" style="min-width:75px;">E1 قراءة</th>
-          <th class="cbr-col-e1" style="min-width:80px;">E1 ضغط (kPa)</th>
+          <th class="cbr-col-e1" id="cbr_penPressureHeader_e1" style="min-width:80px;">E1 ضغط (kPa)</th>
           <th class="cbr-col-e2" style="display:none;min-width:75px;">E2 قراءة</th>
-          <th class="cbr-col-e2" style="display:none;min-width:80px;">E2 ضغط (kPa)</th>
+          <th class="cbr-col-e2" id="cbr_penPressureHeader_e2" style="display:none;min-width:80px;">E2 ضغط (kPa)</th>
           <th class="cbr-col-e3" style="display:none;min-width:75px;">E3 قراءة</th>
-          <th class="cbr-col-e3" style="display:none;min-width:80px;">E3 ضغط (kPa)</th>
+          <th class="cbr-col-e3" id="cbr_penPressureHeader_e3" style="display:none;min-width:80px;">E3 ضغط (kPa)</th>
         </tr>
       </thead>
       <tbody id="penTableBody">
@@ -3555,13 +3632,13 @@
       </thead>
       <tbody>
         <tr class="cbr-row-amber">
-          <td style="text-align:right;font-weight:600;">CBR @ 0.1″ — 2.54mm <span style="color:#6b7280;font-size:.75rem;">(Standard: 1000 psi = 6.9 MPa)</span></td>
+          <td style="text-align:right;font-weight:600;" id="cbr_std01RowLabel">CBR @ 0.1″ — 2.54mm <span style="color:#6b7280;font-size:.75rem;">(Standard: 1000 psi = 6.9 MPa)</span></td>
           <td class="cbr-col-e1"><span id="cbrValue01E1" class="cbr-result-val text-amber">-</span> %</td>
           <td class="cbr-col-e2" style="display:none;"><span id="cbrValue01E2" class="cbr-result-val text-amber">-</span> %</td>
           <td class="cbr-col-e3" style="display:none;"><span id="cbrValue01E3" class="cbr-result-val text-amber">-</span> %</td>
         </tr>
         <tr>
-          <td style="text-align:right;font-weight:600;">CBR @ 0.2″ — 5.08mm <span style="color:#6b7280;font-size:.75rem;">(Standard: 1500 psi = 10.3 MPa)</span></td>
+          <td style="text-align:right;font-weight:600;" id="cbr_std02RowLabel">CBR @ 0.2″ — 5.08mm <span style="color:#6b7280;font-size:.75rem;">(Standard: 1500 psi = 10.3 MPa)</span></td>
           <td class="cbr-col-e1"><span id="cbrValue02E1" class="cbr-result-val text-red">-</span> %</td>
           <td class="cbr-col-e2" style="display:none;"><span id="cbrValue02E2" class="cbr-result-val text-red">-</span> %</td>
           <td class="cbr-col-e3" style="display:none;"><span id="cbrValue02E3" class="cbr-result-val text-red">-</span> %</td>
@@ -3611,6 +3688,20 @@
       </div>
     </div>
     <div id="cbrReportContent" style="padding:0;"></div>
+  </div>
+</div>
+
+<!-- ===== PROCTOR D1557 REPORT MODAL ===== -->
+<div id="proctorReportModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:9999;overflow-y:auto;">
+  <div style="max-width:900px;margin:20px auto;background:white;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+    <div style="background:linear-gradient(135deg,#1e3a5f,#c2410c);color:white;padding:14px 20px;border-radius:12px 12px 0 0;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:1rem;font-weight:700;font-family:Cairo,sans-serif;">📄 Moisture-Density Relationship Report — ASTM D1557-12(2021)</span>
+      <div style="display:flex;gap:8px;">
+        <button onclick="document.querySelector('#proctorReportContent iframe').contentWindow.print()" style="background:#10b981;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-family:Cairo,sans-serif;font-weight:600;font-size:.85rem;">🖨️ طباعة</button>
+        <button onclick="document.getElementById('proctorReportModal').style.display='none'" style="background:#ef4444;color:white;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:1.1rem;line-height:1;">✕</button>
+      </div>
+    </div>
+    <div id="proctorReportContent" style="padding:0;"></div>
   </div>
 </div>
 
@@ -7161,11 +7252,15 @@ const CBR_STD_KPA_01  = 6894.76;        // kPa equivalent of 1000 psi
 const CBR_STD_KPA_02  = 10342.14;       // kPa equivalent of 1500 psi
 const CBR_STD_MPA_01  = 6.895;          // MPa (D1883 §10.2: 6.9 MPa)
 const CBR_STD_MPA_02  = 10.342;         // MPa (D1883 §10.2: 10.3 MPa)
+// kg/cm² standard values (equivalent): 1000 psi = 70.31 kg/cm², 1500 psi = 105.46 kg/cm²
+const CBR_STD_KGCM2_01 = 70.31;        // kg/cm² @ 0.1"
+const CBR_STD_KGCM2_02 = 105.46;       // kg/cm² @ 0.2"
 const CBR_PISTON_AREA_IN2  = 3.0;       // in² (from 1.954" dia)
-const CBR_PISTON_AREA_CM2  = 19.35;     // cm²
+const CBR_PISTON_AREA_CM2  = 19.35;     // cm²  (§6.8 — used for kg mode)
 // Keep backward compat alias — pressure inputs in kPa in the table
 const CBR_STD_P01 = CBR_STD_KPA_01;
 const CBR_STD_P02 = CBR_STD_KPA_02;
+
 // All 11 penetration points per ASTM D1883
 const CBR_PENS   = ['025','050','075','100','125','150','175','200','300','400','500'];
 const CBR_PEN_MM = [0.635, 1.27, 1.91, 2.54, 3.18, 3.81, 4.45, 5.08, 7.62, 10.16, 12.70];
@@ -7173,6 +7268,98 @@ const CBR_PEN_IN = [0.025, 0.050,0.075,0.100,0.125,0.150,0.175,0.200,0.300,0.400
 
 // ── Column Visibility ────────────────────────────────────────
 function handleCBRTemplateChange(n) {
+// unitSystem: 'kN' (default) → pressure in kPa/MPa, standard 6.9/10.3 MPa
+//             'kg'           → pressure in kg/cm², standard 70/105 kg/cm²
+let cbrUnitSystem = 'kN';
+
+function getCBRUnitSystem() {
+  return document.getElementById('cbr_unitSystem')?.value || 'kN';
+}
+
+function onCBRUnitSystemChange() {
+  cbrUnitSystem = getCBRUnitSystem();
+  const isKg = cbrUnitSystem === 'kg';
+
+  // Update badge
+  const badge = document.getElementById('cbr_unitBadge');
+  if (badge) {
+    badge.textContent = isKg ? 'kg' : 'kN';
+    badge.style.background = isKg ? '#16a34a' : '#f59e0b';
+  }
+
+  // Update ring factor label
+  const rfLabel = document.getElementById('cbr_ringFactorLabel');
+  if (rfLabel) rfLabel.textContent = isKg ? 'معامل الحلقة (kg/div)' : 'معامل الحلقة (kN/div)';
+
+  // Update formula hint
+  const hint = document.getElementById('cbr_formulaText');
+  if (hint) {
+    hint.textContent = isKg
+      ? 'الإجهاد (kg/cm²) = قراءة العداد × معامل الحلقة (kg/div) ÷ مساحة الكباسة (cm²)'
+      : 'الضغط (kPa) = قراءة العداد × معامل الحلقة (kN/div) ÷ مساحة الكباسة (m²)';
+  }
+
+  // Update penetration table pressure column headers
+  ['e1','e2','e3'].forEach(e => {
+    const hdr = document.getElementById('cbr_penPressureHeader_'+e);
+    if (hdr) hdr.textContent = isKg ? `E${e.slice(1)} ضغط (kg/cm²)` : `E${e.slice(1)} ضغط (kPa)`;
+  });
+
+  // Update standard pressure info bar
+  const s01 = document.getElementById('cbr_std01Label');
+  const s02 = document.getElementById('cbr_std02Label');
+  if (s01) s01.innerHTML = isKg
+    ? `@ 0.1″ = <b>70 kg/cm² (≈ 1000 psi)</b>`
+    : `@ 0.1″ = <b>1000 psi = 6.9 MPa = 6895 kPa</b>`;
+  if (s02) s02.innerHTML = isKg
+    ? `@ 0.2″ = <b>105 kg/cm² (≈ 1500 psi)</b>`
+    : `@ 0.2″ = <b>1500 psi = 10.3 MPa = 10342 kPa</b>`;
+
+  // Update CBR result row labels
+  const r01 = document.getElementById('cbr_std01RowLabel');
+  const r02 = document.getElementById('cbr_std02RowLabel');
+  if (r01) r01.innerHTML = isKg
+    ? `CBR @ 0.1″ — 2.54mm <span style="color:#6b7280;font-size:.75rem;">(Standard: 70 kg/cm²)</span>`
+    : `CBR @ 0.1″ — 2.54mm <span style="color:#6b7280;font-size:.75rem;">(Standard: 1000 psi = 6.9 MPa)</span>`;
+  if (r02) r02.innerHTML = isKg
+    ? `CBR @ 0.2″ — 5.08mm <span style="color:#6b7280;font-size:.75rem;">(Standard: 105 kg/cm²)</span>`
+    : `CBR @ 0.2″ — 5.08mm <span style="color:#6b7280;font-size:.75rem;">(Standard: 1500 psi = 10.3 MPa)</span>`;
+
+  // Update density row labels
+  const gdUnit = document.getElementById('cbr_gdUnit');
+  if (gdUnit) gdUnit.textContent = isKg ? 'kN/m³' : 'kN/m³';
+
+  // Recalculate all with new unit
+  recalcPressuresFromReadings();
+  updateCBRCalculations();
+}
+
+// ── Ring Factor → Auto-pressure ─────────────────────────────
+// Supports both kN/div (→ kPa) and kg/div (→ kg/cm²)
+function autoCalcPressure(pen, suf) {
+  const rf   = parseFloat(document.getElementById('cbr_ringFactor')?.value) || 0;
+  const area = parseFloat(document.getElementById('cbr_pistonArea')?.value) || CBR_PISTON_AREA_CM2;
+  const r    = parseFloat(document.getElementById('penetration'+pen+suf+'reading')?.value);
+  if (rf > 0 && area > 0 && !isNaN(r)) {
+    const us = getCBRUnitSystem();
+    let stress;
+    if (us === 'kg') {
+      // kg/div → kg/cm²: stress = reading × rf(kg/div) / area(cm²)
+      stress = (r * rf) / area;
+    } else {
+      // kN/div → kPa: stress = reading × rf(kN/div) / area(m²)
+      // area cm² → m²: divide by 10000
+      stress = (r * rf) / (area * 1e-4);
+    }
+    const el = document.getElementById('penetration'+pen+suf+'pressure');
+    if (el) el.value = stress.toFixed(us === 'kg' ? 4 : 1);
+  }
+  updateCBRCalculations();
+}
+
+function recalcPressuresFromReadings() {
+  ['E1','E2','E3'].forEach(s => CBR_PENS.forEach(p => autoCalcPressure(p,s)));
+}
   cbrCurrentTemplate = parseInt(n);
   ['e1','e2','e3'].forEach((e,i) => {
     const show = (i+1) <= cbrCurrentTemplate;
@@ -7305,7 +7492,7 @@ function calculateCBRDensityAndSwell() {
   });
 }
 
-// ── D1883 Test Condition Helpers ─────────────────────────────
+// ── D1883 Helper Functions ───────────────────────────────────
 function updateCBRTestCondition() {
   const isSoaked = document.getElementById('cbr_soaked')?.checked === true;
   const immGrp  = document.getElementById('cbr_immersionGroup');
@@ -7321,39 +7508,46 @@ function updateSurchargeDisplay() {
   if (el) el.textContent = '= ' + lbf.toFixed(1) + ' lbf';
 }
 
-// ── CBR % — per D1883 §10.2 (standard: 1000 psi & 1500 psi) ─
+// ── CBR % — supports kN (→ kPa std) and kg (→ kg/cm² std) modes ─
 function updateCBRPercentage() {
+  const us        = getCBRUnitSystem();
+  const isKg      = us === 'kg';
   const corrType  = document.getElementById('cbr_curveType')?.value || 'none';
   const X         = corrType === 'concave' ? (parseFloat(document.getElementById('cbr_correctionX')?.value)||0) : 0;
   let anyResult   = false;
 
+  // Select standard values based on unit system
+  const std01 = isKg ? CBR_STD_KGCM2_01 : CBR_STD_KPA_01;  // 70 kg/cm² or 6895 kPa
+  const std02 = isKg ? CBR_STD_KGCM2_02 : CBR_STD_KPA_02;  // 105 kg/cm² or 10342 kPa
+  const pUnit = isKg ? 'kg/cm²' : 'kPa';
+
   ['E1','E2','E3'].forEach(suf => {
-    let p01_kPa, p02_kPa;
+    let p01, p02;
 
     if (corrType === 'concave' && X > 0) {
-      p01_kPa = getCorrectedPressure(suf, 0.100) || 0;
-      p02_kPa = getCorrectedPressure(suf, 0.200) || 0;
+      p01 = getCorrectedPressure(suf, 0.100) || 0;
+      p02 = getCorrectedPressure(suf, 0.200) || 0;
       const el01 = document.getElementById('correctedP01Text');
       const el02 = document.getElementById('correctedP02Text');
-      if (el01) el01.innerHTML = `@ 0.1″+X=${(0.1+X).toFixed(3)}″ → ${p01_kPa.toFixed(1)} kPa (${(p01_kPa/6.895).toFixed(1)} psi)`;
-      if (el02) el02.innerHTML = `@ 0.2″+X=${(0.2+X).toFixed(3)}″ → ${p02_kPa.toFixed(1)} kPa (${(p02_kPa/6.895).toFixed(1)} psi)`;
+      if (el01) el01.innerHTML = `@ 0.1″+X=${(0.1+X).toFixed(3)}″ → ${p01.toFixed(isKg?4:1)} ${pUnit}`;
+      if (el02) el02.innerHTML = `@ 0.2″+X=${(0.2+X).toFixed(3)}″ → ${p02.toFixed(isKg?4:1)} ${pUnit}`;
     } else {
-      p01_kPa = parseFloat(document.getElementById('penetration100'+suf+'pressure')?.value)||0;
-      p02_kPa = parseFloat(document.getElementById('penetration200'+suf+'pressure')?.value)||0;
+      p01 = parseFloat(document.getElementById('penetration100'+suf+'pressure')?.value)||0;
+      p02 = parseFloat(document.getElementById('penetration200'+suf+'pressure')?.value)||0;
     }
 
-    // D1883 §10.2: CBR = (unit stress / standard stress) × 100
-    // Standard: 1000 psi (6895 kPa) @ 0.1" and 1500 psi (10342 kPa) @ 0.2"
-    const cbr01 = p01_kPa > 0 ? (p01_kPa / CBR_STD_KPA_01) * 100 : null;
-    const cbr02 = p02_kPa > 0 ? (p02_kPa / CBR_STD_KPA_02) * 100 : null;
-
-    // D1883 §10.2: normally use 0.1" ratio; if 0.2" is greater, rerun test; if confirmed use 0.2"
+    // CBR = (unit stress / standard stress) × 100
+    const cbr01 = p01 > 0 ? (p01 / std01) * 100 : null;
+    const cbr02 = p02 > 0 ? (p02 / std02) * 100 : null;
     const cbrFinal = (cbr01 !== null || cbr02 !== null) ? Math.max(cbr01??0, cbr02??0) : null;
 
     cbrData[suf] = {...cbrData[suf],
-      p01_kPa, p02_kPa,
-      p01_psi: p01_kPa/6.89476, p02_psi: p02_kPa/6.89476,
-      cbr01, cbr02, cbrFinal
+      p01_raw: p01, p02_raw: p02,
+      p01_kPa: isKg ? p01*98.0665 : p01,   // always store kPa internally
+      p02_kPa: isKg ? p02*98.0665 : p02,
+      p01_psi: isKg ? p01*14.2233 : p01/6.89476,
+      p02_psi: isKg ? p02*14.2233 : p02/6.89476,
+      cbr01, cbr02, cbrFinal, pUnit
     };
 
     const set = (id,val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
@@ -7403,10 +7597,25 @@ function drawCBRPenetrationChart() {
   const corrType = document.getElementById('cbr_curveType')?.value || 'none';
   const X = corrType==='concave' ? (parseFloat(document.getElementById('cbr_correctionX')?.value)||0) : 0;
 
-  // D1883 §1.8: inch-pound (psi) is standard; SI (kPa/MPa) in parentheses
-  // Pressure inputs in table are always kPa; convert to psi for imperial chart display
-  const pConv = isImperial ? (1/6.89476) : 1;  // kPa → psi (imperial) or kPa→kPa (metric)
-  const pUnit = isImperial ? 'psi' : 'kPa';
+  // D1883 §1.8: pressure unit depends on selected ring unit system
+  const us = getCBRUnitSystem();
+  const isKg = us === 'kg';
+
+  // Pressure display conversion
+  // If kg mode: values are already in kg/cm² — for chart show kg/cm²
+  // If kN mode + imperial display: convert kPa → psi
+  // If kN mode + metric display: keep kPa
+  let pConv, pUnit;
+  if (isKg) {
+    pConv = 1;       // already kg/cm²
+    pUnit = 'kg/cm²';
+  } else if (isImperial) {
+    pConv = 1/6.89476;  // kPa → psi
+    pUnit = 'psi';
+  } else {
+    pConv = 1;       // kPa
+    pUnit = 'kPa';
+  }
   // Convert penetration: mm → inches if imperial
   const xConv = isImperial ? (1/25.4) : 1;
   const xUnit = isImperial ? 'in' : 'mm';
@@ -7456,44 +7665,47 @@ function drawCBRPenetrationChart() {
   });
 
   // Y axis max — use actual data max + 20%, minimum reasonable
-  const yMax = yMaxData > 0 ? Math.ceil((yMaxData * 1.20) / 50) * 50 : (isImperial ? 400 : 2800);
+  const yMaxDefault = isKg ? 200 : (isImperial ? 400 : 2800);
+  const yMax = yMaxData > 0 ? Math.ceil((yMaxData * 1.20) / 50) * 50 : yMaxDefault;
   const xMax = isImperial ? 0.55 : 14;
 
   // D1883 §10.2 Standard reference lines — using actual data yMax to prevent scale inflation
-  const std01x = isImperial ? 0.100 : 2.54;  // 0.1" in current x-unit
-  const std02x = isImperial ? 0.200 : 5.08;  // 0.2" in current x-unit
-  // Standard stress in current pressure unit
-  const std01y_display = isImperial ? CBR_STD_PSI_01 : CBR_STD_KPA_01;  // 1000 psi or 6895 kPa
-  const std02y_display = isImperial ? CBR_STD_PSI_02 : CBR_STD_KPA_02;  // 1500 psi or 10342 kPa
+  // Standard reference values for current unit
+  const std01_display = isKg ? CBR_STD_KGCM2_01 : (isImperial ? CBR_STD_PSI_01 : CBR_STD_KPA_01);
+  const std02_display = isKg ? CBR_STD_KGCM2_02 : (isImperial ? CBR_STD_PSI_02 : CBR_STD_KPA_02);
+  const std01_label   = isKg ? `★ 0.1" std (70 kg/cm²)` : (isImperial ? `★ 0.1" std (1000 psi)` : `★ 0.1" std (6895 kPa = 1000 psi)`);
+  const std02_label   = isKg ? `★ 0.2" std (105 kg/cm²)` : (isImperial ? `★ 0.2" std (1500 psi)` : `★ 0.2" std (10342 kPa = 1500 psi)`);
 
   if (datasets.length > 0 && yMaxData > 0) {
-    // Vertical line at 0.1"
+    // x coordinates for 0.1" and 0.2" in current x-unit
+    const std01x = isImperial ? 0.100 : 2.54;
+    const std02x = isImperial ? 0.200 : 5.08;
+    // Vertical lines at standard penetrations
     datasets.push({
-      label: isImperial ? '★ 0.1" std (1000 psi = 6.9 MPa)' : '★ 0.1" std (6895 kPa = 1000 psi)',
+      label: std01_label,
       data:[{x:std01x, y:0},{x:std01x, y:yMax}],
       borderColor:'#dc2626', borderDash:[5,4], borderWidth:1.5,
       pointRadius:0, fill:false, tension:0
     });
-    // Vertical line at 0.2"
     datasets.push({
-      label: isImperial ? '★ 0.2" std (1500 psi = 10.3 MPa)' : '★ 0.2" std (10342 kPa = 1500 psi)',
+      label: std02_label,
       data:[{x:std02x, y:0},{x:std02x, y:yMax}],
       borderColor:'#f59e0b', borderDash:[5,4], borderWidth:1.5,
       pointRadius:0, fill:false, tension:0
     });
-    // Horizontal reference at standard stress values (if within range)
-    if (std01y_display <= yMax) {
+    // Horizontal reference at standard stress values
+    if (std01_display <= yMax) {
       datasets.push({
-        label: isImperial ? '— 1000 psi level' : '— 6895 kPa (1000 psi)',
-        data:[{x:0,y:std01y_display},{x:xMax,y:std01y_display}],
+        label: isKg ? '— 70 kg/cm² level' : (isImperial ? '— 1000 psi level' : '— 6895 kPa level'),
+        data:[{x:0,y:std01_display},{x:xMax,y:std01_display}],
         borderColor:'#dc262640', borderDash:[3,6], borderWidth:1,
         pointRadius:0, fill:false, tension:0
       });
     }
-    if (std02y_display <= yMax) {
+    if (std02_display <= yMax) {
       datasets.push({
-        label: isImperial ? '— 1500 psi level' : '— 10342 kPa (1500 psi)',
-        data:[{x:0,y:std02y_display},{x:xMax,y:std02y_display}],
+        label: isKg ? '— 105 kg/cm² level' : (isImperial ? '— 1500 psi level' : '— 10342 kPa level'),
+        data:[{x:0,y:std02_display},{x:xMax,y:std02_display}],
         borderColor:'#f59e0b40', borderDash:[3,6], borderWidth:1,
         pointRadius:0, fill:false, tension:0
       });
@@ -7509,9 +7721,11 @@ function drawCBRPenetrationChart() {
   const xLabel = isImperial
     ? 'الاختراق — Penetration (inches) | D1883 §9.3'
     : 'الاختراق — Penetration (mm) | D1883 §9.3';
-  const yLabel = isImperial
-    ? 'الضغط على الكباسة — Stress on Piston (psi) | D1883 §10.1'
-    : 'الضغط على الكباسة — Stress on Piston (kPa) [1 psi = 6.895 kPa]';
+  const yLabel = isKg
+    ? 'الإجهاد على الكباسة — Stress on Piston (kg/cm²)'
+    : (isImperial
+        ? 'الإجهاد على الكباسة — Stress on Piston (psi) | D1883 §10.1'
+        : 'الإجهاد على الكباسة — Stress on Piston (kPa) | D1883 §10.1');
 
   const xTickLabels_mm = {
     0:'0', 0.635:'0.025"', 1.27:'0.05"', 1.91:'0.075"',
@@ -7749,8 +7963,7 @@ function updateCBRUnitsDisplay() {
   drawCBRDensityChart();
   drawCBRvsDensityChart();
   drawCBRSwellChart();
-}
-function calculateCBRAll()       { updateCBRCalculations(); }
+}function calculateCBRAll()       { updateCBRCalculations(); }
 
 // ── Demo Data (all 11 D1883 points) ─────────────────────────
 const CBR_DEMO = {
@@ -7780,6 +7993,8 @@ function loadDemoCBR() {
   if(g('cbr_ringNo'))      g('cbr_ringNo').value='R-04';
   if(g('cbr_ringFactor'))  g('cbr_ringFactor').value='0.2500';
   if(g('cbr_pistonArea'))  g('cbr_pistonArea').value='19.35';
+  // Initialize unit system UI state
+  onCBRUnitSystemChange();
   if(g('cbr_MDD'))         g('cbr_MDD').value='1.920';
   if(g('cbr_OMC'))         g('cbr_OMC').value='12.0';
   if(g('cbr_immersionHrs')) g('cbr_immersionHrs').value='96';
@@ -7849,6 +8064,7 @@ function resetCBRForm() {
 // ── Professional 2-Page Report ───────────────────────────────
 function generateCBRReport() {
   const isImperial  = document.getElementById('cbrUnitImperial')?.checked === true;
+  const ringUS      = getCBRUnitSystem(); // 'kN' or 'kg'
   const isSoaked    = document.getElementById('cbr_soaked')?.checked !== false;
   const g           = id => document.getElementById(id)?.value || '—';
   const proj        = g('cbr_projectName');
@@ -7869,7 +8085,7 @@ function generateCBRReport() {
   const suffs       = ['E1','E2','E3'].slice(0, n);
   const blowsMap    = {E1:56, E2:25, E3:10};
   const now         = new Date().toLocaleString('ar-SA');
-  const unitSystem  = isImperial ? 'Imperial (psi / pcf / lbf/ft³)' : 'Metric SI (kPa / g·cm⁻³ / kN·m⁻³)';
+  const unitSystem  = `${isImperial ? 'Imperial (psi/pcf)' : 'Metric SI (kPa/g·cm⁻³)'} | Ring: ${ringUS}/div → ${ringUS==='kg' ? 'kg/cm²' : 'kPa'}`;
 
   // ── Build table rows ──────────────────────────────────────────
   let densityRows = '', cbrRows = '', penRows = '';
@@ -7964,6 +8180,54 @@ function generateCBRReport() {
     </div>`;
   }).join('');
 
+  // ── Ensure all charts are rendered & visible for capture ────
+  // Temporarily show hidden chart containers so canvas is rendered
+  const hiddenContainers = ['cbrDensityChartContainer','cbrVsDensityChartContainer','cbrSwellChartContainer'];
+  const prevDisplay = {};
+  hiddenContainers.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { prevDisplay[id] = el.style.display; el.style.display = 'block'; }
+  });
+  // Force charts to redraw at current size
+  updateCBRCalculations();
+
+  // ── Capture charts as base64 images ─────────────────────────
+  function getCanvasImg(id, fallbackLabel) {
+    const canvas = document.getElementById(id);
+    if (!canvas) return null;
+    try { return canvas.toDataURL('image/png'); }
+    catch(e) { return null; }
+  }
+
+  const imgPen     = getCanvasImg('cbrPenetrationChart');
+  const imgCBRvsDd = getCanvasImg('cbrVsDensityChart');
+  const imgDensity = getCanvasImg('cbrDensityChart');
+  const imgSwell   = getCanvasImg('cbrSwellChart');
+
+  function chartBox(img, title, subtitle) {
+    if (img) {
+      return `<div style="border:1px solid #e2e8f0;border-radius:7px;overflow:hidden;background:white;">
+        <div style="background:#1e3a5f;color:white;padding:5px 10px;font-size:.68rem;font-weight:700;">${title}</div>
+        <img src="${img}" style="width:100%;display:block;" alt="${title}">
+      </div>`;
+    }
+    return `<div style="border:1.5px dashed #94a3b8;border-radius:7px;height:130px;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      color:#94a3b8;font-size:.72rem;background:#f8fafc;gap:4px;">
+      <span style="font-size:1.2rem;">📊</span>${title}<br><small style="color:#cbd5e1">${subtitle}</small>
+    </div>`;
+  }
+
+  const chartSection = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;">
+      ${chartBox(imgPen,     '📈 Stress-Penetration Curves — منحنيات الاختراق (§10.1)', 'E1·E2·E3')}
+      ${chartBox(imgCBRvsDd, '📊 CBR% vs Dry Unit Weight (Fig.6)', 'Design value')}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;">
+      ${chartBox(imgDensity, '📉 Dry Density vs Blows', '56·25·10 blows/layer')}
+      ${chartBox(imgSwell,   '📏 Swell% vs Blows (§10.4)', 's = (S/hᵢ)×100')}
+    </div>`;
+
   // ── Report HTML ────────────────────────────────────────────────
   const reportHTML = `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -8039,11 +8303,6 @@ tr:hover td{background:#eff6ff!important;}
   display:flex;justify-content:space-between;font-size:.6rem;color:#94a3b8;}
 
 /* ── Chart placeholders ── */
-.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;}
-.chart-ph{border:1.5px dashed #94a3b8;border-radius:7px;height:110px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  color:#94a3b8;font-size:.72rem;background:#f8fafc;gap:4px;}
-.chart-ph span{font-size:1.1rem;}
 
 @media print{
   body{background:white;}
@@ -8089,9 +8348,9 @@ tr:hover td{background:#eff6ff!important;}
 
   <!-- Standard pressures note -->
   <div class="std-note">
-    📐 <strong>Standard Stresses (D1883 §10.2):</strong>
-    &nbsp; @ 0.1″ (2.54 mm) = <strong>1000 psi = 6.9 MPa = 6895 kPa</strong>
-    &nbsp;|&nbsp; @ 0.2″ (5.08 mm) = <strong>1500 psi = 10.3 MPa = 10342 kPa</strong>
+    📐 <strong>Standard Stresses (D1883 §10.2) — Ring Unit: ${ringUS}/div:</strong>
+    &nbsp; @ 0.1″ (2.54 mm) = <strong>${ringUS==='kg' ? '70 kg/cm²' : '1000 psi = 6.9 MPa = 6895 kPa'}</strong>
+    &nbsp;|&nbsp; @ 0.2″ (5.08 mm) = <strong>${ringUS==='kg' ? '105 kg/cm²' : '1500 psi = 10.3 MPa = 10342 kPa'}</strong>
     &nbsp;|&nbsp; CBR = (Unit Stress / Standard Stress) × 100
   </div>
 
@@ -8166,30 +8425,9 @@ tr:hover td{background:#eff6ff!important;}
     <tbody>${penRows || '<tr><td colspan="6" style="color:#94a3b8">لا توجد بيانات</td></tr>'}</tbody>
   </table>
 
-  <!-- Charts area -->
-  <div class="sec-title">📈 Stress-Penetration Curves — منحنيات الاختراق (§10.1, Fig.4, Fig.5, Fig.6)</div>
-  <div class="charts-grid">
-    <div class="chart-ph">
-      <span>📈</span>
-      Stress vs Penetration Curve<br>منحنى الإجهاد–الاختراق<br>
-      <small>E1 (56 blows) · E2 (25) · E3 (10)</small>
-    </div>
-    <div class="chart-ph">
-      <span>📊</span>
-      CBR% vs Dry Unit Weight<br>CBR مقابل الكثافة (Fig.6)<br>
-      <small>for design unit weight</small>
-    </div>
-    <div class="chart-ph">
-      <span>📉</span>
-      Dry Density vs Blows<br>الكثافة مقابل الضربات<br>
-      <small>56 · 25 · 10 blows/layer</small>
-    </div>
-    <div class="chart-ph">
-      <span>📏</span>
-      Swell% vs Blows<br>الانتفاش مقابل الضربات<br>
-      <small>§10.4 | s = (S/hi) × 100</small>
-    </div>
-  </div>
+  <!-- Charts area — real captured images -->
+  <div class="sec-title">📈 Stress-Penetration Curves &amp; Charts — الرسوم البيانية (§10.1, Fig.4–6)</div>
+  ${chartSection}
 
   <!-- Notes per D1883 §10.2 -->
   <div class="note">
@@ -8240,6 +8478,12 @@ tr:hover td{background:#eff6ff!important;}
 </body>
 </html>`;
 
+  // ── Restore hidden containers ─────────────────────────────────
+  hiddenContainers.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && prevDisplay[id] !== undefined) el.style.display = prevDisplay[id];
+  });
+
   const modal   = document.getElementById('cbrReportModal');
   const content = document.getElementById('cbrReportContent');
   const iframe  = document.createElement('iframe');
@@ -8254,6 +8498,350 @@ tr:hover td{background:#eff6ff!important;}
 // ── Init ─────────────────────────────────────────────────────
 if (document.getElementById('sectionCBR')) {
   initCBRDynamicColumns();
+  // Initialize unit system UI on page load
+  setTimeout(() => onCBRUnitSystemChange(), 50);
+}
+
+// ===== PROCTOR D1557 REPORT GENERATOR =====
+function generateProctorReport() {
+  // ── Helpers ──────────────────────────────────────────────────
+  const g  = id => document.getElementById(id)?.value || '';
+  const gt = id => document.getElementById(id)?.textContent?.trim() || '—';
+  const sel = id => { const el=document.getElementById(id); return el ? el.options[el.selectedIndex]?.text : ''; };
+  const chk = id => document.getElementById(id)?.checked ? '☑' : '☐';
+
+  // ── Collect project info ──────────────────────────────────────
+  const proj        = g('prc_projectName')  || '—';
+  const reportNo    = g('prc_reportNo')     || '—';
+  const reportDate  = g('prc_reportDate')   || '—';
+  const client      = g('prc_client')       || '—';
+  const sampleId    = g('proctor_sampleId') || '—';
+  const sampleDate  = g('prc_sampleDate')   || '—';
+  const testDate    = g('proctor_testDate') || '—';
+  const location    = g('prc_location')     || '—';
+  const depth       = g('prc_depth')        || '—';
+  const sampleMass  = g('prc_sampleMass')   || '—';
+  const asRecWC     = g('prc_asReceivedWC') || '—';
+  const testedBy    = g('prc_testedBy')     || '—';
+
+  // ── Test method info ─────────────────────────────────────────
+  const method      = g('proctor_method');
+  const preparation = sel('prc_preparation');
+  const rammer      = sel('prc_rammer');
+  const layers      = g('prc_layers')       || '5';
+  const blows       = g('prc_blows')        || '56';
+  const moldVol     = g('moldVol_value')    || '—';
+  const moldVUnit   = g('moldVol_unit')     || 'cm³';
+  const sieveMethod = sel('prc_sieveMethod');
+  const oversizePc  = g('prc_oversizePc')  || '0';
+  const testFrac    = g('prc_testFraction') || '100';
+  const oversizeApplied = document.getElementById('prc_oversizeApplied')?.checked;
+
+  // ── Section 3 — Sample description ──────────────────────────
+  const Gs          = g('Gs_input')         || '2.65';
+  const uscsSymbol  = gt('sc_uscs_symbol');
+  const aashtoGroup = gt('sc_aashto_group');
+  const oversizeCorr = oversizeApplied ? 'Yes ☑' : 'No ☐';
+
+  // ── Section 4 — Equipment ───────────────────────────────────
+  const balanceId   = g('prc_balanceId')   || '—';
+  const mouldId     = g('prc_mouldId')     || '—';
+  const rammerId    = g('prc_rammerId')    || '—';
+  const ovenId      = g('prc_ovenId')      || '—';
+  const calibDue    = g('prc_calibDue')    || '—';
+  const mouldDiam   = g('prc_mouldDiam')   || '152.4';
+  const moldMass    = g('moldMass_g')      || '—';
+
+  // ── Unit system ──────────────────────────────────────────────
+  const unitSystem = document.querySelector('input[name="unitSystem"]:checked')?.value || 'g_cm3';
+  const unitLabel  = unitSystem==='g_cm3' ? 'g/cm³' : unitSystem==='kg_m3' ? 'kg/m³' : 'kN/m³';
+
+  // ── Results ──────────────────────────────────────────────────
+  const OMC = gt('omcResult');
+  const MDD = gt('mddResult');
+  const MDDunit = gt('mddUnit') || unitLabel;
+
+  // ── Compaction data table rows ───────────────────────────────
+  let dataRows = '';
+  const params = [
+    { label:'Wgt of Mold + Wet Soil (g)',  ids: [1,2,3,4,5].map(i=>`moldWet_${i}_g`) },
+    { label:'Wgt of Mold (g)',             ids: [1,2,3,4,5].map(()=>'moldMass_g'), static:true },
+    { label:'Wgt of Wet Soil (g)',         ids: [1,2,3,4,5].map(i=>`_wetSoil_${i}`), computed:true, fn: i => {
+        const mw = parseFloat(document.getElementById(`moldWet_${i}_g`)?.value)||0;
+        const mm = parseFloat(document.getElementById('moldMass_g')?.value)||0;
+        return mw>0&&mm>0 ? (mw-mm).toFixed(1) : '—'; }},
+    { label:`Wet Unit Wt. (${unitLabel})`, ids: [1,2,3,4,5].map(i=>`out_moist_${i}`), text:true },
+    { label:`Dry Density ρd (${unitLabel})`,ids: [1,2,3,4,5].map(i=>`out_dry_${i}`),  text:true },
+    { label:'Container No.',               ids: [1,2,3,4,5].map(()=>''), blank:true },
+    { label:'Wgt of Cup + Soil, Wet (g)',  ids: [1,2,3,4,5].map(i=>`wcWetTare_${i}`) },
+    { label:'Wgt of Cup + Soil, Dry (g)',  ids: [1,2,3,4,5].map(i=>`wcDryTare_${i}`) },
+    { label:'Wgt of Water (g)',            ids: [1,2,3,4,5].map(i=>`wcWater_${i}`), text:true },
+    { label:'Tare Cont. Wt. (g)',          ids: [1,2,3,4,5].map(i=>`wcTare_${i}`) },
+    { label:'Wgt of Dry Soil (g)',         ids: [1,2,3,4,5].map(i=>`wcDrySoil_${i}`), text:true },
+    { label:'Water Content w (%)',         ids: [1,2,3,4,5].map(i=>`w_${i}`), text:true, highlight:true },
+    { label:`Dry Density ρd (${unitLabel})`,ids:[1,2,3,4,5].map(i=>`out_dry_${i}`), text:true, highlight:true },
+  ];
+
+  params.forEach(row => {
+    const bg = row.highlight ? 'background:#fff7ed;font-weight:700;' : '';
+    let cells = '';
+    for (let i=1; i<=5; i++) {
+      let val = '—';
+      if (row.blank) { val = ''; }
+      else if (row.static) { val = g('moldMass_g') || '—'; }
+      else if (row.computed) { val = row.fn(i); }
+      else if (row.text) {
+        const el = document.getElementById(row.ids[i-1]);
+        val = el ? (el.value || el.textContent?.trim() || '—') : '—';
+        if (val === '—' || val === '') {
+          // try textContent for computed cells
+          const tel = document.getElementById(row.ids[i-1]);
+          val = tel?.textContent?.trim() || '—';
+        }
+      } else {
+        val = g(row.ids[i-1]) || '—';
+      }
+      cells += `<td style="padding:3px 5px;border:1px solid #ccc;text-align:center;font-size:.72rem;${bg}">${val}</td>`;
+    }
+    dataRows += `<tr><td style="padding:3px 6px;border:1px solid #ccc;font-size:.7rem;font-weight:600;background:#f8f8f8;">${row.label}</td>${cells}</tr>`;
+  });
+
+  // ── Chart capture ────────────────────────────────────────────
+  const canvas = document.getElementById('proctorChart');
+  let chartImg = null;
+  if (canvas) {
+    try { chartImg = canvas.toDataURL('image/png'); } catch(e){}
+  }
+  const chartHtml = chartImg
+    ? `<img src="${chartImg}" style="width:100%;max-height:195px;object-fit:contain;display:block;" alt="Compaction Curve">`
+    : `<div style="height:195px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:.8rem;border:2px dashed #cbd5e1;border-radius:6px;">📊 Run calculation first to see chart</div>`;
+
+  // ── Method detail string ──────────────────────────────────────
+  const methodStr = `Method ${method} (${
+    method==='A'?'4-in mold, No.4 sieve':
+    method==='B'?'4-in mold, 3/8-in sieve':
+    '6-in mold, 3/4-in sieve'})`;
+
+  // ── Build the single-page report HTML ────────────────────────
+  const reportHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Moisture-Density Report — ${proj}</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:9.5pt;color:#000;background:#fff;}
+.page{width:210mm;min-height:295mm;margin:0 auto;padding:7mm 8mm 5mm;background:white;}
+/* Report title */
+.rpt-title{text-align:center;background:#1a365d;color:white;padding:6px 10px;margin-bottom:2px;}
+.rpt-title h1{font-size:13pt;font-weight:700;letter-spacing:.03em;}
+.rpt-title h2{font-size:9.5pt;font-weight:400;margin-top:1px;}
+.form-no{text-align:right;font-size:7.5pt;color:#555;margin-bottom:4px;}
+/* Section headers */
+.sec-hdr{background:#1a365d;color:white;font-size:8pt;font-weight:700;padding:3px 7px;margin:3px 0 2px;}
+/* Info grid */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #999;margin-bottom:0;}
+.info-cell{display:flex;align-items:center;border-bottom:1px solid #ccc;border-right:1px solid #ccc;padding:2px 6px;min-height:18px;}
+.info-cell:nth-child(even){border-right:none;}
+.info-lbl{font-size:7.5pt;font-weight:700;color:#333;min-width:110px;flex-shrink:0;}
+.info-val{font-size:8pt;color:#000;border-bottom:1px dotted #999;flex:1;min-height:13px;padding-left:3px;}
+/* Data table */
+.data-tbl{width:100%;border-collapse:collapse;margin-bottom:2px;}
+.data-tbl th{background:#1a365d;color:white;text-align:center;padding:3px 4px;font-size:7.5pt;border:1px solid #1a365d;}
+.data-tbl td{padding:3px 5px;border:1px solid #bbb;text-align:center;font-size:7.5pt;}
+.data-tbl tr:nth-child(even) td{background:#f5f5f5;}
+/* Curve section */
+.curve-box{border:1px solid #999;padding:4px;margin:3px 0;}
+/* Results summary */
+.results-row{display:flex;gap:8px;margin:3px 0;}
+.result-box{flex:1;border:2px solid #1a365d;border-radius:4px;padding:5px 8px;text-align:center;}
+.result-box .lbl{font-size:7.5pt;font-weight:700;color:#1a365d;}
+.result-box .val{font-size:14pt;font-weight:900;color:#c2410c;line-height:1.2;}
+.result-box .unit{font-size:8pt;color:#555;}
+/* Signatures */
+.sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
+.sig-box{border-top:2px solid #333;padding-top:3px;font-size:7.5pt;}
+/* Checkbox row */
+.chk-row{display:flex;flex-wrap:wrap;gap:6px;font-size:7.5pt;margin:2px 0;}
+.chk-row span{display:flex;align-items:center;gap:2px;}
+/* Remarks */
+.remarks-box{border:1px solid #ccc;min-height:18px;padding:2px 5px;font-size:7.5pt;margin-top:2px;}
+@media print{
+  body{margin:0;}
+  .page{margin:0;padding:6mm 8mm 4mm;width:100%;min-height:unset;}
+  .no-print{display:none!important;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ══ TITLE ══════════════════════════════════════════════════ -->
+<div class="rpt-title">
+  <h1>MOISTURE-DENSITY RELATIONSHIP REPORT</h1>
+  <h2>Modified Proctor Compaction Test — ASTM D1557-12(2021)</h2>
+</div>
+<div class="form-no">Form No.: ASTM-D1557-R01 | Rev. 01 | Page 1 of 1</div>
+
+<!-- ══ SECTION 1 — PROJECT & SAMPLE ═══════════════════════════ -->
+<div class="sec-hdr">SECTION 1 — PROJECT &amp; SAMPLE INFORMATION</div>
+<div class="info-grid">
+  <div class="info-cell"><span class="info-lbl">Project Name:</span><span class="info-val">${proj}</span></div>
+  <div class="info-cell"><span class="info-lbl">Report No.:</span><span class="info-val">${reportNo}</span></div>
+  <div class="info-cell"><span class="info-lbl">Client / Contractor:</span><span class="info-val">${client}</span></div>
+  <div class="info-cell"><span class="info-lbl">Report Date:</span><span class="info-val">${reportDate}</span></div>
+  <div class="info-cell"><span class="info-lbl">Sample ID:</span><span class="info-val">${sampleId}</span></div>
+  <div class="info-cell"><span class="info-lbl">Sample Date:</span><span class="info-val">${sampleDate}</span></div>
+  <div class="info-cell"><span class="info-lbl">Location / Boring No.:</span><span class="info-val">${location}</span></div>
+  <div class="info-cell"><span class="info-lbl">Test Date:</span><span class="info-val">${testDate}</span></div>
+  <div class="info-cell"><span class="info-lbl">As-Received Water Content (%):</span><span class="info-val">${asRecWC}</span></div>
+  <div class="info-cell"><span class="info-lbl">Depth (m):</span><span class="info-val">${depth}</span></div>
+  <div class="info-cell" style="grid-column:span 1;"><span class="info-lbl">Sample Mass (kg):</span><span class="info-val">${sampleMass}</span></div>
+  <div class="info-cell"></div>
+</div>
+
+<!-- ══ SECTION 2 — TEST METHOD ════════════════════════════════ -->
+<div class="sec-hdr">SECTION 2 — TEST METHOD</div>
+<div style="border:1px solid #ccc;padding:3px 6px;font-size:7.5pt;">
+  <div class="chk-row" style="margin-bottom:2px;">
+    <b>Method:</b>
+    <span>${method==='A'?'☑':'☐'} Method A (4-in mold, No.4 sieve)</span>
+    <span>${method==='B'?'☑':'☐'} Method B (4-in mold, 3/8-in sieve)</span>
+    <span>${method==='C'?'☑':'☐'} Method C (6-in mold, 3/4-in sieve)</span>
+  </div>
+  <div class="chk-row" style="margin-bottom:2px;">
+    <b>Preparation:</b>
+    <span>${preparation?.includes('Moist')?'☑':'☐'} Moist Method (preferred)</span>
+    <span>${preparation?.includes('Dry')?'☑':'☐'} Dry Method</span>
+    &nbsp;&nbsp;<b>Rammer:</b>
+    <span>${rammer?.includes('Manual')?'☑':'☐'} Manual</span>
+    <span>${rammer?.includes('Mechanical')?'☑':'☐'} Mechanical</span>
+  </div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;">
+    <span><b>No. of Layers:</b> ${layers}</span>
+    <span><b>Blows/Layer:</b> ${blows}</span>
+    <span><b>Mould Volume (cm³):</b> ${moldVol} ${moldVUnit}</span>
+    <span><b>Sieve for Method:</b> ${sieveMethod}</span>
+    <span><b>PC% (Oversize):</b> ${oversizePc}%</span>
+    <span><b>Test Fraction:</b> ${testFrac}%</span>
+  </div>
+</div>
+
+<!-- ══ SECTION 3 — SAMPLE DESCRIPTION ══════════════════════════ -->
+<div class="sec-hdr">SECTION 3 — SAMPLE DESCRIPTION</div>
+<div style="border:1px solid #ccc;padding:3px 6px;font-size:7.5pt;">
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:2px;">
+    <span><b>Description:</b> <span style="border-bottom:1px dotted #999;min-width:140px;display:inline-block;">&nbsp;</span></span>
+    <span><b>Specific Gravity Gs:</b> ${Gs}</span>
+    <span><b>Method Used for Gs:</b> ☐ D854 &nbsp;☐ Assumed</span>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <span><b>USCS Classification (D2487):</b> ${uscsSymbol !== '—' ? uscsSymbol : '________'}</span>
+    <span><b>Oversize Correction Applied (D4718):</b> ${oversizeApplied?'Yes ☑':'No ☐'}</span>
+    <span><b>Standing/Curing Time (hrs):</b> _____</span>
+  </div>
+</div>
+
+<!-- ══ SECTION 4 — EQUIPMENT TRACEABILITY ═══════════════════════ -->
+<div class="sec-hdr">SECTION 4 — EQUIPMENT TRACEABILITY (ISO 17025)</div>
+<div style="border:1px solid #ccc;padding:3px 6px;font-size:7.5pt;display:flex;gap:10px;flex-wrap:wrap;">
+  <span><b>Balance ID:</b> ${balanceId}</span>
+  <span><b>Mould ID:</b> ${mouldId}</span>
+  <span><b>Rammer ID:</b> ${rammerId}</span>
+  <span><b>Oven ID:</b> ${ovenId}</span>
+  <span><b>Calibration Due:</b> ${calibDue}</span>
+  <span><b>Mould Dimensions:</b> Diameter ${mouldDiam} mm | Height _____ mm | Volume _____ cm³</span>
+</div>
+
+<!-- ══ SECTION 5 — COMPACTION DATA TABLE ════════════════════════ -->
+<div class="sec-hdr">SECTION 5 — COMPACTION DATA TABLE</div>
+<table class="data-tbl">
+  <thead>
+    <tr>
+      <th style="width:145px;text-align:left;">Trial No.</th>
+      <th>1-1</th><th>1-2</th><th>1-3</th><th>1-4</th><th>1-5</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${dataRows}
+  </tbody>
+</table>
+
+<!-- ══ SECTION 6 — MOISTURE-DENSITY CURVE ══════════════════════ -->
+<div class="sec-hdr">SECTION 6 — MOISTURE-DENSITY CURVE</div>
+<div class="curve-box" style="display:grid;grid-template-columns:1fr 120px;gap:8px;align-items:center;">
+  <div>${chartHtml}</div>
+  <div style="font-size:7pt;line-height:1.6;">
+    <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px;">
+      <div style="width:10px;height:10px;border-radius:50%;background:#ea580c;flex-shrink:0;"></div>
+      <span>Compaction Points</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px;">
+      <div style="width:14px;height:2px;background:#3b82f6;flex-shrink:0;"></div>
+      <span>Compaction Curve</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px;">
+      <div style="width:14px;height:2px;background:#16a34a;border-top:2px dashed #16a34a;flex-shrink:0;"></div>
+      <span>Zero Air Voids Curve (Gs = ${Gs})</span>
+    </div>
+    <div style="margin-top:6px;font-size:6.5pt;color:#555;">
+      ZAV formula: γd = Gs·γw / (1 + Gs·w)
+    </div>
+  </div>
+</div>
+
+<!-- ══ SECTION 7 — TEST RESULTS SUMMARY ═════════════════════════ -->
+<div class="sec-hdr">SECTION 7 — TEST RESULTS SUMMARY</div>
+<div style="border:1px solid #ccc;padding:4px 8px;margin-bottom:3px;">
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:4px;">
+    <span style="font-size:8pt;font-weight:700;">Max. Dry Density — MDD (ρ<sub>d,max</sub>): <span style="font-size:11pt;font-weight:900;color:#c2410c;">${MDD}</span> <span style="font-size:8pt;">${MDDunit}</span></span>
+    <span style="font-size:8pt;font-weight:700;margin-right:20px;">Optimum Water Content — OMC (w<sub>opt</sub>): <span style="font-size:11pt;font-weight:900;color:#1d4ed8;">${OMC}</span> <span style="font-size:8pt;">%</span></span>
+  </div>
+  <div style="display:flex;gap:10px;font-size:7.5pt;">
+    <span><b>USCS Classification:</b> ${uscsSymbol !== '—' ? uscsSymbol : '_______'}</span>
+    <span><b>AASHTO Classification:</b> ${aashtoGroup !== '—' ? aashtoGroup : '_______'}</span>
+    <span><b>Reference Standard:</b> ASTM D1557-12(2021)</span>
+  </div>
+</div>
+
+<!-- REMARKS -->
+<div style="font-size:7.5pt;font-weight:700;margin:2px 0 1px;">REMARKS:</div>
+<div class="remarks-box">&nbsp;</div>
+
+<!-- ══ SIGNATURE BLOCK ══════════════════════════════════════════ -->
+<div class="sec-hdr" style="margin-top:3px;">SIGNATURE BLOCK</div>
+<div class="sig-grid" style="border:1px solid #ccc;padding:4px 8px;">
+  <div class="sig-box">
+    <div><b>Tested by:</b> ${testedBy}</div>
+    <div style="margin-top:3px;"><b>Date:</b> ${testDate}</div>
+    <div style="margin-top:3px;"><b>Signature:</b> ___________________________</div>
+  </div>
+  <div class="sig-box">
+    <div><b>Reviewed by (Technical Manager):</b></div>
+    <div style="margin-top:3px;"><b>Date:</b> ___________________________</div>
+    <div style="margin-top:3px;"><b>Signature:</b> ___________________________</div>
+  </div>
+</div>
+
+</div><!-- end .page -->
+
+<div class="no-print" style="text-align:center;padding:12px;background:#f1f5f9;">
+  <button onclick="window.print()" style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:white;padding:10px 28px;border:none;border-radius:8px;font-size:.95rem;font-weight:700;cursor:pointer;">🖨️ Print Report</button>
+</div>
+
+</body>
+</html>`;
+
+  const modal   = document.getElementById('proctorReportModal');
+  const content = document.getElementById('proctorReportContent');
+  const iframe  = document.createElement('iframe');
+  iframe.style.cssText = 'width:100%;height:85vh;border:none;border-radius:0 0 12px 12px;';
+  content.innerHTML = '';
+  content.appendChild(iframe);
+  modal.style.display = 'block';
+  const doc = iframe.contentDocument || iframe.contentWindow.document;
+  doc.open(); doc.write(reportHTML); doc.close();
 }
 
 </script>
