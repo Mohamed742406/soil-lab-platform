@@ -8048,6 +8048,10 @@ function resetCBRForm() {
 
 // ── Professional 2-Page Report ───────────────────────────────
 async function generateCBRReport() {
+  // ── Ensure all calculations are up to date before reading cbrData ──
+  recalcPressuresFromReadings();   // recalc pressure from dial readings × ring factor
+  updateCBRCalculations();         // then recalc density, CBR%, charts
+
   const isImperial  = document.getElementById('cbrUnitImperial')?.checked === true;
   const ringUS      = getCBRUnitSystem(); // 'kN' or 'kg'
   const isSoaked    = document.getElementById('cbr_soaked')?.checked !== false;
@@ -8100,15 +8104,40 @@ async function generateCBRReport() {
     </tr>`;
 
     // CBR per D1883 §10.2 — standard: 1000 psi (6.9 MPa) & 1500 psi (10.3 MPa)
-    const p01kPa = d.p01_kPa != null ? d.p01_kPa.toFixed(1) : '—';
-    const p02kPa = d.p02_kPa != null ? d.p02_kPa.toFixed(1) : '—';
-    const p01psi = d.p01_psi != null ? d.p01_psi.toFixed(1) : '—';
-    const p02psi = d.p02_psi != null ? d.p02_psi.toFixed(1) : '—';
-    const c01    = d.cbr01   != null ? d.cbr01.toFixed(1)   : '—';
-    const c02    = d.cbr02   != null ? d.cbr02.toFixed(1)   : '—';
-    const cf     = d.cbrFinal!= null ? d.cbrFinal.toFixed(1): '—';
-    const useP   = (d.cbr02 != null && d.cbr01 != null && d.cbr02 > d.cbr01)
-                   ? '<span style="color:#dc2626;font-size:.7rem">★ يُستخدم 0.2″ (§10.2)</span>' : '';
+    // Read pressure directly from inputs as authoritative source (covers both ring-calc and manual entry)
+    const us = getCBRUnitSystem();
+    const isKgReport = us === 'kg';
+    const p01raw = parseFloat(document.getElementById('penetration100'+suf+'pressure')?.value) || 0;
+    const p02raw = parseFloat(document.getElementById('penetration200'+suf+'pressure')?.value) || 0;
+    // Convert to kPa and psi for display
+    const p01kPa_val = isKgReport ? p01raw * 98.0665 : p01raw;
+    const p02kPa_val = isKgReport ? p02raw * 98.0665 : p02raw;
+    const p01psi_val = isKgReport ? p01raw * 14.2233 : p01raw / 6.89476;
+    const p02psi_val = isKgReport ? p02raw * 14.2233 : p02raw / 6.89476;
+    // CBR standards
+    const std01 = isKgReport ? 70 : 6895;
+    const std02 = isKgReport ? 105 : 10342;
+    const cbr01_val = p01raw > 0 ? (p01kPa_val / std01) * 100 : null;
+    const cbr02_val = p02raw > 0 ? (p02kPa_val / std02) * 100 : null;
+    const cbrFin_val = (cbr01_val !== null || cbr02_val !== null) ? Math.max(cbr01_val??0, cbr02_val??0) : null;
+
+    const p01kPa = p01raw > 0 ? p01kPa_val.toFixed(1) : '—';
+    const p02kPa = p02raw > 0 ? p02kPa_val.toFixed(1) : '—';
+    const p01psi = p01raw > 0 ? p01psi_val.toFixed(1) : '—';
+    const p02psi = p02raw > 0 ? p02psi_val.toFixed(1) : '—';
+    const c01    = cbr01_val  !== null ? cbr01_val.toFixed(1)  : '—';
+    const c02    = cbr02_val  !== null ? cbr02_val.toFixed(1)  : '—';
+    const cf     = cbrFin_val !== null ? cbrFin_val.toFixed(1) : '—';
+    const useP   = (cbr02_val !== null && cbr01_val !== null && cbr02_val > cbr01_val)
+                   ? '<span style="color:#dc2626;font-size:.7rem">★ يُستخدم 0.2″</span>' : '';
+    // Update cbrData with fresh values for summary
+    if (p01raw > 0 || p02raw > 0) {
+      cbrData[suf] = {...(cbrData[suf]||{}),
+        p01_kPa: p01kPa_val, p02_kPa: p02kPa_val,
+        p01_psi: p01psi_val, p02_psi: p02psi_val,
+        cbr01: cbr01_val, cbr02: cbr02_val, cbrFinal: cbrFin_val
+      };
+    }
 
     cbrRows += `<tr>
       <td style="font-weight:700">${blowsMap[suf]} blows (${suf})</td>
@@ -8249,36 +8278,75 @@ async function generateCBRReport() {
     } catch(e) { return null; }
   }
 
-  const imgPen     = getCanvasImg('cbrPenetrationChart', 900, 380);
-  const imgCBRvsDd = getCanvasImg('cbrVsDensityChart',   700, 320);
-  const imgDensity = getCanvasImg('cbrDensityChart',     700, 320);
-  const imgSwell   = getCanvasImg('cbrSwellChart',       700, 320);
+  // ── Collect chart data directly (no canvas capture — renders fresh in iframe) ──
+  const isKg_chart = ringUS === 'kg';
+  const pConv_chart = isKg_chart ? 1 : 1;
+  const pUnit_chart = isKg_chart ? 'kg/cm²' : 'kPa';
+  const xUnit_chart = 'mm';
 
-  function chartBox(img, title, height='200px') {
-    if (img) {
-      return `<div style="border:1px solid #cbd5e1;border-radius:7px;overflow:hidden;background:white;box-shadow:0 1px 4px rgba(0,0,0,.06);">
-        <div style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:5px 10px;font-size:.68rem;font-weight:700;">${title}</div>
-        <img src="${img}" style="width:100%;display:block;" alt="${title}">
-      </div>`;
-    }
-    return `<div style="border:1.5px dashed #94a3b8;border-radius:7px;height:${height};
-      display:flex;flex-direction:column;align-items:center;justify-content:center;
-      color:#94a3b8;font-size:.72rem;background:#f8fafc;gap:4px;">
-      <span style="font-size:1.5rem;">📊</span>${title}<br><small style="color:#cbd5e1">احسب أولاً ثم أنشئ التقرير</small>
-    </div>`;
-  }
+  // Penetration datasets
+  const penColors = ['#2563eb','#059669','#d97706'];
+  const penNames  = [`E1 — 56 blows`, `E2 — 25 blows`, `E3 — 10 blows`];
+  const penDatasets = [];
+  let penYmax = 0;
+  suffs.forEach((suf, i) => {
+    const pts = CBR_PENS.map((pen, j) => {
+      const p = parseFloat(document.getElementById('penetration'+pen+suf+'pressure')?.value);
+      if (isNaN(p) || p <= 0) return null;
+      if (p > penYmax) penYmax = p;
+      return { x: CBR_PEN_MM[j], y: p };
+    }).filter(Boolean);
+    if (pts.length) penDatasets.push({ label: penNames[i], data: pts, color: penColors[i] });
+  });
+  const penYMax = penYmax > 0 ? Math.ceil((penYmax * 1.18) / 100) * 100 : 3000;
+  // Standard lines
+  const std01x = 2.54, std02x = 5.08;
+  const std01y = isKg_chart ? 70 : 6895;
+  const std02y = isKg_chart ? 105 : 10342;
 
-  const chartSection = `
-    <div style="margin:8px 0;">
-      ${chartBox(imgPen, '📈 منحنيات الإجهاد-الاختراق — Stress-Penetration Curves (ASTM D1883-16 §10.1, Fig.4–5) | الوحدات: ${ringUS==="kg"?"kg/cm²":"kPa"} vs mm', '220px')}
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:8px 0;">
-      ${chartBox(imgCBRvsDd, '📊 CBR% vs Dry Unit Weight — تصميم CBR (Fig.6)', '170px')}
-      ${chartBox(imgDensity, '📉 Dry Density vs Blows — الكثافة الجافة', '170px')}
-      ${chartBox(imgSwell,   '📏 Swell% vs Blows (§10.4) — الانتفاش', '170px')}
-    </div>`;
+  // Density datasets
+  const densSpecData = suffs.map((suf,i) => {
+    const d = cbrData[suf] || {};
+    return d.rhoDry ? { blows: blowsMap[suf], val: d.rhoDry, color: penColors[i] } : null;
+  }).filter(Boolean);
+  const mddVal = parseFloat(document.getElementById('cbr_MDD')?.value) || 0;
 
-  // ── Report HTML ────────────────────────────────────────────────
+  // Swell datasets
+  const swellData = suffs.map((suf,i) => {
+    const d = cbrData[suf] || {};
+    return d.swell != null ? { blows: blowsMap[suf], val: parseFloat(d.swell.toFixed(2)), color: penColors[i] } : null;
+  }).filter(Boolean);
+
+  // CBR vs Density
+  const cbrVsDensData = suffs.map((suf,i) => {
+    const d = cbrData[suf] || {};
+    // use freshly computed cbrFinal from inputs
+    const p01r = parseFloat(document.getElementById('penetration100'+suf+'pressure')?.value)||0;
+    const p02r = parseFloat(document.getElementById('penetration200'+suf+'pressure')?.value)||0;
+    const p01k = isKg_chart ? p01r*98.0665 : p01r;
+    const p02k = isKg_chart ? p02r*98.0665 : p02r;
+    const c01  = p01r > 0 ? (p01k/(isKg_chart?6895:6895))*100 : null;
+    const c02  = p02r > 0 ? (p02k/(isKg_chart?10342:10342))*100 : null;
+    const cf   = (c01||c02) ? Math.max(c01??0,c02??0) : null;
+    return (d.rhoDry && cf != null) ? { x: d.rhoDry, y: cf, color: penColors[i], blows: blowsMap[suf] } : null;
+  }).filter(Boolean);
+
+  // Serialize chart data for iframe
+  const chartJSON = JSON.stringify({ penDatasets, penYMax, std01x, std02x, std01y, std02y, pUnit: pUnit_chart,
+    densSpecData, mddVal, swellData, cbrVsDensData, suffs, blowsMap });
+
+  // ── Restore hidden containers ─────────────────────────────────
+  hiddenContainers.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && prevDisplay[id] !== undefined) el.style.display = prevDisplay[id];
+  });
+  Object.keys(chartSizes).forEach(id => {
+    const c = document.getElementById(id);
+    if (c) { c.style.width = ''; c.style.height = ''; }
+  });
+  [cbrPenChart, cbrDensChart, cbrVsChart, cbrSwChart].forEach(ch => {
+    if (ch) { try { ch.resize(); } catch(e){} }
+  });
   const reportHTML = `<!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -8376,21 +8444,11 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
 <!-- ═══════════════════════════════════════ PAGE 1 ═══════════════════════════════════════ -->
 <div class="page">
 
-  <!-- Company Header -->
-  <div class="hdr">
-    <div class="hdr-left">
-      <div class="hdr-company">MATERIALS AND DESIGN</div>
-      <div class="hdr-sub">القصبي للمواد والتصميم — ELKASABY FOR MATERIALS AND DESIGN</div>
-      <div class="hdr-sub" style="font-size:.65rem;color:#64748b;">ISO/IEC 17025:2017 Accredited Laboratory</div>
-    </div>
-    <div class="hdr-right">
-      <div class="hdr-page">Page 1 of 2</div>
-      <div style="font-size:.65rem;color:#64748b;margin-top:3px;">Generated: ${now}</div>
-    </div>
+  <!-- Report Title with page number -->
+  <div style="display:flex;justify-content:space-between;align-items:center;border:2px solid #111;padding:7px 14px;margin-bottom:0;">
+    <div style="font-size:1.1rem;font-weight:900;letter-spacing:.04em;">CBR TEST REPORT (ASTM D1883–16)</div>
+    <div style="font-size:.82rem;font-weight:700;white-space:nowrap;">Page 1 of 2</div>
   </div>
-
-  <!-- Report Title -->
-  <div class="hdr-title">CBR TEST REPORT (ASTM D1883–16)</div>
 
   <!-- 1. Project Info -->
   <div class="sec-hdr">1. PROJECT INFORMATION — بيانات المشروع</div>
@@ -8414,8 +8472,8 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
       <td class="val">${proctorStd} | MDD = ${MDD} g/cm³ | OMC = ${OMC}%</td>
     </tr>
     <tr>
-      <td class="lbl">Immersion Period</td><td class="val">${immHrs} hrs (Standard: 96±2 hrs §8.2.5)</td>
-      <td class="lbl">Surcharge Weight</td><td class="val">${srchKg} kg (${srchLbf} lbf) §9.1</td>
+      <td class="lbl">Immersion Period</td><td class="val">${immHrs} hrs (Standard: 96±2 hrs)</td>
+      <td class="lbl">Surcharge Weight</td><td class="val">${srchKg} kg (${srchLbf} lbf)</td>
     </tr>
     <tr>
       <td class="lbl">Specimens</td>
@@ -8424,14 +8482,14 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
   </table>
 
   <!-- 2. Equipment Traceability -->
-  <div class="sec-hdr" style="margin-top:10px;">2. EQUIPMENT TRACEABILITY (ISO 17025) — بيانات الأجهزة</div>
+  <div class="sec-hdr" style="margin-top:8px;">2. EQUIPMENT TRACEABILITY (ISO 17025) — بيانات الأجهزة</div>
   <table class="info-table">
     <tr>
       <td class="lbl">CBR Machine ID</td><td class="val">—</td>
       <td class="lbl">Load Ring Coefficient</td><td class="val">${rf} ${ringUS}/div</td>
     </tr>
     <tr>
-      <td class="lbl">Piston Area</td><td class="val">${area} cm² (3.0 in²) — dia. 1.954″ (49.63mm) §6.8</td>
+      <td class="lbl">Piston Area</td><td class="val">${area} cm² (3.0 in²) — dia. 1.954″ (49.63mm)</td>
       <td class="lbl">Zero Correction</td><td class="val">Applied: ${document.getElementById('cbr_curveType')?.value !== 'none' ? '☑ Yes' : '☐ No'}</td>
     </tr>
     <tr>
@@ -8444,16 +8502,16 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
     </tr>
   </table>
 
-  <!-- Standard Pressures -->
-  <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:6px 10px;margin:8px 0;font-size:.72rem;color:#166534;">
-    📐 <strong>Standard Stresses (D1883 §10.2):</strong>
-    &nbsp;@ 0.1″ (2.54 mm) = <strong>${ringUS==='kg' ? '70 kg/cm²' : '1000 psi = 6.9 MPa = 6895 kPa'}</strong>
-    &nbsp;|&nbsp; @ 0.2″ (5.08 mm) = <strong>${ringUS==='kg' ? '105 kg/cm²' : '1500 psi = 10.3 MPa = 10342 kPa'}</strong>
-    &nbsp;|&nbsp; CBR (%) = (Unit Stress ÷ Standard Stress) × 100
+  <!-- Standard Pressures note -->
+  <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:4px;padding:5px 10px;margin:6px 0;font-size:.7rem;color:#166534;">
+    <strong>Standard Stresses:</strong>
+    @ 0.1″ (2.54mm) = <strong>${ringUS==='kg' ? '70 kg/cm²' : '1000 psi = 6895 kPa'}</strong>
+    &nbsp;|&nbsp; @ 0.2″ (5.08mm) = <strong>${ringUS==='kg' ? '105 kg/cm²' : '1500 psi = 10342 kPa'}</strong>
+    &nbsp;|&nbsp; CBR (%) = Unit Stress ÷ Standard Stress × 100
   </div>
 
-  <!-- 3. Density, Swell & Compaction -->
-  <div class="sec-hdr" style="margin-top:8px;">3. UNIT WEIGHT, SWELL & COMPACTION — الكثافة والانتفاش ونسبة الدمك (§10.3, §10.4)</div>
+  <!-- 3. Unit Weight, Swell & Compaction -->
+  <div class="sec-hdr" style="margin-top:6px;">3. UNIT WEIGHT, SWELL &amp; COMPACTION — الكثافة والانتفاش ونسبة الدمك</div>
   <table class="data-table">
     <thead><tr>
       <th>Specimen<br>القالب</th>
@@ -8461,13 +8519,50 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
       <th style="font-size:.65rem;">All Units<br>g/cm³ | kN/m³ | pcf</th>
       <th>Swell %<br>انتفاش</th>
       <th>% Compaction<br>نسبة الدمك</th>
-      <th>w% Top 1″<br>After Soak (§9.4)</th>
+      <th>w% Top 1″<br>After Soak</th>
     </tr></thead>
     <tbody>${densityRows || '<tr><td colspan="6" style="color:#94a3b8;padding:12px;">لا توجد بيانات — No data entered</td></tr>'}</tbody>
   </table>
 
-  <!-- 4. CBR Results -->
-  <div class="sec-hdr" style="margin-top:8px;">4. CBR VALUE CALCULATION — حسابات نسبة التحمل (§10.2, §11.3.7)</div>
+  <!-- Density & Swell charts — inline Canvas, rendered fresh in iframe -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:7px;">
+    <div style="border:1.5px solid #555;border-radius:4px;overflow:hidden;">
+      <div class="chart-hdr" style="border:none;border-bottom:1px solid #777;">Dry Density vs Blows — الكثافة الجافة</div>
+      <div style="background:white;padding:6px;height:240px;"><canvas id="rpt_densChart"></canvas></div>
+    </div>
+    <div style="border:1.5px solid #555;border-radius:4px;overflow:hidden;">
+      <div class="chart-hdr" style="border:none;border-bottom:1px solid #777;">Swell % vs Blows — الانتفاش</div>
+      <div style="background:white;padding:6px;height:240px;"><canvas id="rpt_swellChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>ASTM D1883-16 | Std: 1000 psi @ 0.1″ | 1500 psi @ 0.2″</span>
+    <span>Page 1 / 2 — صفحة 1 / 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ PAGE 2 ═══════════════════════════════════════ -->
+<div class="page">
+
+  <!-- Page 2 Title with page number -->
+  <div style="display:flex;justify-content:space-between;align-items:center;border:2px solid #111;padding:7px 14px;margin-bottom:0;">
+    <div style="font-size:1.0rem;font-weight:900;letter-spacing:.03em;">PENETRATION DATA &amp; CBR RESULTS — بيانات الاختراق ونتائج CBR</div>
+    <div style="font-size:.82rem;font-weight:700;white-space:nowrap;">Page 2 of 2</div>
+  </div>
+
+  <!-- Penetration Data Table -->
+  <div class="sec-hdr" style="margin-top:0;">PENETRATION TEST DATA — بيانات الاختراق الكاملة (11 نقطة)</div>
+  <p style="font-size:.62rem;color:#6b7280;padding:3px 6px;border:1px solid #e2e8f0;border-top:0;margin-bottom:0;">
+    Rate = 0.05 in/min (1.27 mm/min) | ★ = Standard points for CBR | Piston: ${area} cm² (3.0 in²)
+  </p>
+  <table class="data-table">
+    <thead>${penHeader}</thead>
+    <tbody>${penRows || '<tr><td colspan="8" style="color:#94a3b8;padding:10px;">لا توجد بيانات</td></tr>'}</tbody>
+  </table>
+
+  <!-- CBR Results -->
+  <div class="sec-hdr" style="margin-top:8px;">CBR VALUE CALCULATION — حسابات نسبة تحمل التربة</div>
   <table class="data-table">
     <thead><tr>
       <th>Specimen<br>القالب</th>
@@ -8481,108 +8576,42 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
   </table>
 
   <!-- Summary Banner -->
-  <div class="summary-box">${summaryHtml || '<div style="flex:1;text-align:center;color:#94a3b8;padding:14px;">لا توجد نتائج — No results</div>'}</div>
+  <div class="summary-box" style="margin:7px 0;">${summaryHtml || '<div style="flex:1;text-align:center;color:#94a3b8;padding:14px;">لا توجد نتائج — No results</div>'}</div>
 
-  <!-- Acceptance note -->
-  <div class="warn">
-    ⚠️ <b>Acceptance Criteria — معايير القبول:</b>
+  <!-- Stress-Penetration Chart (main) — inline Canvas -->
+  <div class="sec-hdr" style="margin-top:6px;">LOAD-PENETRATION CURVES — منحنيات الإجهاد-الاختراق</div>
+  <div style="border:1.5px solid #555;border-radius:4px;overflow:hidden;margin-bottom:7px;">
+    <div class="chart-hdr">Stress vs Penetration | Unit: ${pUnit_chart} vs mm | Standard lines: 2.54mm (0.1″) &amp; 5.08mm (0.2″)</div>
+    <div style="background:white;padding:6px;height:200px;"><canvas id="rpt_penChart"></canvas></div>
+  </div>
+
+  <!-- CBR vs Density chart — inline Canvas -->
+  <div style="border:1.5px solid #555;border-radius:4px;overflow:hidden;margin-bottom:8px;">
+    <div class="chart-hdr">CBR% vs Dry Unit Weight (g/cm³) — تصميم قيمة CBR</div>
+    <div style="background:white;padding:6px;height:120px;"><canvas id="rpt_cbrDensChart"></canvas></div>
+  </div>
+
+  <!-- Acceptance & Signatures -->
+  <div class="warn" style="margin:5px 0;font-size:.66rem;">
+    ⚠️ <b>Acceptance Criteria:</b>
     Swell ≤ 2% (base) | Compaction ≥ 95% MDD | CBR ≥ 80% (upper base) | CBR ≥ 30% (sub-base) | CBR ≥ 8% (subgrade)
   </div>
 
-  <div class="footer">
-    <span>طباعة: ${now}</span>
-    <span>ASTM D1883-16 | Std: 1000 psi @ 0.1″ | 1500 psi @ 0.2″</span>
-    <span>Page 1 / 2 — صفحة 1 / 2</span>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════ PAGE 2 ═══════════════════════════════════════ -->
-<div class="page">
-
-  <!-- Page 2 Header -->
-  <div class="hdr">
-    <div class="hdr-left">
-      <div class="hdr-company">MATERIALS AND DESIGN</div>
-      <div class="hdr-sub">Penetration Data &amp; Load-Penetration Curves — بيانات الاختراق والرسوم البيانية</div>
-    </div>
-    <div class="hdr-right">
-      <div class="hdr-page">Page 2 of 2</div>
-      <div style="font-size:.65rem;color:#64748b;">Project: ${proj} | Sample: ${sampleId}</div>
-    </div>
-  </div>
-  <div class="hdr-title">PENETRATION DATA &amp; CHARTS — ASTM D1883-16 §9.3 &amp; §10.1</div>
-
-  <!-- 5. Load-Penetration Curves (PROMINENT - matches reference) -->
-  <div class="sec-hdr" style="margin-top:0;">5. LOAD-PENETRATION CURVES (ASTM D1883-16 §10.1, Fig.4–5)</div>
-  <div class="chart-wrap">
-    ${imgPen
-      ? `<div class="chart-hdr">📈 Stress vs Penetration — منحنيات الاختراق | Unit: ${ringUS==='kg'?'kg/cm²':'kPa'} vs mm | Standard lines: 2.54mm (0.1″) &amp; 5.08mm (0.2″)</div>
-         <img src="${imgPen}" class="chart-img" style="max-height:220px;object-fit:contain;background:white;" alt="Penetration Chart">`
-      : `<div class="chart-hdr">📈 Stress vs Penetration Chart</div>
-         <div class="chart-placeholder"><span style="font-size:2rem;">📊</span>
-         أدخل بيانات الاختراق واحسب أولاً<br><small>Enter penetration data and click Calculate first</small></div>`
-    }
-  </div>
-
-  <!-- Secondary charts: CBR vs Density + Density vs Blows + Swell -->
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;">
-    <div style="border:1.5px solid #111;border-radius:4px;overflow:hidden;">
-      <div class="chart-hdr" style="border:none;border-bottom:1px solid #555;">📊 CBR% vs Dry Unit Weight</div>
-      ${imgCBRvsDd
-        ? `<img src="${imgCBRvsDd}" style="width:100%;display:block;max-height:160px;object-fit:contain;background:white;" alt="CBR vs Density">`
-        : `<div class="chart-placeholder" style="height:130px;"><span>📊</span><small>احسب أولاً</small></div>`}
-    </div>
-    <div style="border:1.5px solid #111;border-radius:4px;overflow:hidden;">
-      <div class="chart-hdr" style="border:none;border-bottom:1px solid #555;">📉 Dry Density vs Blows</div>
-      ${imgDensity
-        ? `<img src="${imgDensity}" style="width:100%;display:block;max-height:160px;object-fit:contain;background:white;" alt="Density vs Blows">`
-        : `<div class="chart-placeholder" style="height:130px;"><span>📉</span><small>احسب أولاً</small></div>`}
-    </div>
-    <div style="border:1.5px solid #111;border-radius:4px;overflow:hidden;">
-      <div class="chart-hdr" style="border:none;border-bottom:1px solid #555;">📏 Swell% vs Blows (§10.4)</div>
-      ${imgSwell
-        ? `<img src="${imgSwell}" style="width:100%;display:block;max-height:160px;object-fit:contain;background:white;" alt="Swell vs Blows">`
-        : `<div class="chart-placeholder" style="height:130px;"><span>📏</span><small>احسب أولاً</small></div>`}
-    </div>
-  </div>
-
-  <!-- 6. Penetration Raw Data Table -->
-  <div class="sec-hdr" style="margin-top:8px;">6. PENETRATION TEST DATA (§9.3 — 11 Required Points) — بيانات الاختراق الكاملة</div>
-  <p style="font-size:.63rem;color:#6b7280;padding:3px 6px;border:1px solid #e2e8f0;border-top:0;">
-    Rate of penetration = 0.05 in/min (1.27 mm/min) §9.3 | ★ = Standard points for CBR | Piston: 1.954″ dia (49.63mm) = 3.0 in² (${area} cm²) §6.8
-  </p>
-  <table class="data-table">
-    <thead>${penHeader}</thead>
-    <tbody>${penRows || '<tr><td colspan="8" style="color:#94a3b8;padding:10px;">لا توجد بيانات</td></tr>'}</tbody>
-  </table>
-
-  <!-- ASTM Notes -->
-  <div class="note" style="margin-top:8px;">
-    📌 <b>D1883-16 §10.2 — Bearing Ratio Calculation:</b>
-    Standard stresses: <b>1000 psi (6.9 MPa)</b> @ 0.1″ and <b>1500 psi (10.3 MPa)</b> @ 0.2″.
-    Normally reported at 0.1″. If value @ 0.2″ > value @ 0.1″ → rerun; if confirmed → use 0.2″.
-    Concave upward curve → adjust zero point per Fig.4 &amp; Fig.5 (project tangent, add offset X to both penetrations).
-  </div>
-
-  <!-- Signatures -->
   <div class="sign-grid">
     <div class="sign-box">
-      🔬 Quality Manager / مدير الجودة<br>
-      <br>
+      🔬 Quality Manager / مدير الجودة<br><br>
       Signature: ______________________<br>
       Date: ____________________________
     </div>
     <div class="sign-box">
-      ⚙️ Technical Manager / المدير الفني<br>
-      <br>
+      ⚙️ Technical Manager / المدير الفني<br><br>
       Signature: ______________________<br>
       Date: ____________________________
     </div>
   </div>
 
   <div class="footer">
-    <span>طباعة: ${now}</span>
-    <span>ASTM D1883-16 | منصة الاختبارات المعملية للتربة | م. محمد القصبي</span>
+    <span>ASTM D1883-16 | California Bearing Ratio Test</span>
     <span>Page 2 / 2 — صفحة 2 / 2</span>
   </div>
 </div>
@@ -8595,6 +8624,40 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
     🖨️ طباعة التقرير — Print Report
   </button>
 </div>
+
+<script>
+/* Chart.js will be injected from parent after iframe load */
+window._drawReportCharts = function() {
+  var D = window._rptData;
+  if (!window.Chart || !D) return;
+  Chart.defaults.font.family = "Cairo,Segoe UI,sans-serif";
+  Chart.defaults.font.size = 11;
+  Chart.defaults.color = "#222";
+  var G="#d1d5db",A="#374151";
+  var EC=["#4472C4","#ED7D31","#A9D18E","#FFC000","#5B9BD5"];
+  var EB=["#2e5496","#c55a11","#70ad47","#bf9000","#2e75b6"];
+  var dC=document.getElementById("rpt_densChart");
+  if (dC && D.densSpecData && D.densSpecData.length) {
+    var mddDs=D.mddVal>0?[{label:"MDD="+D.mddVal,data:[{x:5,y:D.mddVal},{x:65,y:D.mddVal}],borderColor:"#FF0000",borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false}]:[];
+    new Chart(dC,{type:"line",data:{datasets:[{label:"Dry Density",data:D.densSpecData.map(function(p){return{x:p.blows,y:p.val};}),borderColor:"#4472C4",backgroundColor:"#4472C415",borderWidth:2.5,pointRadius:9,pointBackgroundColor:D.densSpecData.map(function(_,i){return EC[i];}),pointBorderColor:D.densSpecData.map(function(_,i){return EB[i];}),pointBorderWidth:1.5,fill:true,tension:0.3}].concat(mddDs)},options:{responsive:true,maintainAspectRatio:false,parsing:false,scales:{x:{type:"linear",min:5,max:65,title:{display:true,text:"Blows per Layer",color:A,font:{size:10,weight:"bold"}},ticks:{color:A,callback:function(v){return [10,25,56].indexOf(v)>=0?v+" blows":"";}},grid:{color:G},border:{color:"#888"}},y:{title:{display:true,text:"Dry Density (g/cm3)",color:A,font:{size:10,weight:"bold"}},ticks:{color:A},grid:{color:G},border:{color:"#888"}}},plugins:{legend:{position:"top",labels:{boxWidth:12,font:{size:10}}},tooltip:{callbacks:{label:function(c){return c.dataset.label+": "+c.parsed.y.toFixed(3);}}}}}});
+  }
+  var sC=document.getElementById("rpt_swellChart");
+  if (sC && D.swellData && D.swellData.length) {
+    new Chart(sC,{type:"bar",data:{labels:D.swellData.map(function(p){return p.blows+" blows";}),datasets:[{label:"Swell %",data:D.swellData.map(function(p){return p.val;}),backgroundColor:D.swellData.map(function(_,i){return EC[i];}),borderColor:D.swellData.map(function(_,i){return EB[i];}),borderWidth:1.5,barPercentage:0.55}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:A},grid:{display:false},border:{color:"#888"}},y:{beginAtZero:true,title:{display:true,text:"Swell %",color:A,font:{size:10,weight:"bold"}},ticks:{color:A},grid:{color:G},border:{color:"#888"}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return "Swell = "+c.parsed.y.toFixed(2)+"%";}}}}}});
+  }
+  var pC=document.getElementById("rpt_penChart");
+  if (pC && D.penDatasets && D.penDatasets.length) {
+    var pds=D.penDatasets.map(function(d,i){return{label:d.label,data:d.data,borderColor:EC[i],backgroundColor:EC[i]+"22",borderWidth:2.5,pointRadius:5,pointBackgroundColor:EC[i],fill:false,tension:0.3};});
+    pds.push({label:"0.1in std",borderColor:"#FF0000",data:[{x:D.std01x,y:0},{x:D.std01x,y:D.penYMax}],borderDash:[5,4],borderWidth:1.5,pointRadius:0,fill:false,tension:0});
+    pds.push({label:"0.2in std",borderColor:"#FF8C00",data:[{x:D.std02x,y:0},{x:D.std02x,y:D.penYMax}],borderDash:[5,4],borderWidth:1.5,pointRadius:0,fill:false,tension:0});
+    new Chart(pC,{type:"line",data:{datasets:pds},options:{responsive:true,maintainAspectRatio:false,parsing:false,scales:{x:{type:"linear",min:0,max:14,title:{display:true,text:"Penetration (mm)",color:A,font:{size:10,weight:"bold"}},ticks:{color:A},grid:{color:G},border:{color:"#888"}},y:{min:0,max:D.penYMax,title:{display:true,text:"Stress",color:A,font:{size:10,weight:"bold"}},ticks:{color:A},grid:{color:G},border:{color:"#888"}}},plugins:{legend:{position:"top",labels:{boxWidth:12,font:{size:10}}},tooltip:{callbacks:{label:function(c){return c.dataset.label+": "+c.parsed.y.toFixed(1);}}}}}});
+  }
+  var cdC=document.getElementById("rpt_cbrDensChart");
+  if (cdC && D.cbrVsDensData && D.cbrVsDensData.length) {
+    new Chart(cdC,{type:"line",data:{datasets:[{label:"CBR% vs Density",data:D.cbrVsDensData.map(function(p){return{x:p.x,y:p.y};}),borderColor:"#4472C4",backgroundColor:"#4472C415",borderWidth:2,pointRadius:9,pointBackgroundColor:D.cbrVsDensData.map(function(_,i){return EC[i];}),fill:true,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,parsing:false,scales:{x:{type:"linear",title:{display:true,text:"Dry Density (g/cm3)",color:A,font:{size:10}},ticks:{color:A},grid:{color:G},border:{color:"#888"}},y:{beginAtZero:false,title:{display:true,text:"CBR %",color:A,font:{size:10}},ticks:{color:A},grid:{color:G},border:{color:"#888"}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return "CBR="+c.parsed.y.toFixed(1)+"%";}}}}}});
+  }
+};
+<\/script>
 
 </body>
 </html>`;
@@ -8619,6 +8682,22 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
   content.appendChild(iframe);
   const doc = iframe.contentDocument || iframe.contentWindow.document;
   doc.open(); doc.write(reportHTML); doc.close();
+
+  // Directly inject chart data + Chart.js into iframe (bypasses file:// CDN restriction)
+  setTimeout(function() {
+    try {
+      var iwin = iframe.contentWindow;
+      if (!iwin) return;
+      // Pass chart data object directly — no JSON serialization issues
+      iwin._rptData = { penDatasets, penYMax, std01x, std02x, std01y, std02y,
+        pUnit: pUnit_chart, densSpecData, mddVal, swellData, cbrVsDensData,
+        suffs, blowsMap };
+      // Pass Chart.js constructor from parent
+      if (window.Chart) iwin.Chart = window.Chart;
+      // Execute drawing function
+      if (typeof iwin._drawReportCharts === 'function') iwin._drawReportCharts();
+    } catch(e) { console.warn('Chart inject:', e); }
+  }, 400);
 }
 
 // ── Init ─────────────────────────────────────────────────────
@@ -8739,8 +8818,8 @@ function generateProctorReport() {
     try { chartImg = canvas.toDataURL('image/png'); } catch(e){}
   }
   const chartHtml = chartImg
-    ? `<img src="${chartImg}" style="width:100%;max-height:195px;object-fit:contain;display:block;" alt="Compaction Curve">`
-    : `<div style="height:195px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:.8rem;border:2px dashed #cbd5e1;border-radius:6px;">📊 Run calculation first to see chart</div>`;
+    ? '<img src="' + chartImg + '" style="width:100%;max-height:195px;object-fit:contain;display:block;" alt="Compaction Curve">'
+    : '<div style="height:195px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:.8rem;border:2px dashed #cbd5e1;border-radius:6px;">📊 Run calculation first to see chart</div>';
 
   // ── Method detail string ──────────────────────────────────────
   const methodStr = `Method ${method} (${
