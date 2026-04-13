@@ -99,6 +99,24 @@
             border-radius: 4px;
             margin-right: 4px;
         }
+        /* ── Sieve Manager Chips ── */
+        .sieve-chip {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 5px 11px; border-radius: 20px; font-size: .82rem;
+            font-weight: 600; cursor: pointer; border: 2px solid;
+            transition: all .18s; font-family: inherit;
+        }
+        .sieve-chip-active {
+            background: #dbeafe; color: #1d4ed8; border-color: #93c5fd;
+        }
+        .sieve-chip-active:hover { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+        .sieve-chip-inactive {
+            background: #f1f5f9; color: #94a3b8; border-color: #cbd5e1;
+            text-decoration: line-through;
+        }
+        .sieve-chip-inactive:hover { background: #dcfce7; color: #166534; border-color: #86efac; }
+        .sieve-chip-required { background: #f0fdf4; color: #166534; border-color: #86efac; cursor: default; opacity:.8; }
+        .sieve-chip-icon { font-size: .75rem; }
         .point-number {
             width: 36px;
             height: 36px;
@@ -300,20 +318,27 @@
 
                 <!-- Method Selection -->
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg mb-4">
-                    <label class="block text-sm font-bold text-gray-800 mb-3">طريقة الغربلة — Sieving Method:</label>
+                    <label class="block text-sm font-bold text-gray-800 mb-3">طريقة الغربلة — Sieving Method (ASTM D6913 §10.3):</label>
                     <div class="flex flex-wrap gap-4">
                         <label class="flex items-center gap-3 bg-white px-4 py-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-blue-400 transition-all">
                             <input type="radio" name="method" value="single" checked onchange="toggleMethod()" class="w-5 h-5 text-blue-600">
                             <div>
                                 <span class="font-semibold text-gray-800">Single-Set Sieving</span>
-                                <p class="text-xs text-gray-500">غربلة مجموعة واحدة — الأبسط</p>
+                                <p class="text-xs text-gray-500">غربلة مجموعة واحدة — الأبسط | §10.3.1</p>
                             </div>
                         </label>
-                        <label class="flex items-center gap-3 bg-white px-4 py-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-blue-400 transition-all">
-                            <input type="radio" name="method" value="composite" onchange="toggleMethod()" class="w-5 h-5 text-blue-600">
+                        <label class="flex items-center gap-3 bg-white px-4 py-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-orange-400 transition-all">
+                            <input type="radio" name="method" value="composite" onchange="toggleMethod()" class="w-5 h-5 text-orange-500">
                             <div>
-                                <span class="font-semibold text-gray-800">Composite (Single Separation)</span>
-                                <p class="text-xs text-gray-500" id="compositeMethodDesc">منخل الفصل قابل للاختيار</p>
+                                <span class="font-semibold text-gray-800">Composite — Single Separation</span>
+                                <p class="text-xs text-gray-500" id="compositeMethodDesc">فصل واحد (خشن + ناعم) | §11.5 & §12.5</p>
+                            </div>
+                        </label>
+                        <label class="flex items-center gap-3 bg-white px-4 py-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-purple-400 transition-all">
+                            <input type="radio" name="method" value="double" onchange="toggleMethod()" class="w-5 h-5 text-purple-600">
+                            <div>
+                                <span class="font-semibold text-gray-800">Composite — Double Separation</span>
+                                <p class="text-xs text-gray-500">فصلان — منخلا فصل | §11.6 & §12.6</p>
                             </div>
                         </label>
                     </div>
@@ -325,8 +350,8 @@
                         <div class="flex items-center gap-2">
                             <span class="text-2xl">🔀</span>
                             <div>
-                                <label class="block text-sm font-bold text-gray-800">منخل الفصل (Designated Separating Sieve)</label>
-                                <p class="text-xs text-gray-600">يُستخدم للفصل بين الجزء الخشن والناعم — ASTM range: 19.0 mm to 2.00 mm</p>
+                                <label class="block text-sm font-bold text-gray-800">1st Designated Separating Sieve — منخل الفصل الأول</label>
+                                <p class="text-xs text-gray-600">ASTM D6913 §10.5.2.2 | range: 19.0 mm → 2.00 mm</p>
                             </div>
                         </div>
                         <select id="separatorSieve" class="input-field border-2 border-amber-400 rounded-lg px-4 py-2 bg-white font-semibold text-amber-800" onchange="onSeparatorChange()">
@@ -337,6 +362,27 @@
                         </select>
                         <div class="bg-amber-100 px-3 py-2 rounded-lg">
                             <span class="text-sm text-amber-800">المنخل المختار: <strong id="selectedSeparatorDisplay">No.4 (4.75 mm)</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2nd Separator Sieve — shown only for Double Separation -->
+                <div id="separator2Selection" class="hidden bg-gradient-to-r from-purple-50 to-violet-50 p-4 rounded-lg border-2 border-purple-300 mt-3">
+                    <div class="flex flex-wrap items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">🔁</span>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800">2nd Designated Separating Sieve — منخل الفصل الثاني</label>
+                                <p class="text-xs text-gray-600">ASTM D6913 §11.6.1 | usually 3/8 in, No.4 or No.10</p>
+                            </div>
+                        </div>
+                        <select id="separator2Sieve" class="input-field border-2 border-purple-400 rounded-lg px-4 py-2 bg-white font-semibold text-purple-800" onchange="onSeparatorChange()">
+                            <option value="9.5">3/8 in (9.5 mm)</option>
+                            <option value="4.75" selected>No.4 (4.75 mm)</option>
+                            <option value="2">No.10 (2.00 mm)</option>
+                        </select>
+                        <div class="bg-purple-100 px-3 py-2 rounded-lg">
+                            <span class="text-sm text-purple-800">المنخل الثاني: <strong id="selectedSeparator2Display">No.4 (4.75 mm)</strong></span>
                         </div>
                     </div>
                 </div>
@@ -373,6 +419,23 @@
                     </div>
                 </div>
             </details>
+
+            <!-- ── Sieve Manager ── -->
+            <div class="bg-white border-2 border-blue-200 rounded-xl p-4 mb-5 shadow-sm">
+                <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">🔧</span>
+                        <div>
+                            <span class="font-bold text-gray-800">إدارة المناخل — Sieve Manager</span>
+                            <p class="text-xs text-gray-500">انقر على منخل نشط لحذفه ✕ | انقر على محذوف لإعادته + | No.200 مطلوب دائماً 🔒</p>
+                        </div>
+                    </div>
+                    <button onclick="resetSieves()" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1 rounded-lg border border-gray-300 transition-all">
+                        ↺ إعادة الإعدادات الافتراضية
+                    </button>
+                </div>
+                <div id="sieveManagerChips" class="flex flex-wrap gap-2"></div>
+            </div>
 
             <!-- Single-Set Section -->
             <div id="singleSetSection" class="section-card p-6 mb-6">
@@ -560,6 +623,127 @@
                     
                     <div id="separatorWarning" class="hidden validation-msg validation-warning mt-4">
                         ⚠️ تحذير: يوجد احتجاز على منخل الفصل في العينة الفرعية الناعمة.
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ DOUBLE SEPARATION SECTION — §11.6 & §12.6 ═══ -->
+            <div id="doubleSection" class="hidden">
+
+                <!-- 2nd Coarser Portion masses -->
+                <div class="section-card p-6 mb-6" style="border-right:4px solid #7c3aed;">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <span class="bg-purple-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">3</span>
+                        بيانات الفصل الثاني — 2nd Separation Data (§11.6)
+                    </h3>
+                    <div class="bg-purple-50 border border-purple-200 rounded-lg p-3 mb-4 text-xs text-purple-800">
+                        📌 يتم تمرير 1st SubSpecimen على منخل الفصل الثاني للحصول على: 2nd Coarser Portion + 2nd Finer Portion → 2nd SubSpecimen
+                    </div>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="bg-purple-50 border border-purple-200 p-4 rounded-lg">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">
+                                <span class="glossary-term">2ndCP,Md</span><br>
+                                <span class="text-xs">الكتلة الجافة للجزء الخشن الثاني (قبل الغسيل)</span>
+                            </label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" id="d_2ndCPMd" step="0.01" min="0" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2" placeholder="0.00" oninput="calculateDouble()">
+                                <span class="unit-label text-gray-600 font-semibold">g</span>
+                            </div>
+                        </div>
+                        <div class="bg-purple-50 border border-purple-200 p-4 rounded-lg">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">
+                                <span class="glossary-term">2ndCPw,Md</span><br>
+                                <span class="text-xs">الكتلة الجافة للجزء الخشن الثاني (بعد الغسيل)</span>
+                            </label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" id="d_2ndCPwMd" step="0.01" min="0" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2" placeholder="0.00" oninput="calculateDouble()">
+                                <span class="unit-label text-gray-600 font-semibold">g</span>
+                            </div>
+                        </div>
+                        <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-lg">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">
+                                <span class="glossary-term">2ndSubS,Md</span><br>
+                                <span class="text-xs">الكتلة الجافة للعينة الفرعية الثانية (بعد الغسيل)</span>
+                            </label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" id="d_2ndSubSMd" step="0.01" min="0" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2" placeholder="0.00" oninput="calculateDouble()">
+                                <span class="unit-label text-gray-600 font-semibold">g</span>
+                            </div>
+                        </div>
+                        <div class="bg-gray-100 border border-gray-300 p-4 rounded-lg">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">
+                                <span class="glossary-term">2ndCPL</span> — خسارة الغسيل (محسوب)<br>
+                                <span class="text-xs">§12.6.2.3 | يجب ≤ 0.5% من 1stSubS,Md</span>
+                            </label>
+                            <div id="d_2ndCPL_display" class="font-bold text-lg text-center py-2">—</div>
+                        </div>
+                        <div class="bg-gray-100 border border-gray-300 p-4 rounded-lg">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">
+                                <span class="glossary-term">2ndCSCF</span> — معامل التصحيح الثاني (محسوب)<br>
+                                <span class="text-xs">§12.6.2.2 = % Passing عند منخل الفصل الثاني</span>
+                            </label>
+                            <div id="d_2ndCSCF_display" class="font-bold text-lg text-center text-purple-700 py-2">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2nd Coarser Portion Table -->
+                <div class="section-card p-6 mb-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <span class="bg-violet-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">4</span>
+                        جدول الجزء الخشن الثاني — 2nd Coarser Portion Table (§11.6.3 & §12.6.2)
+                    </h3>
+                    <p class="text-xs text-gray-500 mb-3">النطاق: من منخل الفصل الأول (1st Sep.) إلى منخل الفصل الثاني (2nd Sep.) | <span class="glossary-term">2ndCP,FCMRN</span></p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse" id="coarser2Table">
+                            <thead>
+                                <tr class="bg-gradient-to-r from-violet-700 to-purple-600 text-white">
+                                    <th class="p-3 text-center border border-violet-800 w-24">المنخل<br>Sieve</th>
+                                    <th class="p-3 text-center border border-violet-800 w-28">الفتحة (mm)<br>Opening</th>
+                                    <th class="p-3 text-center border border-violet-800 w-40">
+                                        <span class="glossary-term bg-violet-200 text-violet-900">2ndCP,FCMRN</span><br>
+                                        كتلة تراكمية جزئية
+                                    </th>
+                                    <th class="p-3 text-center border border-violet-800 w-32">
+                                        <span class="glossary-term bg-green-200 text-green-900">2ndCP,PPN</span><br>
+                                        % مار نهائي
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="coarser2TableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 2nd Subspecimen Table -->
+                <div class="section-card p-6 mb-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <span class="bg-indigo-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">5</span>
+                        جدول العينة الفرعية الثانية — 2nd Subspecimen Table (§11.6.4 & §12.6.3)
+                    </h3>
+                    <p class="text-xs text-gray-500 mb-3">النطاق: من منخل الفصل الثاني إلى No.200 | <span class="glossary-term">2ndSubS,FCMRN</span></p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse" id="finer2Table">
+                            <thead>
+                                <tr class="bg-gradient-to-r from-indigo-700 to-blue-600 text-white">
+                                    <th class="p-3 text-center border border-indigo-800 w-20">المنخل<br>Sieve</th>
+                                    <th class="p-3 text-center border border-indigo-800 w-24">الفتحة (mm)<br>Opening</th>
+                                    <th class="p-3 text-center border border-indigo-800 w-36">
+                                        <span class="glossary-term bg-indigo-200 text-indigo-900">2ndSubS,FCMRN</span><br>
+                                        كتلة تراكمية جزئية
+                                    </th>
+                                    <th class="p-3 text-center border border-indigo-800 w-28">
+                                        <span class="glossary-term bg-yellow-200 text-yellow-900">2ndSubS,FPPN</span><br>
+                                        % مار جزئي
+                                    </th>
+                                    <th class="p-3 text-center border border-indigo-800 w-28">
+                                        <span class="glossary-term bg-green-200 text-green-900">2ndSubS,PPN</span><br>
+                                        % مار نهائي
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="finer2TableBody"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -3805,23 +3989,82 @@ function switchTab(tab) {
         // =============================================
         // D6913 SIEVE DATA DEFINITIONS
         // =============================================
-        const ALL_SIEVES = [
-            { name: '3 in', opening: 75 },
-            { name: '2 in', opening: 50 },
+        // ── Full sieve library ──────────────────────────────────────
+        const SIEVE_LIBRARY = [
+            { name: '3 in',   opening: 75 },
+            { name: '2 in',   opening: 50 },
             { name: '1.5 in', opening: 37.5 },
-            { name: '1 in', opening: 25 },
+            { name: '1 in',   opening: 25 },
             { name: '3/4 in', opening: 19 },
             { name: '3/8 in', opening: 9.5 },
-            { name: 'No.4', opening: 4.75 },
-            { name: 'No.10', opening: 2.0 },
-            { name: 'No.20', opening: 0.85 },
-            { name: 'No.40', opening: 0.425 },
-            { name: 'No.60', opening: 0.25 },
+            { name: 'No.4',   opening: 4.75 },
+            { name: 'No.10',  opening: 2.0 },
+            { name: 'No.20',  opening: 0.85 },
+            { name: 'No.40',  opening: 0.425 },
+            { name: 'No.60',  opening: 0.25 },
             { name: 'No.100', opening: 0.15 },
             { name: 'No.140', opening: 0.106 },
             { name: 'No.200', opening: 0.075 },
-            { name: 'Pan', opening: 0 }
+            { name: 'Pan',    opening: 0 }
         ];
+
+        // Default active sieves — excludes No.20, No.60, No.140
+        // Stored as set of opening values (numbers)
+        let activeSieveOpenings = new Set(
+            [75, 50, 37.5, 25, 19, 9.5, 4.75, 2.0, 0.425, 0.15, 0.075, 0]
+        );
+
+        // ALL_SIEVES always returns only active sieves sorted descending
+        const ALL_SIEVES = new Proxy([], {
+            get(target, prop) {
+                const arr = SIEVE_LIBRARY.filter(s => activeSieveOpenings.has(s.opening));
+                if (prop === 'length') return arr.length;
+                if (prop === 'forEach') return arr.forEach.bind(arr);
+                if (prop === 'map')     return arr.map.bind(arr);
+                if (prop === 'filter')  return arr.filter.bind(arr);
+                if (prop === 'find')    return arr.find.bind(arr);
+                if (prop === 'some')    return arr.some.bind(arr);
+                if (typeof prop === 'string' && !isNaN(prop)) return arr[parseInt(prop)];
+                return arr[prop];
+            }
+        });
+
+        function toggleSieve(opening) {
+            if (opening === 0 || opening === 0.075) return; // Pan & No.200 always required
+            if (activeSieveOpenings.has(opening)) {
+                activeSieveOpenings.delete(opening);
+            } else {
+                activeSieveOpenings.add(opening);
+            }
+            renderSieveManager();
+            initializeTables();
+            buildDoubleTables();
+        }
+
+        function renderSieveManager() {
+            const container = document.getElementById('sieveManagerChips');
+            if (!container) return;
+            container.innerHTML = SIEVE_LIBRARY.map(s => {
+                if (s.opening === 0) return ''; // skip Pan chip
+                const active = activeSieveOpenings.has(s.opening);
+                const required = s.opening === 0.075; // No.200 required
+                const isActive = active;
+                return `<button onclick="toggleSieve(${s.opening})"
+                    title="${required ? 'مطلوب دائماً' : (isActive ? 'انقر للحذف' : 'انقر للإضافة')}"
+                    class="sieve-chip ${isActive ? 'sieve-chip-active' : 'sieve-chip-inactive'} ${required ? 'sieve-chip-required' : ''}"
+                    ${required ? 'disabled' : ''}>
+                    ${s.name}
+                    <span class="sieve-chip-icon">${required ? '🔒' : (isActive ? '✕' : '+')}</span>
+                </button>`;
+            }).join('');
+        }
+
+        function resetSieves() {
+            activeSieveOpenings = new Set([75, 50, 37.5, 25, 19, 9.5, 4.75, 2.0, 0.425, 0.15, 0.075, 0]);
+            renderSieveManager();
+            initializeTables();
+            buildDoubleTables();
+        }
 // =============================================
 // D422 CONSTANTS (a, K, L)
 // =============================================
@@ -4107,6 +4350,7 @@ function calculateD422() {
         // =============================================
         document.addEventListener('DOMContentLoaded', () => {
             // D6913 Init
+            renderSieveManager();
             initializeTables();
             initializeGradationChart();
             document.getElementById('testDate').valueAsDate = new Date();
@@ -4320,6 +4564,15 @@ function onSeparatorChange() {
             gradationChart.update();
         }
     }
+    // Always rebuild double tables when either separator changes
+    buildDoubleTables();
+    // Update 2nd separator display
+    const sep2El = document.getElementById('separator2Sieve');
+    const sep2Disp = document.getElementById('selectedSeparator2Display');
+    if (sep2El && sep2Disp) {
+        const sep2Opt = sep2El.options[sep2El.selectedIndex];
+        if (sep2Opt) sep2Disp.textContent = sep2Opt.text;
+    }
 }
 
 function clearCompositeData() {
@@ -4341,12 +4594,158 @@ function updateSeparatorDisplay() {
 
 function toggleMethod() {
     currentMethod = document.querySelector('input[name="method"]:checked').value;
+    const isDouble = currentMethod === 'double';
+    const isComposite = currentMethod === 'composite' || isDouble;
+
     document.getElementById('singleSetSection')
         .classList.toggle('hidden', currentMethod !== 'single');
     document.getElementById('compositeSection')
-        .classList.toggle('hidden', currentMethod !== 'composite');
+        .classList.toggle('hidden', !isComposite);
+    document.getElementById('doubleSection')
+        .classList.toggle('hidden', !isDouble);
     document.getElementById('separatorSelection')
-        .classList.toggle('hidden', currentMethod !== 'composite');
+        .classList.toggle('hidden', !isComposite);
+    document.getElementById('separator2Selection')
+        .classList.toggle('hidden', !isDouble);
+
+    // Update composite section labels for double mode
+    const coarserTitle = document.getElementById('coarserTableTitle');
+    if (coarserTitle) coarserTitle.innerHTML = isDouble
+        ? '<span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">3</span> جدول الجزء الخشن الأول (1st CP) — 1st Coarser Portion'
+        : '<span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">3</span> جدول الجزء الخشن (CP) — Coarser Portion (3 in → No.4)';
+    const finerTitle = document.getElementById('finerTableTitle');
+    if (finerTitle) finerTitle.innerHTML = isDouble
+        ? '<span class="bg-teal-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">3b</span> 1st SubSpecimen — العينة الفرعية الأولى'
+        : '<span class="bg-teal-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">4</span> جدول الجزء الناعم (SubS) — Finer Subspecimen (No.4 → No.200)';
+
+    buildDoubleTables();
+    updateFinalTable();
+}
+
+// Helper: returns standard sieve list with id, label, mm
+function getSieveList() {
+    return [
+        {id:'s75',   label:'3 in',    mm:75},
+        {id:'s50',   label:'2 in',    mm:50},
+        {id:'s375',  label:'1.5 in',  mm:37.5},
+        {id:'s25',   label:'1 in',    mm:25},
+        {id:'s19',   label:'3/4 in',  mm:19},
+        {id:'s95',   label:'3/8 in',  mm:9.5},
+        {id:'s475',  label:'No.4',    mm:4.75},
+        {id:'s2',    label:'No.10',   mm:2.0},
+        {id:'s085',  label:'No.20',   mm:0.85},
+        {id:'s0425', label:'No.40',   mm:0.425},
+        {id:'s025',  label:'No.60',   mm:0.25},
+        {id:'s015',  label:'No.100',  mm:0.15},
+        {id:'s0106', label:'No.140',  mm:0.106},
+        {id:'s0075', label:'No.200',  mm:0.075}
+    ];
+}
+
+
+function buildDoubleTables() {
+    if (currentMethod !== 'double') return;
+    const sep1 = parseFloat(document.getElementById('separatorSieve').value) || 4.75;
+    const sep2 = parseFloat(document.getElementById('separator2Sieve').value) || 2.0;
+    const allSieves = getSieveList();
+
+    // 2nd Coarser: from sep1 down to sep2
+    const c2Sieves = allSieves.filter(s => s.mm <= sep1 && s.mm >= sep2);
+    const c2Body = document.getElementById('coarser2TableBody');
+    if (c2Body) {
+        c2Body.innerHTML = c2Sieves.map(s => `<tr>
+            <td class="p-2 text-center border border-gray-300 font-medium">${s.label}</td>
+            <td class="p-2 text-center border border-gray-300">${s.mm}</td>
+            <td class="p-2 border border-gray-300">
+                <input type="number" id="d_c2_${s.id}_cmr" step="0.01" min="0"
+                    class="input-field w-full border border-gray-300 rounded px-2 py-1 text-center"
+                    placeholder="0.00" oninput="calculateDouble()">
+            </td>
+            <td class="p-2 text-center border border-gray-300 font-bold text-green-700" id="d_c2_${s.id}_pp">—</td>
+        </tr>`).join('');
+    }
+
+    // 2nd Finer: from sep2 down to No.200
+    const f2Sieves = allSieves.filter(s => s.mm <= sep2);
+    const f2Body = document.getElementById('finer2TableBody');
+    if (f2Body) {
+        f2Body.innerHTML = f2Sieves.map(s => `<tr>
+            <td class="p-2 text-center border border-gray-300 font-medium">${s.label}</td>
+            <td class="p-2 text-center border border-gray-300">${s.mm}</td>
+            <td class="p-2 border border-gray-300">
+                <input type="number" id="d_f2_${s.id}_cmr" step="0.01" min="0"
+                    class="input-field w-full border border-gray-300 rounded px-2 py-1 text-center"
+                    placeholder="0.00" oninput="calculateDouble()">
+            </td>
+            <td class="p-2 text-center border border-gray-300 text-yellow-700 font-semibold" id="d_f2_${s.id}_fpp">—</td>
+            <td class="p-2 text-center border border-gray-300 font-bold text-green-700" id="d_f2_${s.id}_pp">—</td>
+        </tr>`).join('');
+    }
+}
+
+function calculateDouble() {
+    if (currentMethod !== 'double') return;
+    const sep1 = parseFloat(document.getElementById('separatorSieve').value) || 4.75;
+    const sep2 = parseFloat(document.getElementById('separator2Sieve').value) || 2.0;
+    const allSieves = getSieveList();
+
+    // Get 1stCSCF from composite section (already computed)
+    const cscfEl = document.getElementById('cscfDisplay');
+    const cscf1 = cscfEl ? (parseFloat(cscfEl.textContent) || 0) / 100 : 0;
+
+    // 2nd Coarser: §12.6.2.1
+    const c2Sieves = allSieves.filter(s => s.mm <= sep1 && s.mm >= sep2);
+    const subSMd = parseFloat(document.getElementById('comp_SubSMd').value) || 0; // 1stSubS,Md
+    const c2Md = parseFloat(document.getElementById('d_2ndCPMd').value) || 0;
+    const c2wMd = parseFloat(document.getElementById('d_2ndCPwMd').value) || 0;
+    const pan2El = document.getElementById('d_c2_pan_cmr');
+    const pan2 = pan2El ? parseFloat(pan2El.value) || 0 : 0;
+
+    let cscf2 = 0;
+    c2Sieves.forEach(s => {
+        const cmrEl = document.getElementById('d_c2_' + s.id + '_cmr');
+        const ppEl  = document.getElementById('d_c2_' + s.id + '_pp');
+        if (!cmrEl || !ppEl) return;
+        const cmr = parseFloat(cmrEl.value) || 0;
+        // §12.6.2.1: 2ndCP,PPN = 1stCSCF × (1 - 2ndCP,FCMRN / 1stSubS,Md) × 100
+        const pp = subSMd > 0 ? cscf1 * (1 - cmr / subSMd) * 100 : null;
+        ppEl.textContent = pp !== null ? pp.toFixed(1) + '%' : '—';
+        // 2ndCSCF = % passing the 2nd sep sieve (last in coarser set)
+        if (Math.abs(s.mm - sep2) < 0.01) cscf2 = pp !== null ? pp / 100 : 0;
+    });
+
+    // Display 2ndCSCF
+    const cscf2El = document.getElementById('d_2ndCSCF_display');
+    if (cscf2El) cscf2El.textContent = cscf2 > 0 ? (cscf2 * 100).toFixed(1) + '%' : '—';
+
+    // 2nd Loss §12.6.2.3: 2ndCPL = 100 × ((2ndCP,Md - 2ndCPw,Md) + pan) / 1stSubS,Md
+    const cpl2 = subSMd > 0 && c2Md > 0
+        ? 100 * ((c2Md - c2wMd) + pan2) / subSMd : null;
+    const cpl2El = document.getElementById('d_2ndCPL_display');
+    if (cpl2El) {
+        if (cpl2 !== null) {
+            const ok = cpl2 <= 0.5;
+            cpl2El.textContent = cpl2.toFixed(2) + '%';
+            cpl2El.className = 'font-bold text-lg text-center py-2 ' + (ok ? 'text-green-700' : 'text-red-600');
+            if (!ok) cpl2El.textContent += ' ⚠️ يتجاوز 0.5%';
+        } else cpl2El.textContent = '—';
+    }
+
+    // 2nd Subspecimen: §12.6.3.1 — 2ndSubS,PPN = 2ndCSCF × (1 - 2ndSubS,FCMRN / 2ndSubS,Md)
+    const subS2Md = parseFloat(document.getElementById('d_2ndSubSMd').value) || 0;
+    const f2Sieves = allSieves.filter(s => s.mm <= sep2);
+    f2Sieves.forEach(s => {
+        const cmrEl = document.getElementById('d_f2_' + s.id + '_cmr');
+        const fppEl = document.getElementById('d_f2_' + s.id + '_fpp');
+        const ppEl  = document.getElementById('d_f2_' + s.id + '_pp');
+        if (!cmrEl || !ppEl) return;
+        const cmr = parseFloat(cmrEl.value) || 0;
+        const fpp = subS2Md > 0 ? (1 - cmr / subS2Md) : null;
+        const pp  = fpp !== null && cscf2 > 0 ? cscf2 * fpp * 100 : null;
+        if (fppEl) fppEl.textContent = fpp !== null ? (fpp * 100).toFixed(1) + '%' : '—';
+        ppEl.textContent = pp !== null ? pp.toFixed(1) + '%' : '—';
+    });
+
     updateFinalTable();
 }
 
@@ -4406,7 +4805,14 @@ function validateInputs() {
 }
         function calculate() {
             if (!validateInputs()) return;
-            currentMethod === 'single' ? calculateSingleSet() : calculateComposite();
+            if (currentMethod === 'single') {
+                calculateSingleSet();
+            } else if (currentMethod === 'double') {
+                calculateComposite();   // first compute 1st CP + 1st SubS (shares same inputs)
+                calculateDouble();      // then compute 2nd CP + 2nd SubS
+            } else {
+                calculateComposite();
+            }
             updateGradationChart();
             calculateDValues();
             generateJSON();
