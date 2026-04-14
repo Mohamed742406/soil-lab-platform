@@ -761,9 +761,11 @@
                             <tr class="bg-gradient-to-r from-emerald-700 to-teal-600 text-white">
                                 <th class="p-3 text-center border border-emerald-800 w-24">المنخل<br>Sieve</th>
                                 <th class="p-3 text-center border border-emerald-800 w-28">الفتحة (mm)<br>Opening</th>
-                                <th class="p-3 text-center border border-emerald-800 w-32">% المار النهائي<br>Final PPN</th>
-                                <th class="p-3 text-center border border-emerald-800 w-32">% المحتجز التراكمي<br>Cum. % Retained</th>
-                                <th class="p-3 text-center border border-emerald-800 w-32">% المحتجز الفردي<br>% Retained</th>
+                                <th class="p-3 text-center border border-emerald-800 w-28">MR (g)<br>محتجز فردي</th>
+                                <th class="p-3 text-center border border-emerald-800 w-28">CMR (g)<br>محتجز تراكمي</th>
+                                <th class="p-3 text-center border border-emerald-800 w-28">% محتجز<br>Ret %</th>
+                                <th class="p-3 text-center border border-emerald-800 w-32">% محتجز تراكمي<br>Cum. Ret %</th>
+                                <th class="p-3 text-center border border-emerald-800 w-32">% المار النهائي<br>Passing %</th>
                             </tr>
                         </thead>
                         <tbody id="finalTableBody"></tbody>
@@ -4194,7 +4196,8 @@ function getEffectiveDepth(reading, hydType) {
     return 10; // قيمة احتياطية
 }
 // D422 Hydrometer State
-let d422Points = []; // { D, pass }
+window.d422Points = window.d422Points || [];
+var d422Points = window.d422Points; // shared reference
 
 function resetD422() {
     // مسح حقول الأرقام
@@ -4329,16 +4332,21 @@ function calculateD422() {
 
     // ترتيب النقاط من الأكبر للأصغر لتحضيرها للرسم والدمج
     d422Points.sort((a, b) => b.D - a.D);
-    
-    // تحديث منحنى الهيدروميتر على التشارت
-    updateHydrometerCurve();
+    window.d422Points = d422Points;  // sync
+    // تحديث المنحنى إذا كانت النتائج موجودة
+    if (results && results.unified && results.unified.length > 0) {
+        buildCombinedCurve();
+        updateGradationChart();
+        calculateDValues();
+    }
 }
         // D6913 State
         let currentMethod = 'single';
         let currentSeparator = 4.75;
         let gradationChart = null;
-        let results = { singleSet: [], coarser: [], finer: [], final: [], CSCF: 0, SMd: 0 };
-        let combinedCurve = [];
+        let results = { method:'single', SMd:0, CSCF1:0, CSCF2:0, unified:[], final:[], dValues:{}, validation:{ok:true,messages:[]} };
+        window.combinedCurve = [];
+        window.d422Points = window.d422Points || [];
 
 
         // D1557 State
@@ -4471,16 +4479,19 @@ function updateFinalTable() {
     const finalBody = document.getElementById('finalTableBody');
     const displaySieves = ALL_SIEVES.filter(s => s.name !== 'Pan');
     finalBody.innerHTML = displaySieves.map((sieve, idx) => {
-        const isSeparator = sieve.opening === currentSeparator && currentMethod === 'composite';
+        const isSeparator = (sieve.opening === currentSeparator && currentMethod !== 'single') ||
+                            (typeof currentSeparator2 !== 'undefined' && sieve.opening === currentSeparator2 && currentMethod === 'double');
         return `
             <tr class="${idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'} ${isSeparator ? 'separator-highlight' : ''}">
                 <td class="p-2 text-center border border-gray-300 font-semibold">
                     ${isSeparator ? '<span class="separator-badge">فصل</span>' : ''}${sieve.name}
                 </td>
                 <td class="p-2 text-center border border-gray-300 text-gray-600">${sieve.opening}</td>
-                <td class="p-2 text-center border border-gray-300 bg-green-50 font-bold text-green-700" id="final_ppn_${idx}">—</td>
-                <td class="p-2 text-center border border-gray-300" id="final_cumret_${idx}">—</td>
+                <td class="p-2 text-center border border-gray-300 text-blue-700 font-medium" id="final_mr_${idx}">—</td>
+                <td class="p-2 text-center border border-gray-300 text-indigo-700 font-medium" id="final_cmr_${idx}">—</td>
                 <td class="p-2 text-center border border-gray-300" id="final_ret_${idx}">—</td>
+                <td class="p-2 text-center border border-gray-300" id="final_cumret_${idx}">—</td>
+                <td class="p-2 text-center border border-gray-300 bg-green-50 font-bold text-green-700" id="final_ppn_${idx}">—</td>
             </tr>
         `;
     }).join('');
@@ -4820,150 +4831,367 @@ function validateInputs() {
                 '<div class="validation-msg validation-success">✅ تم الحساب بنجاح</div>';
         }
 
-        function calculateSingleSet() {
-            const sMd = convertToGrams(parseFloat(document.getElementById('single_SMd').value) || 0);
-            results.SMd = sMd;
-            results.singleSet = [];
-            results.final = [];
-            let prevPPN = 100;
+        // ═══════════════════════════════════════════════════════════════
+        // CALCULATION ENGINE — ASTM D6913/D6913M-17
+        // Pure functions → unified state → UI rendering (one-way flow)
+        // ═══════════════════════════════════════════════════════════════
 
-            ALL_SIEVES.forEach((sieve, idx) => {
-                const cmrn = convertToGrams(parseFloat(document.getElementById(`single_cmrn_${idx}`).value) || 0);
-                let ppn = Math.max(0, Math.min(100, 100 * (1 - cmrn / sMd)));
-                const ppnRounded = Math.round(ppn);
-                document.getElementById(`single_ppn_${idx}`).textContent = sieve.name === 'Pan' ? '—' : `${ppnRounded}%`;
-                results.singleSet.push({ sieve: sieve.name, opening: sieve.opening, cmrn, ppn, ppnRounded });
-                if (sieve.name !== 'Pan') {
-                    results.final.push({ sieve: sieve.name, opening: sieve.opening, ppn: ppnRounded, cumRetained: 100 - ppnRounded, retained: Math.max(0, prevPPN - ppnRounded) });
-                    prevPPN = ppnRounded;
-                }
+        // ── §12.3 Single Sieve-Set ────────────────────────────────────────
+        function calculateSingleSieveGradation() {
+            const sMd = convertToGrams(parseFloat(document.getElementById('single_SMd').value) || 0);
+            if (sMd <= 0) return null;
+
+            const sieves = ALL_SIEVES.filter(s => s.name !== 'Pan');
+            const rows = [];
+            let prevCMR = 0;
+
+            sieves.forEach((sieve, idx) => {
+                const cmr = convertToGrams(parseFloat(document.getElementById(`single_cmrn_${idx}`)?.value) || 0);
+                const mr  = Math.max(0, cmr - prevCMR);
+                prevCMR   = cmr;
+                const retPct    = sMd > 0 ? (mr  / sMd) * 100 : 0;
+                const cumRetPct = sMd > 0 ? (cmr / sMd) * 100 : 0;
+                const passPct   = Math.max(0, 100 - cumRetPct);
+                // Update input table cell
+                const ppEl = document.getElementById(`single_ppn_${idx}`);
+                if (ppEl) ppEl.textContent = `${Math.round(passPct)}%`;
+                rows.push({ sieve: sieve.name, opening: sieve.opening, MR: mr, CMR: cmr, retPct, cumRetPct, passPct, source: 'single' });
             });
-            updateFinalTableValues();
+
+            return { SMd: sMd, CSCF1: 0, CSCF2: 0, unified: rows };
         }
 
-        function calculateComposite() {
-            const cpMd = convertToGrams(parseFloat(document.getElementById('comp_CPMd').value) || 0);
-            const fpMm = convertToGrams(parseFloat(document.getElementById('comp_FPMm').value) || 0);
-            const wfp = parseFloat(document.getElementById('comp_wfp').value) || 0;
-            const subsMd = convertToGrams(parseFloat(document.getElementById('comp_SubSMd').value) || 0);
-            const fpMd = fpMm / (1 + wfp / 100);
-            const sMd = cpMd + fpMd;
+        // ── §12.5 Composite — Single Separation ──────────────────────────
+        function calculateCompositeSingleSeparation() {
+            const cpMd   = convertToGrams(parseFloat(document.getElementById('comp_CPMd')?.value)   || 0);
+            const fpMm   = convertToGrams(parseFloat(document.getElementById('comp_FPMm')?.value)   || 0);
+            const wfp    = parseFloat(document.getElementById('comp_wfp')?.value)   || 0;
+            const subsMd = convertToGrams(parseFloat(document.getElementById('comp_SubSMd')?.value) || 0);
+            if (cpMd <= 0 || fpMm <= 0 || subsMd <= 0) return null;
+
+            const fpMd = fpMm / (1 + wfp / 100);   // §12.4
+            const sMd  = cpMd + fpMd;               // §12.4
 
             document.getElementById('comp_FPMd').value = fpMd.toFixed(2);
-            document.getElementById('comp_SMd').value = sMd.toFixed(2);
-            results.SMd = sMd;
-            results.coarser = [];
-            results.finer = [];
-            results.final = [];
+            document.getElementById('comp_SMd').value  = sMd.toFixed(2);
 
-            const coarseSieves = getCoarseSieves();
-            const fineSieves = getFineSieves();
-            let cscf = 0;
+            const coarseSieves = getCoarseSieves();   // ≥ sep1
+            const fineSieves   = getFineSieves();     // ≤ sep1
 
+            // ── Coarser Portion ──────────────────────────────────────────
+            let cscf1 = 0;
+            let prevCMR_c = 0;
+            const coarseRows = [];
             coarseSieves.forEach((sieve, idx) => {
-                const cmrn = convertToGrams(parseFloat(document.getElementById(`coarse_cmrn_${idx}`).value) || 0);
-                let ppn = Math.max(0, Math.min(100, 100 * (1 - cmrn / sMd)));
-                const ppnRounded = Math.round(ppn);
-                document.getElementById(`coarse_ppn_${idx}`).textContent = `${ppnRounded}%`;
-                results.coarser.push({ sieve: sieve.name, opening: sieve.opening, cmrn, ppn, ppnRounded });
-                if (sieve.opening === currentSeparator) cscf = ppn;
+                const cmr = convertToGrams(parseFloat(document.getElementById(`coarse_cmrn_${idx}`)?.value) || 0);
+                const mr  = Math.max(0, cmr - prevCMR_c);
+                prevCMR_c = cmr;
+                // §12.5.1.1: CP,PPN = 100 × (1 − CP,CMRN / S,Md)
+                const passPct   = Math.max(0, Math.min(100, 100 * (1 - cmr / sMd)));
+                const cumRetPct = 100 - passPct;
+                const retPct    = sMd > 0 ? (mr / sMd) * 100 : 0;
+                if (sieve.opening === currentSeparator) cscf1 = passPct;
+                const ppEl = document.getElementById(`coarse_ppn_${idx}`);
+                if (ppEl) ppEl.textContent = `${Math.round(passPct)}%`;
+                coarseRows.push({ sieve: sieve.name, opening: sieve.opening, MR: mr, CMR: cmr, retPct, cumRetPct, passPct, source: 'CP' });
             });
 
-            results.CSCF = cscf;
-            document.getElementById('cscfDisplay').textContent = `${cscf.toFixed(1)}%`;
+            // §12.5.1.2 CSCF
+            document.getElementById('cscfDisplay').textContent = `${cscf1.toFixed(1)}%`;
 
+            // ── Finer SubSpecimen ─────────────────────────────────────────
+            let prevCMR_f = 0;
+            const fineRows = [];
             fineSieves.forEach((sieve, idx) => {
-                const fcmrn = convertToGrams(parseFloat(document.getElementById(`fine_cmrn_${idx}`).value) || 0);
-                let fppn = Math.max(0, Math.min(1, 1 - (fcmrn / subsMd)));
-                let ppn = Math.max(0, Math.min(100, cscf * fppn));
-                const fppnPercent = fppn * 100;
-                const ppnRounded = Math.round(ppn);
-                document.getElementById(`fine_fppn_${idx}`).textContent = sieve.name === 'Pan' ? '—' : `${fppnPercent.toFixed(1)}%`;
-                document.getElementById(`fine_ppn_${idx}`).textContent = sieve.name === 'Pan' ? '—' : `${ppnRounded}%`;
-                results.finer.push({ sieve: sieve.name, opening: sieve.opening, fcmrn, fppn: fppnPercent, ppn, ppnRounded });
-            });
-
-            let prevPPN = 100;
-            results.coarser.forEach(item => {
-                results.final.push({ sieve: item.sieve, opening: item.opening, ppn: item.ppnRounded, cumRetained: 100 - item.ppnRounded, retained: Math.max(0, prevPPN - item.ppnRounded), source: 'coarse' });
-                prevPPN = item.ppnRounded;
-            });
-            results.finer.slice(1).forEach(item => {
-                if (item.sieve !== 'Pan') {
-                    results.final.push({ sieve: item.sieve, opening: item.opening, ppn: item.ppnRounded, cumRetained: 100 - item.ppnRounded, retained: Math.max(0, prevPPN - item.ppnRounded), source: 'fine' });
-                    prevPPN = item.ppnRounded;
+                if (sieve.opening === currentSeparator) { prevCMR_f = 0; return; } // skip sep row
+                const fcmr = convertToGrams(parseFloat(document.getElementById(`fine_cmrn_${idx}`)?.value) || 0);
+                const fmr  = Math.max(0, fcmr - prevCMR_f);
+                prevCMR_f  = fcmr;
+                // §12.5.2.1: SubS,PPN = CSCF × (1 − SubS,FCMRN / SubS,Md)
+                const fppFrac = subsMd > 0 ? Math.max(0, Math.min(1, 1 - fcmr / subsMd)) : 0;
+                const passPct = Math.max(0, Math.min(100, (cscf1 / 100) * fppFrac * 100));
+                // Back-calculate MR in equivalent specimen mass
+                const MR_equiv = subsMd > 0 ? (fmr / subsMd) * fpMd : 0;
+                const cumRetPct = 100 - passPct;
+                const retPct    = sMd > 0 ? (MR_equiv / sMd) * 100 : 0;
+                const fppEl = document.getElementById(`fine_fppn_${idx}`);
+                const ppEl  = document.getElementById(`fine_ppn_${idx}`);
+                if (fppEl) fppEl.textContent = sieve.name === 'Pan' ? '—' : `${(fppFrac * 100).toFixed(1)}%`;
+                if (ppEl)  ppEl.textContent  = sieve.name === 'Pan' ? '—' : `${Math.round(passPct)}%`;
+                if (sieve.name !== 'Pan') {
+                    fineRows.push({ sieve: sieve.name, opening: sieve.opening, MR: MR_equiv, CMR: 0, retPct, cumRetPct, passPct, source: 'SubS' });
                 }
             });
-            updateFinalTableValues();
+
+            // ── Merge & compute final CMR ─────────────────────────────────
+            const merged = buildFinalUnifiedGradation([...coarseRows, ...fineRows], sMd, currentSeparator, null);
+            return { SMd: sMd, CSCF1: cscf1, CSCF2: 0, unified: merged };
         }
 
+        // ── §12.6 Composite — Double Separation ──────────────────────────
+        function calculateCompositeDoubleSeparation() {
+            // First run single-separation to get 1st CP + 1st SubS + CSCF1
+            const base = calculateCompositeSingleSeparation();
+            if (!base) return null;
+
+            const sep1 = currentSeparator;
+            const sep2 = parseFloat(document.getElementById('separator2Sieve')?.value) || 2.0;
+            const cscf1 = base.CSCF1 / 100;    // as fraction
+            const subS1Md = convertToGrams(parseFloat(document.getElementById('comp_SubSMd')?.value) || 0);
+            const sub2Md  = convertToGrams(parseFloat(document.getElementById('d_2ndSubSMd')?.value) || 0);
+
+            if (sub2Md <= 0) return base; // fallback if 2nd data missing
+
+            // ── 2nd Coarser Portion (§12.6.2.1) ──────────────────────────
+            const allSieves = getSieveList();
+            const c2Sieves  = allSieves.filter(s => s.mm < sep1 && s.mm >= sep2);
+            let cscf2 = 0;
+            let prevFCMR_c2 = 0;
+            const c2Rows = [];
+            c2Sieves.forEach(s => {
+                const el  = document.getElementById('d_c2_' + s.id + '_cmr');
+                const fcmr = el ? (convertToGrams(parseFloat(el.value) || 0)) : 0;
+                const fmr  = Math.max(0, fcmr - prevFCMR_c2);
+                prevFCMR_c2 = fcmr;
+                // §12.6.2.1: 2ndCP,PPN = CSCF1 × (1 − 2ndCP,FCMRN / 1stSubS,Md)
+                const passPct = subS1Md > 0 ? Math.max(0, Math.min(100, cscf1 * (1 - fcmr / subS1Md) * 100)) : 0;
+                if (Math.abs(s.mm - sep2) < 0.001) cscf2 = passPct / 100;
+                const ppEl = document.getElementById('d_c2_' + s.id + '_pp');
+                if (ppEl) ppEl.textContent = `${Math.round(passPct)}%`;
+                const MR_equiv = subS1Md > 0 ? (fmr / subS1Md) * (base.SMd * cscf1) : 0;
+                c2Rows.push({ sieve: s.label, opening: s.mm, MR: MR_equiv, CMR: 0, retPct: 0, cumRetPct: 0, passPct, source: '2ndCP' });
+            });
+
+            // §12.6.2.2 2ndCSCF
+            const cscf2El = document.getElementById('d_2ndCSCF_display');
+            if (cscf2El) cscf2El.textContent = `${(cscf2 * 100).toFixed(1)}%`;
+
+            // ── 2nd SubSpecimen (§12.6.3.1) ──────────────────────────────
+            const f2Sieves = allSieves.filter(s => s.mm < sep2);
+            let prevFCMR_f2 = 0;
+            const f2Rows = [];
+            f2Sieves.forEach(s => {
+                const el   = document.getElementById('d_f2_' + s.id + '_cmr');
+                const fcmr = el ? (convertToGrams(parseFloat(el.value) || 0)) : 0;
+                const fmr  = Math.max(0, fcmr - prevFCMR_f2);
+                prevFCMR_f2 = fcmr;
+                const fppFrac = sub2Md > 0 ? Math.max(0, Math.min(1, 1 - fcmr / sub2Md)) : 0;
+                // §12.6.3.1: 2ndSubS,PPN = 2ndCSCF × fppFrac
+                const passPct = Math.max(0, Math.min(100, cscf2 * fppFrac * 100));
+                const MR_equiv = sub2Md > 0 ? (fmr / sub2Md) * (base.SMd * cscf2) : 0;
+                const fppEl = document.getElementById('d_f2_' + s.id + '_fpp');
+                const ppEl  = document.getElementById('d_f2_' + s.id + '_pp');
+                if (fppEl) fppEl.textContent = `${(fppFrac * 100).toFixed(1)}%`;
+                if (ppEl)  ppEl.textContent  = `${Math.round(passPct)}%`;
+                if (s.mm > 0) {
+                    f2Rows.push({ sieve: s.label, opening: s.mm, MR: MR_equiv, CMR: 0, retPct: 0, cumRetPct: 0, passPct, source: '2ndSubS' });
+                }
+            });
+
+            // ── Merge all: 1st CP (coarse > sep1) + 2nd CP + 2nd SubS ────
+            const cp1Rows = base.unified.filter(r => r.opening > sep1);
+            const merged = buildFinalUnifiedGradation([...cp1Rows, ...c2Rows, ...f2Rows], base.SMd, sep1, sep2);
+            return { SMd: base.SMd, CSCF1: base.CSCF1, CSCF2: cscf2 * 100, unified: merged };
+        }
+
+        // ── Build unified gradation — recomputes CMR/% from MR values ────
+        // sep1/sep2: at separator sieves, coarser portion's passPct wins
+        function buildFinalUnifiedGradation(rows, sMd, sep1, sep2) {
+            // Sort descending by opening (largest first)
+            const sorted = [...rows]
+                .filter(r => r.opening > 0)
+                .sort((a, b) => b.opening - a.opening);
+
+            // Deduplicate separator sieves: keep CP source over SubS source
+            const deduped = [];
+            const seen = new Map();
+            sorted.forEach(r => {
+                const key = r.opening.toFixed(4);
+                if (!seen.has(key)) {
+                    seen.set(key, r);
+                    deduped.push(r);
+                } else {
+                    // CP always wins over SubS/finer at separator
+                    const existing = seen.get(key);
+                    if ((r.source === 'CP' || r.source === '2ndCP') &&
+                        (existing.source === 'SubS' || existing.source === '2ndSubS')) {
+                        const idx = deduped.indexOf(existing);
+                        deduped[idx] = r;
+                        seen.set(key, r);
+                    }
+                }
+            });
+
+            // Recompute CMR and percentages from passPct (derived from ASTM equations)
+            // passPct is authoritative (computed per ASTM); derive CMR = sMd × (1 - passPct/100)
+            let prevPP = 100;
+            return deduped.map(r => {
+                const cmr       = sMd > 0 ? sMd * (1 - r.passPct / 100) : 0;
+                const mr        = Math.max(0, sMd * (prevPP - r.passPct) / 100);
+                const cumRetPct = 100 - r.passPct;
+                const retPct    = prevPP - r.passPct;
+                prevPP = r.passPct;
+                return { ...r, MR: mr, CMR: cmr, retPct: Math.max(0, retPct), cumRetPct };
+            });
+        }
+
+        // ── Validation ────────────────────────────────────────────────────
+        function validateGradation(unified, sMd) {
+            const msgs = [];
+            let ok = true;
+
+            // All retained non-negative
+            unified.forEach(r => {
+                if (r.MR < -0.1) { msgs.push(`⚠️ كتلة محتجزة سالبة على منخل ${r.sieve}`); ok = false; }
+            });
+
+            // Passing % decreases monotonically
+            let prevPP = 100;
+            unified.forEach(r => {
+                if (r.passPct > prevPP + 0.5) {
+                    msgs.push(`⚠️ % المار يزيد عند منخل ${r.sieve} (${r.passPct.toFixed(1)}% > ${prevPP.toFixed(1)}%)`);
+                }
+                prevPP = r.passPct;
+            });
+
+            // Last sieve % passing should be close to 0 (allows 5% fines passing No.200)
+            if (unified.length > 0) {
+                const last = unified[unified.length - 1];
+                if (last.passPct > 50) {
+                    msgs.push(`ℹ️ نسبة المار عند ${last.sieve}: ${last.passPct.toFixed(1)}% — تأكد من صحة البيانات`);
+                }
+            }
+
+            return { ok, messages: msgs };
+        }
+
+        // ── Master calculate() ────────────────────────────────────────────
+        function calculate() {
+            if (!validateInputs()) return;
+
+            let calcResult = null;
+            if (currentMethod === 'single') {
+                calcResult = calculateSingleSieveGradation();
+            } else if (currentMethod === 'double') {
+                calcResult = calculateCompositeDoubleSeparation();
+            } else {
+                calcResult = calculateCompositeSingleSeparation();
+            }
+
+            if (!calcResult) {
+                document.getElementById('validationMessages').innerHTML =
+                    '<div class="validation-msg validation-error">❌ البيانات غير مكتملة — أدخل جميع الكتل المطلوبة</div>';
+                return;
+            }
+
+            // Update global state
+            results.method   = currentMethod;
+            results.SMd      = calcResult.SMd;
+            results.CSCF1    = calcResult.CSCF1;
+            results.CSCF2    = calcResult.CSCF2;
+            results.unified  = calcResult.unified;
+            results.final    = calcResult.unified.map(r => ({   // backward-compat alias
+                sieve: r.sieve, opening: r.opening,
+                ppn: Math.round(r.passPct), ppnExact: r.passPct,
+                cumRetained: Math.round(r.cumRetPct), retained: Math.round(r.retPct)
+            }));
+
+            // Validation
+            const val = validateGradation(calcResult.unified, calcResult.SMd);
+            results.validation = val;
+
+            // Render
+            updateFinalTableValues();
+            buildCombinedCurve();
+            updateGradationChart();
+            calculateDValues();
+            generateJSON();
+
+            const msgs = val.messages.map(m => `<div class="validation-msg validation-warning">${m}</div>`).join('');
+            document.getElementById('validationMessages').innerHTML =
+                msgs + '<div class="validation-msg validation-success">✅ تم الحساب بنجاح</div>';
+        }
+
+        // ── Render unified table ──────────────────────────────────────────
         function updateFinalTableValues() {
             const displaySieves = ALL_SIEVES.filter(s => s.name !== 'Pan');
             displaySieves.forEach((sieve, idx) => {
-                const finalItem = results.final.find(f => f.opening === sieve.opening);
-                if (finalItem) {
-                    document.getElementById(`final_ppn_${idx}`).textContent = `${finalItem.ppn}%`;
-                    document.getElementById(`final_cumret_${idx}`).textContent = `${finalItem.cumRetained}%`;
-                    document.getElementById(`final_ret_${idx}`).textContent = `${finalItem.retained}%`;
-                } else {
-                    document.getElementById(`final_ppn_${idx}`).textContent = '—';
-                    document.getElementById(`final_cumret_${idx}`).textContent = '—';
-                    document.getElementById(`final_ret_${idx}`).textContent = '—';
+                const row = results.unified.find(r => Math.abs(r.opening - sieve.opening) < 0.001);
+                const ppEl  = document.getElementById(`final_ppn_${idx}`);
+                const crEl  = document.getElementById(`final_cumret_${idx}`);
+                const rEl   = document.getElementById(`final_ret_${idx}`);
+                const mrEl  = document.getElementById(`final_mr_${idx}`);
+                const cmrEl = document.getElementById(`final_cmr_${idx}`);
+                if (row && ppEl) {
+                    ppEl.textContent  = `${row.passPct.toFixed(1)}%`;
+                    crEl.textContent  = `${row.cumRetPct.toFixed(1)}%`;
+                    rEl.textContent   = `${row.retPct.toFixed(1)}%`;
+                    if (mrEl)  mrEl.textContent  = row.MR  > 0 ? row.MR.toFixed(1)  : '0.0';
+                    if (cmrEl) cmrEl.textContent = row.CMR > 0 ? row.CMR.toFixed(1) : '0.0';
+                } else if (ppEl) {
+                    ppEl.textContent = '—'; crEl.textContent = '—'; rEl.textContent = '—';
+                    if (mrEl) mrEl.textContent = '—'; if (cmrEl) cmrEl.textContent = '—';
                 }
             });
         }
-function buildCombinedCurve() {
-    const sieveData = results.final
-        .filter(item => item.opening > 0 && item.ppn >= 0 && item.ppn <= 100)
-        .map(item => ({ x: item.opening, y: item.ppn }));
 
-    const hydroData = d422Points
-        .filter(p => p.D > 0 && p.pass >= 0 && p.pass <= 100)
-        .map(p => ({ x: p.D, y: p.pass }));
+        // ── Build combined curve for chart & D-values ─────────────────────
+        function buildCombinedCurve() {
+            const sieveData = results.unified
+                .filter(r => r.opening > 0)
+                .map(r => ({ x: r.opening, y: r.passPct }))
+                .sort((a, b) => b.x - a.x);
 
-    combinedCurve = [...sieveData, ...hydroData]
-        .sort((a, b) => b.x - a.x);
-}
+            const hydroData = (window.d422Points || [])
+                .filter(p => p.D > 0 && p.pass >= 0 && p.pass <= 100)
+                .map(p => ({ x: p.D, y: p.pass }));
 
-      function updateGradationChart() {
-    // بناء المنحنى المدمج (مناخل + هيدروميتر)
-    buildCombinedCurve();
-
-    if (gradationChart && gradationChart.data.datasets[0]) {
-        gradationChart.data.datasets[0].data = combinedCurve;
-        gradationChart.update();
-    }
-}
-
-        function calculateDValues() {
-    // استخدام المنحنى المدمج (D6913 + D422) لحساب D10 و D30 و D60
-    const data = combinedCurve
-        .filter(p => p.x > 0 && p.y >= 0 && p.y <= 100)
-        .map(p => ({ opening: p.x, ppn: p.y }))
-        .sort((a, b) => a.opening - b.opening);
-
-    if (data.length < 2) return;
-
-    const d10 = interpolateD(data, 10);
-    const d30 = interpolateD(data, 30);
-    const d60 = interpolateD(data, 60);
-
-    document.getElementById('d10Value').textContent = d10 ? d10.toFixed(3) : '—';
-    document.getElementById('d30Value').textContent = d30 ? d30.toFixed(3) : '—';
-    document.getElementById('d60Value').textContent = d60 ? d60.toFixed(3) : '—';
-
-    if (d10 && d60) {
-        document.getElementById('cuValue').textContent = (d60 / d10).toFixed(2);
-        if (d30) {
-            document.getElementById('ccValue').textContent =
-                ((d30 * d30) / (d10 * d60)).toFixed(2);
+            window.combinedCurve = [...sieveData, ...hydroData].sort((a, b) => b.x - a.x);
         }
-    }
-}
+
+        function updateGradationChart() {
+            buildCombinedCurve();
+            if (gradationChart && gradationChart.data.datasets[0]) {
+                gradationChart.data.datasets[0].data = window.combinedCurve;
+                gradationChart.update();
+            }
+        }
+
+        // ── D-values & coefficients ───────────────────────────────────────
+        function calculateDValues() {
+            const data = (window.combinedCurve || [])
+                .filter(p => p.x > 0 && p.y >= 0 && p.y <= 100)
+                .map(p => ({ opening: p.x, ppn: p.y }))
+                .sort((a, b) => a.opening - b.opening);
+
+            if (data.length < 2) return;
+
+            const d10 = interpolateD(data, 10);
+            const d30 = interpolateD(data, 30);
+            const d60 = interpolateD(data, 60);
+
+            results.dValues = { D10: d10, D30: d30, D60: d60, Cu: null, Cc: null };
+
+            const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val ? val.toFixed(3) : '—'; };
+            set('d10Value', d10); set('d30Value', d30); set('d60Value', d60);
+
+            if (d10 && d60) {
+                const cu = d60 / d10;
+                results.dValues.Cu = cu;
+                const elCu = document.getElementById('cuValue'); if (elCu) elCu.textContent = cu.toFixed(2);
+                if (d30) {
+                    const cc = (d30 * d30) / (d10 * d60);
+                    results.dValues.Cc = cc;
+                    const elCc = document.getElementById('ccValue'); if (elCc) elCc.textContent = cc.toFixed(2);
+                }
+            }
+        }
+
         function interpolateD(data, targetPercent) {
             for (let i = 0; i < data.length - 1; i++) {
                 const p1 = data[i], p2 = data[i + 1];
-                if ((p1.ppn <= targetPercent && p2.ppn >= targetPercent) || (p1.ppn >= targetPercent && p2.ppn <= targetPercent)) {
+                if ((p1.ppn <= targetPercent && p2.ppn >= targetPercent) ||
+                    (p1.ppn >= targetPercent && p2.ppn <= targetPercent)) {
                     const logD1 = Math.log10(p1.opening), logD2 = Math.log10(p2.opening);
                     const ratio = (targetPercent - p1.ppn) / (p2.ppn - p1.ppn);
                     return Math.pow(10, logD1 + ratio * (logD2 - logD1));
@@ -4972,44 +5200,40 @@ function buildCombinedCurve() {
             return null;
         }
 
+        // ── Generate JSON output ──────────────────────────────────────────
         function generateJSON() {
             const output = {
-                testInfo: { standard: "ASTM D6913/D6913M-17", method: currentMethod === 'single' ? 'Single-Set' : 'Composite', separatorSieve: currentMethod === 'composite' ? getSeparatorName() : null, sampleId: document.getElementById('sampleId').value, testDate: document.getElementById('testDate').value },
-                results: { gradation: results.final, dValues: { D10: document.getElementById('d10Value').textContent, D30: document.getElementById('d30Value').textContent, D60: document.getElementById('d60Value').textContent }, coefficients: { Cu: document.getElementById('cuValue').textContent, Cc: document.getElementById('ccValue').textContent } }
+                standard: 'ASTM D6913/D6913M-17',
+                method: results.method,
+                SMd_g: results.SMd,
+                CSCF1_pct: results.CSCF1?.toFixed(1),
+                CSCF2_pct: results.CSCF2?.toFixed(1),
+                gradation: results.unified.map(r => ({
+                    sieve: r.sieve, opening_mm: r.opening,
+                    MR_g: +r.MR.toFixed(2), CMR_g: +r.CMR.toFixed(2),
+                    retained_pct: +r.retPct.toFixed(2),
+                    cumRetained_pct: +r.cumRetPct.toFixed(2),
+                    passing_pct: +r.passPct.toFixed(2)
+                })),
+                dValues: results.dValues
             };
             console.log('D6913 Results:', output);
         }
 
-     function resetAll() {
-    // مسح مدخلات قسم D6913
-    document.querySelectorAll('#sectionD6913 input[type="number"], #sectionD6913 input[type="text"]').forEach(i => {
-        if (i.id !== 'testDate') i.value = '';
-        i.classList.remove('input-error', 'input-warning');
-    });
-
-    // مسح نتائج الجداول
-    document.querySelectorAll('[id^="single_ppn_"], [id^="coarse_ppn_"], [id^="fine_fppn_"], [id^="fine_ppn_"], [id^="final_ppn_"], [id^="final_cumret_"], [id^="final_ret_"]').forEach(c => c.textContent = '—');
-    document.getElementById('cscfDisplay').textContent = '—';
-    ['d10Value', 'd30Value', 'd60Value', 'cuValue', 'ccValue'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = '—';
-    });
-
-   // مسح منحنى التدرج (المنحنى المدمج)
-if (gradationChart) {
-    if (gradationChart.data.datasets[0]) {
-        gradationChart.data.datasets[0].data = [];
-    }
-    gradationChart.update();
-}
-
-    // مسح رسائل التحقق وإعادة النتائج
-    document.getElementById('validationMessages').innerHTML = '';
-    results = { singleSet: [], coarser: [], finer: [], final: [], CSCF: 0, SMd: 0 };
-
-    // مسح نقاط الهيدروميتر أيضاً
-    d422Points = [];
-}
+        // ── Reset ─────────────────────────────────────────────────────────
+        function resetAll() {
+            document.querySelectorAll('#sectionD6913 input[type="number"], #sectionD6913 input[type="text"]')
+                .forEach(i => { if (i.id !== 'testDate') i.value = ''; i.classList.remove('input-error', 'input-warning'); });
+            document.querySelectorAll('[id^="single_ppn_"],[id^="coarse_ppn_"],[id^="fine_fppn_"],[id^="fine_ppn_"],[id^="final_ppn_"],[id^="final_cumret_"],[id^="final_ret_"]')
+                .forEach(c => c.textContent = '—');
+            const cscfEl = document.getElementById('cscfDisplay'); if (cscfEl) cscfEl.textContent = '—';
+            ['d10Value','d30Value','d60Value','cuValue','ccValue'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '—'; });
+            if (gradationChart?.data?.datasets?.[0]) { gradationChart.data.datasets[0].data = []; gradationChart.update(); }
+            document.getElementById('validationMessages').innerHTML = '';
+            results = { method: currentMethod, SMd: 0, CSCF1: 0, CSCF2: 0, unified: [], final: [], dValues: {}, validation: { ok: true, messages: [] } };
+            window.d422Points = [];
+            window.combinedCurve = [];
+        }
 
         function loadDemoData() {
             resetAll();
