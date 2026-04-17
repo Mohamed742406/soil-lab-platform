@@ -590,8 +590,8 @@
                     </div>
                 </div>
 
-                <!-- Finer Portion Table -->
-                <div class="section-card p-6 mb-6">
+                <!-- Finer Portion Table — hidden in Double Separation mode -->
+                <div class="section-card p-6 mb-6" id="finerTableSection">
                     <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2" id="finerTableTitle">
                         <span class="bg-teal-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">4</span>
                         جدول الجزء الناعم (SubS) — Finer Subspecimen (No.4 → No.200)
@@ -4031,6 +4031,54 @@ function switchTab(tab) {
             }
         });
 
+        function updateSeparatorDropdowns() {
+            // Rebuild both separator dropdowns to only show currently active sieves
+            // (excluding Pan=0, No.200=0.075, and sieves coarser than 25mm which are rarely separators)
+            const SEPARATOR_CANDIDATES = [
+                {value: 19,   label: '3/4 in (19.0 mm)'},
+                {value: 9.5,  label: '3/8 in (9.5 mm)'},
+                {value: 4.75, label: 'No.4 (4.75 mm) — الافتراضي'},
+                {value: 2.0,  label: 'No.10 (2.00 mm)'},
+                {value: 0.85, label: 'No.20 (0.85 mm)'},
+                {value: 0.425,label: 'No.40 (0.425 mm)'},
+                {value: 0.25, label: 'No.60 (0.25 mm)'},
+                {value: 0.15, label: 'No.100 (0.15 mm)'},
+            ];
+
+            const activeCandidates = SEPARATOR_CANDIDATES.filter(c => activeSieveOpenings.has(c.value));
+
+            const sep1El = document.getElementById('separatorSieve');
+            const sep2El = document.getElementById('separator2Sieve');
+
+            if (sep1El) {
+                const cur1 = parseFloat(sep1El.value);
+                sep1El.innerHTML = activeCandidates.map(c =>
+                    `<option value="${c.value}" ${c.value === cur1 ? 'selected' : ''}>${c.label}</option>`
+                ).join('');
+                // If current value no longer active, reset to first available
+                if (!activeSieveOpenings.has(parseFloat(sep1El.value))) {
+                    sep1El.value = activeCandidates[0]?.value ?? 4.75;
+                }
+                currentSeparator = parseFloat(sep1El.value);
+                updateSeparatorDisplay();
+            }
+
+            if (sep2El) {
+                const cur2 = parseFloat(sep2El.value);
+                sep2El.innerHTML = activeCandidates.map(c =>
+                    `<option value="${c.value}" ${c.value === cur2 ? 'selected' : ''}>${c.label}</option>`
+                ).join('');
+                if (!activeSieveOpenings.has(parseFloat(sep2El.value))) {
+                    sep2El.value = activeCandidates[0]?.value ?? 4.75;
+                }
+                const sep2Disp = document.getElementById('selectedSeparator2Display');
+                if (sep2El && sep2Disp) {
+                    const opt = sep2El.options[sep2El.selectedIndex];
+                    if (opt) sep2Disp.textContent = opt.text;
+                }
+            }
+        }
+
         function toggleSieve(opening) {
             if (opening === 0 || opening === 0.075) return; // Pan & No.200 always required
             if (activeSieveOpenings.has(opening)) {
@@ -4039,6 +4087,7 @@ function switchTab(tab) {
                 activeSieveOpenings.add(opening);
             }
             renderSieveManager();
+            updateSeparatorDropdowns();
             initializeTables();
             buildDoubleTables();
         }
@@ -4064,6 +4113,7 @@ function switchTab(tab) {
         function resetSieves() {
             activeSieveOpenings = new Set([75, 50, 37.5, 25, 19, 9.5, 4.75, 2.0, 0.425, 0.15, 0.075, 0]);
             renderSieveManager();
+            updateSeparatorDropdowns();
             initializeTables();
             buildDoubleTables();
         }
@@ -4380,11 +4430,13 @@ function calculateD422() {
         // D6913 FUNCTIONS
         // =============================================
         function getCoarseSieves() {
+            // Includes separator sieve as last (§12.5.1 — CP includes sep sieve)
             return ALL_SIEVES.filter(s => s.opening >= currentSeparator);
         }
 
         function getFineSieves() {
-            return ALL_SIEVES.filter(s => s.opening <= currentSeparator);
+            // Excludes separator sieve — sep belongs to CP table (§12.5.2)
+            return ALL_SIEVES.filter(s => s.opening < currentSeparator);
         }
 
         function getSeparatorSieve() {
@@ -4417,16 +4469,17 @@ function calculateD422() {
         }
 
         function initializeCompositeTables() {
-            const coarseSieves = getCoarseSieves();
-            const fineSieves = getFineSieves();
+            const coarseSieves = getCoarseSieves(); // includes sep sieve as last
+            const fineSieves   = getFineSieves();   // < sep only
 
+            const sepName = getSeparatorSieve()?.name || 'No.4';
             document.getElementById('coarserTableTitle').innerHTML = `
                 <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">3</span>
-                جدول الجزء الخشن (CP) — Coarser Portion (3 in → ${getSeparatorSieve().name})
+                جدول الجزء الخشن — Coarser Portion (3 in → ${sepName} مشمول)
             `;
             document.getElementById('finerTableTitle').innerHTML = `
                 <span class="bg-teal-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">4</span>
-                جدول الجزء الناعم (SubS) — Finer Subspecimen (${getSeparatorSieve().name} → No.200)
+                جدول العينة الفرعية الناعمة — SubSpecimen (&lt; ${sepName} → No.200)
             `;
 
             const coarserBody = document.getElementById('coarserTableBody');
@@ -4435,7 +4488,7 @@ function calculateD422() {
                 return `
                 <tr class="${idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'} ${isSeparator ? 'separator-highlight' : ''}">
                     <td class="p-2 text-center border border-gray-300 font-semibold">
-                        ${isSeparator ? '<span class="separator-badge">منخل الفصل</span>' : ''}${sieve.name}
+                        ${isSeparator ? '<span class="separator-badge">آخر منخل CP</span>' : ''}${sieve.name}
                     </td>
                     <td class="p-2 text-center border border-gray-300 text-gray-600">${sieve.opening}</td>
                     <td class="p-2 text-center border border-gray-300">
@@ -4446,13 +4499,9 @@ function calculateD422() {
             `}).join('');
 
             const finerBody = document.getElementById('finerTableBody');
-            finerBody.innerHTML = fineSieves.map((sieve, idx) => {
-                const isSeparator = sieve.opening === currentSeparator;
-                return `
-                <tr class="${idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'} ${isSeparator ? 'separator-highlight' : ''}">
-                    <td class="p-2 text-center border border-gray-300 font-semibold">
-                        ${isSeparator ? '<span class="separator-badge">منخل الفصل</span>' : ''}${sieve.name}
-                    </td>
+            finerBody.innerHTML = fineSieves.map((sieve, idx) => `
+                <tr class="${idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
+                    <td class="p-2 text-center border border-gray-300 font-semibold">${sieve.name}</td>
                     <td class="p-2 text-center border border-gray-300 text-gray-600">${sieve.opening}</td>
                     <td class="p-2 text-center border border-gray-300">
                         <input type="number" step="0.01" min="0" id="fine_cmrn_${idx}" class="input-field w-full border border-gray-300 rounded px-2 py-1" placeholder="0.00">
@@ -4460,7 +4509,7 @@ function calculateD422() {
                     <td class="p-2 text-center border border-gray-300 bg-yellow-50 font-semibold" id="fine_fppn_${idx}">—</td>
                     <td class="p-2 text-center border border-gray-300 result-cell font-bold" id="fine_ppn_${idx}">—</td>
                 </tr>
-            `}).join('');
+            `).join('');
 
             updateLabelsForSeparator();
         }
@@ -4619,6 +4668,10 @@ function toggleMethod() {
     document.getElementById('separator2Selection')
         .classList.toggle('hidden', !isDouble);
 
+    // SubS (finer) table only shown for Single Separation, not Double
+    const finerSection = document.getElementById('finerTableSection');
+    if (finerSection) finerSection.classList.toggle('hidden', isDouble);
+
     // Update composite section labels for double mode
     const coarserTitle = document.getElementById('coarserTableTitle');
     if (coarserTitle) coarserTitle.innerHTML = isDouble
@@ -4633,9 +4686,9 @@ function toggleMethod() {
     updateFinalTable();
 }
 
-// Helper: returns standard sieve list with id, label, mm
+// Helper: returns active sieves only (respects sieve manager toggles)
 function getSieveList() {
-    return [
+    const full = [
         {id:'s75',   label:'3 in',    mm:75},
         {id:'s50',   label:'2 in',    mm:50},
         {id:'s375',  label:'1.5 in',  mm:37.5},
@@ -4651,6 +4704,7 @@ function getSieveList() {
         {id:'s0106', label:'No.140',  mm:0.106},
         {id:'s0075', label:'No.200',  mm:0.075}
     ];
+    return full.filter(s => activeSieveOpenings.has(s.mm));
 }
 
 
@@ -4900,24 +4954,25 @@ function validateInputs() {
             document.getElementById('cscfDisplay').textContent = `${cscf1.toFixed(1)}%`;
 
             // ── Finer SubSpecimen ─────────────────────────────────────────
-            let prevCMR_f = 0;
+            let prevFCMR = 0;
             const fineRows = [];
             fineSieves.forEach((sieve, idx) => {
-                if (sieve.opening === currentSeparator) { prevCMR_f = 0; return; } // skip sep row
+                // fineSieves already excludes separator sieve (opening < sep)
                 const fcmr = convertToGrams(parseFloat(document.getElementById(`fine_cmrn_${idx}`)?.value) || 0);
-                const fmr  = Math.max(0, fcmr - prevCMR_f);
-                prevCMR_f  = fcmr;
+                const fmr  = Math.max(0, fcmr - prevFCMR);
+                prevFCMR   = fcmr;
                 // §12.5.2.1: SubS,PPN = CSCF × (1 − SubS,FCMRN / SubS,Md)
                 const fppFrac = subsMd > 0 ? Math.max(0, Math.min(1, 1 - fcmr / subsMd)) : 0;
                 const passPct = Math.max(0, Math.min(100, (cscf1 / 100) * fppFrac * 100));
-                // Back-calculate MR in equivalent specimen mass
+                // Equivalent mass on this sieve if full specimen sieved:
+                // MR_equiv = (fmr / subsMd) × fpMd  [scale subspecimen mass to full finer portion]
                 const MR_equiv = subsMd > 0 ? (fmr / subsMd) * fpMd : 0;
+                const retPct   = sMd > 0 ? (MR_equiv / sMd) * 100 : 0;
                 const cumRetPct = 100 - passPct;
-                const retPct    = sMd > 0 ? (MR_equiv / sMd) * 100 : 0;
                 const fppEl = document.getElementById(`fine_fppn_${idx}`);
                 const ppEl  = document.getElementById(`fine_ppn_${idx}`);
-                if (fppEl) fppEl.textContent = sieve.name === 'Pan' ? '—' : `${(fppFrac * 100).toFixed(1)}%`;
-                if (ppEl)  ppEl.textContent  = sieve.name === 'Pan' ? '—' : `${Math.round(passPct)}%`;
+                if (fppEl) fppEl.textContent = `${(fppFrac * 100).toFixed(1)}%`;
+                if (ppEl)  ppEl.textContent  = `${Math.round(passPct)}%`;
                 if (sieve.name !== 'Pan') {
                     fineRows.push({ sieve: sieve.name, opening: sieve.opening, MR: MR_equiv, CMR: 0, retPct, cumRetPct, passPct, source: 'SubS' });
                 }
@@ -4989,32 +5044,33 @@ function validateInputs() {
             });
 
             // ── Merge all: 1st CP (coarse > sep1) + 2nd CP + 2nd SubS ────
-            const cp1Rows = base.unified.filter(r => r.opening > sep1);
+            const cp1Rows = base.unified.filter(r => r.opening >= sep1);
             const merged = buildFinalUnifiedGradation([...cp1Rows, ...c2Rows, ...f2Rows], base.SMd, sep1, sep2);
             return { SMd: base.SMd, CSCF1: base.CSCF1, CSCF2: cscf2 * 100, unified: merged };
         }
 
-        // ── Build unified gradation — recomputes CMR/% from MR values ────
-        // sep1/sep2: at separator sieves, coarser portion's passPct wins
+        // ── Build unified gradation — recomputes CMR/MR from passPct × S,Md ──
+        // This gives the equivalent masses AS IF the full specimen was sieved.
+        // sep1/sep2: at separator sieves, CP source wins over SubS (§12.5.2.3)
         function buildFinalUnifiedGradation(rows, sMd, sep1, sep2) {
-            // Sort descending by opening (largest first)
+            // Sort descending by opening (largest sieve first)
             const sorted = [...rows]
                 .filter(r => r.opening > 0)
                 .sort((a, b) => b.opening - a.opening);
 
-            // Deduplicate separator sieves: keep CP source over SubS source
+            // Deduplicate: at separator openings, CP always wins (§12.5.2.3)
             const deduped = [];
             const seen = new Map();
             sorted.forEach(r => {
                 const key = r.opening.toFixed(4);
                 if (!seen.has(key)) {
-                    seen.set(key, r);
-                    deduped.push(r);
+                    seen.set(key, r); deduped.push(r);
                 } else {
-                    // CP always wins over SubS/finer at separator
                     const existing = seen.get(key);
-                    if ((r.source === 'CP' || r.source === '2ndCP') &&
-                        (existing.source === 'SubS' || existing.source === '2ndSubS')) {
+                    // CP or 2ndCP overwrites SubS/2ndSubS at separator
+                    const rIsCP = r.source === 'CP' || r.source === '2ndCP';
+                    const exIsFine = existing.source === 'SubS' || existing.source === '2ndSubS';
+                    if (rIsCP && exIsFine) {
                         const idx = deduped.indexOf(existing);
                         deduped[idx] = r;
                         seen.set(key, r);
@@ -5022,16 +5078,17 @@ function validateInputs() {
                 }
             });
 
-            // Recompute CMR and percentages from passPct (derived from ASTM equations)
-            // passPct is authoritative (computed per ASTM); derive CMR = sMd × (1 - passPct/100)
+            // Recompute MR and CMR from passPct using actual S,Md
+            // MR_i  = (PP_{i-1} − PP_i) / 100 × S,Md   [equivalent mass retained on sieve i]
+            // CMR_i = (100 − PP_i) / 100 × S,Md         [cumulative mass retained through sieve i]
             let prevPP = 100;
             return deduped.map(r => {
-                const cmr       = sMd > 0 ? sMd * (1 - r.passPct / 100) : 0;
-                const mr        = Math.max(0, sMd * (prevPP - r.passPct) / 100);
-                const cumRetPct = 100 - r.passPct;
-                const retPct    = prevPP - r.passPct;
+                const retPct    = Math.max(0, prevPP - r.passPct);
+                const cumRetPct = Math.max(0, 100 - r.passPct);
+                const MR  = (retPct / 100) * sMd;
+                const CMR = (cumRetPct / 100) * sMd;
                 prevPP = r.passPct;
-                return { ...r, MR: mr, CMR: cmr, retPct: Math.max(0, retPct), cumRetPct };
+                return { ...r, MR, CMR, retPct, cumRetPct };
             });
         }
 
