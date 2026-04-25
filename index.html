@@ -4598,15 +4598,142 @@ function updateFinalTable() {
 }
 
 function initializeGradationChart() {
+    // ══════════════════════════════════════════════════════════════
+    // D-VALUE LINES PLUGIN — registered globally for Chart.js
+    // Draws crosshair lines for D10, D30, D60 on the gradation chart
+    // ══════════════════════════════════════════════════════════════
+    const dValueLinesPlugin = {
+        id: 'dValueLines',
+        afterDraw(chart) {
+            // Only run on the gradation chart
+            if (chart.canvas.id !== 'gradationChart') return;
+
+            const dv = (typeof results !== 'undefined' && results && results.dValues)
+                       ? results.dValues : {};
+
+            const ITEMS = [
+                { d: dv.D10, pct: 10,  color: '#16a34a', name: 'D₁₀' },
+                { d: dv.D30, pct: 30,  color: '#2563eb', name: 'D₃₀' },
+                { d: dv.D60, pct: 60,  color: '#dc2626', name: 'D₆₀' }
+            ];
+
+            const c     = chart.ctx;
+            const xAxis = chart.scales.x;
+            const yAxis = chart.scales.y;
+            if (!xAxis || !yAxis) return;
+
+            const yBot  = yAxis.getPixelForValue(0);
+            const xLeft = xAxis.left;
+            const xRight= xAxis.right;
+
+            // roundRect helper
+            const rr = (c, x, y, w, h, r) => {
+                r = Math.min(r, w/2, h/2);
+                c.beginPath();
+                c.moveTo(x+r, y);
+                c.lineTo(x+w-r, y); c.quadraticCurveTo(x+w, y, x+w, y+r);
+                c.lineTo(x+w, y+h-r); c.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+                c.lineTo(x+r, y+h); c.quadraticCurveTo(x, y+h, x, y+h-r);
+                c.lineTo(x, y+r); c.quadraticCurveTo(x, y, x+r, y);
+                c.closePath();
+            };
+
+            c.save();
+
+            ITEMS.forEach(item => {
+                if (!item.d || isNaN(item.d) || item.d <= 0) return;
+                // Guard: D value must be within chart x-range
+                if (item.d < xAxis.min || item.d > xAxis.max) return;
+
+                const cx = xAxis.getPixelForValue(item.d);
+                const cy = yAxis.getPixelForValue(item.pct);
+
+                // ── Horizontal dashed line: from left edge → intersection ──
+                c.beginPath();
+                c.setLineDash([6, 4]);
+                c.lineWidth = 1.6;
+                c.strokeStyle = item.color;
+                c.moveTo(xLeft, cy);
+                c.lineTo(cx, cy);
+                c.stroke();
+
+                // ── Vertical dashed line: from intersection → x-axis ──────
+                c.beginPath();
+                c.moveTo(cx, cy);
+                c.lineTo(cx, yBot);
+                c.stroke();
+
+                c.setLineDash([]);
+
+                // ── Intersection dot ────────────────────────────────────────
+                c.beginPath();
+                c.arc(cx, cy, 5.5, 0, Math.PI * 2);
+                c.fillStyle = item.color;
+                c.fill();
+                c.lineWidth = 2;
+                c.strokeStyle = '#fff';
+                c.stroke();
+
+                // ── Y-axis label (left side, at horizontal line height) ─────
+                c.font = 'bold 10px Inter, Arial, sans-serif';
+                const lyTxt = item.pct + '%';
+                const lyW   = c.measureText(lyTxt).width + 8;
+                const lyH   = 16;
+                const lyX   = xLeft - lyW - 4;
+                const lyY   = cy - lyH / 2;
+                rr(c, lyX, lyY, lyW, lyH, 3);
+                c.fillStyle = item.color;
+                c.fill();
+                c.fillStyle = '#fff';
+                c.fillText(lyTxt, lyX + 4, lyY + 12);
+
+                // ── X-axis label (below x-axis, at vertical line position) ──
+                c.font = 'bold 9px Inter, Arial, sans-serif';
+                const lxTxt = item.name + ' = ' + item.d.toFixed(4) + ' mm';
+                const lxW   = c.measureText(lxTxt).width + 10;
+                const lxH   = 15;
+                const lxX   = cx - lxW / 2;
+                const lxY   = yBot + 5;
+                rr(c, lxX, lxY, lxW, lxH, 3);
+                c.fillStyle = item.color;
+                c.fill();
+                c.fillStyle = '#fff';
+                c.fillText(lxTxt, lxX + 5, lxY + 11);
+            });
+
+            c.restore();
+        }
+    };
+    Chart.register(dValueLinesPlugin);
+
+    // roundRect polyfill for older browsers
+    if (!CanvasRenderingContext2D.prototype.roundRect) {
+        CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+            r = Math.min(r, w/2, h/2);
+            this.beginPath();
+            this.moveTo(x+r, y);
+            this.lineTo(x+w-r, y);
+            this.quadraticCurveTo(x+w, y, x+w, y+r);
+            this.lineTo(x+w, y+h-r);
+            this.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+            this.lineTo(x+r, y+h);
+            this.quadraticCurveTo(x, y+h, x, y+h-r);
+            this.lineTo(x, y+r);
+            this.quadraticCurveTo(x, y, x+r, y);
+            this.closePath();
+        };
+    }
+
     const ctx = document.getElementById('gradationChart').getContext('2d');
     gradationChart = new Chart(ctx, {
         type: 'line',
         data: {
             datasets: [
+                // ── Dataset 0: Main gradation curve ──────────────────────
                 {
                     label: 'منحنى التدرج المدمج — Combined Gradation Curve (D6913 + D422)',
                     data: [],
-                    borderColor: '#a855f7',                  // لون واحد للمنحنى بالكامل
+                    borderColor: '#a855f7',
                     backgroundColor: 'rgba(168, 85, 247, 0.08)',
                     borderWidth: 3,
                     fill: true,
@@ -4614,7 +4741,61 @@ function initializeGradationChart() {
                     pointRadius: 5,
                     pointBackgroundColor: '#a855f7',
                     pointBorderColor: '#fff',
-                    pointBorderWidth: 2
+                    pointBorderWidth: 2,
+                    order: 10
+                },
+                // ── Dataset 1: D10 lines (vertical + horizontal) ─────────
+                {
+                    label: 'D₁₀',
+                    data: [],
+                    borderColor: '#16a34a',
+                    backgroundColor: 'transparent',
+                    borderWidth: 1.8,
+                    borderDash: [5, 4],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    order: 1
+                },
+                // ── Dataset 2: D30 lines ──────────────────────────────────
+                {
+                    label: 'D₃₀',
+                    data: [],
+                    borderColor: '#2563eb',
+                    backgroundColor: 'transparent',
+                    borderWidth: 1.8,
+                    borderDash: [5, 4],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    order: 1
+                },
+                // ── Dataset 3: D60 lines ──────────────────────────────────
+                {
+                    label: 'D₆₀',
+                    data: [],
+                    borderColor: '#dc2626',
+                    backgroundColor: 'transparent',
+                    borderWidth: 1.8,
+                    borderDash: [5, 4],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    order: 1
+                },
+                // ── Dataset 4: D-value intersection dots ─────────────────
+                {
+                    label: '_dots',
+                    data: [],
+                    borderColor: 'transparent',
+                    backgroundColor: ['#16a34a','#2563eb','#dc2626'],
+                    pointRadius: 7,
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointStyle: 'circle',
+                    showLine: false,
+                    fill: false,
+                    order: 0
                 }
             ]
         },
@@ -4653,7 +4834,23 @@ function initializeGradationChart() {
                     grid: { color: 'rgba(0,0,0,0.1)' }
                 }
             },
-            plugins: { legend: { display: true, position: 'top' } }
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        filter: item => item.text !== '_dots',
+                        usePointStyle: true
+                    }
+                },
+                tooltip: {
+                    filter: item => item.datasetIndex === 0,
+                    callbacks: {
+                        label: ctx => `Passing: ${ctx.parsed.y.toFixed(2)}%`,
+                        title: ctx => `D = ${ctx[0].parsed.x.toFixed(4)} mm`
+                    }
+                }
+            }
         }
     });
 }
@@ -5267,46 +5464,77 @@ function validateInputs() {
         }
 
         // ── D-values & coefficients ───────────────────────────────────────
-        function calculateDValues() {
-            const data = (window.combinedCurve || [])
-                .filter(p => p.x > 0 && p.y >= 0 && p.y <= 100)
-                .map(p => ({ opening: p.x, ppn: p.y }))
-                .sort((a, b) => a.opening - b.opening);
-
-            if (data.length < 2) return;
-
-            const d10 = interpolateD(data, 10);
-            const d30 = interpolateD(data, 30);
-            const d60 = interpolateD(data, 60);
-
-            results.dValues = { D10: d10, D30: d30, D60: d60, Cu: null, Cc: null };
-
-            const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val ? val.toFixed(3) : '—'; };
-            set('d10Value', d10); set('d30Value', d30); set('d60Value', d60);
-
-            if (d10 && d60) {
-                const cu = d60 / d10;
-                results.dValues.Cu = cu;
-                const elCu = document.getElementById('cuValue'); if (elCu) elCu.textContent = cu.toFixed(2);
-                if (d30) {
-                    const cc = (d30 * d30) / (d10 * d60);
-                    results.dValues.Cc = cc;
-                    const elCc = document.getElementById('ccValue'); if (elCc) elCc.textContent = cc.toFixed(2);
-                }
-            }
-        }
-
+        // interpolateD — Log-Linear interpolation per ASTM D6913
+        // data: array sorted ascending by opening (mm), with exact passPct (float)
         function interpolateD(data, targetPercent) {
             for (let i = 0; i < data.length - 1; i++) {
                 const p1 = data[i], p2 = data[i + 1];
-                if ((p1.ppn <= targetPercent && p2.ppn >= targetPercent) ||
-                    (p1.ppn >= targetPercent && p2.ppn <= targetPercent)) {
-                    const logD1 = Math.log10(p1.opening), logD2 = Math.log10(p2.opening);
-                    const ratio = (targetPercent - p1.ppn) / (p2.ppn - p1.ppn);
+                // p1 = smaller opening (lower passing%), p2 = larger opening (higher passing%)
+                const lo = Math.min(p1.passPct, p2.passPct);
+                const hi = Math.max(p1.passPct, p2.passPct);
+                if (targetPercent >= lo && targetPercent <= hi && p2.passPct !== p1.passPct) {
+                    // Log-Linear Interpolation: diameter axis is logarithmic
+                    const logD1  = Math.log10(p1.opening);
+                    const logD2  = Math.log10(p2.opening);
+                    const ratio  = (targetPercent - p1.passPct) / (p2.passPct - p1.passPct);
                     return Math.pow(10, logD1 + ratio * (logD2 - logD1));
                 }
             }
             return null;
+        }
+
+        function calculateDValues() {
+            // Build data from results.unified (exact passPct floats — not rounded chart points)
+            let data = [];
+            if (results && results.unified && results.unified.length > 0) {
+                data = results.unified
+                    .filter(r => r.opening > 0 && r.passPct >= 0 && r.passPct <= 100)
+                    .map(r => ({ opening: r.opening, passPct: r.passPct }))
+                    .sort((a, b) => a.opening - b.opening);   // ascending: small→large
+            }
+            // Fallback: combinedCurve (includes hydrometer points if available)
+            if (data.length < 2) {
+                data = (window.combinedCurve || [])
+                    .filter(p => p.x > 0 && p.y >= 0 && p.y <= 100)
+                    .map(p => ({ opening: p.x, passPct: p.y }))
+                    .sort((a, b) => a.opening - b.opening);
+            }
+
+            if (data.length < 2) return;
+
+            // Calculate D10, D30, D60, D85, D90
+            const d10 = interpolateD(data, 10);
+            const d30 = interpolateD(data, 30);
+            const d60 = interpolateD(data, 60);
+            const d85 = interpolateD(data, 85);
+            const d90 = interpolateD(data, 90);
+
+            results.dValues = { D10: d10, D30: d30, D60: d60, D85: d85, D90: d90, Cu: null, Cc: null };
+
+            // Update display
+            const set = (id, val, decimals=4) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = (val != null && !isNaN(val)) ? val.toFixed(decimals) : '—';
+            };
+            set('d10Value', d10); set('d30Value', d30); set('d60Value', d60);
+            set('d85Value', d85); set('d90Value', d90);
+
+            // Cu and Cc
+            if (d10 && d60) {
+                const cu = d60 / d10;
+                results.dValues.Cu = cu;
+                const elCu = document.getElementById('cuValue');
+                if (elCu) elCu.textContent = cu.toFixed(3);
+                if (d30) {
+                    const cc = (d30 * d30) / (d10 * d60);
+                    results.dValues.Cc = cc;
+                    const elCc = document.getElementById('ccValue');
+                    if (elCc) elCc.textContent = cc.toFixed(3);
+                }
+            }
+
+            // ── Redraw chart to show D-value lines ─────────────────────
+            if (gradationChart) gradationChart.update();
         }
 
         // ── Generate JSON output ──────────────────────────────────────────
