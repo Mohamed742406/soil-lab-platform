@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة الاختبارات المعملية للتربة — Soil Laboratory Testing Platform | ASTM D6913, D1557, D4318 & D2487</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script>/* ExcelJS browser fix — must be before exceljs loads */
+      if(typeof global==='undefined'){window.global=window;}
+      if(typeof process==='undefined'){window.process={env:{}};}
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
@@ -810,7 +815,12 @@
                     </svg>
                     بيانات تجريبية — Demo Data
                 </button>
-
+                <button onclick="exportToExcel('D6913')" class="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2 hover:from-emerald-600 hover:to-green-700 transition-all hover:-translate-y-0.5">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    📊 تصدير Excel
+                </button>
             </div>
 
             <div id="validationMessages" class="mb-6"></div>
@@ -1266,6 +1276,12 @@
               class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-lg font-semibold shadow-lg flex items-center gap-2 hover:from-purple-600 hover:to-pink-600 transition-all"
               onclick="loadD422Demo()">
         تحميل مثال تجريبي — Demo
+      </button>
+      <button type="button"
+              class="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-6 py-2 rounded-lg font-semibold shadow-lg flex items-center gap-2 hover:from-emerald-600 hover:to-green-700 transition-all hover:-translate-y-0.5"
+              onclick="exportToExcel('D422')">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        📊 تصدير Excel
       </button>
     </div>
 
@@ -1815,7 +1831,7 @@
                     <span id="reportMethodBadge" class="ml-3 px-3 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-600">لا توجد نتائج بعد</span>
                 </h3>
                 <p class="text-sm text-gray-500 mb-4">اضغط "احسب" أولاً — يسحب التقرير النتائج تلقائياً من أي طريقة (نخل مفرد أو مركب فصل واحد أو فصلين).</p>
-                <button onclick="openGradationReport()"
+                <button onclick="generateProctorReport()"
                     class="bg-gradient-to-r from-blue-700 to-indigo-700 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2 hover:from-blue-800 hover:to-indigo-800 transition-all">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
@@ -1844,7 +1860,10 @@
                     </svg>
                     بيانات تجريبية — Demo Data
                 </button>
-
+                <button onclick="exportToExcel('D1557')" class="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2 hover:from-emerald-600 hover:to-green-700 transition-all hover:-translate-y-0.5">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    📊 تصدير Excel
+                </button>
             </div>
 
             <div id="proctorValidationMessages" class="mb-6"></div>
@@ -2116,6 +2135,10 @@
         <button onclick="loadD4318Example()" class="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2 hover:from-pink-600 hover:to-rose-600 transition-all">
             📝 تحميل مثال — Load Example
         </button>
+        <button onclick="exportToExcel('D4318')" class="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2 hover:from-emerald-600 hover:to-green-700 transition-all hover:-translate-y-0.5">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            📊 تصدير Excel
+        </button>
     </div>
 
     <div id="d4318_validationMessages" class="mb-6"></div>
@@ -2337,6 +2360,10 @@
         </button>
         <button onclick="resetSoilClassification()" class="btn-secondary text-white px-6 py-4 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2">
             🔄 إعادة تعيين — Reset
+        </button>
+        <button onclick="exportToExcel('SoilClass')" class="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-8 py-4 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2 hover:from-emerald-600 hover:to-green-700 transition-all hover:-translate-y-0.5">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            📊 تصدير Excel
         </button>
     </div>
 
@@ -2820,6 +2847,10 @@
                     </svg>
                     بيانات تجريبية — Load Example
                 </button>
+                <button onclick="exportToExcel('D2216')" class="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2 hover:from-emerald-600 hover:to-green-700 transition-all hover:-translate-y-0.5">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    📊 تصدير Excel
+                </button>
             </div>
 
             <div id="d2216_validationMessages" class="mb-6"></div>
@@ -3024,6 +3055,13 @@
     onclick="loadD854Demo_MpVp()"
   >
     Demo Test No. 1 — Mp + Vp
+  </button>
+  <button
+    type="button"
+    class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold px-4 py-2 rounded-lg w-full flex items-center justify-center gap-2"
+    onclick="exportToExcel('D854')"
+  >
+    📊 تصدير Excel
   </button>
 </div>
 
@@ -3383,6 +3421,7 @@
   <button class="cbr-btn cbr-btn-reset"  onclick="resetCBRForm()">🔄 مسح الكل</button>
   <button class="cbr-btn cbr-btn-calc"   onclick="calculateCBRAll()">🧮 احسب الكل</button>
   <button class="cbr-btn cbr-btn-report" onclick="generateCBRReport()">📄 تقرير احترافي</button>
+  <button class="cbr-btn" onclick="exportToExcel('CBR')" style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;cursor:pointer;">📊 تصدير Excel</button>
 </div>
 
 <!-- ④ PROJECT INFO ──────────────────────────────────────── -->
@@ -3934,7 +3973,7 @@
     <div style="background:linear-gradient(135deg,#1e3a5f,#c2410c);color:white;padding:14px 20px;border-radius:12px 12px 0 0;display:flex;justify-content:space-between;align-items:center;">
       <span style="font-size:1rem;font-weight:700;font-family:Cairo,sans-serif;">📄 Moisture-Density Relationship Report — ASTM D1557-12(2021)</span>
       <div style="display:flex;gap:8px;">
-        <button onclick="document.querySelector('#proctorReportContent iframe').contentWindow.print()" style="background:#10b981;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-family:Cairo,sans-serif;font-weight:600;font-size:.85rem;">🖨️ طباعة</button>
+        <button onclick="(function(){ var ifr=document.querySelector('#proctorReportContent iframe'); if(ifr){ try{ ifr.contentWindow.print(); }catch(e){} } })()" style="background:#10b981;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-family:Cairo,sans-serif;font-weight:600;font-size:.85rem;">🖨️ طباعة</button>
         <button onclick="document.getElementById('proctorReportModal').style.display='none'" style="background:#ef4444;color:white;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:1.1rem;line-height:1;">✕</button>
       </div>
     </div>
@@ -9718,11 +9757,14 @@ if (document.getElementById('sectionCBR')) {
 
 // ===== PROCTOR D1557 REPORT GENERATOR =====
 function generateProctorReport() {
-  // ── Helpers ──────────────────────────────────────────────────
-  const g  = id => document.getElementById(id)?.value || '';
-  const gt = id => document.getElementById(id)?.textContent?.trim() || '—';
-  const sel = id => { const el=document.getElementById(id); return el ? el.options[el.selectedIndex]?.text : ''; };
-  const chk = id => document.getElementById(id)?.checked ? '☑' : '☐';
+  /* ══════════════════════════════════════════════════════════════
+     PROCTOR REPORT v3 — Professional A4 | ISO 17025 | Bilingual
+     Redesigned for field clarity, ZAV curve, D4718 correction
+  ══════════════════════════════════════════════════════════════ */
+  const g   = id => document.getElementById(id)?.value?.trim() || '—';
+  const gt  = id => document.getElementById(id)?.textContent?.trim() || '—';
+  const sel = id => { const el=document.getElementById(id); return el ? (el.options[el.selectedIndex]?.text||'—') : '—'; };
+  const gn  = id => { const v=parseFloat(document.getElementById(id)?.value); return isNaN(v)?null:v; };
 
   // ── Collect project info ──────────────────────────────────────
   const proj        = g('prc_projectName')  || '—';
@@ -9815,166 +9857,344 @@ function generateProctorReport() {
       } else {
         val = g(row.ids[i-1]) || '—';
       }
-      cells += `<td style="padding:3px 5px;border:1px solid #ccc;text-align:center;font-size:.72rem;${bg}">${val}</td>`;
+      cells += `<td style="padding:2px 4px;border:1px solid #ccc;text-align:center;font-size:.65rem;${bg}">${val}</td>`;
     }
-    dataRows += `<tr><td style="padding:3px 6px;border:1px solid #ccc;font-size:.7rem;font-weight:600;background:#f8f8f8;">${row.label}</td>${cells}</tr>`;
+    dataRows += `<tr><td style="padding:2px 5px;border:1px solid #ccc;font-size:.62rem;font-weight:600;background:#f8f8f8;">${row.label}</td>${cells}</tr>`;
   });
 
   // ── Chart capture ────────────────────────────────────────────
   const canvas = document.getElementById('proctorChart');
   let chartImg = null;
-  if (canvas) {
-    try { chartImg = canvas.toDataURL('image/png'); } catch(e){}
-  }
+  if (canvas) { try { chartImg = canvas.toDataURL('image/png'); } catch(e){} }
+
   const chartHtml = chartImg
-    ? '<img src="' + chartImg + '" style="width:100%;max-height:195px;object-fit:contain;display:block;" alt="Compaction Curve">'
-    : '<div style="height:195px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:.8rem;border:2px dashed #cbd5e1;border-radius:6px;">📊 Run calculation first to see chart</div>';
+    ? `<img src="${chartImg}" style="width:100%;height:100%;object-fit:contain;display:block;" alt="Compaction Curve">`
+    : `<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#94a3b8;gap:6px;border:2px dashed #cbd5e1;border-radius:6px;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span style="font-size:7.5pt;">Click Calculate to display the curve</span>
+       </div>`;
 
-  // ── Method detail string ──────────────────────────────────────
-  const methodStr = `Method ${method} (${
-    method==='A'?'4-in mold, No.4 sieve':
-    method==='B'?'4-in mold, 3/8-in sieve':
-    '6-in mold, 3/4-in sieve'})`;
+  // ── D4718 corrected values if available ──────────────────────
+  const corrMDD  = gt('corrMDD_display')  || '—';
+  const corrOMC  = gt('corrOMC_display')  || '—';
+  const hasCorr  = oversizeApplied && corrMDD !== '—';
 
-  // ── Build the single-page report HTML ────────────────────────
+  // ── Method label ──────────────────────────────────────────────
+  const methodLabel = method==='A' ? 'A — قالب 4 بوصة / No.4' :
+                      method==='B' ? 'B — قالب 4 بوصة / 3/8 in' :
+                                     'C — قالب 6 بوصة / 3/4 in';
+
+  // ── ZAV table data from proctorResults ───────────────────────
+  let zavRows = '';
+  if (typeof proctorResults !== 'undefined' && proctorResults.points && proctorResults.points.length > 0) {
+    const GsVal = parseFloat(Gs) || 2.65;
+    proctorResults.points.forEach((pt, idx) => {
+      const w  = parseFloat(pt.w)           || 0;
+      const rd = parseFloat(pt.rho_d_gcm3)  || 0;
+      const rdZav = w > 0 ? (GsVal / (1 + GsVal * w / 100)).toFixed(3) : '—';
+      const bg = idx%2===0 ? '#fff' : '#f7f8fa';
+      zavRows += `<tr style="background:${bg};">
+        <td style="border:1px solid #ddd;padding:2px 4px;text-align:center;">${idx+1}</td>
+        <td style="border:1px solid #ddd;padding:2px 4px;text-align:center;font-weight:600;">${w.toFixed(1)}</td>
+        <td style="border:1px solid #ddd;padding:2px 4px;text-align:center;font-weight:600;">${rd > 0 ? rd.toFixed(3) : '—'}</td>
+        <td style="border:1px solid #ddd;padding:2px 4px;text-align:center;color:#166534;">${rdZav}</td>
+      </tr>`;
+    });
+  } else {
+    zavRows = `<tr><td colspan="4" style="text-align:center;color:#94a3b8;font-size:7pt;padding:6px;">— لا توجد نقاط —</td></tr>`;
+  }
+
+  // ════════════════════════════════════════════════════════════
+  //  BUILD REPORT HTML — Professional A4 Bilingual Design
+  // ════════════════════════════════════════════════════════════
   const reportHTML = `<!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<title>Moisture-Density Report — ${proj}</title>
+<title>Proctor Compaction Report — ${proj}</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:Arial,Helvetica,sans-serif;font-size:9.5pt;color:#000;background:#fff;}
-.page{width:210mm;min-height:295mm;margin:0 auto;padding:7mm 8mm 5mm;background:white;}
-/* Report title */
-.rpt-title{text-align:center;background:#1a365d;color:white;padding:6px 10px;margin-bottom:2px;}
-.rpt-title h1{font-size:13pt;font-weight:700;letter-spacing:.03em;}
-.rpt-title h2{font-size:9.5pt;font-weight:400;margin-top:1px;}
-.form-no{text-align:right;font-size:7.5pt;color:#555;margin-bottom:4px;}
-/* Section headers */
-.sec-hdr{background:#1a365d;color:white;font-size:8pt;font-weight:700;padding:3px 7px;margin:3px 0 2px;}
-/* Info grid */
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #999;margin-bottom:0;}
-.info-cell{display:flex;align-items:center;border-bottom:1px solid #ccc;border-right:1px solid #ccc;padding:2px 6px;min-height:18px;}
-.info-cell:nth-child(even){border-right:none;}
-.info-lbl{font-size:7.5pt;font-weight:700;color:#333;min-width:110px;flex-shrink:0;}
-.info-val{font-size:8pt;color:#000;border-bottom:1px dotted #999;flex:1;min-height:13px;padding-left:3px;}
-/* Data table */
-.data-tbl{width:100%;border-collapse:collapse;margin-bottom:2px;}
-.data-tbl th{background:#1a365d;color:white;text-align:center;padding:3px 4px;font-size:7.5pt;border:1px solid #1a365d;}
-.data-tbl td{padding:3px 5px;border:1px solid #bbb;text-align:center;font-size:7.5pt;}
-.data-tbl tr:nth-child(even) td{background:#f5f5f5;}
-/* Curve section */
-.curve-box{border:1px solid #999;padding:4px;margin:3px 0;}
-/* Results summary */
-.results-row{display:flex;gap:8px;margin:3px 0;}
-.result-box{flex:1;border:2px solid #1a365d;border-radius:4px;padding:5px 8px;text-align:center;}
-.result-box .lbl{font-size:7.5pt;font-weight:700;color:#1a365d;}
-.result-box .val{font-size:14pt;font-weight:900;color:#c2410c;line-height:1.2;}
-.result-box .unit{font-size:8pt;color:#555;}
-/* Signatures */
-.sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
-.sig-box{border-top:2px solid #333;padding-top:3px;font-size:7.5pt;}
-/* Checkbox row */
-.chk-row{display:flex;flex-wrap:wrap;gap:6px;font-size:7.5pt;margin:2px 0;}
-.chk-row span{display:flex;align-items:center;gap:2px;}
-/* Remarks */
-.remarks-box{border:1px solid #ccc;min-height:18px;padding:2px 5px;font-size:7.5pt;margin-top:2px;}
+body{font-family:'Inter',Arial,sans-serif;font-size:7pt;color:#1a1a2e;background:#e8ecf0;}
+.page{
+  width:210mm;min-height:297mm;max-height:297mm;margin:6mm auto;background:#fff;
+  box-shadow:0 4px 24px rgba(0,0,0,.18);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+
+/* ── TOP ACCENT BAR ── */
+.accent-bar{
+  height:5px;
+  background:linear-gradient(90deg,#1a365d 0%,#2563eb 45%,#d97706 45%,#f59e0b 100%);
+}
+
+/* ── HEADER ── */
+.header{
+  background:linear-gradient(135deg,#0f2044 0%,#1e3a6e 60%,#1e4080 100%);
+  color:#fff;padding:6px 12px 5px;
+  display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;
+}
+.header-left{}
+.header-title{font-size:11pt;font-weight:800;letter-spacing:.02em;line-height:1.2;}
+.header-sub{font-size:7pt;color:#93c5fd;margin-top:1px;font-weight:400;}
+.header-std{font-size:6.5pt;color:#fbbf24;margin-top:1px;letter-spacing:.04em;}
+.header-right{text-align:left;min-width:110px;}
+.report-no-box{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+  border-radius:5px;padding:5px 9px;text-align:center;
+}
+.report-no-lbl{font-size:6pt;color:#bfdbfe;display:block;margin-bottom:1px;}
+.report-no-val{font-size:9.5pt;font-weight:800;color:#fbbf24;letter-spacing:.05em;}
+.report-form{font-size:6pt;color:#93c5fd;margin-top:3px;text-align:center;}
+
+/* ── SECTION HEADER ── */
+.sec{
+  background:linear-gradient(90deg,#1e3a6e,#2563eb);
+  color:#fff;font-size:6.5pt;font-weight:700;
+  padding:2.5px 8px;margin:3px 0 2px;
+  display:flex;align-items:center;gap:5px;
+  border-right:4px solid #f59e0b;
+}
+.sec-num{
+  background:#f59e0b;color:#1a1a2e;font-size:6pt;font-weight:800;
+  width:14px;height:14px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.sec-ar{font-size:7pt;}
+.sec-en{font-size:6pt;opacity:.8;margin-right:4px;}
+
+/* ── INFO GRID ── */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid #dde2ed;border-bottom:none;}
+.ic{
+  display:flex;align-items:stretch;border-bottom:1px solid #dde2ed;
+  border-left:1px solid #dde2ed;min-height:16px;
+}
+.ic:nth-child(odd){border-left:none;}
+.ic-lbl{
+  background:#f0f4fb;font-size:6pt;font-weight:700;color:#374151;
+  padding:2px 5px;min-width:95px;border-left:1px solid #dde2ed;
+  display:flex;align-items:center;flex-shrink:0;
+}
+.ic-val{font-size:6.5pt;color:#111827;padding:2px 5px;flex:1;display:flex;align-items:center;}
+
+/* ── COMPACT INFO ROW ── */
+.info-strip{
+  display:flex;flex-wrap:wrap;gap:0;border:1px solid #dde2ed;border-top:none;
+}
+.is-item{
+  display:flex;align-items:center;gap:0;border-left:1px solid #dde2ed;padding:3px 8px;
+}
+.is-item:first-child{border-left:none;}
+.is-lbl{font-size:6.5pt;font-weight:700;color:#6b7280;margin-left:3px;}
+.is-val{font-size:7.5pt;font-weight:600;color:#111827;}
+
+/* ── METHOD BOXES ── */
+.method-row{display:flex;gap:5px;margin:3px 0;}
+.mbox{
+  border:1.5px solid #dde2ed;border-radius:5px;padding:4px 7px;
+  font-size:7pt;display:flex;align-items:center;gap:4px;flex:1;
+}
+.mbox.active{border-color:#2563eb;background:#eff6ff;}
+.mbox-chk{
+  width:13px;height:13px;border:2px solid #9ca3af;border-radius:3px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.mbox.active .mbox-chk{background:#2563eb;border-color:#2563eb;color:#fff;font-size:9pt;line-height:1;}
+
+/* ── DATA TABLE ── */
+.dtbl{width:100%;border-collapse:collapse;font-size:6pt;}
+.dtbl thead tr th{
+  background:linear-gradient(135deg,#1e3a6e,#2563eb);
+  color:#fff;padding:3px 4px;border:1px solid #1e3a6e;
+  text-align:center;font-weight:700;font-size:5.5pt;
+}
+.dtbl thead tr th:first-child{text-align:right;background:linear-gradient(135deg,#0f2044,#1e3a6e);}
+.dtbl tbody tr td{border:1px solid #dde2ed;padding:2px 4px;text-align:center;font-size:6pt;}
+.dtbl tbody tr td:first-child{text-align:right;background:#f8f9fc;font-weight:600;font-size:5.5pt;color:#374151;}
+.dtbl tbody tr:nth-child(even) td{background:#f5f7fc;}
+.dtbl tbody tr:nth-child(even) td:first-child{background:#edf0f8;}
+.dtbl .row-hl td{background:#fff7ed !important;font-weight:700 !important;color:#c2410c !important;}
+.dtbl .row-hl td:first-child{background:#fff0d6 !important;color:#9a3412 !important;}
+.dtbl .row-sep td{
+  background:linear-gradient(90deg,#fef3c7,#fff)!important;
+  font-weight:700;font-size:6pt;color:#92400e;
+  border-top:2px solid #f59e0b;border-bottom:2px solid #f59e0b;
+}
+
+/* ── CURVE + ZAV LAYOUT ── */
+.curve-wrap{
+  display:grid;grid-template-columns:1fr 160px;gap:5px;
+  border:1px solid #dde2ed;padding:4px;margin:2px 0;
+}
+.curve-img-box{
+  border:1px solid #dde2ed;border-radius:4px;overflow:hidden;
+  background:#f8f9fc;height:155px;
+}
+.zav-panel{}
+.zav-title{
+  font-size:7pt;font-weight:700;color:#fff;
+  background:linear-gradient(90deg,#166534,#16a34a);
+  padding:3px 7px;border-radius:4px 4px 0 0;margin-bottom:0;
+  display:flex;align-items:center;gap:4px;
+}
+.zav-tbl{width:100%;border-collapse:collapse;font-size:6.5pt;}
+.zav-tbl th{background:#dcfce7;color:#166534;padding:3px 4px;border:1px solid #bbf7d0;text-align:center;font-weight:700;}
+.zav-tbl td{border:1px solid #d1fae5;padding:3px 4px;text-align:center;}
+.legend-box{margin-top:6px;}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:6.5pt;margin-bottom:3px;color:#374151;}
+.leg-line{height:2px;width:18px;flex-shrink:0;}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* ── RESULTS BAND ── */
+.results-band{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;
+  margin:3px 0;
+}
+.rb{
+  border-radius:6px;padding:4px 8px;text-align:center;
+  border:2px solid;
+}
+.rb-mdd{background:linear-gradient(135deg,#fff7ed,#ffedd5);border-color:#ea580c;}
+.rb-omc{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#2563eb;}
+.rb-corr{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#16a34a;}
+.rb-lbl{font-size:5.8pt;font-weight:700;color:#6b7280;display:block;}
+.rb-sym{font-size:6pt;color:#9ca3af;display:block;}
+.rb-val{font-size:13pt;font-weight:800;line-height:1.1;display:block;}
+.rb-mdd .rb-val{color:#c2410c;}
+.rb-omc .rb-val{color:#1d4ed8;}
+.rb-corr .rb-val{color:#166534;}
+.rb-unit{font-size:6.5pt;color:#6b7280;display:block;}
+
+/* ── REMARKS ── */
+.remarks{
+  border:1px solid #dde2ed;border-radius:3px;
+  min-height:16px;padding:2px 6px;font-size:7pt;
+  background:#fafbfd;color:#9ca3af;
+}
+
+/* ── SIGNATURE BLOCK ── */
+.sig-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:1px solid #dde2ed;margin-top:0;}
+.sig-cell{padding:3px 8px;border-left:1px solid #dde2ed;}
+.sig-cell:last-child{border-left:none;}
+.sig-role{font-size:5.8pt;font-weight:700;color:#6b7280;display:block;margin-bottom:1px;}
+.sig-name{font-size:6.8pt;font-weight:600;color:#111827;border-bottom:1px dotted #9ca3af;min-height:12px;display:block;padding-bottom:1px;}
+.sig-date{font-size:5.8pt;color:#6b7280;margin-top:1px;display:block;}
+.sig-stamp{font-size:5.8pt;color:#9ca3af;margin-top:1px;display:block;min-height:12px;border-bottom:1px dotted #9ca3af;}
+
+/* ── FOOTER ── */
+.footer{
+  margin-top:auto;
+  background:#f0f4fb;border-top:1px solid #dde2ed;
+  padding:4px 12px;display:flex;justify-content:space-between;align-items:center;
+}
+.footer-left{font-size:6pt;color:#9ca3af;}
+.footer-right{font-size:6pt;color:#9ca3af;text-align:left;}
+.iso-badge{
+  background:#1e3a6e;color:#fff;font-size:5.5pt;
+  padding:1px 6px;border-radius:3px;display:inline-block;margin-left:4px;
+}
+
+/* ── PRINT ── */
 @media print{
-  body{margin:0;}
-  .page{margin:0;padding:6mm 8mm 4mm;width:100%;min-height:unset;}
+  @page{size:A4 portrait;margin:0;}
+  body{background:#fff;}
+  .page{margin:0;box-shadow:none;width:210mm;height:297mm;min-height:unset;max-height:297mm;overflow:hidden;}
   .no-print{display:none!important;}
+  .accent-bar{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 }
 </style>
 </head>
 <body>
 <div class="page">
 
-<!-- ══ TITLE ══════════════════════════════════════════════════ -->
-<div class="rpt-title">
-  <h1>MOISTURE-DENSITY RELATIONSHIP REPORT</h1>
-  <h2>Modified Proctor Compaction Test — ASTM D1557-12(2021)</h2>
-</div>
-<div class="form-no">Form No.: ASTM-D1557-R01 | Rev. 01 | Page 1 of 1</div>
+<!-- TOP ACCENT -->
+<div class="accent-bar"></div>
 
-<!-- ══ SECTION 1 — PROJECT & SAMPLE ═══════════════════════════ -->
-<div class="sec-hdr">SECTION 1 — PROJECT &amp; SAMPLE INFORMATION</div>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="header-title">Moisture-Density Relationship Test</div>
+    <div class="header-sub">Modified Proctor Compaction Test — ASTM D1557</div>
+    <div class="header-std">ASTM D1557-12(2021) &nbsp;|&nbsp; ASTM D4718 &nbsp;|&nbsp; ISO/IEC 17025:2017</div>
+  </div>
+  <div class="header-right">
+    <div class="report-no-box">
+      <span class="report-no-lbl">Report No.</span>
+      <span class="report-no-val">${reportNo}</span>
+    </div>
+    <div class="report-form">Form: D1557-R03 | Rev.01 | Page 1/1</div>
+  </div>
+</div>
+
+<!-- ①  PROJECT & SAMPLE -->
+<div class="sec"><span class="sec-num">①</span><span class="sec-ar">Project &amp; Sample Information</span><span class="sec-en">Section 1</span></div>
 <div class="info-grid">
-  <div class="info-cell"><span class="info-lbl">Project Name:</span><span class="info-val">${proj}</span></div>
-  <div class="info-cell"><span class="info-lbl">Report No.:</span><span class="info-val">${reportNo}</span></div>
-  <div class="info-cell"><span class="info-lbl">Client / Contractor:</span><span class="info-val">${client}</span></div>
-  <div class="info-cell"><span class="info-lbl">Report Date:</span><span class="info-val">${reportDate}</span></div>
-  <div class="info-cell"><span class="info-lbl">Sample ID:</span><span class="info-val">${sampleId}</span></div>
-  <div class="info-cell"><span class="info-lbl">Sample Date:</span><span class="info-val">${sampleDate}</span></div>
-  <div class="info-cell"><span class="info-lbl">Location / Boring No.:</span><span class="info-val">${location}</span></div>
-  <div class="info-cell"><span class="info-lbl">Test Date:</span><span class="info-val">${testDate}</span></div>
-  <div class="info-cell"><span class="info-lbl">As-Received Water Content (%):</span><span class="info-val">${asRecWC}</span></div>
-  <div class="info-cell"><span class="info-lbl">Depth (m):</span><span class="info-val">${depth}</span></div>
-  <div class="info-cell" style="grid-column:span 1;"><span class="info-lbl">Sample Mass (kg):</span><span class="info-val">${sampleMass}</span></div>
-  <div class="info-cell"></div>
+  <div class="ic"><span class="ic-lbl">Project Name</span><span class="ic-val">${proj}</span></div>
+  <div class="ic"><span class="ic-lbl">Client</span><span class="ic-val">${client}</span></div>
+  <div class="ic"><span class="ic-lbl">Sample ID</span><span class="ic-val">${sampleId}</span></div>
+  <div class="ic"><span class="ic-lbl">Location</span><span class="ic-val">${location}</span></div>
+  <div class="ic"><span class="ic-lbl">Sample Date</span><span class="ic-val">${sampleDate}</span></div>
+  <div class="ic"><span class="ic-lbl">Test Date</span><span class="ic-val">${testDate}</span></div>
+  <div class="ic"><span class="ic-lbl">Depth (m)</span><span class="ic-val">${depth}</span></div>
+  <div class="ic"><span class="ic-lbl">Report Date</span><span class="ic-val">${reportDate}</span></div>
+</div>
+<div class="info-strip">
+  <div class="is-item"><span class="is-lbl">Sample Mass:</span><span class="is-val">${sampleMass} kg</span></div>
+  <div class="is-item"><span class="is-lbl">As-Received Water Content:</span><span class="is-val">${asRecWC} %</span></div>
+  <div class="is-item"><span class="is-lbl">Tested By:</span><span class="is-val">${testedBy}</span></div>
 </div>
 
-<!-- ══ SECTION 2 — TEST METHOD ════════════════════════════════ -->
-<div class="sec-hdr">SECTION 2 — TEST METHOD</div>
-<div style="border:1px solid #ccc;padding:3px 6px;font-size:7.5pt;">
-  <div class="chk-row" style="margin-bottom:2px;">
-    <b>Method:</b>
-    <span>${method==='A'?'☑':'☐'} Method A (4-in mold, No.4 sieve)</span>
-    <span>${method==='B'?'☑':'☐'} Method B (4-in mold, 3/8-in sieve)</span>
-    <span>${method==='C'?'☑':'☐'} Method C (6-in mold, 3/4-in sieve)</span>
+<!-- ②  TEST METHOD -->
+<div class="sec"><span class="sec-num">②</span><span class="sec-ar">Test Method</span><span class="sec-en">D1557 Section 5</span></div>
+<div style="border:1px solid #dde2ed;padding:4px 8px;">
+  <div class="method-row">
+    <div class="mbox ${method==='A'?'active':''}">
+      <div class="mbox-chk">${method==='A'?'✓':''}</div>
+      <span><b>Method A</b> — 4-in Mold | No.4 Sieve</span>
+    </div>
+    <div class="mbox ${method==='B'?'active':''}">
+      <div class="mbox-chk">${method==='B'?'✓':''}</div>
+      <span><b>Method B</b> — 4-in Mold | 3/8-in Sieve</span>
+    </div>
+    <div class="mbox ${method==='C'?'active':''}">
+      <div class="mbox-chk">${method==='C'?'✓':''}</div>
+      <span><b>Method C</b> — 6-in Mold | 3/4-in Sieve</span>
+    </div>
   </div>
-  <div class="chk-row" style="margin-bottom:2px;">
-    <b>Preparation:</b>
-    <span>${preparation?.includes('Moist')?'☑':'☐'} Moist Method (preferred)</span>
-    <span>${preparation?.includes('Dry')?'☑':'☐'} Dry Method</span>
-    &nbsp;&nbsp;<b>Rammer:</b>
-    <span>${rammer?.includes('Manual')?'☑':'☐'} Manual</span>
-    <span>${rammer?.includes('Mechanical')?'☑':'☐'} Mechanical</span>
-  </div>
-  <div style="display:flex;gap:12px;flex-wrap:wrap;">
-    <span><b>No. of Layers:</b> ${layers}</span>
+  <div style="display:flex;flex-wrap:wrap;gap:12px;font-size:7pt;margin-top:3px;padding-top:3px;border-top:1px dashed #e5e7eb;">
+    <span><b>Preparation:</b> ${preparation||'—'}</span>
+    <span><b>Rammer:</b> ${rammer||'—'}</span>
+    <span><b>Layers:</b> ${layers}</span>
     <span><b>Blows/Layer:</b> ${blows}</span>
-    <span><b>Mould Volume (cm³):</b> ${moldVol} ${moldVUnit}</span>
-    <span><b>Sieve for Method:</b> ${sieveMethod}</span>
-    <span><b>PC% (Oversize):</b> ${oversizePc}%</span>
-    <span><b>Test Fraction:</b> ${testFrac}%</span>
+    <span><b>Mold Volume:</b> ${moldVol} ${moldVUnit}</span>
+    <span><b>Oversize %:</b> ${oversizePc}%</span>
+    <span style="font-weight:700;color:${oversizeApplied?'#16a34a':'#6b7280'};">D4718 Correction: ${oversizeApplied?'☑ Applied':'☐ Not Applied'}</span>
   </div>
 </div>
 
-<!-- ══ SECTION 3 — SAMPLE DESCRIPTION ══════════════════════════ -->
-<div class="sec-hdr">SECTION 3 — SAMPLE DESCRIPTION</div>
-<div style="border:1px solid #ccc;padding:3px 6px;font-size:7.5pt;">
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:2px;">
-    <span><b>Description:</b> <span style="border-bottom:1px dotted #999;min-width:140px;display:inline-block;">&nbsp;</span></span>
-    <span><b>Specific Gravity Gs:</b> ${Gs}</span>
-    <span><b>Method Used for Gs:</b> ☐ D854 &nbsp;☐ Assumed</span>
-  </div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;">
-    <span><b>USCS Classification (D2487):</b> ${uscsSymbol !== '—' ? uscsSymbol : '________'}</span>
-    <span><b>Oversize Correction Applied (D4718):</b> ${oversizeApplied?'Yes ☑':'No ☐'}</span>
-    <span><b>Standing/Curing Time (hrs):</b> _____</span>
-  </div>
-</div>
-
-<!-- ══ SECTION 4 — EQUIPMENT TRACEABILITY ═══════════════════════ -->
-<div class="sec-hdr">SECTION 4 — EQUIPMENT TRACEABILITY (ISO 17025)</div>
-<div style="border:1px solid #ccc;padding:3px 6px;font-size:7.5pt;display:flex;gap:10px;flex-wrap:wrap;">
+<!-- ③  SAMPLE DESCRIPTION + EQUIPMENT -->
+<div class="sec"><span class="sec-num">③</span><span class="sec-ar">Sample Description &amp; Equipment Traceability</span><span class="sec-en">ISO 17025</span></div>
+<div style="border:1px solid #dde2ed;padding:4px 8px;display:flex;flex-wrap:wrap;gap:10px;font-size:7pt;">
+  <span><b>Gs (Specific Gravity):</b> ${Gs}</span>
+  <span><b>USCS (D2487):</b> ${uscsSymbol!=='—'?uscsSymbol:'________'}</span>
+  <span><b>AASHTO:</b> ${aashtoGroup!=='—'?aashtoGroup:'________'}</span>
+  <span style="border-left:1px solid #dde2ed;padding-right:10px;"></span>
   <span><b>Balance ID:</b> ${balanceId}</span>
   <span><b>Mould ID:</b> ${mouldId}</span>
   <span><b>Rammer ID:</b> ${rammerId}</span>
   <span><b>Oven ID:</b> ${ovenId}</span>
   <span><b>Calibration Due:</b> ${calibDue}</span>
-  <span><b>Mould Dimensions:</b> Diameter ${mouldDiam} mm | Height _____ mm | Volume _____ cm³</span>
+  <span><b>Mould Diam.:</b> ${mouldDiam} mm</span>
 </div>
 
-<!-- ══ SECTION 5 — COMPACTION DATA TABLE ════════════════════════ -->
-<div class="sec-hdr">SECTION 5 — COMPACTION DATA TABLE</div>
-<table class="data-tbl">
+<!-- ④  COMPACTION DATA TABLE -->
+<div class="sec"><span class="sec-num">④</span><span class="sec-ar">Compaction Data Table (5 Trials)</span><span class="sec-en">Section 4</span></div>
+<table class="dtbl">
   <thead>
     <tr>
-      <th style="width:145px;text-align:left;">Trial No.</th>
-      <th>1-1</th><th>1-2</th><th>1-3</th><th>1-4</th><th>1-5</th>
+      <th style="width:140px;text-align:left;">Variable</th>
+      <th>Point 1</th><th>Point 2</th><th>Point 3</th><th>Point 4</th><th>Point 5</th>
     </tr>
   </thead>
   <tbody>
@@ -9982,80 +10202,137 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:9.5pt;color:#000;backgroun
   </tbody>
 </table>
 
-<!-- ══ SECTION 6 — MOISTURE-DENSITY CURVE ══════════════════════ -->
-<div class="sec-hdr">SECTION 6 — MOISTURE-DENSITY CURVE</div>
-<div class="curve-box" style="display:grid;grid-template-columns:1fr 120px;gap:8px;align-items:center;">
-  <div>${chartHtml}</div>
-  <div style="font-size:7pt;line-height:1.6;">
-    <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px;">
-      <div style="width:10px;height:10px;border-radius:50%;background:#ea580c;flex-shrink:0;"></div>
-      <span>Compaction Points</span>
+<!-- ⑤  CURVE + ZAV TABLE -->
+<div class="sec"><span class="sec-num">⑤</span><span class="sec-ar">Compaction Curve &amp; Zero Air Voids Curve (ZAV)</span><span class="sec-en">Gs = ${Gs}</span></div>
+<div class="curve-wrap">
+
+  <!-- Chart image -->
+  <div class="curve-img-box">${chartHtml}</div>
+
+  <!-- ZAV table + legend -->
+  <div class="zav-panel">
+    <div class="zav-title">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      ZAV Curve (S = 100%)
     </div>
-    <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px;">
-      <div style="width:14px;height:2px;background:#3b82f6;flex-shrink:0;"></div>
-      <span>Compaction Curve</span>
+    <table class="zav-tbl">
+      <thead><tr>
+        <th>#</th>
+        <th>w (%)</th>
+        <th>ρd<br><span style="font-weight:400;font-size:6pt;">Measured</span></th>
+        <th>ρd,zav<br><span style="font-weight:400;font-size:6pt;">Computed</span></th>
+      </tr></thead>
+      <tbody>${zavRows}</tbody>
+    </table>
+    <div style="font-size:5.5pt;color:#166534;background:#f0fdf4;padding:3px 5px;border:1px solid #bbf7d0;margin-top:2px;border-radius:0 0 4px 4px;">
+      ρd,ZAV = Gs·γw / (1 + Gs·w/100) &nbsp;|&nbsp; Eq.8 D1557
     </div>
-    <div style="display:flex;align-items:center;gap:4px;">
-      <div style="width:14px;height:2px;background:#16a34a;border-top:2px dashed #16a34a;flex-shrink:0;"></div>
-      <span>Zero Air Voids Curve (Gs = ${Gs})</span>
-    </div>
-    <div style="margin-top:6px;font-size:6.5pt;color:#555;">
-      ZAV formula: γd = Gs·γw / (1 + Gs·w)
+
+    <div class="legend-box">
+      <div class="leg-item">
+        <div class="leg-dot" style="background:#ea580c;"></div>
+        <span>Measured Compaction Points</span>
+      </div>
+      <div class="leg-item">
+        <div class="leg-line" style="background:#3b82f6;"></div>
+        <span>Compaction Curve</span>
+      </div>
+      <div class="leg-item">
+        <div class="leg-line" style="background:repeating-linear-gradient(90deg,#16a34a 0,#16a34a 4px,transparent 4px,transparent 7px);"></div>
+        <span>ZAV Curve (S = 100%)</span>
+      </div>
+      ${hasCorr ? `<div class="leg-item">
+        <div class="leg-line" style="background:repeating-linear-gradient(90deg,#9333ea 0,#9333ea 4px,transparent 4px,transparent 7px);"></div>
+        <span>D4718 Corrected Curve</span>
+      </div>` : ''}
     </div>
   </div>
 </div>
 
-<!-- ══ SECTION 7 — TEST RESULTS SUMMARY ═════════════════════════ -->
-<div class="sec-hdr">SECTION 7 — TEST RESULTS SUMMARY</div>
-<div style="border:1px solid #ccc;padding:4px 8px;margin-bottom:3px;">
-  <div style="display:flex;gap:10px;align-items:center;margin-bottom:4px;">
-    <span style="font-size:8pt;font-weight:700;">Max. Dry Density — MDD (ρ<sub>d,max</sub>): <span style="font-size:11pt;font-weight:900;color:#c2410c;">${MDD}</span> <span style="font-size:8pt;">${MDDunit}</span></span>
-    <span style="font-size:8pt;font-weight:700;margin-right:20px;">Optimum Water Content — OMC (w<sub>opt</sub>): <span style="font-size:11pt;font-weight:900;color:#1d4ed8;">${OMC}</span> <span style="font-size:8pt;">%</span></span>
+<!-- ⑥  RESULTS -->
+<div class="sec"><span class="sec-num">⑥</span><span class="sec-ar">Final Test Results Summary</span><span class="sec-en">Section 6</span></div>
+<div class="results-band">
+  <div class="rb rb-mdd">
+    <span class="rb-lbl">Maximum Dry Density</span>
+    <span class="rb-sym">MDD — ρ<sub>d,max</sub></span>
+    <span class="rb-val">${MDD}</span>
+    <span class="rb-unit">${MDDunit}</span>
   </div>
-  <div style="display:flex;gap:10px;font-size:7.5pt;">
-    <span><b>USCS Classification:</b> ${uscsSymbol !== '—' ? uscsSymbol : '_______'}</span>
-    <span><b>AASHTO Classification:</b> ${aashtoGroup !== '—' ? aashtoGroup : '_______'}</span>
-    <span><b>Reference Standard:</b> ASTM D1557-12(2021)</span>
+  <div class="rb rb-omc">
+    <span class="rb-lbl">Optimum Moisture Content</span>
+    <span class="rb-sym">OMC — w<sub>opt</sub></span>
+    <span class="rb-val">${OMC}</span>
+    <span class="rb-unit">%</span>
+  </div>
+  <div class="rb rb-corr">
+    <span class="rb-lbl">${hasCorr ? 'D4718 Corrected MDD' : 'USCS Classification'}</span>
+    <span class="rb-sym">${hasCorr ? 'Corrected MDD' : 'D2487 Symbol'}</span>
+    <span class="rb-val" style="font-size:${hasCorr?'13pt':'13pt'};">${hasCorr ? corrMDD : (uscsSymbol!=='—'?uscsSymbol:'—')}</span>
+    <span class="rb-unit">${hasCorr ? MDDunit : ''}</span>
   </div>
 </div>
 
 <!-- REMARKS -->
-<div style="font-size:7.5pt;font-weight:700;margin:2px 0 1px;">REMARKS:</div>
-<div class="remarks-box">&nbsp;</div>
+<div style="font-size:7pt;font-weight:700;color:#374151;margin:3px 0 2px;">Remarks / Notes:</div>
+<div class="remarks">&#8203;</div>
 
-<!-- ══ SIGNATURE BLOCK ══════════════════════════════════════════ -->
-<div class="sec-hdr" style="margin-top:3px;">SIGNATURE BLOCK</div>
-<div class="sig-grid" style="border:1px solid #ccc;padding:4px 8px;">
-  <div class="sig-box">
-    <div><b>Tested by:</b> ${testedBy}</div>
-    <div style="margin-top:3px;"><b>Date:</b> ${testDate}</div>
-    <div style="margin-top:3px;"><b>Signature:</b> ___________________________</div>
+<!-- ⑦  SIGNATURES -->
+<div class="sec" style="margin-top:3px;"><span class="sec-num">⑦</span><span class="sec-ar">Signatures &amp; Authorization</span><span class="sec-en">ISO 17025 §7.8.2</span></div>
+<div class="sig-grid">
+  <div class="sig-cell">
+    <span class="sig-role">Tested By</span>
+    <span class="sig-name">${testedBy}</span>
+    <span class="sig-date">Date: ${testDate}</span>
+    <span class="sig-stamp"></span>
   </div>
-  <div class="sig-box">
-    <div><b>Reviewed by (Technical Manager):</b></div>
-    <div style="margin-top:3px;"><b>Date:</b> ___________________________</div>
-    <div style="margin-top:3px;"><b>Signature:</b> ___________________________</div>
+  <div class="sig-cell">
+    <span class="sig-role">Reviewed By</span>
+    <span class="sig-name"></span>
+    <span class="sig-date">Date: _______________</span>
+    <span class="sig-stamp"></span>
+  </div>
+  <div class="sig-cell">
+    <span class="sig-role">Technical Manager</span>
+    <span class="sig-name"></span>
+    <span class="sig-date">Date: _______________</span>
+    <span class="sig-stamp"></span>
   </div>
 </div>
 
-</div><!-- end .page -->
-
-<div class="no-print" style="text-align:center;padding:12px;background:#f1f5f9;">
-  <button onclick="window.print()" style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:white;padding:10px 28px;border:none;border-radius:8px;font-size:.95rem;font-weight:700;cursor:pointer;">🖨️ Print Report</button>
+<!-- FOOTER -->
+<div class="footer">
+  <span class="footer-left">
+    ASTM D1557-12(2021) | ASTM D4718 | ASTM D854 | ASTM D2487
+    <span class="iso-badge">ISO/IEC 17025:2017</span>
+  </span>
+  <span class="footer-right">
+    Issue Date: ${reportDate} &nbsp;|&nbsp; Rev.01
+  </span>
 </div>
 
+</div><!-- .page -->
+
+<div class="no-print" style="text-align:center;padding:14px;background:#1e293b;">
+  <button onclick="window.print()" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;padding:10px 32px;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;margin-right:8px;">
+    🖨️ Print Report
+  </button>
+  <button onclick="window.close()" style="background:linear-gradient(135deg,#475569,#334155);color:#fff;padding:10px 24px;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;">
+    ✕ Close
+  </button>
+</div>
 </body>
 </html>`;
 
+  // ── عرض التقرير — srcdoc يتجنب قيود file:// تماماً ──────────
   const modal   = document.getElementById('proctorReportModal');
   const content = document.getElementById('proctorReportContent');
-  const iframe  = document.createElement('iframe');
-  iframe.style.cssText = 'width:100%;height:85vh;border:none;border-radius:0 0 12px 12px;';
   content.innerHTML = '';
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'width:100%;height:88vh;border:none;border-radius:0 0 12px 12px;';
+  // srcdoc لا يحتاج URL — يعمل على file:// وhttp:// على حد سواء
+  iframe.srcdoc = reportHTML;
   content.appendChild(iframe);
   modal.style.display = 'block';
-  const doc = iframe.contentDocument || iframe.contentWindow.document;
-  doc.open(); doc.write(reportHTML); doc.close();
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -10264,94 +10541,95 @@ function openGradationReport() {
   --line:#c8d8e0;--bg:#f4f9fa;--alt:#ebf4f5;--calc:#dff0f1;
   --hi:#b8e8ea;--fn:'Inter','Segoe UI',sans-serif;
 }
-body{font-family:var(--fn);font-size:7.2pt;color:var(--ink);background:#cdd8da;}
+body{font-family:var(--fn);font-size:6.5pt;color:var(--ink);background:#cdd8da;}
 .page{
   width:210mm;min-height:297mm;max-height:297mm;background:#fff;
-  margin:8mm auto;padding:6mm 7mm;
+  margin:8mm auto;padding:5mm 6mm;
   box-shadow:0 4px 24px rgba(0,0,0,.18);
-  display:flex;flex-direction:column;gap:2.5px;overflow:hidden;
+  display:flex;flex-direction:column;gap:1.5px;overflow:hidden;
 }
 /* HEADER */
-.hdr{display:grid;grid-template-columns:34px 1fr 90px;align-items:center;
-  background:var(--navy);border-radius:4px;padding:6px 10px;gap:10px;}
-.hdr-logo{width:32px;height:32px;background:rgba(255,255,255,.15);border-radius:50%;
-  display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;}
+.hdr{display:grid;grid-template-columns:28px 1fr 90px;align-items:center;
+  background:var(--navy);border-radius:4px;padding:4px 8px;gap:8px;}
+.hdr-logo{width:26px;height:26px;background:rgba(255,255,255,.15);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;}
 .hdr-mid{color:#fff;}
-.hdr-mid .lab{font-size:6pt;letter-spacing:1.5px;text-transform:uppercase;opacity:.7;margin-bottom:1px;}
-.hdr-mid .ttl{font-size:11.5pt;font-weight:700;letter-spacing:.3px;line-height:1.1;}
-.hdr-mid .sub{font-size:6.5pt;opacity:.85;margin-top:2px;}
+.hdr-mid .lab{font-size:5.5pt;letter-spacing:1.5px;text-transform:uppercase;opacity:.7;margin-bottom:0px;}
+.hdr-mid .ttl{font-size:10pt;font-weight:700;letter-spacing:.3px;line-height:1.1;}
+.hdr-mid .sub{font-size:5.8pt;opacity:.85;margin-top:1px;}
 .hdr-right{text-align:right;color:#fff;}
-.hdr-right .std{font-size:5.5pt;opacity:.75;text-transform:uppercase;letter-spacing:.5px;}
-.hdr-right .pg{font-size:8pt;font-weight:700;margin-top:2px;}
-.hdr-right .rev{font-size:5.2pt;opacity:.6;margin-top:1px;}
+.hdr-right .std{font-size:5pt;opacity:.75;text-transform:uppercase;letter-spacing:.5px;}
+.hdr-right .pg{font-size:7pt;font-weight:700;margin-top:1px;}
+.hdr-right .rev{font-size:4.8pt;opacity:.6;margin-top:0px;}
 /* SECTION TITLE */
-.st{display:flex;align-items:center;gap:5px;margin-bottom:1.5px;margin-top:1px;}
-.st::before{content:'';display:block;width:3px;height:12px;background:var(--teal);border-radius:2px;flex-shrink:0;}
-.st-lbl{font-size:6.5pt;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;}
+.st{display:flex;align-items:center;gap:4px;margin-bottom:1px;margin-top:1px;}
+.st::before{content:'';display:block;width:3px;height:10px;background:var(--teal);border-radius:2px;flex-shrink:0;}
+.st-lbl{font-size:6pt;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;}
 .st-rule{flex:1;height:1px;background:var(--line);}
 /* PROJECT INFO */
-.pi{display:grid;gap:1.5px 5px;}
+.pi{display:grid;gap:1px 4px;}
 .pi4{grid-template-columns:repeat(4,1fr);}
 .pi3{grid-template-columns:repeat(3,1fr);}
-.pf{display:flex;flex-direction:column;gap:.5px;}
-.pf label{font-size:5pt;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.3px;}
-.pf .val{border-bottom:1px solid var(--line);height:13px;font-size:6.8pt;color:var(--ink);padding:0 1px;line-height:13px;}
+.pf{display:flex;flex-direction:column;gap:.3px;}
+.pf label{font-size:4.5pt;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.3px;}
+.pf .val{border-bottom:1px solid var(--line);height:11px;font-size:6pt;color:var(--ink);padding:0 1px;line-height:11px;}
 /* METHOD BAR */
-.mbar{display:grid;grid-template-columns:repeat(5,1fr);gap:2.5px;margin-top:2px;}
-.mi{border:1px solid var(--line);border-radius:3px;padding:2px 4px;text-align:center;}
-.mi .ml{font-size:5pt;font-weight:600;text-transform:uppercase;color:var(--teal);}
-.mi .mv{font-size:8.5pt;font-weight:700;color:var(--ink);height:16px;line-height:16px;}
-.mi .mu{font-size:5pt;color:#888;}
+.mbar{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;margin-top:1.5px;}
+.mi{border:1px solid var(--line);border-radius:3px;padding:1.5px 3px;text-align:center;}
+.mi .ml{font-size:4.5pt;font-weight:600;text-transform:uppercase;color:var(--teal);}
+.mi .mv{font-size:7.5pt;font-weight:700;color:var(--ink);height:13px;line-height:13px;}
+.mi .mu{font-size:4.5pt;color:#888;}
 .mi.calc{background:var(--calc);}.mi.calc .mv{color:var(--teal);}
 /* SIEVE TABLE */
-table.sieve{width:100%;border-collapse:collapse;font-size:6.5pt;table-layout:fixed;}
+table.sieve{width:100%;border-collapse:collapse;font-size:6pt;table-layout:fixed;}
 .tbl-wrap{border:1px solid var(--line);border-radius:3px;overflow:hidden;}
-table.sieve thead tr th{background:var(--navy);color:#fff;text-align:center;padding:2.5px 2px;
-  font-size:5.5pt;font-weight:600;border-right:1px solid rgba(255,255,255,.12);line-height:1.25;}
+table.sieve thead tr th{background:var(--navy);color:#fff;text-align:center;padding:2px 2px;
+  font-size:5pt;font-weight:600;border-right:1px solid rgba(255,255,255,.12);line-height:1.2;}
 table.sieve thead tr th:last-child{border-right:none;}
 table.sieve tbody tr td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);
-  padding:1px 2px;height:14px;text-align:center;vertical-align:middle;}
+  padding:0.5px 2px;height:11px;text-align:center;vertical-align:middle;}
 table.sieve tbody tr:nth-child(even) td{background:#f8fbfc;}
 table.sieve tbody tr:last-child td{border-bottom:none;}
-.sc{font-size:6.5pt;font-weight:600;color:var(--navy);background:var(--alt)!important;padding:1px 3px;}
+.sc{font-size:6pt;font-weight:600;color:var(--navy);background:var(--alt)!important;padding:0.5px 2px;}
 .ltr{direction:ltr;}
-.tcalc{font-size:6.5pt;color:var(--teal);background:var(--calc)!important;padding:1px 2px;}
+.tcalc{font-size:6pt;color:var(--teal);background:var(--calc)!important;padding:0.5px 2px;}
 .tcalc.hi{background:var(--hi)!important;font-weight:700;color:#005a60;}
 /* CHART */
 .chart-box{border:1px solid var(--line);border-radius:3px;overflow:hidden;background:#fff;}
-.chart-legend{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;
-  padding:2px 4px;border-top:1px solid var(--line);background:var(--bg);}
-.chart-legend span{display:flex;align-items:center;gap:2px;font-size:5.2pt;color:#555;}
-.lsw{width:11px;height:7px;border:1px solid rgba(0,0,0,.08);}
+.chart-legend{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;
+  padding:1.5px 4px;border-top:1px solid var(--line);background:var(--bg);}
+.chart-legend span{display:flex;align-items:center;gap:2px;font-size:4.8pt;color:#555;}
+.lsw{width:10px;height:6px;border:1px solid rgba(0,0,0,.08);}
 /* CLASSIFICATION TABLE */
-table.cls{width:100%;border-collapse:collapse;font-size:6.5pt;}
-table.cls td{border:1px solid var(--line);padding:2px 5px;vertical-align:middle;}
-.rl{background:var(--alt);font-weight:700;color:var(--navy);font-size:6pt;white-space:nowrap;width:70px;}
-.rs{font-size:5pt;color:#888;font-weight:400;}
-.rv{font-size:6.5pt;color:var(--ink);}
+table.cls{width:100%;border-collapse:collapse;font-size:6pt;}
+table.cls td{border:1px solid var(--line);padding:1.5px 4px;vertical-align:middle;}
+.rl{background:var(--alt);font-weight:700;color:var(--navy);font-size:5.5pt;white-space:nowrap;width:65px;}
+.rs{font-size:4.5pt;color:#888;font-weight:400;}
+.rv{font-size:6pt;color:var(--ink);}
 /* AUTH */
-.auth{border:1px solid var(--line);border-radius:3px;overflow:hidden;margin-top:2px;}
-.auth-hdr{background:var(--navy);color:#fff;text-align:center;font-size:5.8pt;
-  font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:2px;}
-.auth-rem{padding:2px 6px;border-bottom:1px solid var(--line);background:var(--bg);
-  font-size:6pt;display:flex;align-items:center;gap:4px;}
+.auth{border:1px solid var(--line);border-radius:3px;overflow:hidden;margin-top:1.5px;}
+.auth-hdr{background:var(--navy);color:#fff;text-align:center;font-size:5.5pt;
+  font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:1.5px;}
+.auth-rem{padding:1.5px 5px;border-bottom:1px solid var(--line);background:var(--bg);
+  font-size:5.5pt;display:flex;align-items:center;gap:4px;}
 .auth-rem label{font-weight:700;color:var(--navy);white-space:nowrap;}
-.auth-rem .rv2{flex:1;border-bottom:1px solid var(--line);height:13px;font-size:6.5pt;}
+.auth-rem .rv2{flex:1;border-bottom:1px solid var(--line);height:11px;font-size:6pt;}
 .auth-cols{display:grid;grid-template-columns:repeat(3,1fr);}
-.ac{padding:3px 6px;border-right:1px solid var(--line);}
+.ac{padding:2px 5px;border-right:1px solid var(--line);}
 .ac:last-child{border-right:none;}
-.ac .ac-hdr{font-size:5.8pt;font-weight:700;color:var(--navy);text-align:center;
-  border-bottom:1px solid var(--line);margin-bottom:2px;padding-bottom:1.5px;}
-.ac .afl{font-size:5.8pt;color:#777;display:grid;grid-template-columns:50px 1fr;
-  align-items:center;margin-bottom:2px;}
-.ac .afl .line{border-bottom:1px solid var(--line);height:12px;}
+.ac .ac-hdr{font-size:5.3pt;font-weight:700;color:var(--navy);text-align:center;
+  border-bottom:1px solid var(--line);margin-bottom:1.5px;padding-bottom:1px;}
+.ac .afl{font-size:5.3pt;color:#777;display:grid;grid-template-columns:46px 1fr;
+  align-items:center;margin-bottom:1.5px;}
+.ac .afl .line{border-bottom:1px solid var(--line);height:10px;}
 /* FOOTER */
 .ff{display:flex;justify-content:space-between;align-items:center;
-  border-top:1px solid var(--line);padding-top:2px;margin-top:auto;font-size:5.2pt;color:#aaa;}
+  border-top:1px solid var(--line);padding-top:1.5px;margin-top:auto;font-size:4.8pt;color:#aaa;}
 /* PRINT */
 @media print{
+  @page{size:A4 portrait;margin:0;}
   body{background:#fff;}
-  .page{width:210mm;height:297mm;margin:0;padding:6mm 7mm;box-shadow:none;overflow:hidden;}
+  .page{width:210mm;height:297mm;min-height:unset;max-height:297mm;margin:0;padding:5mm 6mm;box-shadow:none;overflow:hidden;}
   .no-print{display:none!important;}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 }
@@ -10381,7 +10659,7 @@ table.cls td{border:1px solid var(--line);padding:2px 5px;vertical-align:middle;
 
   <!-- PROJECT INFO -->
   <div class="st"><div class="st-lbl">Project Information</div><div class="st-rule"></div></div>
-  <div style="display:flex;flex-direction:column;gap:2px;">
+  <div style="display:flex;flex-direction:column;gap:1px;">
     <div class="pi pi4">
       <div class="pf"><label>Project Name</label><div class="val"></div></div>
       <div class="pf"><label>Client</label><div class="val"></div></div>
@@ -10444,7 +10722,7 @@ table.cls td{border:1px solid var(--line);padding:2px 5px;vertical-align:middle;
   <!-- CHART — big and clear -->
   <div class="st"><div class="st-lbl">Grain Size Distribution Curve</div><div class="st-rule"></div></div>
   <div class="chart-box">
-    <svg viewBox="0 0 560 200" preserveAspectRatio="xMidYMid meet" style="display:block;width:100%;height:155px;">${chartSVG}</svg>
+    <svg viewBox="0 0 560 200" preserveAspectRatio="xMidYMid meet" style="display:block;width:100%;height:118px;">${chartSVG}</svg>
     <div class="chart-legend">
       <span><div class="lsw" style="background:#eef3fa;"></div>Fines</span>
       <span><div class="lsw" style="background:#e8f8ee;"></div>Fine Sand</span>
@@ -10558,6 +10836,674 @@ function updateReportBadge() {
     badge.textContent = labels[results.method] || '✅ محسوب';
     badge.className = 'ml-3 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800';
 }
+
+/* ================================================================
+   exportToExcel(mode)
+   يُستدعى من زر التصدير داخل كل تبويب بتمرير اسم التبويب مباشرة
+   ================================================================ */
+async function exportToExcel(mode) {
+
+    /* ── 0. تحميل ExcelJS إن لزم ── */
+    if (typeof ExcelJS === 'undefined') {
+        try {
+            await new Promise(function(res, rej) {
+                var s = document.createElement('script');
+                s.src = 'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';
+                s.crossOrigin = 'anonymous';
+                s.onload = res;
+                s.onerror = function(){ rej(new Error('فشل تحميل ExcelJS')); };
+                document.head.appendChild(s);
+            });
+        } catch(err) { alert('❌ ExcelJS load error:\n'+err.message); return; }
+    }
+
+    /* ── 1. Workbook ── */
+    var wb = new ExcelJS.Workbook();
+    wb.creator = 'م. محمد القصبي — Soil Lab Platform v2.0';
+    wb.created = wb.modified = new Date();
+    var ws = wb.addWorksheet('نتائج الاختبار', {
+        views: [{ rightToLeft: true }],
+        pageSetup: { paperSize: 9, orientation: 'portrait', fitToPage: true, fitToWidth: 1 }
+    });
+    ws.properties.defaultRowHeight = 20;
+    ws.columns = [
+        {width:38},{width:18},{width:18},{width:18},
+        {width:18},{width:16},{width:16},{width:16}
+    ];
+
+    /* ── 2. Palette ── */
+    var C = {
+        navyDark:'1E3A5F', navyMid:'2D5A87', orange:'EA580C',
+        green:'059669',    teal:'0D9488',     purple:'7C3AED',
+        red:'DC2626',      amber:'D97706',    blue:'1D4ED8',
+        cyan:'0891B2',     grayBg:'F3F4F6',   greenBg:'F0FDF4',
+        amberBg:'FEFCE8',  white:'FFFFFF'
+    };
+    var THIN  = { style:'thin', color:{argb:'FFCCCCCC'} };
+    var BORD  = { top:THIN, bottom:THIN, left:THIN, right:THIN };
+    var R = 0;
+
+    /* ── 3. DOM helpers ── */
+    function _g(id) {
+        var el=document.getElementById(id); if(!el) return '—';
+        var t=el.textContent.trim(); return (t===''||t==='-'||t==='—')?'—':t;
+    }
+    function _v(id) {
+        var el=document.getElementById(id); if(!el) return '—';
+        return (el.value===undefined||el.value==='')?'—':el.value;
+    }
+
+    /* ── 4. Style helper ── */
+    function S(cell, opts) {
+        if (opts.font)  cell.font  = opts.font;
+        if (opts.fill)  cell.fill  = {type:'pattern',pattern:'solid',fgColor:{argb:'FF'+opts.fill}};
+        cell.alignment = opts.align || {vertical:'middle',horizontal:'right',readingOrder:2,wrapText:true};
+        cell.border    = BORD;
+    }
+
+    /* ── 5. Row builders ── */
+    function titleRow(text, fill) {
+        R++; var row=ws.getRow(R); row.height=34;
+        var c=row.getCell(1); c.value=text;
+        S(c,{font:{bold:true,size:14,color:{argb:'FFFFFFFF'},name:'Cairo'},fill:fill,
+             align:{vertical:'middle',horizontal:'center',wrapText:true,readingOrder:2}});
+        ws.mergeCells(R,1,R,8);
+    }
+    function secHdr(text, fill) {
+        R++; var row=ws.getRow(R); row.height=24;
+        var c=row.getCell(1); c.value=text;
+        S(c,{font:{bold:true,size:10,color:{argb:'FFFFFFFF'},name:'Cairo'},fill:fill,
+             align:{vertical:'middle',horizontal:'right',readingOrder:2}});
+        ws.mergeCells(R,1,R,8);
+    }
+    function blankRow(){ R++; ws.getRow(R).height=6; }
+    function lvRow(label, value) {
+        R++; var row=ws.getRow(R); row.height=20;
+        var lc=row.getCell(1); lc.value=label;
+        S(lc,{font:{bold:true,size:9,name:'Cairo'},fill:C.grayBg,
+              align:{vertical:'middle',horizontal:'right',readingOrder:2}});
+        var vc=row.getCell(2);
+        vc.value=(value===undefined||value===null||value==='')?'—':value;
+        S(vc,{font:{bold:true,size:9,color:{argb:'FF'+C.green},name:'Cairo'},fill:C.greenBg,
+              align:{vertical:'middle',horizontal:'center'}});
+        ws.mergeCells(R,2,R,8);
+    }
+    function tblHdr(headers, fills) {
+        R++; var row=ws.getRow(R); row.height=26;
+        headers.forEach(function(h,i){
+            var c=row.getCell(i+1); c.value=h||'';
+            S(c,{font:{bold:true,size:9,color:{argb:'FFFFFFFF'},name:'Cairo'},
+                 fill:fills?fills[i]||C.navyDark:C.navyDark,
+                 align:{vertical:'middle',horizontal:'center',wrapText:true}});
+        });
+    }
+    function tblRow(vals, alt, boldFirst) {
+        R++; var row=ws.getRow(R); row.height=18;
+        vals.forEach(function(v,i){
+            var c=row.getCell(i+1);
+            c.value=(v===undefined||v===null)?'':v;
+            S(c,{font:{bold:(boldFirst&&i===0),size:9,name:'Cairo'},
+                 fill:alt?'F9FAFB':C.white,
+                 align:{vertical:'middle',horizontal:i===0?'right':'center',
+                        readingOrder:i===0?2:1,wrapText:true}});
+        });
+    }
+    function bigRow(items, fillColor) {
+        R++; var row=ws.getRow(R); row.height=34;
+        items.forEach(function(it){
+            var c=row.getCell(it.col); c.value=it.value;
+            S(c,{font:{bold:true,size:it.size||15,
+                       color:{argb:'FF'+(it.color||C.green)},name:'Cairo'},
+                 fill:fillColor||C.amberBg,
+                 align:{vertical:'middle',horizontal:'center',wrapText:true}});
+        });
+    }
+
+    /* ── 6. Global header ── */
+    var today = new Date().toLocaleDateString('ar-SA',
+        {year:'numeric',month:'long',day:'numeric'});
+    titleRow('🔬 منصة الاختبارات المعملية للتربة — Soil Laboratory Testing Platform', C.navyDark);
+    R++;
+    var hRow=ws.getRow(R); hRow.height=15;
+    var dc=hRow.getCell(1);
+    dc.value='المطور: م. محمد القصبي  |  Developer: Eng. Mohammed Al-Kasaby';
+    dc.font={italic:true,size:8,color:{argb:'FF6B7280'},name:'Cairo'};
+    dc.alignment={horizontal:'right',readingOrder:2};
+    dc.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF8FAFC'}};
+    ws.mergeCells(R,1,R,5);
+    var dtc=hRow.getCell(6);
+    dtc.value='تاريخ التقرير: '+today;
+    dtc.font={italic:true,size:8,color:{argb:'FF6B7280'},name:'Cairo'};
+    dtc.alignment={horizontal:'center'};
+    dtc.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF8FAFC'}};
+    ws.mergeCells(R,6,R,8);
+    blankRow();
+
+    /* ══════════════════════════════════════════════════════════
+       تبويب D6913 — تدرج حبيبي
+       ══════════════════════════════════════════════════════════ */
+    if (mode === 'D6913') {
+        titleRow('📊 تحليل التدرج الحبيبي — Particle-Size Distribution | ASTM D6913/D6913M-17', C.navyDark);
+        blankRow();
+
+        secHdr('① بيانات العينة — Sample Information', C.navyMid);
+        lvRow('رقم العينة / Sample ID',        _v('sampleId'));
+        lvRow('تاريخ الاختبار / Test Date',     _v('testDate'));
+        lvRow('وحدة الكتلة / Mass Unit',        _v('massUnit'));
+        var selM=document.querySelector('input[name="method"]:checked');
+        lvRow('طريقة الغربلة / Method', selM?selM.value:'—');
+        lvRow('منخل الفصل / Separator', (_g('selectedSeparatorDisplay')!=='—')?_g('selectedSeparatorDisplay'):'فصل واحد');
+        lvRow('ملاحظات / Notes', _v('notes'));
+        blankRow();
+
+        secHdr('② جدول التدرج النهائي — Final Gradation Table', C.orange);
+        tblHdr(
+            ['المنخل\nSieve','الفتحة\nmm','MR\n(g)','CMR\n(g)','%Ret\nمحتجز%','Cum%\nتراكمي%','%Pass\nمار%',''],
+            [C.orange,C.orange,C.orange,C.orange,C.orange,C.orange,C.orange,'FFFFFF']
+        );
+        var fRows=document.querySelectorAll('#finalTableBody tr');
+        if (fRows.length) {
+            fRows.forEach(function(tr,idx){
+                var vals=Array.from(tr.querySelectorAll('td')).map(function(td){
+                    var sp=td.querySelector('span'); 
+                    var t=sp?(sp.firstChild?sp.firstChild.textContent.trim():sp.textContent.trim()):td.textContent.trim();
+                    return t||'—';
+                });
+                while(vals.length<7) vals.push(''); vals.push('');
+                tblRow(vals.slice(0,8),idx%2===1,true);
+            });
+        } else {
+            R++; ws.getRow(R).getCell(1).value='⚠️ اضغط "احسب" أولاً لتوليد الجدول';
+            ws.getRow(R).getCell(1).font={italic:true,size:9,color:{argb:'FFDC2626'}};
+            ws.mergeCells(R,1,R,8);
+        }
+        blankRow();
+
+        secHdr('③ معاملات التدرج — Gradation Parameters', C.teal);
+        tblHdr(
+            ['D₁₀ (mm)','D₃₀ (mm)','D₆₀ (mm)','Cu','Cc','','',''],
+            [C.teal,C.teal,C.teal,C.teal,C.teal,'FFFFFF','FFFFFF','FFFFFF']
+        );
+        R++; var gpr=ws.getRow(R); gpr.height=28;
+        [{id:'d10Value',col:1},{id:'d30Value',col:2},{id:'d60Value',col:3},
+         {id:'cuValue',col:4},{id:'ccValue',col:5}].forEach(function(it){
+            var c=gpr.getCell(it.col); c.value=_g(it.id);
+            S(c,{font:{bold:true,size:14,color:{argb:'FF'+C.teal},name:'Cairo'},
+                 fill:'F0FDFA',align:{vertical:'middle',horizontal:'center'}});
+        });
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       تبويب D4318 — حدود أتربرج
+       ══════════════════════════════════════════════════════════ */
+    else if (mode === 'D4318') {
+        titleRow('🏋️ حدود أتربرج — Atterberg Limits | ASTM D4318-17e1', C.purple);
+        blankRow();
+
+        secHdr('① بيانات العينة — Sample Information', '7C3AED');
+        lvRow('رقم العينة / Sample ID', _v('d4318_sampleId'));
+        lvRow('تاريخ الاختبار / Date',  _v('d4318_testDate'));
+        lvRow('الطريقة / Method',        _v('d4318_method'));
+        var np=document.getElementById('isNonPlastic');
+        lvRow('غير لدنة / NP', (np&&np.checked)?'نعم / Yes':'لا / No');
+        blankRow();
+
+        secHdr('② جدول حد السيولة — Liquid Limit (Casagrande)', '3B82F6');
+        tblHdr(
+            ['N ضربات','Tare (g)','Wet+Tare (g)','Dry+Tare (g)','Water (g)','Dry Soil (g)','w%',''],
+            ['3B82F6','3B82F6','3B82F6','3B82F6','EAB308','EAB308','16A34A','FFFFFF']
+        );
+        var llR=document.querySelectorAll('#d4318_llBody tr');
+        if(llR.length){
+            llR.forEach(function(tr,idx){
+                var vals=Array.from(tr.querySelectorAll('td')).map(function(td){
+                    var inp=td.querySelector('input'); return inp?(inp.value||'—'):td.textContent.trim()||'—';
+                });
+                while(vals.length<7) vals.push(''); vals.push('');
+                tblRow(vals.slice(0,8),idx%2===1,true);
+            });
+        } else {
+            R++; ws.getRow(R).getCell(1).value='⚠️ لم تُدخَل بيانات LL بعد';
+            ws.getRow(R).getCell(1).font={italic:true,size:9,color:{argb:'FFDC2626'}};
+            ws.mergeCells(R,1,R,8);
+        }
+        blankRow();
+
+        secHdr('③ جدول حد اللدونة — Plastic Limit (Thread Rolling)', '7C3AED');
+        tblHdr(
+            ['Roll#','Tare (g)','Wet+Tare (g)','Dry+Tare (g)','Water (g)','Dry Soil (g)','w%',''],
+            ['7C3AED','7C3AED','7C3AED','7C3AED','EAB308','EAB308','16A34A','FFFFFF']
+        );
+        var plR=document.querySelectorAll('#d4318_plBody tr');
+        if(plR.length){
+            plR.forEach(function(tr,idx){
+                var vals=Array.from(tr.querySelectorAll('td')).map(function(td){
+                    var inp=td.querySelector('input'); return inp?(inp.value||'—'):td.textContent.trim()||'—';
+                });
+                while(vals.length<7) vals.push(''); vals.push('');
+                tblRow(vals.slice(0,8),idx%2===1,true);
+            });
+        } else {
+            R++; ws.getRow(R).getCell(1).value='⚠️ لم تُدخَل بيانات PL بعد';
+            ws.getRow(R).getCell(1).font={italic:true,size:9,color:{argb:'FFDC2626'}};
+            ws.mergeCells(R,1,R,8);
+        }
+        blankRow();
+
+        secHdr('④ النتائج النهائية — Final Results', C.green);
+        tblHdr(
+            ['LL — حد السيولة (%)','PL — حد اللدونة (%)','PI — دليل اللدونة (%)','التصنيف / Classification','','','',''],
+            ['3B82F6','7C3AED','EA580C','059669','FFFFFF','FFFFFF','FFFFFF','FFFFFF']
+        );
+        bigRow([
+            {col:1,value:_g('d4318_LL_val'),color:'1D4ED8',size:18},
+            {col:2,value:_g('d4318_PL_val'),color:'7C3AED',size:18},
+            {col:3,value:_g('d4318_PI_val'),color:'EA580C',size:18},
+            {col:4,value:_g('d4318_classification'),color:'059669',size:10}
+        ],'FFF0F9FF');
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       تبويب D1557 — الدمك المعدل
+       ══════════════════════════════════════════════════════════ */
+    else if (mode === 'D1557') {
+        titleRow('🔨 الدمك المعدل — Modified Proctor | ASTM D1557-12(2021)', C.orange);
+        blankRow();
+
+        secHdr('① بيانات المشروع والعينة — Project & Sample Information', C.blue);
+        lvRow('اسم المشروع / Project',       _v('prc_projectName'));
+        lvRow('رقم التقرير / Report No.',    _v('prc_reportNo'));
+        lvRow('العميل / Client',              _v('prc_client'));
+        lvRow('رقم العينة / Sample ID',       _v('proctor_sampleId'));
+        lvRow('تاريخ الاختبار / Test Date',   _v('proctor_testDate'));
+        lvRow('الموقع / Location',             _v('prc_location'));
+        lvRow('العمق / Depth (m)',             _v('prc_depth'));
+        lvRow('الطريقة / Method',              _v('proctor_method'));
+        lvRow('حجم القالب / Mold Vol. (cm³)', _v('moldVol_value'));
+        lvRow('Gs — الكثافة النوعية',         _v('Gs_input'));
+        blankRow();
+
+        secHdr('② جدول المحتوى المائي — Water Content Table (5 Points)', 'F97316');
+        tblHdr(
+            ['البيان / Parameter','P1','P2','P3','P4','P5','',''],
+            ['F97316','F97316','F97316','F97316','F97316','F97316','FFFFFF','FFFFFF']
+        );
+        [
+            {label:'Wet+Tare (g)',          ids:['wcWetTare_1','wcWetTare_2','wcWetTare_3','wcWetTare_4','wcWetTare_5'],  inp:true},
+            {label:'Dry+Tare (g)',           ids:['wcDryTare_1','wcDryTare_2','wcDryTare_3','wcDryTare_4','wcDryTare_5'],  inp:true},
+            {label:'Tare (g)',               ids:['wcTare_1','wcTare_2','wcTare_3','wcTare_4','wcTare_5'],                  inp:true},
+            {label:'Mw — الماء (g)',         ids:['wcWater_1','wcWater_2','wcWater_3','wcWater_4','wcWater_5'],            inp:false},
+            {label:'Ms — تربة جافة (g)',     ids:['wcDrySoil_1','wcDrySoil_2','wcDrySoil_3','wcDrySoil_4','wcDrySoil_5'],inp:false},
+            {label:'w% (محسوب)',             ids:['w_1','w_2','w_3','w_4','w_5'],                                          inp:false}
+        ].forEach(function(p,idx){
+            var row=[p.label];
+            p.ids.forEach(function(id){
+                var el=document.getElementById(id);
+                row.push(el?(p.inp?(el.value||'—'):el.textContent.trim()||'—'):'—');
+            });
+            while(row.length<8) row.push('');
+            tblRow(row.slice(0,8),idx%2===1,true);
+        });
+        blankRow();
+
+        secHdr('③ جدول الكثافة — Density/Compaction Table (5 Points)', C.navyDark);
+        tblHdr(
+            ['البيان / Parameter','P1','P2','P3','P4','P5','',''],
+            [C.navyDark,C.navyDark,C.navyDark,C.navyDark,C.navyDark,C.navyDark,'FFFFFF','FFFFFF']
+        );
+        [
+            {label:'Mt — قالب+تربة رطبة (g)', ids:['moldWet_1_g','moldWet_2_g','moldWet_3_g','moldWet_4_g','moldWet_5_g'], inp:true},
+            {label:'ρm — كثافة رطبة (محسوب)', ids:['out_moist_1','out_moist_2','out_moist_3','out_moist_4','out_moist_5'], inp:false},
+            {label:'ρd — كثافة جافة (محسوب)', ids:['out_dry_1','out_dry_2','out_dry_3','out_dry_4','out_dry_5'],            inp:false}
+        ].forEach(function(p,idx){
+            var row=[p.label];
+            p.ids.forEach(function(id){
+                var el=document.getElementById(id);
+                row.push(el?(p.inp?(el.value||'—'):el.textContent.trim()||'—'):'—');
+            });
+            while(row.length<8) row.push('');
+            tblRow(row.slice(0,8),idx%2===1,true);
+        });
+        blankRow();
+
+        secHdr('④ النتائج الرئيسية — OMC & MDD', C.green);
+        tblHdr(
+            ['OMC — المحتوى المائي الأمثل (%)','MDD — الكثافة الجافة القصوى','الوحدة','','','','',''],
+            [C.green,C.green,C.green,'FFFFFF','FFFFFF','FFFFFF','FFFFFF','FFFFFF']
+        );
+        bigRow([
+            {col:1,value:_g('omcResult'),color:'C2410C',size:18},
+            {col:2,value:_g('mddResult'),color:'1D4ED8',size:18},
+            {col:3,value:_g('mddUnit'),  color:'4B5563',size:10}
+        ],C.amberBg);
+
+        var corrSec=document.getElementById('correctedResultsSection');
+        if(corrSec&&!corrSec.classList.contains('hidden')){
+            blankRow();
+            secHdr('⑤ تصحيح D4718 — Oversize Corrected Results', C.amber);
+            tblHdr(
+                ['البيان','القيمة الأصلية','المصححة','الفرق','','','',''],
+                [C.amber,C.amber,C.amber,C.amber,'FFFFFF','FFFFFF','FFFFFF','FFFFFF']
+            );
+            tblRow(['OMC (%)',_g('omcOriginal'),_g('omcCorrectedTable'),_g('omcDiff'),'','','',''],false,true);
+            tblRow(['MDD',    _g('mddOriginal'),_g('mddCorrectedTable'),_g('mddDiff'),'','','',''],true, true);
+        }
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       تبويب D2216 — محتوى مائي
+       ══════════════════════════════════════════════════════════ */
+    else if (mode === 'D2216') {
+        titleRow('💧 تحديد المحتوى المائي — Water Content | ASTM D2216-19', C.cyan);
+        blankRow();
+
+        secHdr('① بيانات العينة — Sample Information', C.cyan);
+        lvRow('رقم العينة / Sample ID',     _v('d2216_sampleId'));
+        lvRow('تاريخ الاختبار / Test Date', _v('d2216_testDate'));
+        lvRow('الطريقة / Method',            _v('d2216_method'));
+        lvRow('درجة حرارة الفرن (°C)',       _v('d2216_ovenTemp'));
+        lvRow('ملاحظات / Notes',             _v('d2216_notes'));
+        blankRow();
+
+        secHdr('② بيانات الاختبار — Test Data (3 Determinations)', '164E63');
+        tblHdr(
+            ['البيان / Parameter','علبة 1','علبة 2','علبة 3','','','',''],
+            ['164E63','164E63','164E63','164E63','FFFFFF','FFFFFF','FFFFFF','FFFFFF']
+        );
+        [
+            {label:'Mc — كتلة العلبة (g)',   ids:['d2216_Mc_1','d2216_Mc_2','d2216_Mc_3'],      inp:true},
+            {label:'Mcms — رطب+علبة (g)',   ids:['d2216_Mcms_1','d2216_Mcms_2','d2216_Mcms_3'],  inp:true},
+            {label:'Mcds — جاف+علبة (g)',   ids:['d2216_Mcds_1','d2216_Mcds_2','d2216_Mcds_3'],  inp:true},
+            {label:'Mw — كتلة الماء (g)',   ids:['d2216_Mw_1','d2216_Mw_2','d2216_Mw_3'],        inp:false},
+            {label:'Ms — تربة جافة (g)',     ids:['d2216_Ms_1','d2216_Ms_2','d2216_Ms_3'],        inp:false},
+            {label:'w% — المحتوى المائي',   ids:['d2216_w_1','d2216_w_2','d2216_w_3'],            inp:false}
+        ].forEach(function(f,idx){
+            var row=[f.label];
+            f.ids.forEach(function(id){
+                var el=document.getElementById(id);
+                row.push(el?(f.inp?(el.value||'—'):el.textContent.trim()||'—'):'—');
+            });
+            while(row.length<8) row.push('');
+            tblRow(row.slice(0,8),idx%2===1,true);
+        });
+        blankRow();
+
+        secHdr('③ النتائج — Results', C.green);
+        tblHdr(
+            ['w% علبة 1','w% علبة 2','w% علبة 3','المتوسط / Average w%','','','',''],
+            [C.teal,C.teal,C.teal,C.green,'FFFFFF','FFFFFF','FFFFFF','FFFFFF']
+        );
+        bigRow([
+            {col:1,value:_g('d2216_result_w1'),color:C.teal, size:16},
+            {col:2,value:_g('d2216_result_w2'),color:C.teal, size:16},
+            {col:3,value:_g('d2216_result_w3'),color:C.teal, size:16},
+            {col:4,value:_g('d2216_result_avg'),color:C.green,size:18}
+        ],C.greenBg);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       تبويب D854 — الكثافة النوعية
+       ══════════════════════════════════════════════════════════ */
+    else if (mode === 'D854') {
+        titleRow('⚖️ الكثافة النوعية — Specific Gravity | ASTM D854', 'B45309');
+        blankRow();
+
+        secHdr('① بيانات الاختبار — Test Data (Test No. 1)', 'B45309');
+        lvRow('درجة الحرارة T (°C)',              _v('d854_T'));
+        lvRow('Ms — كتلة التربة الجافة (g)',       _v('d854_Ms'));
+        lvRow('Mpws — فلاسك+تربة+ماء (g)',        _v('d854_Mpws'));
+        var dm=document.querySelector('input[name="d854_mode"]:checked');
+        lvRow('طريقة الإدخال', dm?(dm.value==='MpVp'?'Mp + Vp':'W₁ مباشر'):'—');
+        blankRow();
+
+        secHdr('② نتائج الحساب — Calculation Results', C.green);
+        tblHdr(
+            ['البيان / Item','القيمة / Value','','','','','',''],
+            [C.navyDark,C.green,'FFFFFF','FFFFFF','FFFFFF','FFFFFF','FFFFFF','FFFFFF']
+        );
+        [
+            {label:'W₁ — فلاسك+ماء حتى العلامة (g)',            id:'d854_W1'},
+            {label:'W₂ — فلاسك+تربة+ماء حتى العلامة (g)',      id:'d854_W2'},
+            {label:'Ws — كتلة التربة الجافة (g)',                id:'d854_Ws'},
+            {label:'Ww — كتلة الماء المكافئ لحجم الحبيبات (g)', id:'d854_Ww'},
+            {label:'Gs(T)  =  Ws / Ww  [at T°C]',               id:'d854_Gt'},
+            {label:'✅  Gs(20°C)  =  Gs(T) × K  [corrected]',   id:'d854_G20'}
+        ].forEach(function(it,idx){
+            tblRow([it.label,_g(it.id),'','','','','',''],idx%2===1,true);
+        });
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       تبويب SoilClass — USCS + AASHTO
+       ══════════════════════════════════════════════════════════ */
+    else if (mode === 'SoilClass') {
+        titleRow('🏗️ تصنيف التربة — Soil Classification | USCS (D2487) + AASHTO', C.teal);
+        blankRow();
+
+        secHdr('① بيانات الإدخال — Input Data (Auto-Read)', '0D9488');
+        lvRow('% Fines — الغرامات (No.200)',  _g('sc_fines'));
+        lvRow('% Passing No.4',                _g('sc_passNo4'));
+        lvRow('% Passing No.10',               _g('sc_passNo10'));
+        lvRow('% Passing No.40',               _g('sc_passNo40'));
+        lvRow('Cu / Cc',                       _g('sc_CuCc'));
+        lvRow('LL — حد السيولة',               _g('sc_LL'));
+        lvRow('PL — حد اللدونة',               _g('sc_PL'));
+        lvRow('PI — دليل اللدونة',             _g('sc_PI'));
+        var pb=document.getElementById('uscs_proctorData');
+        if(pb&&!pb.classList.contains('hidden')){
+            lvRow('OMC (%)',  _g('uscs_OMC'));
+            lvRow('MDD',      _g('uscs_MDD')+' '+_g('uscs_MDD_unit'));
+        }
+        blankRow();
+
+        secHdr('② تصنيف USCS — Unified Soil Classification System (ASTM D2487)', C.blue);
+        tblHdr(
+            ['الرمز\nSymbol','الوصف\nDescription','الاسم بالعربي','نوع التربة','A-Line','ملاحظات','',''],
+            [C.blue,C.blue,C.blue,C.blue,C.blue,C.blue,'FFFFFF','FFFFFF']
+        );
+        R++; var ur=ws.getRow(R); ur.height=30;
+        [{id:'sc_uscs_symbol',col:1,sz:18},{id:'sc_uscs_desc',col:2,sz:9},
+         {id:'sc_uscs_name_ar',col:3,sz:9},{id:'sc_uscs_type',col:4,sz:9},
+         {id:'sc_uscs_aline',col:5,sz:9},{id:'sc_uscs_notes',col:6,sz:8}
+        ].forEach(function(it){
+            var c=ur.getCell(it.col); c.value=_g(it.id);
+            S(c,{font:{bold:true,size:it.sz,color:{argb:'FF'+C.blue},name:'Cairo'},
+                 fill:'EFF6FF',align:{vertical:'middle',horizontal:'center',wrapText:true}});
+        });
+        blankRow();
+
+        secHdr('③ تصنيف AASHTO', C.green);
+        tblHdr(
+            ['المجموعة\nGroup','الوصف\nDescription','GI — دليل المجموعة','التقييم\nEvaluation','','','',''],
+            [C.green,C.green,C.green,C.green,'FFFFFF','FFFFFF','FFFFFF','FFFFFF']
+        );
+        R++; var ar=ws.getRow(R); ar.height=32;
+        [{id:'sc_aashto_group',col:1,sz:18},{id:'sc_aashto_desc',col:2,sz:9},
+         {id:'sc_aashto_gi',col:3,sz:15},{id:'sc_aashto_eval',col:4,sz:9}
+        ].forEach(function(it){
+            var c=ar.getCell(it.col); c.value=_g(it.id);
+            S(c,{font:{bold:true,size:it.sz,color:{argb:'FF'+C.green},name:'Cairo'},
+                 fill:'ECFDF5',align:{vertical:'middle',horizontal:'center',wrapText:true}});
+        });
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       تبويب CBR — نسبة تحمل كاليفورنيا
+       ══════════════════════════════════════════════════════════ */
+    else if (mode === 'CBR') {
+        titleRow('🚜 نسبة تحمل كاليفورنيا — CBR | ASTM D1883', C.red);
+        blankRow();
+
+        secHdr('① بيانات المشروع والحلقة — Project & Ring Information', C.blue);
+        lvRow('اسم المشروع / Project',           _v('cbr_projectName'));
+        lvRow('رقم العينة / Sample ID',           _v('cbr_sampleId'));
+        lvRow('تاريخ الاختبار / Test Date',       _v('cbr_testDate'));
+        lvRow('المهندس / Engineer',               _v('cbr_engineer'));
+        lvRow('رقم الحلقة / Ring No.',             _v('cbr_ringNo'));
+        lvRow('معامل الحلقة / Ring Factor',       _v('cbr_ringFactor'));
+        lvRow('مساحة الكباسة / Piston Area (cm²)',_v('cbr_pistonArea'));
+        var cc=document.querySelector('input[name="cbr_soakCondition"]:checked');
+        lvRow('حالة العينة',cc?(cc.value==='soaked'?'منقوع / Soaked':'غير منقوع / Unsoaked'):'—');
+        lvRow('MDD مرجع الدمك (g/cm³)', _v('cbr_MDD'));
+        lvRow('OMC مرجع الدمك (%)',     _v('cbr_OMC'));
+        blankRow();
+
+        var nM=parseInt((document.querySelector('input[name="cbrTemplateCount"]:checked')||{}).value||'1');
+        var mL=['E1 — 56 ضربة','E2 — 25 ضربة','E3 — 10 ضربات'].slice(0,nM);
+        function mHdr(){ var h=['المتغير / Variable'].concat(mL); while(h.length<8) h.push(''); return h; }
+        function mFill(c){ var f=Array(8).fill(c); return f; }
+
+        secHdr('② بيانات الدمك — Compaction Input Data', 'F97316');
+        tblHdr(mHdr(), mFill('F97316'));
+        [
+            {label:'Mm — القالب الفارغ (g)',    ids:['cbrMmE1','cbrMmE2','cbrMmE3']},
+            {label:'Mw — قالب+تربة رطبة (g)',  ids:['cbrMwE1','cbrMwE2','cbrMwE3']},
+            {label:'Vm — حجم القالب (cm³)',     ids:['cbrVmE1','cbrVmE2','cbrVmE3']},
+            {label:'w% — المحتوى المائي',        ids:['cbrWaterE1','cbrWaterE2','cbrWaterE3']},
+            {label:'hi — ارتفاع مبدئي (mm)',     ids:['cbrHeightInitE1','cbrHeightInitE2','cbrHeightInitE3']},
+            {label:'hf — ارتفاع نهائي (mm)',     ids:['cbrHeightFinE1','cbrHeightFinE2','cbrHeightFinE3']}
+        ].forEach(function(p,idx){
+            var row=[p.label];
+            p.ids.slice(0,nM).forEach(function(id){ var el=document.getElementById(id); row.push(el?(el.value||'—'):'—'); });
+            while(row.length<8) row.push('');
+            tblRow(row,idx%2===1,true);
+        });
+        blankRow();
+
+        secHdr('③ نتائج الكثافة والانتفاش — Density & Swell Results', C.navyDark);
+        tblHdr(mHdr(), mFill(C.navyDark));
+        [
+            {label:'ρd — كثافة جافة (g/cm³)',  ids:['cbrRhoDryE1','cbrRhoDryE2','cbrRhoDryE3']},
+            {label:'PCF — وزن وحدة (lb/ft³)',   ids:['cbrPCFE1','cbrPCFE2','cbrPCFE3']},
+            {label:'γd (kN/m³)',                 ids:['cbrKNm3E1','cbrKNm3E2','cbrKNm3E3']},
+            {label:'Swell% — الانتفاش',          ids:['cbrSwellE1','cbrSwellE2','cbrSwellE3']},
+            {label:'% الدمك / Compaction',       ids:['cbrCompE1','cbrCompE2','cbrCompE3']}
+        ].forEach(function(p,idx){
+            var row=[p.label];
+            p.ids.slice(0,nM).forEach(function(id){ row.push(_g(id)); });
+            while(row.length<8) row.push('');
+            tblRow(row,idx%2===1,true);
+        });
+        blankRow();
+
+        secHdr('④ بيانات الاختراق — Full Penetration Data (11 Points)', '7C3AED');
+        var ph=['#','الاختراق (in)'].concat(mL.map(function(m){return m+'\nضغط';}));
+        while(ph.length<8) ph.push('');
+        tblHdr(ph, mFill('7C3AED'));
+        [
+            {pt:'025',lbl:'0.025″ (0.64mm)'},  {pt:'050',lbl:'0.050″ (1.27mm)'},
+            {pt:'075',lbl:'0.075″ (1.91mm)'},  {pt:'100',lbl:'★ 0.100″ (2.54mm)'},
+            {pt:'125',lbl:'0.125″ (3.18mm)'},  {pt:'150',lbl:'0.150″ (3.81mm)'},
+            {pt:'175',lbl:'0.175″ (4.45mm)'},  {pt:'200',lbl:'★ 0.200″ (5.08mm)'},
+            {pt:'300',lbl:'0.300″ (7.62mm)'},  {pt:'400',lbl:'0.400″ (10.16mm)'},
+            {pt:'500',lbl:'0.500″ (12.70mm)'}
+        ].forEach(function(p,idx){
+            var row=[idx+1,p.lbl];
+            ['E1','E2','E3'].slice(0,nM).forEach(function(en){
+                var el=document.getElementById('penetration'+p.pt+en+'pressure');
+                row.push(el?(el.value||'—'):'—');
+            });
+            while(row.length<8) row.push('');
+            tblRow(row,idx%2===1,false);
+        });
+        blankRow();
+
+        secHdr('⑤ نتائج CBR النهائية ✅ — Final CBR Results', C.red);
+        tblHdr(mHdr(), mFill(C.red));
+        [
+            {label:'CBR @ 0.1″ (2.54mm) %',              ids:['cbrValue01E1','cbrValue01E2','cbrValue01E3']},
+            {label:'CBR @ 0.2″ (5.08mm) %',              ids:['cbrValue02E1','cbrValue02E2','cbrValue02E3']},
+            {label:'✅ CBR النهائي / Final (الأعلى) %', ids:['cbrFinalE1','cbrFinalE2','cbrFinalE3']},
+            {label:'ρd عند الاختبار (g/cm³)',             ids:['cbrDdAtTestE1','cbrDdAtTestE2','cbrDdAtTestE3']}
+        ].forEach(function(p,idx){
+            var row=[p.label];
+            p.ids.slice(0,nM).forEach(function(id){ row.push(_g(id)); });
+            while(row.length<8) row.push('');
+            tblRow(row,idx%2===1,true);
+        });
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       تبويب D422 — الهيدروميتر
+       ══════════════════════════════════════════════════════════ */
+    else if (mode === 'D422') {
+        titleRow('🧪 تحليل الهيدروميتر — Hydrometer Analysis | ASTM D422-63', '7C3AED');
+        blankRow();
+
+        secHdr('① إعدادات الاختبار — Test Settings', '7C3AED');
+        lvRow('نوع الهيدروميتر / Type',          _v('d422HydrometerType'));
+        lvRow('Gs — الكثافة النوعية',            _v('d422Gs'));
+        lvRow('T — درجة الحرارة (°C)',            _v('d422Temp'));
+        lvRow('% Passing No.10',                  _v('d422PassNo10'));
+        lvRow('Wair — كتلة العينة (g)',           _v('d422Wair'));
+        lvRow('H — معامل الرطوبة الهجروسكوبية',  _v('d422Hfactor'));
+        blankRow();
+
+        secHdr('② نتائج جدول الهيدروميتر — Hydrometer Results Table', '5B21B6');
+        tblHdr(
+            ['t (min)','R — قراءة','R_c — مصحح','L (cm)','D (mm)','% Passing','',''],
+            ['5B21B6','5B21B6','5B21B6','5B21B6','5B21B6','5B21B6','FFFFFF','FFFFFF']
+        );
+        var hR=document.querySelectorAll('#d422ResultsTableBody tr, #d422ResultsTable tbody tr');
+        if(hR.length){
+            hR.forEach(function(tr,idx){
+                var vals=Array.from(tr.querySelectorAll('td')).map(function(td){return td.textContent.trim();});
+                while(vals.length<8) vals.push('');
+                tblRow(vals.slice(0,8),idx%2===1,false);
+            });
+        } else {
+            R++; ws.getRow(R).getCell(1).value='⚠️ اضغط "احسب نتائج الهيدروميتر" أولاً';
+            ws.getRow(R).getCell(1).font={italic:true,size:9,color:{argb:'FFDC2626'}};
+            ws.mergeCells(R,1,R,8);
+        }
+    }
+
+    /* ══ Footer ══ */
+    blankRow(); blankRow();
+    R++;
+    var ftRow=ws.getRow(R); ftRow.height=13;
+    var ft1=ftRow.getCell(1);
+    ft1.value='ASTM D6913 | D4318 | D1557 | D2216 | D854 | D1883 | D422 | ISO/IEC 17025:2017';
+    ft1.font={italic:true,size:7,color:{argb:'FF9CA3AF'},name:'Cairo'};
+    ft1.alignment={horizontal:'right',readingOrder:2};
+    ft1.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF8FAFC'}};
+    ws.mergeCells(R,1,R,5);
+    var ft2=ftRow.getCell(6);
+    ft2.value='© منصة الاختبارات المعملية للتربة v2.0 | م. محمد القصبي';
+    ft2.font={italic:true,size:7,color:{argb:'FF9CA3AF'},name:'Cairo'};
+    ft2.alignment={horizontal:'center'};
+    ft2.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF8FAFC'}};
+    ws.mergeCells(R,6,R,8);
+
+    /* ══ اسم الملف + تنزيل ══ */
+    var sId=(_v('sampleId')!=='—'?_v('sampleId'):
+             _v('proctor_sampleId')!=='—'?_v('proctor_sampleId'):
+             _v('cbr_sampleId')!=='—'?_v('cbr_sampleId'):
+             _v('d4318_sampleId')!=='—'?_v('d4318_sampleId'):
+             _v('d2216_sampleId')!=='—'?_v('d2216_sampleId'):'Sample');
+    var tabNames={
+        D6913:'D6913-Sieve',D4318:'D4318-Atterberg',D1557:'D1557-Proctor',
+        D2216:'D2216-WaterContent',D854:'D854-SpecificGravity',
+        SoilClass:'SoilClassification',CBR:'CBR-D1883',D422:'D422-Hydrometer'
+    };
+    var dateStr=new Date().toISOString().slice(0,10);
+    var fileName=(sId!=='—'?sId.replace(/[^a-zA-Z0-9\u0600-\u06FF\-_]/g,'_')+'_':'')
+                +(tabNames[mode]||mode)+'_'+dateStr+'.xlsx';
+
+    try {
+        var buffer=await wb.xlsx.writeBuffer();
+        var blob=new Blob([buffer],
+            {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+        var url=URL.createObjectURL(blob);
+        var a=document.createElement('a');
+        a.href=url; a.download=fileName;
+        document.body.appendChild(a); a.click();
+        document.body.removeChild(a); URL.revokeObjectURL(url);
+    } catch(err){
+        alert('❌ خطأ في إنشاء ملف Excel:\n'+err.message);
+    }
+}
+/* END exportToExcel */
 
 </script>
 </body>
