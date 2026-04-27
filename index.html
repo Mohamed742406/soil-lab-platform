@@ -272,9 +272,104 @@
     </nav>
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-6">
-        
-        <!-- ============================================= -->
-        <!-- D6913 SECTION -->
+
+        <!-- ============================================================ -->
+        <!-- GLOBAL PROJECT INFORMATION PANEL — يُطبّق على جميع التقارير  -->
+        <!-- ============================================================ -->
+        <div id="globalProjectPanel" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:2px solid #3b82f6;border-radius:12px;padding:16px 20px;margin-bottom:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:1.3rem;">📋</span>
+              <div>
+                <div style="font-weight:800;font-size:.95rem;color:#1e3a8a;">بيانات المشروع — Project Information</div>
+                <div style="font-size:.72rem;color:#3b82f6;">هذه البيانات تُطبَّق تلقائياً على جميع التقارير النهائية في كل التبويبات</div>
+              </div>
+            </div>
+            <button onclick="toggleGlobalPanel()" id="globalPanelToggleBtn"
+              style="background:#3b82f6;color:white;border:none;border-radius:8px;padding:5px 14px;cursor:pointer;font-size:.78rem;font-weight:700;">
+              ▲ طيّ
+            </button>
+          </div>
+
+          <div id="globalPanelBody">
+            <!-- Fixed fields grid -->
+            <div id="globalFixedFields" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;">
+              <div>
+                <label style="display:block;font-size:.72rem;font-weight:700;color:#1e40af;margin-bottom:3px;">🏗️ Project Name / اسم المشروع</label>
+                <input id="gpi_project" type="text" placeholder="اسم المشروع..."
+                  oninput="syncGlobalInfo()"
+                  style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.78rem;background:white;">
+              </div>
+              <div>
+                <label style="display:block;font-size:.72rem;font-weight:700;color:#1e40af;margin-bottom:3px;">🏢 Client / اسم العميل</label>
+                <input id="gpi_client" type="text" placeholder="اسم العميل..."
+                  oninput="syncGlobalInfo()"
+                  style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.78rem;background:white;">
+              </div>
+              <div>
+                <label style="display:block;font-size:.72rem;font-weight:700;color:#1e40af;margin-bottom:3px;">📍 Location / الموقع</label>
+                <input id="gpi_location" type="text" placeholder="الموقع..."
+                  oninput="syncGlobalInfo()"
+                  style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.78rem;background:white;">
+              </div>
+              <div>
+                <label style="display:block;font-size:.72rem;font-weight:700;color:#1e40af;margin-bottom:3px;">🔢 Report No. / رقم التقرير</label>
+                <input id="gpi_reportNo" type="text" placeholder="RPT-2025-001"
+                  oninput="syncGlobalInfo()"
+                  style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.78rem;background:white;">
+              </div>
+              <div>
+                <label style="display:block;font-size:.72rem;font-weight:700;color:#1e40af;margin-bottom:3px;">🧪 Sample ID / رقم العينة</label>
+                <input id="gpi_sampleId" type="text" placeholder="S-001"
+                  oninput="syncGlobalInfo()"
+                  style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.78rem;background:white;">
+              </div>
+              <div>
+                <label style="display:block;font-size:.72rem;font-weight:700;color:#1e40af;margin-bottom:3px;">👷 Engineer / المهندس</label>
+                <input id="gpi_engineer" type="text" placeholder="اسم المهندس..."
+                  oninput="syncGlobalInfo()"
+                  style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.78rem;background:white;">
+              </div>
+              <div>
+                <label style="display:block;font-size:.72rem;font-weight:700;color:#1e40af;margin-bottom:3px;">📅 Test Date / تاريخ الاختبار</label>
+                <input id="gpi_testDate" type="date"
+                  oninput="syncGlobalInfo()"
+                  style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.78rem;background:white;">
+              </div>
+              <div>
+                <label style="display:block;font-size:.72rem;font-weight:700;color:#1e40af;margin-bottom:3px;">📆 Report Date / تاريخ التقرير</label>
+                <input id="gpi_reportDate" type="date"
+                  oninput="syncGlobalInfo()"
+                  style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.78rem;background:white;">
+              </div>
+              <div>
+                <label style="display:block;font-size:.72rem;font-weight:700;color:#1e40af;margin-bottom:3px;">📝 Remarks / ملاحظات</label>
+                <input id="gpi_remarks" type="text" placeholder="أي ملاحظات..."
+                  oninput="syncGlobalInfo()"
+                  style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.78rem;background:white;">
+              </div>
+            </div>
+
+            <!-- Custom fields -->
+            <div id="globalCustomFields" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;"></div>
+
+            <!-- Add field button -->
+            <div style="display:flex;align-items:center;gap:10px;">
+              <button onclick="addGlobalCustomField()"
+                style="background:white;border:2px dashed #60a5fa;color:#2563eb;border-radius:8px;padding:6px 16px;cursor:pointer;font-size:.78rem;font-weight:700;display:flex;align-items:center;gap:6px;">
+                ➕ إضافة حقل مخصص
+              </button>
+              <button onclick="clearGlobalInfo()"
+                style="background:white;border:1.5px solid #fca5a5;color:#dc2626;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:.75rem;font-weight:600;">
+                🗑️ مسح الكل
+              </button>
+              <span id="gpi_syncStatus" style="font-size:.7rem;color:#16a34a;font-weight:700;"></span>
+            </div>
+          </div>
+        </div>
+        <!-- END GLOBAL PROJECT PANEL -->
+
+
         <!-- ============================================= -->
         <div id="sectionD6913">
             <!-- Page Title -->
@@ -3028,6 +3123,24 @@
         <input id="d854_Ms" type="number" step="0.01"
                class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2">
       </div>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">
+            🌡️ درجة حرارة المختبر (°C)
+          </label>
+          <input id="d854_ambTemp" type="number" step="0.1"
+                 class="input-field w-full border-2 border-amber-300 rounded-lg px-3 py-2"
+                 placeholder="مثال: 22.5">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">
+            💧 الرطوبة النسبية (%)
+          </label>
+          <input id="d854_humidity" type="number" step="0.1" min="0" max="100"
+                 class="input-field w-full border-2 border-blue-300 rounded-lg px-3 py-2"
+                 placeholder="مثال: 55">
+        </div>
+      </div>
      <div class="flex flex-col items-end gap-2">
   <button
     class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg w-full"
@@ -3065,6 +3178,13 @@
     onclick="exportToExcel('D854')"
   >
     📊 تصدير Excel
+  </button>
+  <button
+    type="button"
+    class="bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-semibold px-4 py-2 rounded-lg w-full flex items-center justify-center gap-2"
+    onclick="generateD854Report()"
+  >
+    📄 تقرير احترافي
   </button>
 </div>
 
@@ -3970,6 +4090,20 @@
   </div>
 </div>
 
+<!-- ===== D854 SPECIFIC GRAVITY REPORT MODAL ===== -->
+<div id="d854ReportModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:9999;overflow-y:auto;">
+  <div style="max-width:860px;margin:20px auto;background:white;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+    <div style="background:linear-gradient(135deg,#713f12,#a16207);color:white;padding:14px 20px;border-radius:12px 12px 0 0;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:1rem;font-weight:700;font-family:Cairo,sans-serif;">📄 Professional Report — Specific Gravity | ASTM D854</span>
+      <div style="display:flex;gap:8px;">
+        <button onclick="document.querySelector('#d854ReportContent iframe').contentWindow.print()" style="background:#10b981;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-family:Cairo,sans-serif;font-weight:600;font-size:.85rem;">🖨️ Print</button>
+        <button onclick="document.getElementById('d854ReportModal').style.display='none'" style="background:#ef4444;color:white;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:1.1rem;line-height:1;">✕</button>
+      </div>
+    </div>
+    <div id="d854ReportContent" style="padding:0;"></div>
+  </div>
+</div>
+
 <!-- ===== PROCTOR D1557 REPORT MODAL ===== -->
 <div id="proctorReportModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:9999;overflow-y:auto;">
   <div style="max-width:900px;margin:20px auto;background:white;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
@@ -4004,10 +4138,107 @@
     </footer>
 
     <script>
-  // =============================================
-// TAB SWITCHING
-// =============================================
-let currentTab = 'D6913';
+  // ============================================================
+  // GLOBAL PROJECT INFO — بيانات المشروع المشتركة
+  // ============================================================
+
+  // Custom fields counter
+  let gpiCustomCount = 0;
+
+  // Returns value of a global project field (fixed or custom)
+  function getGPI(key) {
+    const el = document.getElementById('gpi_' + key);
+    if (el) return el.value.trim() || '—';
+    // search custom fields
+    const customs = document.querySelectorAll('[data-gpi-key]');
+    for (const c of customs) {
+      if (c.dataset.gpiKey === key) return c.value.trim() || '—';
+    }
+    return '—';
+  }
+
+  // Returns object with ALL global project info (fixed + custom)
+  function getAllGPI() {
+    const data = {
+      project    : getGPI('project'),
+      client     : getGPI('client'),
+      location   : getGPI('location'),
+      reportNo   : getGPI('reportNo'),
+      sampleId   : getGPI('sampleId'),
+      engineer   : getGPI('engineer'),
+      testDate   : getGPI('testDate'),
+      reportDate : getGPI('reportDate'),
+      remarks    : getGPI('remarks'),
+      custom     : []
+    };
+    document.querySelectorAll('[data-gpi-key]').forEach(el => {
+      const label = el.closest('.gpi-custom-wrap')?.querySelector('.gpi-custom-label')?.value?.trim() || el.dataset.gpiKey;
+      const value = el.value.trim();
+      if (value) data.custom.push({ label, value });
+    });
+    return data;
+  }
+
+  function syncGlobalInfo() {
+    const st = document.getElementById('gpi_syncStatus');
+    if (st) { st.textContent = '✅ محفوظ'; setTimeout(() => { if(st) st.textContent=''; }, 1500); }
+  }
+
+  function clearGlobalInfo() {
+    if (!confirm('مسح جميع بيانات المشروع؟')) return;
+    ['project','client','location','reportNo','sampleId','engineer','testDate','reportDate','remarks']
+      .forEach(k => { const el=document.getElementById('gpi_'+k); if(el) el.value=''; });
+    document.getElementById('globalCustomFields').innerHTML = '';
+    gpiCustomCount = 0;
+  }
+
+  function toggleGlobalPanel() {
+    const body = document.getElementById('globalPanelBody');
+    const btn  = document.getElementById('globalPanelToggleBtn');
+    if (body.style.display === 'none') {
+      body.style.display = '';
+      btn.textContent = '▲ طيّ';
+    } else {
+      body.style.display = 'none';
+      btn.textContent = '▼ توسيع';
+    }
+  }
+
+  function addGlobalCustomField() {
+    gpiCustomCount++;
+    const id = 'gpi_custom_' + gpiCustomCount;
+    const container = document.getElementById('globalCustomFields');
+    const wrap = document.createElement('div');
+    wrap.className = 'gpi-custom-wrap';
+    wrap.style.cssText = 'display:flex;flex-direction:column;gap:4px;position:relative;';
+    wrap.innerHTML = `
+      <div style="display:flex;align-items:center;gap:4px;margin-bottom:2px;">
+        <input class="gpi-custom-label" type="text" placeholder="اسم الحقل..."
+          style="flex:1;border:1.5px solid #fbbf24;border-radius:5px;padding:3px 7px;font-size:.7rem;font-weight:700;color:#92400e;background:#fffbeb;">
+        <button onclick="this.closest('.gpi-custom-wrap').remove();syncGlobalInfo();"
+          style="background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;border-radius:5px;padding:2px 7px;cursor:pointer;font-size:.75rem;font-weight:700;">✕</button>
+      </div>
+      <input id="${id}" data-gpi-key="custom_${gpiCustomCount}" type="text"
+        placeholder="القيمة..."
+        oninput="syncGlobalInfo()"
+        style="width:100%;border:1.5px solid #fbbf24;border-radius:7px;padding:6px 10px;font-size:.78rem;background:white;">
+    `;
+    container.appendChild(wrap);
+  }
+
+  // Set today's date as default for test & report date
+  window.addEventListener('DOMContentLoaded', () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const td = document.getElementById('gpi_testDate');
+    const rd = document.getElementById('gpi_reportDate');
+    if (td && !td.value) td.value = today;
+    if (rd && !rd.value) rd.value = today;
+  });
+
+  // ============================================================
+  // TAB SWITCHING
+  // ============================================================
+  let currentTab = 'D6913';
 
 function switchTab(tab) {
     currentTab = tab;
@@ -9107,10 +9338,11 @@ async function generateCBRReport() {
   const ringUS      = getCBRUnitSystem(); // 'kN' or 'kg'
   const isSoaked    = document.getElementById('cbr_soaked')?.checked !== false;
   const g           = id => document.getElementById(id)?.value || '—';
-  const proj        = g('cbr_projectName');
-  const sampleId    = g('cbr_sampleId');
-  const engineer    = g('cbr_engineer');
-  const testDate    = g('cbr_testDate');
+  const gpi         = getAllGPI();
+  const proj        = gpi.project  !== '—' ? gpi.project  : g('cbr_projectName');
+  const sampleId    = gpi.sampleId !== '—' ? gpi.sampleId : g('cbr_sampleId');
+  const engineer    = gpi.engineer !== '—' ? gpi.engineer : g('cbr_engineer');
+  const testDate    = gpi.testDate !== '—' ? gpi.testDate : g('cbr_testDate');
   const ringNo      = g('cbr_ringNo');
   const rf          = g('cbr_ringFactor');
   const area        = g('cbr_pistonArea');
@@ -9180,7 +9412,7 @@ async function generateCBRReport() {
     const c02    = cbr02_val  !== null ? cbr02_val.toFixed(1)  : '—';
     const cf     = cbrFin_val !== null ? cbrFin_val.toFixed(1) : '—';
     const useP   = (cbr02_val !== null && cbr01_val !== null && cbr02_val > cbr01_val)
-                   ? '<span style="color:#dc2626;font-size:.7rem">★ يُستخدم 0.2″</span>' : '';
+                   ? '<span style="color:#dc2626;font-size:.7rem">★ Uses 0.2″</span>' : '';
     // Update cbrData with fresh values for summary
     if (p01raw > 0 || p02raw > 0) {
       cbrData[suf] = {...(cbrData[suf]||{}),
@@ -9216,15 +9448,15 @@ async function generateCBRReport() {
 
   // Build header row for penetration table
   let penHeader = `<tr>
-    <th rowspan="2">Pen. (in)<br>الاختراق</th>
-    <th rowspan="2">Pen. (mm)<br>الاختراق</th>`;
+    <th rowspan="2">Pen. (in)</th>
+    <th rowspan="2">Pen. (mm)</th>`;
   suffs.forEach(suf => {
     penHeader += `<th colspan="2" style="background:linear-gradient(135deg,${suf==='E1'?'#1e3a5f,#2d5a87':suf==='E2'?'#065f46,#047857':'#7c2d12,#b45309'});">
       ${suf} — ${blowsMap[suf]} blows</th>`;
   });
   penHeader += `</tr><tr>`;
   suffs.forEach(() => {
-    penHeader += `<th>Dial Reading<br>(div)</th><th>${pLabel}<br>الضغط</th>`;
+    penHeader += `<th>Dial Reading<br>(div)</th><th>${pLabel}<br>Pressure</th>`;
   });
   penHeader += `</tr>`;
 
@@ -9281,8 +9513,8 @@ async function generateCBRReport() {
   modal.style.display = 'block';
   content.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:18px;color:#1e3a5f;">
     <div style="font-size:2.5rem;">⏳</div>
-    <div style="font-size:1.1rem;font-weight:700;">جاري تجهيز التقرير...</div>
-    <div style="font-size:.85rem;color:#64748b;">يتم رسم الرسوم البيانية — Please wait</div>
+    <div style="font-size:1.1rem;font-weight:700;">Generating Report...</div>
+    <div style="font-size:.85rem;color:#64748b;">Rendering charts — Please wait</div>
   </div>`;
 
   // Force all charts to redraw — call twice to ensure hidden charts get rendered
@@ -9406,77 +9638,77 @@ async function generateCBRReport() {
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
 *{font-family:'Cairo',sans-serif;margin:0;padding:0;box-sizing:border-box;}
-body{background:#f1f5f9;color:#111;font-size:11.5px;}
-.page{width:210mm;min-height:297mm;margin:0 auto 20px;background:white;
-  padding:10mm 12mm 14mm;box-shadow:0 4px 20px rgba(0,0,0,.18);
-  page-break-after:always;position:relative;}
+body{background:#f1f5f9;color:#111;font-size:10.5px;}
+.page{width:210mm;height:297mm;margin:0 auto 20px;background:white;
+  padding:7mm 10mm 10mm;box-shadow:0 4px 20px rgba(0,0,0,.18);
+  page-break-after:always;position:relative;overflow:hidden;}
 .page:last-child{page-break-after:avoid;}
 
 /* Header */
-.hdr{display:flex;justify-content:space-between;align-items:flex-start;border:2px solid #111;padding:8px 12px;margin-bottom:0;}
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;border:2px solid #111;padding:6px 10px;margin-bottom:0;}
 .hdr-left{display:flex;flex-direction:column;justify-content:center;}
-.hdr-company{font-size:1.3rem;font-weight:900;letter-spacing:0.03em;color:#111;}
-.hdr-sub{font-size:.72rem;color:#444;margin-top:2px;}
+.hdr-company{font-size:1.2rem;font-weight:900;letter-spacing:0.03em;color:#111;}
+.hdr-sub{font-size:.68rem;color:#444;margin-top:1px;}
 .hdr-right{text-align:right;}
-.hdr-page{font-size:.82rem;font-weight:700;color:#111;}
-.hdr-title{font-size:1.05rem;font-weight:900;text-align:center;background:#f3f4f6;border:2px solid #111;border-top:0;padding:6px;margin-bottom:0;letter-spacing:.04em;}
+.hdr-page{font-size:.78rem;font-weight:700;color:#111;}
+.hdr-title{font-size:1rem;font-weight:900;text-align:center;background:#f3f4f6;border:2px solid #111;border-top:0;padding:5px;margin-bottom:0;letter-spacing:.04em;}
 
 /* Info table */
 .info-table{width:100%;border-collapse:collapse;border:1.5px solid #111;margin-bottom:0;}
-.info-table td{border:1px solid #555;padding:4px 7px;font-size:.78rem;}
-.info-table .lbl{font-weight:700;white-space:nowrap;width:140px;background:#f9fafb;}
-.info-table .val{min-width:120px;}
+.info-table td{border:1px solid #555;padding:3px 6px;font-size:.73rem;}
+.info-table .lbl{font-weight:700;white-space:nowrap;width:130px;background:#f9fafb;}
+.info-table .val{min-width:110px;}
 
 /* Section headers */
 .sec-hdr{background:#e5e7eb;border:1.5px solid #111;border-top:0;
-  padding:5px 10px;font-size:.85rem;font-weight:900;letter-spacing:.02em;margin-bottom:0;}
+  padding:3px 8px;font-size:.78rem;font-weight:900;letter-spacing:.02em;margin-bottom:0;}
 .sec-hdr-inline{display:flex;align-items:center;gap:6px;}
 
 /* Data table */
 .data-table{width:100%;border-collapse:collapse;border:1.5px solid #111;border-top:0;}
-.data-table th{background:#e5e7eb;border:1px solid #555;padding:5px 4px;
-  text-align:center;font-size:.72rem;font-weight:800;line-height:1.3;}
-.data-table td{border:1px solid #888;padding:4px 5px;text-align:center;
-  font-size:.75rem;vertical-align:middle;line-height:1.4;}
+.data-table th{background:#e5e7eb;border:1px solid #555;padding:3px 3px;
+  text-align:center;font-size:.66rem;font-weight:800;line-height:1.2;}
+.data-table td{border:1px solid #888;padding:3px 4px;text-align:center;
+  font-size:.69rem;vertical-align:middle;line-height:1.3;}
 .data-table tr:nth-child(even) td{background:#fafafa;}
 .data-table td.hl{background:#fef9c3;font-weight:700;}
-.data-table td.cbr-val{background:#dbeafe;font-weight:900;font-size:.9rem;color:#1d4ed8;}
+.data-table td.cbr-val{background:#dbeafe;font-weight:900;font-size:.85rem;color:#1d4ed8;}
 
 /* Summary box */
-.summary-box{border:2px solid #1d4ed8;border-radius:8px;background:linear-gradient(135deg,#eff6ff,#dbeafe);
-  display:flex;align-items:stretch;margin:10px 0;}
-.sum-card{flex:1;text-align:center;padding:10px 8px;border-right:1px solid #93c5fd;}
+.summary-box{border:2px solid #1d4ed8;border-radius:6px;background:linear-gradient(135deg,#eff6ff,#dbeafe);
+  display:flex;align-items:stretch;margin:5px 0;}
+.sum-card{flex:1;text-align:center;padding:7px 6px;border-right:1px solid #93c5fd;}
 .sum-card:last-child{border-right:none;}
-.sum-cbr{font-size:1.85rem;font-weight:900;color:#1d4ed8;line-height:1;}
-.sum-lbl{font-size:.66rem;font-weight:700;color:#1e40af;margin-top:3px;}
-.sum-detail{font-size:.62rem;color:#475569;margin-top:4px;line-height:1.5;}
+.sum-cbr{font-size:1.6rem;font-weight:900;color:#1d4ed8;line-height:1;}
+.sum-lbl{font-size:.62rem;font-weight:700;color:#1e40af;margin-top:2px;}
+.sum-detail{font-size:.58rem;color:#475569;margin-top:3px;line-height:1.4;}
 
 /* Note boxes */
 .note{border-right:4px solid #3b82f6;background:#eff6ff;border-radius:0 6px 6px 0;
-  padding:6px 10px;margin:8px 0;font-size:.68rem;color:#1e40af;line-height:1.5;}
+  padding:4px 8px;margin:5px 0;font-size:.63rem;color:#1e40af;line-height:1.4;}
 .warn{border-right:4px solid #f59e0b;background:#fffbeb;border-radius:0 6px 6px 0;
-  padding:6px 10px;margin:8px 0;font-size:.68rem;color:#92400e;line-height:1.5;}
+  padding:4px 8px;margin:5px 0;font-size:.63rem;color:#92400e;line-height:1.4;}
 
 /* Chart container */
 .chart-wrap{border:1.5px solid #111;border-top:0;}
-.chart-hdr{background:#e5e7eb;border-bottom:1px solid #555;padding:5px 10px;font-size:.78rem;font-weight:700;}
+.chart-hdr{background:#e5e7eb;border-bottom:1px solid #555;padding:3px 8px;font-size:.7rem;font-weight:700;}
 .chart-img{width:100%;display:block;}
-.chart-placeholder{height:200px;display:flex;align-items:center;justify-content:center;
-  background:#f8fafc;color:#94a3b8;font-size:.82rem;flex-direction:column;gap:6px;}
+.chart-placeholder{height:160px;display:flex;align-items:center;justify-content:center;
+  background:#f8fafc;color:#94a3b8;font-size:.78rem;flex-direction:column;gap:6px;}
 .chart-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:0;}
 
 /* Signatures */
-.sign-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
-.sign-box{border:1.5px dashed #94a3b8;border-radius:7px;padding:16px;
-  text-align:center;color:#64748b;font-size:.72rem;line-height:2;}
+.sign-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
+.sign-box{border:1.5px dashed #94a3b8;border-radius:6px;padding:10px;
+  text-align:center;color:#64748b;font-size:.68rem;line-height:1.8;}
 
 /* Footer */
-.footer{position:absolute;bottom:8mm;left:12mm;right:12mm;
-  border-top:1px solid #cbd5e1;padding-top:5px;
-  display:flex;justify-content:space-between;font-size:.6rem;color:#94a3b8;}
+.footer{position:absolute;bottom:6mm;left:10mm;right:10mm;
+  border-top:1px solid #cbd5e1;padding-top:4px;
+  display:flex;justify-content:space-between;font-size:.58rem;color:#94a3b8;}
 
 /* Condition pills */
-.pill{display:inline-block;border-radius:20px;padding:3px 9px;font-size:.65rem;font-weight:700;margin:2px 2px;}
+.pill{display:inline-block;border-radius:20px;padding:2px 8px;font-size:.62rem;font-weight:700;margin:1px 2px;}
 .p-blue{background:#dbeafe;color:#1d4ed8;border:1px solid #93c5fd;}
 .p-amber{background:#fef3c7;color:#92400e;border:1px solid #fcd34d;}
 .p-green{background:#dcfce7;color:#166534;border:1px solid #86efac;}
@@ -9485,8 +9717,9 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
 
 @media print{
   body{background:white;}
-  .page{margin:0;box-shadow:none;padding:8mm 10mm 12mm;}
+  .page{margin:0;box-shadow:none;padding:6mm 9mm 9mm;height:297mm;overflow:hidden;}
   .no-print{display:none!important;}
+  @page{size:A4 portrait;margin:0;}
 }
 </style>
 </head>
@@ -9496,17 +9729,17 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
 <div class="page">
 
   <!-- Report Title with page number -->
-  <div style="display:flex;justify-content:space-between;align-items:center;border:2px solid #111;padding:7px 14px;margin-bottom:0;">
-    <div style="font-size:1.1rem;font-weight:900;letter-spacing:.04em;">CBR TEST REPORT (ASTM D1883–16)</div>
-    <div style="font-size:.82rem;font-weight:700;white-space:nowrap;">Page 1 of 2</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;border:2px solid #111;padding:5px 12px;margin-bottom:0;">
+    <div style="font-size:1.05rem;font-weight:900;letter-spacing:.04em;">CBR TEST REPORT (ASTM D1883–16)</div>
+    <div style="font-size:.78rem;font-weight:700;white-space:nowrap;">Page 1 of 2</div>
   </div>
 
   <!-- 1. Project Info -->
-  <div class="sec-hdr">1. PROJECT INFORMATION — بيانات المشروع</div>
+  <div class="sec-hdr">1. PROJECT INFORMATION</div>
   <table class="info-table">
     <tr>
       <td class="lbl">Project Name</td><td class="val">${proj}</td>
-      <td class="lbl">Report Date</td><td class="val">${now.split('،')[0]}</td>
+      <td class="lbl">Report Date</td><td class="val">${now}</td>
     </tr>
     <tr>
       <td class="lbl">Client / Contractor</td><td class="val">—</td>
@@ -9518,7 +9751,7 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
     </tr>
     <tr>
       <td class="lbl">Condition</td>
-      <td class="val"><span class="${isSoaked?'pill p-blue':'pill p-amber'}">${isSoaked?'💧 Soaked — منقوع':'🏜️ Unsoaked — جاف'}</span></td>
+      <td class="val"><span class="${isSoaked?'pill p-blue':'pill p-amber'}">${isSoaked?'💧 Soaked':'🏜️ Unsoaked'}</span></td>
       <td class="lbl">Proctor Reference</td>
       <td class="val">${proctorStd} | MDD = ${MDD} g/cm³ | OMC = ${OMC}%</td>
     </tr>
@@ -9533,7 +9766,7 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
   </table>
 
   <!-- 2. Equipment Traceability -->
-  <div class="sec-hdr" style="margin-top:8px;">2. EQUIPMENT TRACEABILITY (ISO 17025) — بيانات الأجهزة</div>
+  <div class="sec-hdr" style="margin-top:5px;">2. EQUIPMENT TRACEABILITY (ISO 17025)</div>
   <table class="info-table">
     <tr>
       <td class="lbl">CBR Machine ID</td><td class="val">—</td>
@@ -9554,7 +9787,7 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
   </table>
 
   <!-- Standard Pressures note -->
-  <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:4px;padding:5px 10px;margin:6px 0;font-size:.7rem;color:#166534;">
+  <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:4px;padding:3px 8px;margin:4px 0;font-size:.67rem;color:#166534;">
     <strong>Standard Stresses:</strong>
     @ 0.1″ (2.54mm) = <strong>${ringUS==='kg' ? '70 kg/cm²' : '1000 psi = 6895 kPa'}</strong>
     &nbsp;|&nbsp; @ 0.2″ (5.08mm) = <strong>${ringUS==='kg' ? '105 kg/cm²' : '1500 psi = 10342 kPa'}</strong>
@@ -9562,34 +9795,34 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
   </div>
 
   <!-- 3. Unit Weight, Swell & Compaction -->
-  <div class="sec-hdr" style="margin-top:6px;">3. UNIT WEIGHT, SWELL &amp; COMPACTION — الكثافة والانتفاش ونسبة الدمك</div>
+  <div class="sec-hdr" style="margin-top:3px;">3. UNIT WEIGHT, SWELL &amp; COMPACTION</div>
   <table class="data-table">
     <thead><tr>
-      <th>Specimen<br>القالب</th>
-      <th>Dry Unit Weight (Primary)<br>الكثافة الجافة</th>
+      <th>Specimen</th>
+      <th>Dry Unit Weight (Primary)</th>
       <th style="font-size:.65rem;">All Units<br>g/cm³ | kN/m³ | pcf</th>
-      <th>Swell %<br>انتفاش</th>
-      <th>% Compaction<br>نسبة الدمك</th>
+      <th>Swell %</th>
+      <th>% Compaction</th>
       <th>w% Top 1″<br>After Soak</th>
     </tr></thead>
-    <tbody>${densityRows || '<tr><td colspan="6" style="color:#94a3b8;padding:12px;">لا توجد بيانات — No data entered</td></tr>'}</tbody>
+    <tbody>${densityRows || '<tr><td colspan="6" style="color:#94a3b8;padding:12px;">No data entered</td></tr>'}</tbody>
   </table>
 
   <!-- Density & Swell charts — inline Canvas, rendered fresh in iframe -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:7px;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:5px;">
     <div style="border:1.5px solid #555;border-radius:4px;overflow:hidden;">
-      <div class="chart-hdr" style="border:none;border-bottom:1px solid #777;">Dry Density vs Blows — الكثافة الجافة</div>
-      <div style="background:white;padding:6px;height:240px;"><canvas id="rpt_densChart"></canvas></div>
+      <div class="chart-hdr" style="border:none;border-bottom:1px solid #777;">Dry Density vs Blows per Layer</div>
+      <div style="background:white;padding:4px;height:225px;"><canvas id="rpt_densChart"></canvas></div>
     </div>
     <div style="border:1.5px solid #555;border-radius:4px;overflow:hidden;">
-      <div class="chart-hdr" style="border:none;border-bottom:1px solid #777;">Swell % vs Blows — الانتفاش</div>
-      <div style="background:white;padding:6px;height:240px;"><canvas id="rpt_swellChart"></canvas></div>
+      <div class="chart-hdr" style="border:none;border-bottom:1px solid #777;">Swell % vs Blows per Layer</div>
+      <div style="background:white;padding:4px;height:225px;"><canvas id="rpt_swellChart"></canvas></div>
     </div>
   </div>
 
   <div class="footer">
     <span>ASTM D1883-16 | Std: 1000 psi @ 0.1″ | 1500 psi @ 0.2″</span>
-    <span>Page 1 / 2 — صفحة 1 / 2</span>
+    <span>Page 1 of 2</span>
   </div>
 </div>
 
@@ -9597,49 +9830,49 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
 <div class="page">
 
   <!-- Page 2 Title with page number -->
-  <div style="display:flex;justify-content:space-between;align-items:center;border:2px solid #111;padding:7px 14px;margin-bottom:0;">
-    <div style="font-size:1.0rem;font-weight:900;letter-spacing:.03em;">PENETRATION DATA &amp; CBR RESULTS — بيانات الاختراق ونتائج CBR</div>
-    <div style="font-size:.82rem;font-weight:700;white-space:nowrap;">Page 2 of 2</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;border:2px solid #111;padding:5px 12px;margin-bottom:0;">
+    <div style="font-size:.95rem;font-weight:900;letter-spacing:.03em;">PENETRATION DATA &amp; CBR RESULTS</div>
+    <div style="font-size:.78rem;font-weight:700;white-space:nowrap;">Page 2 of 2</div>
   </div>
 
   <!-- Penetration Data Table -->
-  <div class="sec-hdr" style="margin-top:0;">PENETRATION TEST DATA — بيانات الاختراق الكاملة (11 نقطة)</div>
+  <div class="sec-hdr" style="margin-top:0;">PENETRATION TEST DATA — 11 Points</div>
   <p style="font-size:.62rem;color:#6b7280;padding:3px 6px;border:1px solid #e2e8f0;border-top:0;margin-bottom:0;">
     Rate = 0.05 in/min (1.27 mm/min) | ★ = Standard points for CBR | Piston: ${area} cm² (3.0 in²)
   </p>
   <table class="data-table">
     <thead>${penHeader}</thead>
-    <tbody>${penRows || '<tr><td colspan="8" style="color:#94a3b8;padding:10px;">لا توجد بيانات</td></tr>'}</tbody>
+    <tbody>${penRows || '<tr><td colspan="8" style="color:#94a3b8;padding:10px;">No data entered</td></tr>'}</tbody>
   </table>
 
   <!-- CBR Results -->
-  <div class="sec-hdr" style="margin-top:8px;">CBR VALUE CALCULATION — حسابات نسبة تحمل التربة</div>
+  <div class="sec-hdr" style="margin-top:5px;">CBR VALUE CALCULATION</div>
   <table class="data-table">
     <thead><tr>
-      <th>Specimen<br>القالب</th>
-      <th>Stress @ 0.1″ (2.54mm)<br>ضغط</th>
+      <th>Specimen</th>
+      <th>Stress @ 0.1″ (2.54mm)</th>
       <th>CBR @ 0.1″<br>(Std: 1000 psi)</th>
-      <th>Stress @ 0.2″ (5.08mm)<br>ضغط</th>
+      <th>Stress @ 0.2″ (5.08mm)</th>
       <th>CBR @ 0.2″<br>(Std: 1500 psi)</th>
-      <th>Final CBR ✅<br>النهائي</th>
+      <th>Final CBR ✅</th>
     </tr></thead>
-    <tbody>${cbrRows || '<tr><td colspan="6" style="color:#94a3b8;padding:12px;">لا توجد بيانات — No data entered</td></tr>'}</tbody>
+    <tbody>${cbrRows || '<tr><td colspan="6" style="color:#94a3b8;padding:12px;">No data entered</td></tr>'}</tbody>
   </table>
 
   <!-- Summary Banner -->
-  <div class="summary-box" style="margin:7px 0;">${summaryHtml || '<div style="flex:1;text-align:center;color:#94a3b8;padding:14px;">لا توجد نتائج — No results</div>'}</div>
+  <div class="summary-box" style="margin:7px 0;">${summaryHtml || '<div style="flex:1;text-align:center;color:#94a3b8;padding:14px;">No results</div>'}</div>
 
   <!-- Stress-Penetration Chart (main) — inline Canvas -->
-  <div class="sec-hdr" style="margin-top:6px;">LOAD-PENETRATION CURVES — منحنيات الإجهاد-الاختراق</div>
-  <div style="border:1.5px solid #555;border-radius:4px;overflow:hidden;margin-bottom:7px;">
+  <div class="sec-hdr" style="margin-top:5px;">LOAD-PENETRATION CURVES</div>
+  <div style="border:1.5px solid #555;border-radius:4px;overflow:hidden;margin-bottom:5px;">
     <div class="chart-hdr">Stress vs Penetration | Unit: ${pUnit_chart} vs mm | Standard lines: 2.54mm (0.1″) &amp; 5.08mm (0.2″)</div>
-    <div style="background:white;padding:6px;height:200px;"><canvas id="rpt_penChart"></canvas></div>
+    <div style="background:white;padding:4px;height:165px;"><canvas id="rpt_penChart"></canvas></div>
   </div>
 
   <!-- CBR vs Density chart — inline Canvas -->
-  <div style="border:1.5px solid #555;border-radius:4px;overflow:hidden;margin-bottom:8px;">
-    <div class="chart-hdr">CBR% vs Dry Unit Weight (g/cm³) — تصميم قيمة CBR</div>
-    <div style="background:white;padding:6px;height:120px;"><canvas id="rpt_cbrDensChart"></canvas></div>
+  <div style="border:1.5px solid #555;border-radius:4px;overflow:hidden;margin-bottom:6px;">
+    <div class="chart-hdr">CBR% vs Dry Unit Weight (g/cm³)</div>
+    <div style="background:white;padding:4px;height:100px;"><canvas id="rpt_cbrDensChart"></canvas></div>
   </div>
 
   <!-- Acceptance & Signatures -->
@@ -9650,12 +9883,12 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
 
   <div class="sign-grid">
     <div class="sign-box">
-      🔬 Quality Manager / مدير الجودة<br><br>
+      🔬 Quality Manager<br><br>
       Signature: ______________________<br>
       Date: ____________________________
     </div>
     <div class="sign-box">
-      ⚙️ Technical Manager / المدير الفني<br><br>
+      ⚙️ Technical Manager<br><br>
       Signature: ______________________<br>
       Date: ____________________________
     </div>
@@ -9663,7 +9896,7 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
 
   <div class="footer">
     <span>ASTM D1883-16 | California Bearing Ratio Test</span>
-    <span>Page 2 / 2 — صفحة 2 / 2</span>
+    <span>Page 2 of 2</span>
   </div>
 </div>
 
@@ -9672,7 +9905,7 @@ body{background:#f1f5f9;color:#111;font-size:11.5px;}
   <button onclick="window.print()" style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);
     color:white;padding:11px 30px;border:none;border-radius:8px;
     font-size:1rem;font-weight:700;cursor:pointer;">
-    🖨️ طباعة التقرير — Print Report
+    🖨️ Print Report
   </button>
 </div>
 
@@ -9770,14 +10003,15 @@ function generateProctorReport() {
   const gn  = id => { const v=parseFloat(document.getElementById(id)?.value); return isNaN(v)?null:v; };
 
   // ── Collect project info ──────────────────────────────────────
-  const proj        = g('prc_projectName')  || '—';
-  const reportNo    = g('prc_reportNo')     || '—';
-  const reportDate  = g('prc_reportDate')   || '—';
-  const client      = g('prc_client')       || '—';
-  const sampleId    = g('proctor_sampleId') || '—';
-  const sampleDate  = g('prc_sampleDate')   || '—';
-  const testDate    = g('proctor_testDate') || '—';
-  const location    = g('prc_location')     || '—';
+  const gpi_p     = getAllGPI();
+  const proj      = gpi_p.project    !== '—' ? gpi_p.project    : (g('prc_projectName')  || '—');
+  const reportNo  = gpi_p.reportNo   !== '—' ? gpi_p.reportNo   : (g('prc_reportNo')     || '—');
+  const reportDate= gpi_p.reportDate !== '—' ? gpi_p.reportDate : (g('prc_reportDate')   || '—');
+  const client    = gpi_p.client     !== '—' ? gpi_p.client     : (g('prc_client')       || '—');
+  const sampleId  = gpi_p.sampleId   !== '—' ? gpi_p.sampleId   : (g('proctor_sampleId') || '—');
+  const sampleDate= g('prc_sampleDate')   || '—';
+  const testDate  = gpi_p.testDate   !== '—' ? gpi_p.testDate   : (g('proctor_testDate') || '—');
+  const location  = gpi_p.location   !== '—' ? gpi_p.location   : (g('prc_location')     || '—');
   const depth       = g('prc_depth')        || '—';
   const sampleMass  = g('prc_sampleMass')   || '—';
   const asRecWC     = g('prc_asReceivedWC') || '—';
@@ -11531,11 +11765,16 @@ function generateD4318Report() {
 
     const isNP    = document.getElementById('isNonPlastic').checked;
     const method  = gv('d4318_method');
-    const sampleId= gv('d4318_sampleId');
-    const testDate= gv('d4318_testDate');
+    const gpi_d4  = getAllGPI();
+    const sampleId= gpi_d4.sampleId !== '—' ? gpi_d4.sampleId : gv('d4318_sampleId');
+    const testDate= gpi_d4.testDate  !== '—' ? gpi_d4.testDate  : gv('d4318_testDate');
+    const proj4   = gpi_d4.project   !== '—' ? gpi_d4.project   : '—';
+    const client4 = gpi_d4.client    !== '—' ? gpi_d4.client    : '—';
+    const engineer4= gpi_d4.engineer !== '—' ? gpi_d4.engineer  : '—';
+    const repNo4  = gpi_d4.reportNo  !== '—' ? gpi_d4.reportNo  : ('ATT-' + new Date().toISOString().slice(2,10).replace(/-/g,''));
     const classif = gt('d4318_classification');
     const today   = new Date().toLocaleDateString('en-GB', {year:'numeric',month:'long',day:'numeric'});
-    const repNo   = 'ATT-' + new Date().toISOString().slice(2,10).replace(/-/g,'');
+    const repNo   = repNo4;
     const LL_num  = isNP ? null : parseFloat(LL_val);
     const PL_num  = isNP ? null : parseFloat(PL_val);
     const PI_num  = isNP ? null : parseFloat(PI_val);
@@ -12040,6 +12279,402 @@ tr:last-child .rc{border-bottom:none;}
     win.focus();
 }
 
+</script>
+
+<script>
+// ===== D854 SPECIFIC GRAVITY PROFESSIONAL REPORT =====
+function generateD854Report() {
+
+  // ── Collect project info ──────────────────────────────────────
+  const gpi       = getAllGPI();
+  const proj      = gpi.project   !== '—' ? gpi.project   : (document.getElementById('cbr_project')?.value  || document.getElementById('projectName')?.value  || '—');
+  const sampleId  = gpi.sampleId  !== '—' ? gpi.sampleId  : (document.getElementById('cbr_sampleId')?.value || document.getElementById('sampleID')?.value      || '—');
+  const engineer  = gpi.engineer  !== '—' ? gpi.engineer  : (document.getElementById('cbr_engineer')?.value || document.getElementById('engineerName')?.value  || '—');
+  const testDate  = gpi.testDate  !== '—' ? gpi.testDate  : (document.getElementById('cbr_testDate')?.value || new Date().toLocaleDateString('en-GB') || '—');
+  const repNo     = gpi.reportNo  !== '—' ? gpi.reportNo  : (document.getElementById('cbr_reportNo')?.value || '—');
+  const client    = gpi.client    !== '—' ? gpi.client    : '—';
+  const location  = gpi.location  !== '—' ? gpi.location  : '—';
+  const gpiCustomRows = gpi.custom.length ? gpi.custom.map(c =>
+    `<tr><td class="lbl">${c.label}</td><td colspan="3">${c.value}</td></tr>`).join('') : '';
+
+  // ── Collect D854 inputs ───────────────────────────────────────
+  const T_val    = document.getElementById('d854_T')?.value     || '';
+  const W1_val   = document.getElementById('d854_W1_in')?.value || '';
+  const Mp_val   = document.getElementById('d854_Mp')?.value    || '';
+  const Vp_val   = document.getElementById('d854_Vp')?.value    || '';
+  const Mpws_val = document.getElementById('d854_Mpws')?.value  || '';
+  const Ms_val   = document.getElementById('d854_Ms')?.value    || '';
+  const mode     = d854Mode; // 'W1' or 'MpVp'
+  const ambTemp_val  = document.getElementById('d854_ambTemp')?.value  || '—';
+  const humidity_val = document.getElementById('d854_humidity')?.value || '—';
+
+  // ── Collect D854 results ──────────────────────────────────────
+  const W1_res  = document.getElementById('d854_W1')?.textContent  || '—';
+  const W2_res  = document.getElementById('d854_W2')?.textContent  || '—';
+  const Ws_res  = document.getElementById('d854_Ws')?.textContent  || '—';
+  const Ww_res  = document.getElementById('d854_Ww')?.textContent  || '—';
+  const Gt_res  = document.getElementById('d854_Gt')?.textContent  || '—';
+  const G20_res = document.getElementById('d854_G20')?.textContent || '—';
+
+  // ── Compute K factor from temperature for display ─────────────
+  const T = parseFloat(T_val);
+  const K_val = !isNaN(T) ? getTemperatureCoefficient(T).toFixed(5) : '—';
+  const rhoW_val = !isNaN(T) ? getWaterDensity(T).toFixed(6) : '—';
+
+  // ── Acceptance check per ASTM D854 §10 ───────────────────────
+  const G20_num = parseFloat(G20_res);
+  let acceptStatus = '—', acceptColor = '#94a3b8';
+  if (!isNaN(G20_num)) {
+    if (G20_num >= 2.60 && G20_num <= 2.80) {
+      acceptStatus = '✅ Within typical range (2.60 – 2.80)';
+      acceptColor = '#16a34a';
+    } else if (G20_num >= 2.40 && G20_num < 2.60) {
+      acceptStatus = '⚠️ Low — verify (organic or lightweight minerals)';
+      acceptColor = '#d97706';
+    } else if (G20_num > 2.80 && G20_num <= 3.00) {
+      acceptStatus = '⚠️ High — verify (heavy minerals)';
+      acceptColor = '#d97706';
+    } else {
+      acceptStatus = '❌ Outside normal range — recheck';
+      acceptColor = '#dc2626';
+    }
+  }
+
+  // ── Date ──────────────────────────────────────────────────────
+  const today = new Date().toLocaleDateString('en-GB', {day:'2-digit',month:'long',year:'numeric'});
+
+  const reportHTML = `<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<title>Specific Gravity Report — ASTM D854</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+*{font-family:'Cairo',sans-serif;margin:0;padding:0;box-sizing:border-box;}
+body{background:#f1f5f9;color:#111;font-size:8.5px;}
+.page{width:210mm;min-height:297mm;margin:0 auto 20px;background:white;
+  padding:5mm 8mm 5mm;box-shadow:0 4px 20px rgba(0,0,0,.18);}
+
+/* ── Header ── */
+.rpt-title-bar{display:flex;justify-content:space-between;align-items:center;
+  border:2px solid #111;padding:4px 10px;
+  background:linear-gradient(135deg,#fef3c7,#fde68a);}
+.rpt-title{font-size:.88rem;font-weight:900;letter-spacing:.02em;color:#111;}
+.rpt-page{font-size:.68rem;font-weight:700;color:#555;}
+
+/* ── Section header ── */
+.sec{background:#e5e7eb;border:1.5px solid #111;border-top:0;
+  padding:1.5px 8px;font-size:.68rem;font-weight:900;margin-bottom:0;}
+
+/* ── Info table ── */
+.info-tbl{width:100%;border-collapse:collapse;border:1.5px solid #111;}
+.info-tbl td{border:1px solid #555;padding:2px 6px;font-size:.66rem;line-height:1.3;}
+.info-tbl .lbl{font-weight:700;background:#f9fafb;width:130px;white-space:nowrap;}
+
+/* ── Data table ── */
+.dtbl{width:100%;border-collapse:collapse;border:1.5px solid #111;border-top:0;}
+.dtbl th{background:#e5e7eb;border:1px solid #555;padding:2px 4px;
+  text-align:center;font-size:.63rem;font-weight:800;}
+.dtbl td{border:1px solid #bbb;padding:1.5px 6px;font-size:.66rem;vertical-align:middle;line-height:1.3;}
+.dtbl td.center{text-align:center;}
+.dtbl td.formula{color:#475569;font-size:.57rem;display:block;margin-top:0;}
+.dtbl td.result{background:#fef9c3;font-weight:800;text-align:center;font-size:.78rem;color:#1d4ed8;}
+.dtbl td.final{background:linear-gradient(135deg,#dbeafe,#eff6ff);font-weight:900;
+  text-align:center;font-size:.88rem;color:#1e3a8a;border:2px solid #3b82f6;}
+
+/* ── Summary card ── */
+.summary-strip{display:flex;border:1.5px solid #b45309;border-radius:5px;
+  background:linear-gradient(135deg,#fef3c7,#fde68a);margin:4px 0;overflow:hidden;}
+.sum-item{flex:1;text-align:center;padding:4px 3px;border-right:1px solid #d97706;}
+.sum-item:last-child{border-right:none;}
+.sum-val{font-size:1.25rem;font-weight:900;color:#1e3a8a;line-height:1;}
+.sum-lbl{font-size:.55rem;font-weight:700;color:#713f12;margin-top:1px;}
+.sum-sub{font-size:.52rem;color:#92400e;}
+
+/* ── Acceptance box ── */
+.accept-box{border-radius:4px;padding:3px 8px;margin:3px 0;font-size:.63rem;font-weight:700;}
+
+/* ── Signatures ── */
+.sign-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:5px;}
+.sign-box{border:1.5px solid #94a3b8;border-radius:4px;padding:5px 8px;background:#fafafa;}
+.sign-title{display:block;font-size:.68rem;font-weight:800;color:#1e3a8a;
+  border-bottom:1px solid #cbd5e1;padding-bottom:2px;margin-bottom:4px;text-align:center;}
+.sign-row{display:flex;align-items:flex-end;gap:4px;margin-bottom:3px;
+  font-size:.62rem;color:#374151;font-weight:600;}
+.sign-row span{white-space:nowrap;}
+.sign-line{flex:1;border-bottom:1px solid #94a3b8;min-height:13px;}
+
+/* ── Footer ── */
+.footer{border-top:1px solid #cbd5e1;padding-top:2px;margin-top:5px;
+  display:flex;justify-content:space-between;font-size:.52rem;color:#94a3b8;}
+
+@media print{
+  body{background:white;}
+  .page{margin:0;box-shadow:none;padding:4mm 8mm 4mm;
+    width:210mm;height:297mm;overflow:hidden;}
+  .no-print{display:none!important;}
+  @page{size:A4 portrait;margin:0;}
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Title Bar -->
+  <div class="rpt-title-bar">
+    <div class="rpt-title">⚖️ SPECIFIC GRAVITY OF SOIL SOLIDS — TEST REPORT (ASTM D854)</div>
+    <div class="rpt-page">Page 1 of 1</div>
+  </div>
+
+  <!-- 1. Project Information -->
+  <div class="sec">1. PROJECT INFORMATION</div>
+  <table class="info-tbl" style="margin-bottom:0;">
+    <tr>
+      <td class="lbl">Project Name</td><td>${proj}</td>
+      <td class="lbl">Report No.</td><td>${repNo}</td>
+    </tr>
+    <tr>
+      <td class="lbl">Client</td><td>${client}</td>
+      <td class="lbl">Report Date</td><td>${today}</td>
+    </tr>
+    <tr>
+      <td class="lbl">Location</td><td>${location}</td>
+      <td class="lbl">Test Date</td><td>${testDate}</td>
+    </tr>
+    <tr>
+      <td class="lbl">Sample ID</td><td>${sampleId}</td>
+      <td class="lbl">Engineer</td><td>${engineer}</td>
+    </tr>
+    <tr>
+      <td class="lbl">Standard</td><td>ASTM D854 — Standard Test Methods for Specific Gravity of Soil Solids by Water Pycnometer</td>
+      <td class="lbl">Method</td><td>${mode === 'W1' ? 'Direct W₁ entry' : 'Pycnometer M<sub>p</sub> + V<sub>p</sub>'}</td>
+    </tr>
+    ${gpiCustomRows}
+  </table>
+
+  <!-- 2. Equipment & Apparatus -->
+  <div class="sec" style="margin-top:3px;">2. EQUIPMENT & APPARATUS (ISO 17025)</div>
+  <table class="info-tbl" style="margin-bottom:0;">
+    <tr>
+      <td class="lbl">Apparatus Type</td>
+      <td>Water Pycnometer (Flask) — Volumetric Flask or Specific Gravity Bottle</td>
+      <td class="lbl">Calibration Date</td><td>—</td>
+    </tr>
+    <tr>
+      <td class="lbl">Balance Precision</td><td>0.01 g (ASTM D854 §6.1)</td>
+      <td class="lbl">Thermometer Precision</td><td>0.1 °C</td>
+    </tr>
+    <tr>
+      <td class="lbl">Vacuum Pump / Boiling</td>
+      <td colspan="3">Applied for air removal per ASTM D854 §9 (de-airing)</td>
+    </tr>
+    <tr>
+      <td class="lbl">🌡️ Lab Ambient Temp.</td>
+      <td>${ambTemp_val}${ambTemp_val !== '—' ? ' °C' : ''}</td>
+      <td class="lbl">💧 Relative Humidity</td>
+      <td>${humidity_val}${humidity_val !== '—' ? ' %' : ''}</td>
+    </tr>
+  </table>
+
+  <!-- 3. Test Input Data -->
+  <div class="sec" style="margin-top:3px;">3. TEST INPUT DATA</div>
+  <table class="dtbl">
+    <thead><tr>
+      <th style="text-align:left;width:55%;">Parameter</th>
+      <th>Symbol</th>
+      <th>Value</th>
+      <th>Unit</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td>Test Temperature</td>
+        <td class="center">T</td>
+        <td class="center">${T_val || '—'}</td>
+        <td class="center">°C</td>
+      </tr>
+      <tr style="${mode === 'W1' ? '' : 'display:none;'}">
+        <td>Mass of Flask + Water to Mark (direct entry)</td>
+        <td class="center">W₁</td>
+        <td class="center">${W1_val || '—'}</td>
+        <td class="center">g</td>
+      </tr>
+      <tr style="${mode === 'MpVp' ? '' : 'display:none;'}">
+        <td>Dry Mass of Pycnometer</td>
+        <td class="center">M<sub>p</sub></td>
+        <td class="center">${Mp_val || '—'}</td>
+        <td class="center">g</td>
+      </tr>
+      <tr style="${mode === 'MpVp' ? '' : 'display:none;'}">
+        <td>Volume of Pycnometer</td>
+        <td class="center">V<sub>p</sub></td>
+        <td class="center">${Vp_val || '—'}</td>
+        <td class="center">mL</td>
+      </tr>
+      <tr>
+        <td>Mass of Pycnometer + Soil + Water to Mark</td>
+        <td class="center">M<sub>pws,T</sub></td>
+        <td class="center">${Mpws_val || '—'}</td>
+        <td class="center">g</td>
+      </tr>
+      <tr>
+        <td>Dry Mass of Soil</td>
+        <td class="center">M<sub>s</sub> (W<sub>s</sub>)</td>
+        <td class="center">${Ms_val || '—'}</td>
+        <td class="center">g</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 4. Calculation Results -->
+  <div class="sec" style="margin-top:3px;">4. CALCULATION RESULTS — ASTM D854 Equations</div>
+  <table class="dtbl">
+    <thead><tr>
+      <th style="text-align:left;width:50%;">Parameter / Equation</th>
+      <th>Symbol</th>
+      <th>Result</th>
+      <th>Unit</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td>Mass of Flask + Water to Mark<br>
+          <span class="formula">${mode === 'MpVp' ? `W₁ = Mₚ + Vₚ × ρw(T) = ${Mp_val} + ${Vp_val} × ${rhoW_val}` : 'Direct entry'}</span></td>
+        <td class="center">W₁</td>
+        <td class="result">${W1_res}</td>
+        <td class="center">g</td>
+      </tr>
+      <tr>
+        <td>Mass of Flask + Soil + Water to Mark</td>
+        <td class="center">W₂ = M<sub>pws,T</sub></td>
+        <td class="result">${W2_res}</td>
+        <td class="center">g</td>
+      </tr>
+      <tr>
+        <td>Dry Mass of Soil</td>
+        <td class="center">W<sub>s</sub></td>
+        <td class="result">${Ws_res}</td>
+        <td class="center">g</td>
+      </tr>
+      <tr>
+        <td>Mass of Equal Volume of Water as Soil Solids<br>
+          <span class="formula">W<sub>w</sub> = (W₁ + W<sub>s</sub>) − W₂</span></td>
+        <td class="center">W<sub>w</sub></td>
+        <td class="result">${Ww_res}</td>
+        <td class="center">g</td>
+      </tr>
+      <tr>
+        <td>Water Density at Test Temperature T<br>
+          <span class="formula">ρ<sub>w</sub>(${T_val}°C) — from ASTM D854 Table 2</span></td>
+        <td class="center">ρ<sub>w</sub>(T)</td>
+        <td class="result">${rhoW_val}</td>
+        <td class="center">g/mL</td>
+      </tr>
+      <tr>
+        <td>Temperature Correction Factor<br>
+          <span class="formula">K = ρ<sub>w</sub>(T) / ρ<sub>w</sub>(20°C) = ${rhoW_val} / 0.9982063</span></td>
+        <td class="center">K</td>
+        <td class="result">${K_val}</td>
+        <td class="center">—</td>
+      </tr>
+      <tr>
+        <td>Specific Gravity at Test Temperature<br>
+          <span class="formula">G<sub>s(T)</sub> = W<sub>s</sub> / W<sub>w</sub></span></td>
+        <td class="center">G<sub>s(T)</sub></td>
+        <td class="result">${Gt_res}</td>
+        <td class="center">—</td>
+      </tr>
+      <tr>
+        <td style="font-weight:800;">Specific Gravity at 20°C (Reported Value)<br>
+          <span class="formula">G<sub>s(20)</sub> = K × G<sub>s(T)</sub></span></td>
+        <td class="center" style="font-weight:800;">G<sub>s(20°C)</sub></td>
+        <td class="final">${G20_res}</td>
+        <td class="center" style="font-weight:800;">—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 5. Summary & Acceptance -->
+  <div class="summary-strip">
+    <div class="sum-item">
+      <div class="sum-val">${Gt_res}</div>
+      <div class="sum-lbl">G<sub>s</sub> at T = ${T_val}°C</div>
+      <div class="sum-sub">Uncorrected Value</div>
+    </div>
+    <div class="sum-item">
+      <div class="sum-val">${K_val}</div>
+      <div class="sum-lbl">K Factor</div>
+      <div class="sum-sub">Temperature Correction</div>
+    </div>
+    <div class="sum-item">
+      <div class="sum-val" style="font-size:2.1rem;">${G20_res}</div>
+      <div class="sum-lbl">G<sub>s(20°C)</sub> — Reported</div>
+      <div class="sum-sub">ASTM D854 §10 Result</div>
+    </div>
+    <div class="sum-item">
+      <div class="sum-val" style="font-size:.85rem;margin-top:6px;color:${acceptColor};">${acceptStatus.split(' ').slice(0,1).join('')}</div>
+      <div class="sum-lbl">Range Check</div>
+      <div class="sum-sub" style="color:${acceptColor};font-size:.62rem;">${acceptStatus.split(' ').slice(1).join(' ')}</div>
+    </div>
+  </div>
+
+  <!-- Acceptance note -->
+  <div class="accept-box" style="background:${G20_num>=2.60&&G20_num<=2.80?'#f0fdf4':'#fffbeb'};border:1.5px solid ${G20_num>=2.60&&G20_num<=2.80?'#86efac':'#fcd34d'};">
+    <span style="color:${acceptColor};">${acceptStatus}</span>
+    &nbsp;|&nbsp; <span style="color:#374151;font-weight:400;">Typical Gs range for natural soils: 2.60 – 2.80 (ASTM D854 §10 / Holtz & Kovacs)</span>
+  </div>
+
+  <!-- 5. Authorization -->
+  <div class="sec" style="margin-top:3px;">5. AUTHORIZATION & APPROVAL — ISO/IEC 17025:2017</div>
+  <div style="border:1px solid #e2e8f0;border-top:0;padding:3px 10px;font-size:.63rem;color:#6b7280;">
+    Prepared by: ${engineer}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Remarks: _______________________________________________
+  </div>
+  <div class="sign-grid">
+    <div class="sign-box">
+      <span class="sign-title">📋 Quality Manager</span>
+      <div class="sign-row"><span>Name:</span><div class="sign-line"></div></div>
+      <div class="sign-row"><span>Signature:</span><div class="sign-line"></div></div>
+      <div class="sign-row"><span>Date:</span><div class="sign-line"></div></div>
+    </div>
+    <div class="sign-box">
+      <span class="sign-title">⚙️ Technical Manager</span>
+      <div class="sign-row"><span>Name:</span><div class="sign-line"></div></div>
+      <div class="sign-row"><span>Signature:</span><div class="sign-line"></div></div>
+      <div class="sign-row"><span>Date:</span><div class="sign-line"></div></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>ASTM D854 — Specific Gravity of Soil Solids by Water Pycnometer</span>
+    <span style="font-weight:800;color:#111;">Page 1 of 1</span>
+    <span>FM-ATT-D854-01 · Rev.01 · ${new Date().toLocaleDateString('en-GB',{month:'long',year:'numeric'})}</span>
+  </div>
+
+</div>
+
+<!-- Print button -->
+<div class="no-print" style="text-align:center;padding:16px;background:#f1f5f9;">
+  <button onclick="window.print()" style="background:linear-gradient(135deg,#a16207,#d97706);
+    color:white;padding:11px 30px;border:none;border-radius:8px;
+    font-size:1rem;font-weight:700;cursor:pointer;">
+    🖨️ Print Report
+  </button>
+</div>
+
+</body>
+</html>`;
+
+  // ── Inject into modal ─────────────────────────────────────────
+  const modal   = document.getElementById('d854ReportModal');
+  const content = document.getElementById('d854ReportContent');
+  modal.style.display = 'block';
+
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'width:100%;height:82vh;border:none;border-radius:0 0 12px 12px;';
+  content.innerHTML = '';
+  content.appendChild(iframe);
+  const doc = iframe.contentDocument || iframe.contentWindow.document;
+  doc.open(); doc.write(reportHTML); doc.close();
+}
 </script>
 </body>
 </html>
