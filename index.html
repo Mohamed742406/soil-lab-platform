@@ -2139,6 +2139,9 @@
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
             📊 تصدير Excel
         </button>
+        <button onclick="generateD4318Report()" class="bg-gradient-to-r from-violet-700 to-purple-800 hover:from-violet-800 hover:to-purple-900 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg flex items-center gap-2 transition-all hover:transform hover:-translate-y-1">
+            🖨️ تقرير A4 — Print Report
+        </button>
     </div>
 
     <div id="d4318_validationMessages" class="mb-6"></div>
@@ -11504,6 +11507,539 @@ async function exportToExcel(mode) {
     }
 }
 /* END exportToExcel */
+
+// ══════════════════════════════════════════════════════════════════════
+// ATTERBERG LIMITS REPORT GENERATOR — ASTM D4318-17e1
+// LabCore Pro | تقرير حدود أتربرج
+// ══════════════════════════════════════════════════════════════════════
+function generateD4318Report() {
+
+    const LL_val = document.getElementById('d4318_LL_val').textContent.trim();
+    const PL_val = document.getElementById('d4318_PL_val').textContent.trim();
+    const PI_val = document.getElementById('d4318_PI_val').textContent.trim();
+
+    if (LL_val === '—' || LL_val === '') {
+        alert('⚠️ يرجى الضغط على "احسب" أولاً قبل فتح التقرير.');
+        return;
+    }
+
+    // ── Helpers ──────────────────────────────────────────────────────
+    const gv  = id => { const e = document.getElementById(id); return e ? (e.value || '—') : '—'; };
+    const gt  = id => { const e = document.getElementById(id); return e ? (e.textContent.trim() || '—') : '—'; };
+    const gn  = id => { const e = document.getElementById(id); return e ? (parseFloat(e.value) || 0) : 0; };
+    const gtf = id => { const t = gt(id); return (t === '—' || t === '') ? null : parseFloat(t); };
+
+    const isNP    = document.getElementById('isNonPlastic').checked;
+    const method  = gv('d4318_method');
+    const sampleId= gv('d4318_sampleId');
+    const testDate= gv('d4318_testDate');
+    const classif = gt('d4318_classification');
+    const today   = new Date().toLocaleDateString('en-GB', {year:'numeric',month:'long',day:'numeric'});
+    const repNo   = 'ATT-' + new Date().toISOString().slice(2,10).replace(/-/g,'');
+    const LL_num  = isNP ? null : parseFloat(LL_val);
+    const PL_num  = isNP ? null : parseFloat(PL_val);
+    const PI_num  = isNP ? null : parseFloat(PI_val);
+    const methodLabel = isNP ? 'Non-Plastic (NP)' :
+                        (method === 'A' ? 'Method A — Multipoint' : 'Method B — One-Point');
+
+    // ── LL Table Rows ─────────────────────────────────────────────────
+    const LL_COUNT = 4;
+    let llRows = '';
+    const llPts = [];
+    for (let i = 1; i <= LL_COUNT; i++) {
+        const N       = gn(`ll_N_${i}`);
+        const tare    = gn(`ll_tare_${i}`);
+        const wetTare = gn(`ll_wetTare_${i}`);
+        const dryTare = gn(`ll_dryTare_${i}`);
+        const water   = wetTare > 0 ? gt(`ll_water_${i}`) : '—';
+        const dry     = wetTare > 0 ? gt(`ll_drySoil_${i}`) : '—';
+        const wPct    = wetTare > 0 ? gt(`ll_w_${i}`) : '—';
+        const alt     = i % 2 === 0 ? '#f5f0ff' : '#fff';
+        llRows += `<tr style="background:${alt};">
+            <td class="rc" style="font-weight:700;color:#5b21b6;">${i}</td>
+            <td class="rc" style="font-weight:700;color:#1e3a5f;">${N || '—'}</td>
+            <td class="rc">${tare || '—'}</td>
+            <td class="rc">${wetTare || '—'}</td>
+            <td class="rc">${dryTare || '—'}</td>
+            <td class="rc" style="background:#fdf6b2;">${water}</td>
+            <td class="rc" style="background:#fdf6b2;">${dry}</td>
+            <td class="rc" style="background:#d1fae5;font-weight:700;color:#065f46;">${wPct}</td>
+        </tr>`;
+        if (N > 0 && wetTare > 0) {
+            const w = (wetTare - dryTare) / (dryTare - tare) * 100;
+            if (isFinite(w) && w > 0) llPts.push({ N, w });
+        }
+    }
+
+    // ── PL Table Rows ─────────────────────────────────────────────────
+    const PL_COUNT = 2;
+    let plRows = '';
+    const plVals = [];
+    for (let i = 1; i <= PL_COUNT; i++) {
+        const tare    = gn(`pl_tare_${i}`);
+        const wetTare = gn(`pl_wetTare_${i}`);
+        const dryTare = gn(`pl_dryTare_${i}`);
+        const water   = wetTare > 0 ? gt(`pl_water_${i}`) : '—';
+        const dry     = wetTare > 0 ? gt(`pl_drySoil_${i}`) : '—';
+        const wPct    = wetTare > 0 ? gt(`pl_w_${i}`) : '—';
+        const alt     = i % 2 === 0 ? '#fdf4ff' : '#fff';
+        plRows += `<tr style="background:${alt};">
+            <td class="rc" style="font-weight:700;color:#7c3aed;">${i}</td>
+            <td class="rc">${tare || '—'}</td>
+            <td class="rc">${wetTare || '—'}</td>
+            <td class="rc">${dryTare || '—'}</td>
+            <td class="rc" style="background:#fdf6b2;">${water}</td>
+            <td class="rc" style="background:#fdf6b2;">${dry}</td>
+            <td class="rc" style="background:#d1fae5;font-weight:700;color:#065f46;">${wPct}</td>
+        </tr>`;
+        if (wetTare > 0 && tare > 0) {
+            const w = (wetTare - dryTare) / (dryTare - tare) * 100;
+            if (isFinite(w) && w > 0) plVals.push(w);
+        }
+    }
+    const PL_avg = plVals.length ? plVals.reduce((a,b)=>a+b,0)/plVals.length : null;
+
+    // ── Flow Curve SVG ────────────────────────────────────────────────
+    function buildFlowCurve(pts, LL) {
+        const W=280, H=155, ml=36, mr=10, mt=14, mb=32;
+        const cw=W-ml-mr, ch=H-mt-mb;
+
+        // log scale: N from 10 to 50
+        const xS = N => ml + (Math.log10(N)-Math.log10(10))/(Math.log10(50)-Math.log10(10))*cw;
+        // y: water content, auto range
+        const allW = pts.map(p=>p.w);
+        const minW = Math.max(0, Math.floor(Math.min(...allW, LL||0) - 5));
+        const maxW = Math.ceil(Math.max(...allW, LL||0) + 5);
+        const yS = w => mt + ch - (w - minW)/(maxW - minW)*ch;
+
+        let s = '';
+        // Grid lines & Y ticks
+        for (let w = Math.ceil(minW/5)*5; w <= maxW; w+=5) {
+            const yv = yS(w);
+            s += `<line x1="${ml}" y1="${yv}" x2="${ml+cw}" y2="${yv}" stroke="#e0e7ff" stroke-width="0.5"/>`;
+            s += `<text x="${ml-2}" y="${yv+3}" text-anchor="end" font-size="6" fill="#555">${w}</text>`;
+        }
+        // X ticks (log)
+        [10,15,20,25,30,40,50].forEach(N => {
+            const xv = xS(N);
+            s += `<line x1="${xv}" y1="${mt+ch}" x2="${xv}" y2="${mt+ch+3}" stroke="#888" stroke-width="0.8"/>`;
+            s += `<text x="${xv}" y="${mt+ch+10}" text-anchor="middle" font-size="6" fill="#444">${N}</text>`;
+        });
+        // Border
+        s += `<rect x="${ml}" y="${mt}" width="${cw}" height="${ch}" fill="none" stroke="#a78bfa" stroke-width="1"/>`;
+        // Axis labels
+        s += `<text x="${ml+cw/2}" y="${H-1}" text-anchor="middle" font-size="6.5" fill="#4c1d95" font-weight="600">Number of Blows (N) — log scale</text>`;
+        s += `<text x="8" y="${mt+ch/2}" text-anchor="middle" font-size="6.5" fill="#4c1d95" font-weight="600" transform="rotate(-90,8,${mt+ch/2})">Water Content (%)</text>`;
+
+        // Best-fit line (if ≥2 pts and method A)
+        if (pts.length >= 2) {
+            const logN = pts.map(p => Math.log10(p.N));
+            const w    = pts.map(p => p.w);
+            const n    = pts.length;
+            const sumX = logN.reduce((a,b)=>a+b,0);
+            const sumY = w.reduce((a,b)=>a+b,0);
+            const sumXY= logN.reduce((s,x,i)=>s+x*w[i],0);
+            const sumX2= logN.reduce((s,x)=>s+x*x,0);
+            const slope = (n*sumXY - sumX*sumY)/(n*sumX2 - sumX*sumX);
+            const intc  = (sumY - slope*sumX)/n;
+            const x1 = xS(10), x2 = xS(50);
+            const y1 = yS(slope*Math.log10(10)+intc);
+            const y2 = yS(slope*Math.log10(50)+intc);
+            s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4,2"/>`;
+        }
+        // Data points
+        pts.forEach(p => {
+            const cx = xS(p.N), cy = yS(p.w);
+            s += `<circle cx="${cx}" cy="${cy}" r="4" fill="#7c3aed" stroke="#fff" stroke-width="1.2"/>`;
+            s += `<text x="${cx}" y="${cy-6}" text-anchor="middle" font-size="5.2" fill="#4c1d95">${p.w.toFixed(1)}%</text>`;
+        });
+        // LL vertical at N=25
+        if (LL) {
+            const xLL = xS(25), yLL = yS(LL);
+            s += `<line x1="${xLL}" y1="${mt}" x2="${xLL}" y2="${mt+ch}" stroke="#dc2626" stroke-width="1" stroke-dasharray="3,2"/>`;
+            s += `<circle cx="${xLL}" cy="${yLL}" r="5" fill="#dc2626" stroke="#fff" stroke-width="1.5"/>`;
+            s += `<text x="${xLL+6}" y="${yLL+3}" font-size="6" fill="#dc2626" font-weight="700">LL=${LL.toFixed(1)}%</text>`;
+        }
+        return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:155px;">${s}</svg>`;
+    }
+
+    // ── Plasticity Chart SVG (Casagrande) ────────────────────────────
+    function buildPlasticityChart(LL, PI) {
+        const W=280, H=155, ml=36, mr=10, mt=14, mb=32;
+        const cw=W-ml-mr, ch=H-mt-mb;
+        const xS = v => ml + (v/100)*cw;
+        const yS = v => mt + ch - (v/60)*ch;
+
+        let s = '';
+        // Grid
+        for (let x=0;x<=100;x+=20) {
+            const xv=xS(x);
+            s += `<line x1="${xv}" y1="${mt}" x2="${xv}" y2="${mt+ch}" stroke="#e0e7ff" stroke-width="0.5"/>`;
+            s += `<text x="${xv}" y="${mt+ch+10}" text-anchor="middle" font-size="6" fill="#555">${x}</text>`;
+        }
+        for (let y=0;y<=60;y+=10) {
+            const yv=yS(y);
+            s += `<line x1="${ml}" y1="${yv}" x2="${ml+cw}" y2="${yv}" stroke="#e0e7ff" stroke-width="0.5"/>`;
+            s += `<text x="${ml-2}" y="${yv+3}" text-anchor="end" font-size="6" fill="#555">${y}</text>`;
+        }
+        s += `<rect x="${ml}" y="${mt}" width="${cw}" height="${ch}" fill="none" stroke="#a78bfa" stroke-width="1"/>`;
+        // Zone labels
+        s += `<text x="${xS(30)}" y="${yS(18)}" font-size="5.5" fill="#9333ea" font-weight="600" text-anchor="middle">CL</text>`;
+        s += `<text x="${xS(70)}" y="${yS(35)}" font-size="5.5" fill="#1d4ed8" font-weight="600" text-anchor="middle">CH</text>`;
+        s += `<text x="${xS(30)}" y="${yS(6)}" font-size="5.5" fill="#64748b" font-weight="600" text-anchor="middle">ML/MH</text>`;
+        // A-Line: PI = 0.73(LL-20), LL≥20
+        const aLine = [];
+        for (let ll=20;ll<=100;ll+=2) { aLine.push({x:ll, y:0.73*(ll-20)}); }
+        const aPath = aLine.filter(p=>p.y>=0&&p.y<=60).map((p,i)=>`${i?'L':'M'}${xS(p.x).toFixed(1)},${yS(p.y).toFixed(1)}`).join(' ');
+        s += `<path d="${aPath}" fill="none" stroke="#7c3aed" stroke-width="1.4"/>`;
+        s += `<text x="${xS(78)}" y="${yS(42)}" font-size="5.5" fill="#7c3aed" font-weight="700" transform="rotate(-32,${xS(78)},${yS(42)})">A-Line</text>`;
+        // U-Line: PI = 0.9(LL-8)
+        const uLine = [];
+        for (let ll=8;ll<=100;ll+=2) { uLine.push({x:ll, y:0.9*(ll-8)}); }
+        const uPath = uLine.filter(p=>p.y>=0&&p.y<=60).map((p,i)=>`${i?'L':'M'}${xS(p.x).toFixed(1)},${yS(p.y).toFixed(1)}`).join(' ');
+        s += `<path d="${uPath}" fill="none" stroke="#6b7280" stroke-width="0.8" stroke-dasharray="4,2"/>`;
+        s += `<text x="${xS(60)}" y="${yS(50)}" font-size="5" fill="#6b7280" transform="rotate(-42,${xS(60)},${yS(50)})">U-Line</text>`;
+        // LL=50 vertical
+        s += `<line x1="${xS(50)}" y1="${mt}" x2="${xS(50)}" y2="${mt+ch}" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="3,2"/>`;
+        s += `<text x="${xS(50)+3}" y="${mt+8}" font-size="5" fill="#94a3b8">LL=50</text>`;
+        // Sample point
+        if (LL != null && PI != null && LL >= 0 && PI >= 0) {
+            const px = xS(LL), py = yS(PI);
+            s += `<circle cx="${px}" cy="${py}" r="5.5" fill="#dc2626" stroke="#fff" stroke-width="1.5"/>`;
+            s += `<text x="${px+7}" y="${py+3}" font-size="6" fill="#dc2626" font-weight="700">Sample</text>`;
+            s += `<text x="${px+7}" y="${py+10}" font-size="5.5" fill="#b91c1c">LL=${LL}, PI=${PI}</text>`;
+        }
+        // Axes
+        s += `<text x="${ml+cw/2}" y="${H-1}" text-anchor="middle" font-size="6.5" fill="#4c1d95" font-weight="600">Liquid Limit LL (%)</text>`;
+        s += `<text x="8" y="${mt+ch/2}" text-anchor="middle" font-size="6.5" fill="#4c1d95" font-weight="600" transform="rotate(-90,8,${mt+ch/2})">Plasticity Index PI (%)</text>`;
+        return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:155px;">${s}</svg>`;
+    }
+
+    const flowChartSVG = (!isNP && llPts.length >= 1)
+        ? buildFlowCurve(llPts, LL_num)
+        : `<div style="text-align:center;padding:20px;color:#888;font-size:7pt;">No LL data points entered</div>`;
+
+    const plastChartSVG = (!isNP && LL_num != null && PI_num != null)
+        ? buildPlasticityChart(LL_num, PI_num)
+        : `<div style="text-align:center;padding:20px;color:#888;font-size:7pt;">Non-Plastic soil — chart not applicable</div>`;
+
+    // ── USCS from classification text ────────────────────────────────
+    const uscsText = gt('sc_uscs_symbol') !== '—' ? gt('sc_uscs_symbol') : classif.split(' ')[0];
+
+    // ── Precision check ──────────────────────────────────────────────
+    const llPrec = llPts.length >= 2 ? (() => {
+        const ws = llPts.map(p=>p.w);
+        const diff = Math.max(...ws) - Math.min(...ws);
+        return diff <= 2.5 ? '✅ Pass' : '⚠️ Check';
+    })() : '—';
+    const plPrec = plVals.length >= 2 ? (() => {
+        const diff = Math.max(...plVals) - Math.min(...plVals);
+        return diff <= 2.4 ? '✅ Pass' : '⚠️ Check';
+    })() : '—';
+
+    // ── Build LI if possible ─────────────────────────────────────────
+    // LI requires natural water content (not available here, leave blank)
+
+    // ══════════════════════════════════════════════════════════════════
+    // Report HTML
+    // ══════════════════════════════════════════════════════════════════
+    const reportHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Atterberg Limits Report — ${sampleId}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#1e1b4b;--violet:#4c1d95;--purple:#7c3aed;--light:#ede9fe;
+  --mint:#d1fae5;--amber:#fef3c7;--line:#ddd6fe;--ink:#1e1b4b;
+  --calc:#f0fdf4;--hi:#c4b5fd;--fn:'Inter','Segoe UI',sans-serif;
+}
+body{font-family:var(--fn);font-size:7.4pt;color:var(--ink);background:#c4b5fd22;}
+.page{
+  width:210mm;min-height:297mm;max-height:297mm;background:#fff;
+  margin:6mm auto;padding:5mm 6mm;
+  box-shadow:0 6px 32px rgba(76,29,149,.2);
+  display:flex;flex-direction:column;gap:3px;overflow:hidden;
+}
+/* ── HEADER ── */
+.hdr{
+  display:grid;grid-template-columns:42px 1fr 108px;align-items:center;
+  background:var(--navy);border-radius:5px;padding:5px 10px;gap:10px;
+}
+.hdr-logo{
+  width:38px;height:38px;background:rgba(196,181,253,.18);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+}
+.hdr-mid{color:#fff;}
+.hdr-mid .lab{font-size:5.5pt;letter-spacing:1.8px;text-transform:uppercase;opacity:.7;margin-bottom:1px;}
+.hdr-mid .ttl{font-size:12pt;font-weight:800;letter-spacing:.2px;line-height:1.1;color:#c4b5fd;}
+.hdr-mid .sub{font-size:6pt;opacity:.8;margin-top:2px;}
+.hdr-right{text-align:right;color:#fff;}
+.hdr-right .lbl{font-size:5pt;opacity:.6;text-transform:uppercase;letter-spacing:.5px;}
+.hdr-right .val{font-size:7pt;font-weight:700;line-height:1.5;}
+.hdr-right .pg{font-size:7.5pt;font-weight:800;color:#c4b5fd;margin-top:2px;}
+/* ── SECTION TITLE ── */
+.st{display:flex;align-items:center;gap:5px;margin:3px 0 2px;}
+.st-bar{width:4px;border-radius:2px;height:12px;background:var(--purple);flex-shrink:0;}
+.st-lbl{font-size:6.5pt;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.6px;}
+.st-rule{flex:1;height:1px;background:var(--line);}
+.st-num{width:16px;height:16px;border-radius:50%;background:var(--purple);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:6pt;font-weight:800;flex-shrink:0;}
+/* ── PROJECT INFO GRID ── */
+.pi-grid{display:grid;gap:2px 6px;}
+.pi4{grid-template-columns:repeat(4,1fr);}
+.pi3{grid-template-columns:repeat(3,1fr);}
+.pf{display:flex;flex-direction:column;gap:1px;}
+.pf label{font-size:4.8pt;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.3px;}
+.pf .pv{border-bottom:1.5px solid var(--line);min-height:11px;font-size:6.5pt;color:var(--ink);padding:0 2px;line-height:11px;font-weight:500;}
+/* ── TABLES ── */
+.tbl-wrap{border:1px solid var(--line);border-radius:4px;overflow:hidden;margin-bottom:1px;}
+table{width:100%;border-collapse:collapse;font-size:7pt;table-layout:fixed;}
+thead tr th{background:var(--violet);color:#fff;text-align:center;padding:3px 2px;
+  font-size:6pt;font-weight:700;border-right:1px solid rgba(255,255,255,.15);line-height:1.25;}
+thead tr th:last-child{border-right:none;}
+.rc{border-bottom:1px solid var(--line);border-right:1px solid var(--line);
+  padding:2px 2px;height:15px;text-align:center;vertical-align:middle;font-size:7pt;}
+tr:last-child .rc{border-bottom:none;}
+.pl-head{background:linear-gradient(135deg,#6d28d9,#7c3aed)!important;}
+/* ── CHARTS AREA ── */
+.chart-pair{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:1px;}
+.chart-card{border:1px solid var(--line);border-radius:4px;overflow:hidden;}
+.chart-hdr{background:var(--navy);color:#c4b5fd;text-align:center;font-size:5.8pt;
+  font-weight:700;padding:2.5px 4px;letter-spacing:.4px;text-transform:uppercase;}
+.chart-legend{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;
+  padding:2px 4px;border-top:1px solid var(--line);background:#fafafa;}
+.chart-legend span{display:flex;align-items:center;gap:2px;font-size:5pt;color:#555;}
+/* ── RESULTS SUMMARY ── */
+.res-row{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:2px 0;}
+.res-box{border-radius:5px;text-align:center;padding:4px 2px;border:1.5px solid;}
+.res-lbl{font-size:5pt;font-weight:700;text-transform:uppercase;letter-spacing:.3px;opacity:.75;}
+.res-val{font-size:14pt;font-weight:800;line-height:1.15;}
+.res-unit{font-size:5pt;opacity:.65;}
+.box-ll{background:#ede9fe;border-color:#7c3aed;color:#4c1d95;}
+.box-pl{background:#f3e8ff;border-color:#9333ea;color:#6b21a8;}
+.box-pi{background:#fce7f3;border-color:#db2777;color:#9d174d;}
+.box-li{background:#fff7ed;border-color:#ea580c;color:#9a3412;}
+.box-cls{background:#ecfdf5;border-color:#059669;color:#065f46;}
+/* ── PREC / FLAGS ── */
+.flag-row{display:flex;gap:6px;margin-top:2px;font-size:6pt;flex-wrap:wrap;}
+.flag{padding:1.5px 7px;border-radius:10px;font-weight:700;}
+.flag-ok{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;}
+.flag-warn{background:#fef3c7;color:#92400e;border:1px solid #fcd34d;}
+/* ── AUTH ── */
+.auth{border:1px solid var(--line);border-radius:4px;overflow:hidden;margin-top:auto;}
+.auth-hdr{background:var(--navy);color:#c4b5fd;text-align:center;font-size:6pt;
+  font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:3px;}
+.auth-rem{padding:2.5px 7px;border-bottom:1px solid var(--line);background:#fafafa;
+  font-size:6pt;display:flex;align-items:center;gap:5px;}
+.auth-rem label{font-weight:800;color:var(--navy);white-space:nowrap;}
+.auth-rem .rv2{flex:1;border-bottom:1px solid var(--line);height:12px;font-size:6.5pt;}
+.auth-cols{display:grid;grid-template-columns:repeat(3,1fr);}
+.ac{padding:3px 7px;border-right:1px solid var(--line);}
+.ac:last-child{border-right:none;}
+.ac .ac-hdr{font-size:5.5pt;font-weight:800;color:var(--navy);text-align:center;
+  border-bottom:1px solid var(--line);margin-bottom:3px;padding-bottom:2px;}
+.ac .afl{font-size:5.5pt;color:#777;display:grid;grid-template-columns:52px 1fr;
+  align-items:center;margin-bottom:3px;}
+.ac .line{border-bottom:1px solid var(--line);height:12px;}
+/* ── FOOTER ── */
+.ff{display:flex;justify-content:space-between;align-items:center;
+  border-top:1px solid var(--line);padding-top:2px;margin-top:2px;font-size:5pt;color:#aaa;}
+/* ── PRINT ── */
+@media print{
+  @page{size:A4 portrait;margin:0;}
+  body{background:#fff;}
+  .page{width:210mm;height:297mm;min-height:unset;max-height:297mm;margin:0;padding:5mm 6mm;box-shadow:none;}
+  .no-print{display:none!important;}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+.pbtn{position:fixed;bottom:14px;left:14px;background:var(--violet);color:#fff;border:none;
+  border-radius:6px;padding:8px 18px;font-family:var(--fn);font-size:11px;font-weight:800;
+  cursor:pointer;box-shadow:0 4px 16px rgba(76,29,149,.35);z-index:99;letter-spacing:.3px;}
+</style>
+</head>
+<body>
+<button class="pbtn no-print" onclick="window.print()">🖨 Print Report</button>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-logo">🔬</div>
+    <div class="hdr-mid">
+      <div class="lab">LabCore Pro — Materials &amp; Geotechnical Laboratory</div>
+      <div class="ttl">ATTERBERG LIMITS TEST REPORT</div>
+      <div class="sub">Standard Test Methods for Liquid Limit, Plastic Limit, and Plasticity Index of Soils</div>
+    </div>
+    <div class="hdr-right">
+      <div><div class="lbl">Form No.</div><div class="val">${repNo}</div></div>
+      <div><div class="lbl">Issue Date</div><div class="val">${today}</div></div>
+      <div class="pg">Page 1 of 1</div>
+    </div>
+  </div>
+
+  <!-- PROJECT & SAMPLE INFO -->
+  <div class="st"><div class="st-num">1</div><div class="st-bar"></div><div class="st-lbl">Project &amp; Sample Information</div><div class="st-rule"></div></div>
+  <div style="display:flex;flex-direction:column;gap:2px;">
+    <div class="pi-grid pi4">
+      <div class="pf"><label>Project Name</label><div class="pv"></div></div>
+      <div class="pf"><label>Client / Contractor</label><div class="pv"></div></div>
+      <div class="pf"><label>Report No.</label><div class="pv">${repNo}</div></div>
+      <div class="pf"><label>Report Date</label><div class="pv">${today}</div></div>
+    </div>
+    <div class="pi-grid pi4">
+      <div class="pf"><label>Sample ID</label><div class="pv">${sampleId}</div></div>
+      <div class="pf"><label>Sample Date</label><div class="pv"></div></div>
+      <div class="pf"><label>Location / Borehole</label><div class="pv"></div></div>
+      <div class="pf"><label>Test Date</label><div class="pv">${testDate}</div></div>
+    </div>
+    <div class="pi-grid pi3">
+      <div class="pf"><label>Soil Description</label><div class="pv"></div></div>
+      <div class="pf"><label>Preparation</label><div class="pv">Air Dry</div></div>
+      <div class="pf"><label>Standard</label><div class="pv">ASTM D4318-17e1 &nbsp;|&nbsp; ${methodLabel}</div></div>
+    </div>
+  </div>
+
+  <!-- LL TABLE -->
+  <div class="st"><div class="st-num">2</div><div class="st-bar"></div><div class="st-lbl">Liquid Limit (LL) Data Table &amp; Flow Curve</div><div class="st-rule"></div></div>
+  <div style="display:grid;grid-template-columns:1fr 280px;gap:5px;align-items:start;">
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th style="width:7%;">Trial<br>No.</th>
+          <th style="width:9%;">No. of<br>Blows (N)</th>
+          <th>Tare (g)</th>
+          <th>Wet+Tare<br>(g)</th>
+          <th>Dry+Tare<br>(g)</th>
+          <th style="background:#b45309;">Mass of<br>Water (g)</th>
+          <th style="background:#b45309;">Dry Soil<br>(g)</th>
+          <th style="background:#059669;">Water<br>Content (%)</th>
+        </tr></thead>
+        <tbody>${llRows}</tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <div class="chart-hdr">📈 Flow Curve — Water Content vs. Blows (N) Log Scale</div>
+      ${flowChartSVG}
+      <div class="chart-legend">
+        <span><svg width="10" height="10"><circle cx="5" cy="5" r="4" fill="#7c3aed"/></svg> Data Pts</span>
+        <span><svg width="14" height="6"><line x1="0" y1="3" x2="14" y2="3" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4,2"/></svg> Best-fit</span>
+        <span><svg width="10" height="10"><circle cx="5" cy="5" r="4" fill="#dc2626"/></svg> LL@N=25</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PL TABLE + Plasticity Chart -->
+  <div class="st"><div class="st-num">3</div><div class="st-bar"></div><div class="st-lbl">Plastic Limit (PL) Data Table &amp; Plasticity Chart (USCS — Casagrande)</div><div class="st-rule"></div></div>
+  <div style="display:grid;grid-template-columns:1fr 280px;gap:5px;align-items:start;">
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr class="pl-head">
+          <th style="width:8%;">Trial<br>No.</th>
+          <th>Tare (g)</th>
+          <th>Wet+Tare<br>(g)</th>
+          <th>Dry+Tare<br>(g)</th>
+          <th style="background:#92400e;">Mass of<br>Water (g)</th>
+          <th style="background:#92400e;">Dry Soil<br>(g)</th>
+          <th style="background:#059669;">Water<br>Content (%)</th>
+        </tr></thead>
+        <tbody>${plRows}</tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <div class="chart-hdr">📊 Plasticity Chart (USCS — Casagrande Diagram)</div>
+      ${plastChartSVG}
+      <div class="chart-legend">
+        <span><svg width="22" height="6"><line x1="0" y1="3" x2="22" y2="3" stroke="#7c3aed" stroke-width="1.4"/></svg> A-Line: PI=0.73(LL-20)</span>
+        <span><svg width="22" height="6"><line x1="0" y1="3" x2="22" y2="3" stroke="#6b7280" stroke-width="0.8" stroke-dasharray="4,2"/></svg> U-Line</span>
+        <span><svg width="10" height="10"><circle cx="5" cy="5" r="4" fill="#dc2626"/></svg> Sample</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS SUMMARY -->
+  <div class="st"><div class="st-num">4</div><div class="st-bar"></div><div class="st-lbl">Test Results Summary</div><div class="st-rule"></div></div>
+  <div class="res-row">
+    <div class="res-box box-ll">
+      <div class="res-lbl">Liquid Limit (LL)</div>
+      <div class="res-val">${isNP ? 'NP' : LL_val}</div>
+      <div class="res-unit">%</div>
+    </div>
+    <div class="res-box box-pl">
+      <div class="res-lbl">Plastic Limit (PL)</div>
+      <div class="res-val">${isNP ? 'NP' : PL_val}</div>
+      <div class="res-unit">%</div>
+    </div>
+    <div class="res-box box-pi">
+      <div class="res-lbl">Plasticity Index (PI)</div>
+      <div class="res-val">${isNP ? '0' : PI_val}</div>
+      <div class="res-unit">${isNP ? '' : '% (LL − PL)'}</div>
+    </div>
+    <div class="res-box box-li">
+      <div class="res-lbl">Liquidity Index (LI)</div>
+      <div class="res-val" style="font-size:9pt;margin-top:4px;">— / —</div>
+      <div class="res-unit">requires w<sub>n</sub></div>
+    </div>
+    <div class="res-box box-cls">
+      <div class="res-lbl">USCS Classification</div>
+      <div class="res-val" style="font-size:${uscsText.length > 4 ? '8pt' : '13pt'};">${uscsText !== '—' ? uscsText : (isNP ? 'NP' : '—')}</div>
+      <div class="res-unit">ASTM D2487</div>
+    </div>
+  </div>
+
+  <!-- FLAGS -->
+  <div class="flag-row">
+    <div class="flag ${isNP ? 'flag-ok' : 'flag-warn'}" style="${isNP?'':'display:none;'}">✅ Non-Plastic Soil (NP)</div>
+    <div class="flag flag-ok" style="font-size:5.5pt;">LL Method: ${methodLabel}</div>
+    <div class="flag ${llPrec.startsWith('✅') ? 'flag-ok' : 'flag-warn'}">LL Precision: ${llPrec} (±2.5%)</div>
+    <div class="flag ${plPrec.startsWith('✅') ? 'flag-ok' : 'flag-warn'}">PL Precision: ${plPrec} (±2.4%)</div>
+    ${classif !== '—' ? `<div class="flag flag-ok" style="font-size:5.5pt;">Classification: ${classif}</div>` : ''}
+  </div>
+
+  <!-- AUTH -->
+  <div class="auth">
+    <div class="auth-hdr">Authorization &amp; Approval — ISO/IEC 17025:2017</div>
+    <div class="auth-rem"><label>Remarks:</label><div class="rv2"></div></div>
+    <div class="auth-cols">
+      <div class="ac">
+        <div class="ac-hdr">Technician / Lab Staff</div>
+        <div class="afl"><span>Name:</span><div class="line"></div></div>
+        <div class="afl"><span>Signature:</span><div class="line"></div></div>
+        <div class="afl"><span>Date:</span><div class="line"></div></div>
+      </div>
+      <div class="ac">
+        <div class="ac-hdr">Quality Manager</div>
+        <div class="afl"><span>Name:</span><div class="line"></div></div>
+        <div class="afl"><span>Signature:</span><div class="line"></div></div>
+        <div class="afl"><span>Date:</span><div class="line"></div></div>
+      </div>
+      <div class="ac">
+        <div class="ac-hdr">Technical Manager</div>
+        <div class="afl"><span>Name:</span><div class="line"></div></div>
+        <div class="afl"><span>ASTM Ref:</span><div class="line"></div></div>
+        <div class="afl"><span>Date:</span><div class="line"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="ff">
+    <span>ASTM D4318-17e1 &nbsp;·&nbsp; ISO/IEC 17025:2017</span>
+    <span style="font-weight:800;color:var(--navy);">Page 1 of 1</span>
+    <span>FM-ATT-D4318-01 &nbsp;·&nbsp; Rev.01 &nbsp;·&nbsp; ${new Date().toLocaleDateString('en-GB',{month:'long',year:'numeric'})}</span>
+  </div>
+
+</div>
+</body>
+</html>`;
+
+    const win = window.open('', '_blank', 'width=900,height=800');
+    win.document.open();
+    win.document.write(reportHTML);
+    win.document.close();
+    win.focus();
+}
 
 </script>
 </body>
