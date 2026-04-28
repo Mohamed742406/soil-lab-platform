@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة الاختبارات المعملية للتربة — Soil Laboratory Testing Platform | ASTM D6913, D1557, D4318 & D2487</title>
+    <title>منظومة القصبي للاختبارات الجيوتقنية والمواد — Elkasaby Geotechnical &amp; Materials Testing System | ASTM · ISO/IEC 17025</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script>/* ExcelJS browser fix — must be before exceljs loads */
       if(typeof global==='undefined'){window.global=window;}
@@ -229,12 +229,17 @@
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-2xl font-bold">🔬 منصة الاختبارات المعملية للتربة</h1>
-                    <p class="text-blue-200 text-sm">Soil Laboratory Testing Platform</p>
+                    <h1 class="text-2xl font-bold" style="letter-spacing:.01em;">
+                      🔬 منظومة القصبي للاختبارات الجيوتقنية والمواد
+                    </h1>
+                    <p class="text-blue-200 text-sm" style="margin-top:3px;letter-spacing:.03em;">
+                      Elkasaby Geotechnical &amp; Materials Testing System
+                    </p>
+                    <p class="text-blue-300 mt-1" style="font-size:.7rem;letter-spacing:.06em;">
+                      ASTM &nbsp;·&nbsp; ISO/IEC 17025:2017 &nbsp;·&nbsp; ACI &nbsp;·&nbsp; DIN
+                    </p>
                 </div>
                 <div class="text-left">
-                    <p class="text-sm text-blue-200">الإصدار 2.0</p>
-                    <p class="text-xs text-blue-300 mt-1">تم تطوير المنصة: م. محمد القصبي</p>
                 </div>
             </div>
         </div>
@@ -339,6 +344,18 @@
               <div>
                 <label style="display:block;font-size:.72rem;font-weight:700;color:#1e40af;margin-bottom:3px;">📆 Report Date / تاريخ التقرير</label>
                 <input id="gpi_reportDate" type="date"
+                  oninput="syncGlobalInfo()"
+                  style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.78rem;background:white;">
+              </div>
+              <div>
+                <label style="display:block;font-size:.72rem;font-weight:700;color:#1e40af;margin-bottom:3px;">🌡️ Lab Temp. / درجة حرارة المختبر (°C)</label>
+                <input id="gpi_ambTemp" type="number" step="0.1" placeholder="مثال: 23.5"
+                  oninput="syncGlobalInfo()"
+                  style="width:100%;border:1.5px solid #fbbf24;border-radius:7px;padding:6px 10px;font-size:.78rem;background:white;">
+              </div>
+              <div>
+                <label style="display:block;font-size:.72rem;font-weight:700;color:#1e40af;margin-bottom:3px;">💧 Humidity / الرطوبة النسبية (%)</label>
+                <input id="gpi_humidity" type="number" step="0.1" min="0" max="100" placeholder="مثال: 55"
                   oninput="syncGlobalInfo()"
                   style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.78rem;background:white;">
               </div>
@@ -4127,12 +4144,20 @@
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-6">
         <div class="container mx-auto px-4 text-center">
-            <p class="text-gray-300 font-semibold">🔬 منصة الاختبارات المعملية للتربة</p>
-            <p class="text-gray-400 text-sm">Soil Laboratory Testing Platform</p>
-             <p class="text-gray-400 text-sm mt-2">ASTM D6913, D4318, D2487, D3282, D1557, D2216, D854 & D1883 | AASHTO M 145</p>
-            <p class="text-gray-500 text-sm mt-1">جميع الحسابات وفقًا للمواصفات القياسية الأمريكية | Unified Soil Classification System (USCS)</p>
-            <div class="mt-4 pt-4 border-t border-gray-700">
-                <p class="text-gray-400 text-sm">تم تطوير المنصة: <span class="text-blue-400 font-semibold">م. محمد القصبي</span></p>
+            <p class="text-gray-200 font-bold" style="font-size:1rem;letter-spacing:.01em;">
+              🔬 منظومة القصبي للاختبارات الجيوتقنية والمواد
+            </p>
+            <p class="text-blue-300 text-sm mt-1" style="letter-spacing:.04em;">
+              Elkasaby Geotechnical &amp; Materials Testing System
+            </p>
+            <p class="text-gray-400 text-xs mt-2">
+              ASTM D6913 &nbsp;·&nbsp; D4318 &nbsp;·&nbsp; D2487 &nbsp;·&nbsp; D3282 &nbsp;·&nbsp; D1557 &nbsp;·&nbsp; D2216 &nbsp;·&nbsp; D854 &nbsp;·&nbsp; D1883 &nbsp;·&nbsp; AASHTO M 145
+            </p>
+            <p class="text-gray-500 text-xs mt-1">
+              جميع الحسابات وفقاً للمواصفات القياسية &nbsp;|&nbsp; ISO/IEC 17025:2017 Compliant &nbsp;|&nbsp; USCS Classification
+            </p>
+            <div class="mt-3 pt-3 border-t border-gray-700">
+              <p class="text-gray-500 text-xs">الإصدار 2.0 &nbsp;·&nbsp; 2025</p>
             </div>
         </div>
     </footer>
@@ -4186,7 +4211,7 @@
 
   function clearGlobalInfo() {
     if (!confirm('مسح جميع بيانات المشروع؟')) return;
-    ['project','client','location','reportNo','sampleId','engineer','testDate','reportDate','remarks']
+    ['project','client','location','reportNo','sampleId','engineer','testDate','reportDate','ambTemp','humidity','remarks']
       .forEach(k => { const el=document.getElementById('gpi_'+k); if(el) el.value=''; });
     document.getElementById('globalCustomFields').innerHTML = '';
     gpiCustomCount = 0;
@@ -9335,14 +9360,17 @@ async function generateCBRReport() {
   updateCBRCalculations();         // then recalc density, CBR%, charts
 
   const isImperial  = document.getElementById('cbrUnitImperial')?.checked === true;
-  const ringUS      = getCBRUnitSystem(); // 'kN' or 'kg'
+  const ringUS      = getCBRUnitSystem();
   const isSoaked    = document.getElementById('cbr_soaked')?.checked !== false;
   const g           = id => document.getElementById(id)?.value || '—';
-  const gpi         = getAllGPI();
-  const proj        = gpi.project  !== '—' ? gpi.project  : g('cbr_projectName');
-  const sampleId    = gpi.sampleId !== '—' ? gpi.sampleId : g('cbr_sampleId');
-  const engineer    = gpi.engineer !== '—' ? gpi.engineer : g('cbr_engineer');
-  const testDate    = gpi.testDate !== '—' ? gpi.testDate : g('cbr_testDate');
+  const _rc = id => (document.getElementById(id)?.value?.trim() || '');
+  const _dc = id => _rc(id) || '—';
+  const proj      = _dc('gpi_project')    || _dc('cbr_projectName');
+  const sampleId  = _dc('gpi_sampleId')   || _dc('cbr_sampleId');
+  const engineer  = _dc('gpi_engineer')   || _dc('cbr_engineer');
+  const testDate  = _dc('gpi_testDate')   || _dc('cbr_testDate');
+  const ambTemp   = _rc('gpi_ambTemp') || '';
+  const humidity  = _rc('gpi_humidity') || '';
   const ringNo      = g('cbr_ringNo');
   const rf          = g('cbr_ringFactor');
   const area        = g('cbr_pistonArea');
@@ -9594,11 +9622,11 @@ async function generateCBRReport() {
   }).filter(Boolean);
   const mddVal = parseFloat(document.getElementById('cbr_MDD')?.value) || 0;
 
-  // Swell datasets
-  const swellData = suffs.map((suf,i) => {
+  // Swell datasets — only include when soaked test (unsoaked = no swell data)
+  const swellData = isSoaked ? suffs.map((suf,i) => {
     const d = cbrData[suf] || {};
     return d.swell != null ? { blows: blowsMap[suf], val: parseFloat(d.swell.toFixed(2)), color: penColors[i] } : null;
-  }).filter(Boolean);
+  }).filter(Boolean) : [];
 
   // CBR vs Density
   const cbrVsDensData = suffs.map((suf,i) => {
@@ -9638,9 +9666,9 @@ async function generateCBRReport() {
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
 *{font-family:'Cairo',sans-serif;margin:0;padding:0;box-sizing:border-box;}
-body{background:#f1f5f9;color:#111;font-size:10.5px;}
+body{background:#f1f5f9;color:#111;font-size:9.5px;}
 .page{width:210mm;height:297mm;margin:0 auto 20px;background:white;
-  padding:7mm 10mm 10mm;box-shadow:0 4px 20px rgba(0,0,0,.18);
+  padding:6mm 9mm 8mm;box-shadow:0 4px 20px rgba(0,0,0,.18);
   page-break-after:always;position:relative;overflow:hidden;}
 .page:last-child{page-break-after:avoid;}
 
@@ -9703,9 +9731,11 @@ body{background:#f1f5f9;color:#111;font-size:10.5px;}
   text-align:center;color:#64748b;font-size:.68rem;line-height:1.8;}
 
 /* Footer */
-.footer{position:absolute;bottom:6mm;left:10mm;right:10mm;
-  border-top:1px solid #cbd5e1;padding-top:4px;
+.footer{border-top:1px solid #cbd5e1;padding-top:3px;margin-top:6px;
   display:flex;justify-content:space-between;font-size:.58rem;color:#94a3b8;}
+
+/* Page 1 bottom padding to leave room for footer */
+.page-1-footer-spacer{height:8mm;}
 
 /* Condition pills */
 .pill{display:inline-block;border-radius:20px;padding:2px 8px;font-size:.62rem;font-weight:700;margin:1px 2px;}
@@ -9739,16 +9769,24 @@ body{background:#f1f5f9;color:#111;font-size:10.5px;}
   <table class="info-table">
     <tr>
       <td class="lbl">Project Name</td><td class="val">${proj}</td>
+      <td class="lbl">Report No.</td><td class="val">${_dc('gpi_reportNo')}</td>
+    </tr>
+    <tr>
+      <td class="lbl">Client / Contractor</td><td class="val">${_dc('gpi_client')}</td>
       <td class="lbl">Report Date</td><td class="val">${now}</td>
     </tr>
     <tr>
-      <td class="lbl">Client / Contractor</td><td class="val">—</td>
+      <td class="lbl">Location</td><td class="val">${_dc('gpi_location')}</td>
       <td class="lbl">Test Date</td><td class="val">${testDate}</td>
     </tr>
     <tr>
       <td class="lbl">Sample ID</td><td class="val">${sampleId}</td>
       <td class="lbl">Engineer</td><td class="val">${engineer}</td>
     </tr>
+    ${(ambTemp||humidity) ? `<tr>
+      <td class="lbl">🌡️ Lab Temp.</td><td class="val">${ambTemp ? ambTemp+' °C' : '—'}</td>
+      <td class="lbl">💧 Humidity</td><td class="val">${humidity ? humidity+' %' : '—'}</td>
+    </tr>` : ''}
     <tr>
       <td class="lbl">Condition</td>
       <td class="val"><span class="${isSoaked?'pill p-blue':'pill p-amber'}">${isSoaked?'💧 Soaked':'🏜️ Unsoaked'}</span></td>
@@ -9808,15 +9846,15 @@ body{background:#f1f5f9;color:#111;font-size:10.5px;}
     <tbody>${densityRows || '<tr><td colspan="6" style="color:#94a3b8;padding:12px;">No data entered</td></tr>'}</tbody>
   </table>
 
-  <!-- Density & Swell charts — inline Canvas, rendered fresh in iframe -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:5px;">
+  <!-- Density & Swell charts — 2 columns -->
+  <div id="rpt_densSwellGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:5px;">
     <div style="border:1.5px solid #555;border-radius:4px;overflow:hidden;">
       <div class="chart-hdr" style="border:none;border-bottom:1px solid #777;">Dry Density vs Blows per Layer</div>
-      <div style="background:white;padding:4px;height:225px;"><canvas id="rpt_densChart"></canvas></div>
+      <div style="background:white;padding:4px;height:200px;"><canvas id="rpt_densChart"></canvas></div>
     </div>
-    <div style="border:1.5px solid #555;border-radius:4px;overflow:hidden;">
+    <div id="rpt_swellChartWrapper" style="border:1.5px solid #555;border-radius:4px;overflow:hidden;">
       <div class="chart-hdr" style="border:none;border-bottom:1px solid #777;">Swell % vs Blows per Layer</div>
-      <div style="background:white;padding:4px;height:225px;"><canvas id="rpt_swellChart"></canvas></div>
+      <div style="background:white;padding:4px;height:200px;"><canvas id="rpt_swellChart"></canvas></div>
     </div>
   </div>
 
@@ -9846,7 +9884,7 @@ body{background:#f1f5f9;color:#111;font-size:10.5px;}
   </table>
 
   <!-- CBR Results -->
-  <div class="sec-hdr" style="margin-top:5px;">CBR VALUE CALCULATION</div>
+  <div class="sec-hdr" style="margin-top:3px;">CBR VALUE CALCULATION</div>
   <table class="data-table">
     <thead><tr>
       <th>Specimen</th>
@@ -9860,37 +9898,61 @@ body{background:#f1f5f9;color:#111;font-size:10.5px;}
   </table>
 
   <!-- Summary Banner -->
-  <div class="summary-box" style="margin:7px 0;">${summaryHtml || '<div style="flex:1;text-align:center;color:#94a3b8;padding:14px;">No results</div>'}</div>
+  <div class="summary-box" style="margin:4px 0;">${summaryHtml || '<div style="flex:1;text-align:center;color:#94a3b8;padding:14px;">No results</div>'}</div>
 
   <!-- Stress-Penetration Chart (main) — inline Canvas -->
-  <div class="sec-hdr" style="margin-top:5px;">LOAD-PENETRATION CURVES</div>
-  <div style="border:1.5px solid #555;border-radius:4px;overflow:hidden;margin-bottom:5px;">
+  <div class="sec-hdr" style="margin-top:3px;">LOAD-PENETRATION CURVES</div>
+  <div style="border:1.5px solid #555;border-radius:4px;overflow:hidden;margin-bottom:3px;">
     <div class="chart-hdr">Stress vs Penetration | Unit: ${pUnit_chart} vs mm | Standard lines: 2.54mm (0.1″) &amp; 5.08mm (0.2″)</div>
-    <div style="background:white;padding:4px;height:165px;"><canvas id="rpt_penChart"></canvas></div>
+    <div style="background:white;padding:4px;height:170px;"><canvas id="rpt_penChart"></canvas></div>
   </div>
 
-  <!-- CBR vs Density chart — inline Canvas -->
-  <div style="border:1.5px solid #555;border-radius:4px;overflow:hidden;margin-bottom:6px;">
-    <div class="chart-hdr">CBR% vs Dry Unit Weight (g/cm³)</div>
-    <div style="background:white;padding:4px;height:100px;"><canvas id="rpt_cbrDensChart"></canvas></div>
-  </div>
-
-  <!-- Acceptance & Signatures -->
-  <div class="warn" style="margin:5px 0;font-size:.66rem;">
+  <!-- Acceptance -->
+  <div class="warn" style="margin:3px 0;font-size:.63rem;padding:3px 8px;">
     ⚠️ <b>Acceptance Criteria:</b>
     Swell ≤ 2% (base) | Compaction ≥ 95% MDD | CBR ≥ 80% (upper base) | CBR ≥ 30% (sub-base) | CBR ≥ 8% (subgrade)
   </div>
 
-  <div class="sign-grid">
-    <div class="sign-box">
-      🔬 Quality Manager<br><br>
-      Signature: ______________________<br>
-      Date: ____________________________
+  <!-- Signatures -->
+  <div style="border:1.5px solid #334155;border-radius:6px;overflow:hidden;margin-top:3px;">
+    <div style="background:#1e3a8a;color:white;padding:4px 12px;font-size:.72rem;font-weight:800;letter-spacing:.04em;">
+      AUTHORIZATION &amp; APPROVAL — ISO/IEC 17025:2017
     </div>
-    <div class="sign-box">
-      ⚙️ Technical Manager<br><br>
-      Signature: ______________________<br>
-      Date: ____________________________
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;">
+      <div style="padding:5px 12px;border-right:1px solid #cbd5e1;">
+        <div style="font-size:.72rem;font-weight:800;color:#1e3a8a;border-bottom:1px solid #e2e8f0;padding-bottom:2px;margin-bottom:5px;text-align:center;">
+          📋 Quality Manager
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:6px;margin-bottom:4px;font-size:.65rem;color:#374151;font-weight:600;">
+          <span style="white-space:nowrap;">Name:</span>
+          <div style="flex:1;border-bottom:1px solid #94a3b8;min-height:12px;"></div>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:6px;margin-bottom:4px;font-size:.65rem;color:#374151;font-weight:600;">
+          <span style="white-space:nowrap;">Signature:</span>
+          <div style="flex:1;border-bottom:1px solid #94a3b8;min-height:12px;"></div>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:6px;font-size:.65rem;color:#374151;font-weight:600;">
+          <span style="white-space:nowrap;">Date:</span>
+          <div style="flex:1;border-bottom:1px solid #94a3b8;min-height:12px;"></div>
+        </div>
+      </div>
+      <div style="padding:5px 12px;">
+        <div style="font-size:.72rem;font-weight:800;color:#1e3a8a;border-bottom:1px solid #e2e8f0;padding-bottom:2px;margin-bottom:5px;text-align:center;">
+          ⚙️ Technical Manager
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:6px;margin-bottom:4px;font-size:.65rem;color:#374151;font-weight:600;">
+          <span style="white-space:nowrap;">Name:</span>
+          <div style="flex:1;border-bottom:1px solid #94a3b8;min-height:12px;"></div>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:6px;margin-bottom:4px;font-size:.65rem;color:#374151;font-weight:600;">
+          <span style="white-space:nowrap;">Signature:</span>
+          <div style="flex:1;border-bottom:1px solid #94a3b8;min-height:12px;"></div>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:6px;font-size:.65rem;color:#374151;font-weight:600;">
+          <span style="white-space:nowrap;">Date:</span>
+          <div style="flex:1;border-bottom:1px solid #94a3b8;min-height:12px;"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -9926,7 +9988,14 @@ window._drawReportCharts = function() {
     new Chart(dC,{type:"line",data:{datasets:[{label:"Dry Density",data:D.densSpecData.map(function(p){return{x:p.blows,y:p.val};}),borderColor:"#4472C4",backgroundColor:"#4472C415",borderWidth:2.5,pointRadius:9,pointBackgroundColor:D.densSpecData.map(function(_,i){return EC[i];}),pointBorderColor:D.densSpecData.map(function(_,i){return EB[i];}),pointBorderWidth:1.5,fill:true,tension:0.3}].concat(mddDs)},options:{responsive:true,maintainAspectRatio:false,parsing:false,scales:{x:{type:"linear",min:5,max:65,title:{display:true,text:"Blows per Layer",color:A,font:{size:10,weight:"bold"}},ticks:{color:A,callback:function(v){return [10,25,56].indexOf(v)>=0?v+" blows":"";}},grid:{color:G},border:{color:"#888"}},y:{title:{display:true,text:"Dry Density (g/cm3)",color:A,font:{size:10,weight:"bold"}},ticks:{color:A},grid:{color:G},border:{color:"#888"}}},plugins:{legend:{position:"top",labels:{boxWidth:12,font:{size:10}}},tooltip:{callbacks:{label:function(c){return c.dataset.label+": "+c.parsed.y.toFixed(3);}}}}}});
   }
   var sC=document.getElementById("rpt_swellChart");
-  if (sC && D.swellData && D.swellData.length) {
+  var hasRealSwell = D.swellData && D.swellData.length && D.swellData.some(function(p){return p.val > 0;});
+  var swellWrapper = document.getElementById("rpt_swellChartWrapper");
+  var densSwellGrid = document.getElementById("rpt_densSwellGrid");
+  if (!hasRealSwell) {
+    // Hide swell chart, expand density chart to full width
+    if (swellWrapper) swellWrapper.style.display = "none";
+    if (densSwellGrid) densSwellGrid.style.gridTemplateColumns = "1fr";
+  } else if (sC) {
     new Chart(sC,{type:"bar",data:{labels:D.swellData.map(function(p){return p.blows+" blows";}),datasets:[{label:"Swell %",data:D.swellData.map(function(p){return p.val;}),backgroundColor:D.swellData.map(function(_,i){return EC[i];}),borderColor:D.swellData.map(function(_,i){return EB[i];}),borderWidth:1.5,barPercentage:0.55}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:A},grid:{display:false},border:{color:"#888"}},y:{beginAtZero:true,title:{display:true,text:"Swell %",color:A,font:{size:10,weight:"bold"}},ticks:{color:A},grid:{color:G},border:{color:"#888"}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return "Swell = "+c.parsed.y.toFixed(2)+"%";}}}}}});
   }
   var pC=document.getElementById("rpt_penChart");
@@ -9937,7 +10006,8 @@ window._drawReportCharts = function() {
     new Chart(pC,{type:"line",data:{datasets:pds},options:{responsive:true,maintainAspectRatio:false,parsing:false,scales:{x:{type:"linear",min:0,max:14,title:{display:true,text:"Penetration (mm)",color:A,font:{size:10,weight:"bold"}},ticks:{color:A},grid:{color:G},border:{color:"#888"}},y:{min:0,max:D.penYMax,title:{display:true,text:"Stress",color:A,font:{size:10,weight:"bold"}},ticks:{color:A},grid:{color:G},border:{color:"#888"}}},plugins:{legend:{position:"top",labels:{boxWidth:12,font:{size:10}}},tooltip:{callbacks:{label:function(c){return c.dataset.label+": "+c.parsed.y.toFixed(1);}}}}}});
   }
   var cdC=document.getElementById("rpt_cbrDensChart");
-  if (cdC && D.cbrVsDensData && D.cbrVsDensData.length) {
+  // rpt_cbrDensChart removed from page 2 layout — chart shown in main tab only
+  if (false && cdC && D.cbrVsDensData && D.cbrVsDensData.length) {
     new Chart(cdC,{type:"line",data:{datasets:[{label:"CBR% vs Density",data:D.cbrVsDensData.map(function(p){return{x:p.x,y:p.y};}),borderColor:"#4472C4",backgroundColor:"#4472C415",borderWidth:2,pointRadius:9,pointBackgroundColor:D.cbrVsDensData.map(function(_,i){return EC[i];}),fill:true,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,parsing:false,scales:{x:{type:"linear",title:{display:true,text:"Dry Density (g/cm3)",color:A,font:{size:10}},ticks:{color:A},grid:{color:G},border:{color:"#888"}},y:{beginAtZero:false,title:{display:true,text:"CBR %",color:A,font:{size:10}},ticks:{color:A},grid:{color:G},border:{color:"#888"}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return "CBR="+c.parsed.y.toFixed(1)+"%";}}}}}});
   }
 };
@@ -10003,15 +10073,18 @@ function generateProctorReport() {
   const gn  = id => { const v=parseFloat(document.getElementById(id)?.value); return isNaN(v)?null:v; };
 
   // ── Collect project info ──────────────────────────────────────
-  const gpi_p     = getAllGPI();
-  const proj      = gpi_p.project    !== '—' ? gpi_p.project    : (g('prc_projectName')  || '—');
-  const reportNo  = gpi_p.reportNo   !== '—' ? gpi_p.reportNo   : (g('prc_reportNo')     || '—');
-  const reportDate= gpi_p.reportDate !== '—' ? gpi_p.reportDate : (g('prc_reportDate')   || '—');
-  const client    = gpi_p.client     !== '—' ? gpi_p.client     : (g('prc_client')       || '—');
-  const sampleId  = gpi_p.sampleId   !== '—' ? gpi_p.sampleId   : (g('proctor_sampleId') || '—');
-  const sampleDate= g('prc_sampleDate')   || '—';
-  const testDate  = gpi_p.testDate   !== '—' ? gpi_p.testDate   : (g('proctor_testDate') || '—');
-  const location  = gpi_p.location   !== '—' ? gpi_p.location   : (g('prc_location')     || '—');
+  const _rp  = id => (document.getElementById(id)?.value?.trim() || '');
+  const _rdp = id => _rp(id) || '—';
+  const proj       = _rdp('gpi_project')    || _rdp('prc_projectName');
+  const reportNo   = _rdp('gpi_reportNo')   || _rdp('prc_reportNo');
+  const reportDate = _rdp('gpi_reportDate') || _rdp('prc_reportDate') || new Date().toLocaleDateString('en-GB');
+  const client     = _rdp('gpi_client')     || _rdp('prc_client');
+  const sampleId   = _rdp('gpi_sampleId')   || _rdp('proctor_sampleId');
+  const sampleDate = _rdp('prc_sampleDate');
+  const testDate   = _rdp('gpi_testDate')   || _rdp('proctor_testDate');
+  const location   = _rdp('gpi_location')   || _rdp('prc_location');
+  const ambTemp    = _rp('gpi_ambTemp')  || '';
+  const humidity   = _rp('gpi_humidity') || '';
   const depth       = g('prc_depth')        || '—';
   const sampleMass  = g('prc_sampleMass')   || '—';
   const asRecWC     = g('prc_asReceivedWC') || '—';
@@ -10380,6 +10453,8 @@ body{font-family:'Inter',Arial,sans-serif;font-size:7pt;color:#1a1a2e;background
   <div class="is-item"><span class="is-lbl">Sample Mass:</span><span class="is-val">${sampleMass} kg</span></div>
   <div class="is-item"><span class="is-lbl">As-Received Water Content:</span><span class="is-val">${asRecWC} %</span></div>
   <div class="is-item"><span class="is-lbl">Tested By:</span><span class="is-val">${testedBy}</span></div>
+  ${ambTemp ? `<div class="is-item"><span class="is-lbl">🌡️ Lab Temp.:</span><span class="is-val">${ambTemp} °C</span></div>` : ''}
+  ${humidity ? `<div class="is-item"><span class="is-lbl">💧 Humidity:</span><span class="is-val">${humidity} %</span></div>` : ''}
 </div>
 
 <!-- ②  TEST METHOD -->
@@ -10582,9 +10657,23 @@ function openGradationReport() {
     }
 
     // ── Collect data ──────────────────────────────────────────────
-    const sampleId   = document.getElementById('sampleId')?.value  || '—';
-    const testDate   = document.getElementById('testDate')?.value   || '—';
-    const notes      = document.getElementById('notes')?.value      || '';
+    // Read global project panel fields directly for reliability
+    const _r  = id => (document.getElementById(id)?.value?.trim() || '');
+    const _rd = id => _r(id) || '—';
+
+    const projName   = _rd('gpi_project');
+    const clientName = _rd('gpi_client');
+    const repNo      = _rd('gpi_reportNo');
+    const repDate    = _rd('gpi_reportDate') || new Date().toLocaleDateString('en-GB');
+    const location   = _rd('gpi_location');
+    const engineer   = _rd('gpi_engineer');
+    const remarks    = _r('gpi_remarks');
+    const ambTemp    = _r('gpi_ambTemp') || _r('d854_ambTemp') || '';
+    const humidity   = _r('gpi_humidity') || _r('d854_humidity') || '';
+
+    const sampleId   = _rd('gpi_sampleId')  || _rd('sampleId');
+    const testDate   = _rd('gpi_testDate')  || _rd('testDate');
+    const notes      = document.getElementById('notes')?.value || remarks;
     const massUnit   = document.getElementById('massUnit')?.value   || 'g';
 
     const methodMap = {
@@ -10898,17 +10987,23 @@ table.cls td{border:1px solid var(--line);padding:2.5px 4px;vertical-align:middl
   <div class="st"><div class="st-lbl">Project Information</div><div class="st-rule"></div></div>
   <div style="display:flex;flex-direction:column;gap:1px;">
     <div class="pi pi4">
-      <div class="pf"><label>Project Name</label><div class="val"></div></div>
-      <div class="pf"><label>Client</label><div class="val"></div></div>
-      <div class="pf"><label>Report No.</label><div class="val"></div></div>
-      <div class="pf"><label>Report Date</label><div class="val">${testDate}</div></div>
+      <div class="pf"><label>Project Name</label><div class="val">${projName}</div></div>
+      <div class="pf"><label>Client</label><div class="val">${clientName}</div></div>
+      <div class="pf"><label>Report No.</label><div class="val">${repNo}</div></div>
+      <div class="pf"><label>Report Date</label><div class="val">${repDate}</div></div>
     </div>
     <div class="pi pi4">
       <div class="pf"><label>Sample ID</label><div class="val">${sampleId}</div></div>
-      <div class="pf"><label>Sample Date</label><div class="val"></div></div>
-      <div class="pf"><label>Location</label><div class="val"></div></div>
+      <div class="pf"><label>Engineer</label><div class="val">${engineer}</div></div>
+      <div class="pf"><label>Location</label><div class="val">${location}</div></div>
       <div class="pf"><label>Test Date</label><div class="val">${testDate}</div></div>
     </div>
+    ${(ambTemp || humidity) ? `
+    <div class="pi pi4">
+      <div class="pf"><label>🌡️ Lab Temp.</label><div class="val">${ambTemp ? ambTemp+' °C' : '—'}</div></div>
+      <div class="pf"><label>💧 Relative Humidity</label><div class="val">${humidity ? humidity+' %' : '—'}</div></div>
+      <div class="pf"></div><div class="pf"></div>
+    </div>` : ''}
     <div class="pi pi3">
       <div class="pf"><label>Soil Description</label><div class="val"></div></div>
       <div class="pf"><label>Max Particle Size (mm)</label><div class="val">${unified[0] ? unified[0].opening + ' mm' : '—'}</div></div>
@@ -11199,11 +11294,11 @@ async function exportToExcel(mode) {
     /* ── 6. Global header ── */
     var today = new Date().toLocaleDateString('ar-SA',
         {year:'numeric',month:'long',day:'numeric'});
-    titleRow('🔬 منصة الاختبارات المعملية للتربة — Soil Laboratory Testing Platform', C.navyDark);
+    titleRow('🔬 منظومة القصبي للاختبارات الجيوتقنية والمواد — Elkasaby Geotechnical & Materials Testing System', C.navyDark);
     R++;
     var hRow=ws.getRow(R); hRow.height=15;
     var dc=hRow.getCell(1);
-    dc.value='المطور: م. محمد القصبي  |  Developer: Eng. Mohammed Al-Kasaby';
+    dc.value='المطور: م. محمد القصبي  |  Developer: Eng. Mohammed Elkasaby';
     dc.font={italic:true,size:8,color:{argb:'FF6B7280'},name:'Cairo'};
     dc.alignment={horizontal:'right',readingOrder:2};
     dc.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF8FAFC'}};
@@ -11706,7 +11801,7 @@ async function exportToExcel(mode) {
     ft1.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF8FAFC'}};
     ws.mergeCells(R,1,R,5);
     var ft2=ftRow.getCell(6);
-    ft2.value='© منصة الاختبارات المعملية للتربة v2.0 | م. محمد القصبي';
+    ft2.value='© منظومة القصبي للاختبارات الجيوتقنية والمواد v2.0';
     ft2.font={italic:true,size:7,color:{argb:'FF9CA3AF'},name:'Cairo'};
     ft2.alignment={horizontal:'center'};
     ft2.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF8FAFC'}};
@@ -11744,7 +11839,7 @@ async function exportToExcel(mode) {
 
 // ══════════════════════════════════════════════════════════════════════
 // ATTERBERG LIMITS REPORT GENERATOR — ASTM D4318-17e1
-// LabCore Pro | تقرير حدود أتربرج
+// Elkasaby Geotechnical & Materials Testing System | تقرير حدود أتربرج
 // ══════════════════════════════════════════════════════════════════════
 function generateD4318Report() {
 
@@ -11765,13 +11860,16 @@ function generateD4318Report() {
 
     const isNP    = document.getElementById('isNonPlastic').checked;
     const method  = gv('d4318_method');
-    const gpi_d4  = getAllGPI();
-    const sampleId= gpi_d4.sampleId !== '—' ? gpi_d4.sampleId : gv('d4318_sampleId');
-    const testDate= gpi_d4.testDate  !== '—' ? gpi_d4.testDate  : gv('d4318_testDate');
-    const proj4   = gpi_d4.project   !== '—' ? gpi_d4.project   : '—';
-    const client4 = gpi_d4.client    !== '—' ? gpi_d4.client    : '—';
-    const engineer4= gpi_d4.engineer !== '—' ? gpi_d4.engineer  : '—';
-    const repNo4  = gpi_d4.reportNo  !== '—' ? gpi_d4.reportNo  : ('ATT-' + new Date().toISOString().slice(2,10).replace(/-/g,''));
+    const _rg = id => (document.getElementById(id)?.value?.trim() || '');
+    const _dg = id => _rg(id) || '—';
+    const sampleId  = _dg('gpi_sampleId')  || gv('d4318_sampleId');
+    const testDate  = _dg('gpi_testDate')  || gv('d4318_testDate');
+    const proj4     = _dg('gpi_project');
+    const client4   = _dg('gpi_client');
+    const engineer4 = _dg('gpi_engineer');
+    const repNo4    = _dg('gpi_reportNo')  || ('ATT-' + new Date().toISOString().slice(2,10).replace(/-/g,''));
+    const ambTemp   = _rg('gpi_ambTemp') || '';
+    const humidity  = _rg('gpi_humidity') || '';
     const classif = gt('d4318_classification');
     const today   = new Date().toLocaleDateString('en-GB', {year:'numeric',month:'long',day:'numeric'});
     const repNo   = repNo4;
@@ -12106,7 +12204,7 @@ tr:last-child .rc{border-bottom:none;}
   <div class="hdr">
     <div class="hdr-logo">🔬</div>
     <div class="hdr-mid">
-      <div class="lab">LabCore Pro — Materials &amp; Geotechnical Laboratory</div>
+      <div class="lab">Elkasaby Geotechnical &amp; Materials Testing System</div>
       <div class="ttl">ATTERBERG LIMITS TEST REPORT</div>
       <div class="sub">Standard Test Methods for Liquid Limit, Plastic Limit, and Plasticity Index of Soils</div>
     </div>
@@ -12121,15 +12219,15 @@ tr:last-child .rc{border-bottom:none;}
   <div class="st"><div class="st-num">1</div><div class="st-bar"></div><div class="st-lbl">Project &amp; Sample Information</div><div class="st-rule"></div></div>
   <div style="display:flex;flex-direction:column;gap:4px;">
     <div class="pi-grid pi4">
-      <div class="pf"><label>Project Name</label><div class="pv"></div></div>
-      <div class="pf"><label>Client / Contractor</label><div class="pv"></div></div>
+      <div class="pf"><label>Project Name</label><div class="pv">${proj4}</div></div>
+      <div class="pf"><label>Client / Contractor</label><div class="pv">${client4}</div></div>
       <div class="pf"><label>Report No.</label><div class="pv">${repNo}</div></div>
       <div class="pf"><label>Report Date</label><div class="pv">${today}</div></div>
     </div>
     <div class="pi-grid pi4">
       <div class="pf"><label>Sample ID</label><div class="pv">${sampleId}</div></div>
-      <div class="pf"><label>Sample Date</label><div class="pv"></div></div>
-      <div class="pf"><label>Location / Borehole</label><div class="pv"></div></div>
+      <div class="pf"><label>Engineer</label><div class="pv">${engineer4}</div></div>
+      <div class="pf"><label>Location / Borehole</label><div class="pv">${_rg('gpi_location')}</div></div>
       <div class="pf"><label>Test Date</label><div class="pv">${testDate}</div></div>
     </div>
     <div class="pi-grid pi3">
@@ -12137,6 +12235,11 @@ tr:last-child .rc{border-bottom:none;}
       <div class="pf"><label>Preparation</label><div class="pv">Air Dry</div></div>
       <div class="pf"><label>Standard</label><div class="pv">ASTM D4318-17e1 &nbsp;|&nbsp; ${methodLabel}</div></div>
     </div>
+    ${(ambTemp||humidity) ? `<div class="pi-grid pi4">
+      <div class="pf"><label>🌡️ Lab Temp.</label><div class="pv">${ambTemp ? ambTemp+' °C' : '—'}</div></div>
+      <div class="pf"><label>💧 Relative Humidity</label><div class="pv">${humidity ? humidity+' %' : '—'}</div></div>
+      <div class="pf"></div><div class="pf"></div>
+    </div>` : ''}
   </div>
 
   <!-- LL TABLE -->
@@ -12286,16 +12389,18 @@ tr:last-child .rc{border-bottom:none;}
 function generateD854Report() {
 
   // ── Collect project info ──────────────────────────────────────
-  const gpi       = getAllGPI();
-  const proj      = gpi.project   !== '—' ? gpi.project   : (document.getElementById('cbr_project')?.value  || document.getElementById('projectName')?.value  || '—');
-  const sampleId  = gpi.sampleId  !== '—' ? gpi.sampleId  : (document.getElementById('cbr_sampleId')?.value || document.getElementById('sampleID')?.value      || '—');
-  const engineer  = gpi.engineer  !== '—' ? gpi.engineer  : (document.getElementById('cbr_engineer')?.value || document.getElementById('engineerName')?.value  || '—');
-  const testDate  = gpi.testDate  !== '—' ? gpi.testDate  : (document.getElementById('cbr_testDate')?.value || new Date().toLocaleDateString('en-GB') || '—');
-  const repNo     = gpi.reportNo  !== '—' ? gpi.reportNo  : (document.getElementById('cbr_reportNo')?.value || '—');
-  const client    = gpi.client    !== '—' ? gpi.client    : '—';
-  const location  = gpi.location  !== '—' ? gpi.location  : '—';
-  const gpiCustomRows = gpi.custom.length ? gpi.custom.map(c =>
-    `<tr><td class="lbl">${c.label}</td><td colspan="3">${c.value}</td></tr>`).join('') : '';
+  const _r854 = id => (document.getElementById(id)?.value?.trim() || '');
+  const _rd854= id => _r854(id) || '—';
+  const proj      = _rd854('gpi_project')    || _rd854('cbr_project')    || _rd854('projectName');
+  const sampleId  = _rd854('gpi_sampleId')   || _rd854('cbr_sampleId')   || _rd854('sampleID');
+  const engineer  = _rd854('gpi_engineer')   || _rd854('cbr_engineer')   || _rd854('engineerName');
+  const testDate  = _rd854('gpi_testDate')   || _rd854('cbr_testDate')   || new Date().toLocaleDateString('en-GB');
+  const repNo     = _rd854('gpi_reportNo')   || _rd854('cbr_reportNo');
+  const client    = _rd854('gpi_client');
+  const location  = _rd854('gpi_location');
+  const ambTemp   = _r854('gpi_ambTemp')  || _r854('d854_ambTemp')  || '';
+  const humidity  = _r854('gpi_humidity') || _r854('d854_humidity') || '';
+  const gpiCustomRows = '';
 
   // ── Collect D854 inputs ───────────────────────────────────────
   const T_val    = document.getElementById('d854_T')?.value     || '';
@@ -12471,9 +12576,9 @@ body{background:#f1f5f9;color:#111;font-size:8.5px;}
     </tr>
     <tr>
       <td class="lbl">🌡️ Lab Ambient Temp.</td>
-      <td>${ambTemp_val}${ambTemp_val !== '—' ? ' °C' : ''}</td>
+      <td>${ambTemp ? ambTemp+' °C' : '—'}</td>
       <td class="lbl">💧 Relative Humidity</td>
-      <td>${humidity_val}${humidity_val !== '—' ? ' %' : ''}</td>
+      <td>${humidity ? humidity+' %' : '—'}</td>
     </tr>
   </table>
 
