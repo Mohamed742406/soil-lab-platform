@@ -11697,6 +11697,62 @@ async function exportToExcel(mode) {
         {width:18},{width:16},{width:16},{width:16}
     ];
 
+    /* ── 1b. Chart helper ── */
+    async function addChartToSheet(canvasIds, labelText) {
+        // canvasIds: string or array of canvas element IDs
+        var ids = Array.isArray(canvasIds) ? canvasIds : [canvasIds];
+        var images = [];
+        for (var i = 0; i < ids.length; i++) {
+            var canvas = document.getElementById(ids[i]);
+            if (!canvas || canvas.width === 0) continue;
+            try {
+                var dataUrl = canvas.toDataURL('image/png');
+                var base64  = dataUrl.replace(/^data:image\/png;base64,/, '');
+                images.push({ base64: base64, w: canvas.width, h: canvas.height, label: ids[i] });
+            } catch(e) { console.warn('Chart capture failed:', ids[i], e); }
+        }
+        if (!images.length) return;
+
+        // Section header row
+        blankRow();
+        R++;
+        var hdr = ws.getRow(R);
+        var hc = hdr.getCell(1);
+        hc.value = labelText || '📈 الرسم البياني — Chart';
+        hc.font = { bold: true, size: 11, color: { argb: 'FFFFFFFF' }, name: 'Cairo' };
+        hc.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E3A5F' } };
+        hc.alignment = { horizontal: 'right', vertical: 'middle', readingOrder: 2 };
+        hdr.height = 22;
+        ws.mergeCells(R, 1, R, 8);
+
+        // For each chart image: calculate cell span and embed
+        for (var j = 0; j < images.length; j++) {
+            var img = images[j];
+            // Target width ≈ 8 columns wide, maintain aspect ratio
+            var targetW = 900; // px approx for 8 cols
+            var aspect  = img.h / img.w;
+            var targetH = Math.round(targetW * aspect);
+            // Rows needed (each row ≈ 20px height → use 15px for calc)
+            var rowsNeeded = Math.ceil(targetH / 18) + 1;
+
+            var startRow = R + 1;
+            for (var k = 0; k < rowsNeeded; k++) {
+                var rr = ws.getRow(startRow + k);
+                rr.height = 18;
+            }
+
+            var imgId = wb.addImage({ base64: img.base64, extension: 'png' });
+            ws.addImage(imgId, {
+                tl: { col: 0, row: startRow - 1 },
+                br: { col: 8, row: startRow + rowsNeeded - 1 },
+                editAs: 'oneCell'
+            });
+
+            R = startRow + rowsNeeded;
+        }
+        blankRow();
+    }
+
     /* ── 2. Palette ── */
     var C = {
         navyDark:'1E3A5F', navyMid:'2D5A87', orange:'EA580C',
@@ -11857,6 +11913,7 @@ async function exportToExcel(mode) {
             S(c,{font:{bold:true,size:14,color:{argb:'FF'+C.teal},name:'Cairo'},
                  fill:'F0FDFA',align:{vertical:'middle',horizontal:'center'}});
         });
+        await addChartToSheet('gradationChart', '④ منحنى التدرج الحبيبي — Particle-Size Distribution Curve');
     }
 
     /* ══════════════════════════════════════════════════════════
@@ -11927,6 +11984,7 @@ async function exportToExcel(mode) {
             {col:3,value:_g('d4318_PI_val'),color:'EA580C',size:18},
             {col:4,value:_g('d4318_classification'),color:'059669',size:10}
         ],'FFF0F9FF');
+        await addChartToSheet('d4318_chart', '④ منحنى حدود أتربرج — Atterberg Limits Flow Curve');
     }
 
     /* ══════════════════════════════════════════════════════════
@@ -12014,6 +12072,7 @@ async function exportToExcel(mode) {
             tblRow(['OMC (%)',_g('omcOriginal'),_g('omcCorrectedTable'),_g('omcDiff'),'','','',''],false,true);
             tblRow(['MDD',    _g('mddOriginal'),_g('mddCorrectedTable'),_g('mddDiff'),'','','',''],true, true);
         }
+        await addChartToSheet('proctorChart', '⑤ منحنى الدمك — Compaction Curve (w% vs MDD)');
     }
 
     /* ══════════════════════════════════════════════════════════
@@ -12247,6 +12306,11 @@ async function exportToExcel(mode) {
             while(row.length<8) row.push('');
             tblRow(row,idx%2===1,true);
         });
+        // CBR has multiple charts — embed all available
+        await addChartToSheet(
+            ['cbrPenetrationChart','cbrDensityChart','cbrSwellChart','cbrVsDensityChart'],
+            '⑥ الرسوم البيانية — CBR Load-Penetration & Density Curves'
+        );
     }
 
     /* ══════════════════════════════════════════════════════════
