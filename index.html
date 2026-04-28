@@ -1709,26 +1709,17 @@
                 </div>
             </div>
 
-            <!-- PROJECT & SAMPLE INFO (NEW — matches report form) -->
-            <div class="section-card p-6 mb-6" style="border-right:4px solid #1d4ed8;">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">📋</span>
-                    بيانات المشروع والعينة — Project &amp; Sample Information (§11 Report)
-                </h3>
-                <div class="grid md:grid-cols-3 gap-3 mb-3">
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Project Name / اسم المشروع</label><input type="text" id="prc_projectName" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Project Name"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Report No. / رقم التقرير</label><input type="text" id="prc_reportNo" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="RPT-001"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Report Date / تاريخ التقرير</label><input type="date" id="prc_reportDate" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Client / Contractor</label><input type="text" id="prc_client" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Client Name"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Sample ID / رقم العينة</label><input type="text" id="proctor_sampleId" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="P-001"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Sample Date / تاريخ العينة</label><input type="date" id="prc_sampleDate" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Test Date / تاريخ الاختبار</label><input type="date" id="proctor_testDate" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Location / Boring No.</label><input type="text" id="prc_location" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="BH-01"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Depth (m) / العمق</label><input type="number" id="prc_depth" step="0.1" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="1.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Sample Mass (kg)</label><input type="number" id="prc_sampleMass" step="0.1" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="25"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">As-Received Water Content (%)</label><input type="number" id="prc_asReceivedWC" step="0.1" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="8.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Tested By / المهندس</label><input type="text" id="prc_testedBy" class="input-field w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="م. محمد"></div>
-                </div>
+            <!-- inputs مخفية — البيانات بتيجي من Global Project Panel -->
+            <div style="display:none">
+                <input type="text" id="prc_projectName">
+                <input type="text" id="prc_reportNo">
+                <input type="date" id="prc_reportDate">
+                <input type="text" id="prc_client">
+                <input type="text" id="proctor_sampleId">
+                <input type="date" id="prc_sampleDate">
+                <input type="date" id="proctor_testDate">
+                <input type="text" id="prc_location">
+                <input type="text" id="prc_testedBy">
             </div>
 
             <!-- SECTION 2 — TEST METHOD -->
@@ -4655,6 +4646,48 @@
     return data;
   }
 
+  // ── Custom Fields HTML Helpers ───────────────────────────────
+  // Returns <tr> rows for info-table style reports (CBR, D854)
+  function gpiCustomTableRows() {
+    const customs = getAllGPI().custom;
+    if (!customs.length) return '';
+    let html = '';
+    for (let i = 0; i < customs.length; i += 2) {
+      const a = customs[i];
+      const b = customs[i + 1];
+      html += `<tr>
+        <td class="lbl">${a.label}</td><td class="val">${a.value}</td>
+        ${b ? `<td class="lbl">${b.label}</td><td class="val">${b.value}</td>`
+             : `<td class="lbl"></td><td class="val"></td>`}
+      </tr>`;
+    }
+    return html;
+  }
+
+  // Returns <div class="pf"> items for pi-grid style reports (D4318, Gradation)
+  function gpiCustomPiItems(valClass) {
+    const vc = valClass || 'val';
+    const customs = getAllGPI().custom;
+    if (!customs.length) return '';
+    // Group into rows of 4
+    let html = '';
+    for (let i = 0; i < customs.length; i += 4) {
+      const chunk = customs.slice(i, i + 4);
+      const items = chunk.map(c => `<div class="pf"><label>${c.label}</label><div class="${vc}">${c.value}</div></div>`).join('');
+      const empties = Array(4 - chunk.length).fill('<div class="pf"></div>').join('');
+      html += `<div class="pi pi4">${items}${empties}</div>`;
+    }
+    return html;
+  }
+
+  // Returns <div class="ic"> items for Proctor info-grid style
+  function gpiCustomIcItems() {
+    const customs = getAllGPI().custom;
+    if (!customs.length) return '';
+    return customs.map(c => `<div class="ic"><span class="ic-lbl">${c.label}</span><span class="ic-val">${c.value}</span></div>`).join('');
+  }
+  // ─────────────────────────────────────────────────────────────
+
   function syncGlobalInfo() {
     const st = document.getElementById('gpi_syncStatus');
     if (st) { st.textContent = '✅ محفوظ'; setTimeout(() => { if(st) st.textContent=''; }, 1500); }
@@ -6903,11 +6936,13 @@ function validateInputs() {
             document.getElementById('mddDiff').textContent = '—';
 
             // Clear chart
-            proctorChart.data.datasets[0].data = [];
-            proctorChart.data.datasets[1].data = [];
-            proctorChart.data.datasets[1].hidden = true;
-            proctorChart.data.datasets[2].data = [];
-            proctorChart.update();
+            if (proctorChart && proctorChart.data) {
+                proctorChart.data.datasets[0].data = [];
+                proctorChart.data.datasets[1].data = [];
+                proctorChart.data.datasets[1].hidden = true;
+                proctorChart.data.datasets[2].data = [];
+                proctorChart.update();
+            }
 
             // Clear messages
             document.getElementById('proctorValidationMessages').innerHTML = '';
@@ -10252,6 +10287,7 @@ body{background:#f1f5f9;color:#111;font-size:9.5px;}
       <td class="lbl">Specimens</td>
       <td colspan="3" class="val">${n} molds — ${['E1 (56 blows/layer)','E2 (25 blows/layer)','E3 (10 blows/layer)'].slice(0,n).join(' | ')}</td>
     </tr>
+    ${gpiCustomTableRows()}
   </table>
 
   <!-- 2. Equipment Traceability -->
@@ -10485,24 +10521,24 @@ window._drawReportCharts = function() {
   iframe.style.cssText = 'width:100%;height:82vh;border:none;border-radius:0 0 12px 12px;';
   content.innerHTML = '';
   content.appendChild(iframe);
-  const doc = iframe.contentDocument || iframe.contentWindow.document;
-  doc.open(); doc.write(reportHTML); doc.close();
+  // Blob URL — يعمل على file:// وhttp:// بدون قيود
+  const _cbrBlob = new Blob([reportHTML], { type: 'text/html; charset=utf-8' });
+  const _cbrUrl  = URL.createObjectURL(_cbrBlob);
+  iframe.src = _cbrUrl;
 
-  // Directly inject chart data + Chart.js into iframe (bypasses file:// CDN restriction)
-  setTimeout(function() {
+  // Directly inject chart data + Chart.js into iframe after load
+  iframe.onload = function() {
     try {
       var iwin = iframe.contentWindow;
       if (!iwin) return;
-      // Pass chart data object directly — no JSON serialization issues
       iwin._rptData = { penDatasets, penYMax, std01x, std02x, std01y, std02y,
         pUnit: pUnit_chart, densSpecData, mddVal, swellData, cbrVsDensData,
         suffs, blowsMap };
-      // Pass Chart.js constructor from parent
       if (window.Chart) iwin.Chart = window.Chart;
-      // Execute drawing function
       if (typeof iwin._drawReportCharts === 'function') iwin._drawReportCharts();
     } catch(e) { console.warn('Chart inject:', e); }
-  }, 400);
+    setTimeout(() => URL.revokeObjectURL(_cbrUrl), 5000);
+  };
 }
 
 // ── Init ─────────────────────────────────────────────────────
@@ -10531,7 +10567,7 @@ function generateProctorReport() {
   const reportDate = _rdp('gpi_reportDate') || _rdp('prc_reportDate') || new Date().toLocaleDateString('en-GB');
   const client     = _rdp('gpi_client')     || _rdp('prc_client');
   const sampleId   = _rdp('gpi_sampleId')   || _rdp('proctor_sampleId');
-  const sampleDate = _rdp('prc_sampleDate');
+  const sampleDate = _rdp('gpi_testDate') || _rdp('prc_sampleDate');
   const testDate   = _rdp('gpi_testDate')   || _rdp('proctor_testDate');
   const location   = _rdp('gpi_location')   || _rdp('prc_location');
   const ambTemp    = _rp('gpi_ambTemp')  || '';
@@ -10539,7 +10575,7 @@ function generateProctorReport() {
   const depth       = g('prc_depth')        || '—';
   const sampleMass  = g('prc_sampleMass')   || '—';
   const asRecWC     = g('prc_asReceivedWC') || '—';
-  const testedBy    = g('prc_testedBy')     || '—';
+  const testedBy    = _rdp('gpi_engineer')  || g('prc_testedBy') || '—';
 
   // ── Test method info ─────────────────────────────────────────
   const method      = g('proctor_method');
@@ -10906,6 +10942,7 @@ body{font-family:'Inter',Arial,sans-serif;font-size:7pt;color:#1a1a2e;background
   <div class="is-item"><span class="is-lbl">Tested By:</span><span class="is-val">${testedBy}</span></div>
   ${ambTemp ? `<div class="is-item"><span class="is-lbl">🌡️ Lab Temp.:</span><span class="is-val">${ambTemp} °C</span></div>` : ''}
   ${humidity ? `<div class="is-item"><span class="is-lbl">💧 Humidity:</span><span class="is-val">${humidity} %</span></div>` : ''}
+  ${gpiCustomIcItems()}
 </div>
 
 <!-- ②  TEST METHOD -->
@@ -11460,6 +11497,7 @@ table.cls td{border:1px solid var(--line);padding:2.5px 4px;vertical-align:middl
       <div class="pf"><label>Max Particle Size (mm)</label><div class="val">${unified[0] ? unified[0].opening + ' mm' : '—'}</div></div>
       <div class="pf"><label>Notes</label><div class="val">${notes}</div></div>
     </div>
+    ${gpiCustomPiItems('val')}
   </div>
 
   <!-- TEST PROCEDURE -->
@@ -11592,12 +11630,17 @@ table.cls td{border:1px solid var(--line);padding:2.5px 4px;vertical-align:middl
 </body>
 </html>`;
 
-    const win = window.open('', '_blank', 'width=900,height=780');
-    win.document.open();
-    win.document.write(reportHTML);
-    win.document.close();
-    win.focus();
-    win.onload = () => { win.print(); };
+    // Blob URL — يعمل على file:// وhttp:// بدون قيود security origin
+    const blob = new Blob([reportHTML], { type: 'text/html; charset=utf-8' });
+    const blobUrl = URL.createObjectURL(blob);
+    const win = window.open(blobUrl, '_blank', 'width=900,height=780');
+    if (win) {
+      win.focus();
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+    } else {
+      alert('⚠️ البراوزر منع فتح التقرير. يرجى السماح بالنوافذ المنبثقة لهذا الموقع.');
+      URL.revokeObjectURL(blobUrl);
+    }
 }
 
 
@@ -11894,12 +11937,12 @@ async function exportToExcel(mode) {
         blankRow();
 
         secHdr('① بيانات المشروع والعينة — Project & Sample Information', C.blue);
-        lvRow('اسم المشروع / Project',       _v('prc_projectName'));
-        lvRow('رقم التقرير / Report No.',    _v('prc_reportNo'));
-        lvRow('العميل / Client',              _v('prc_client'));
-        lvRow('رقم العينة / Sample ID',       _v('proctor_sampleId'));
-        lvRow('تاريخ الاختبار / Test Date',   _v('proctor_testDate'));
-        lvRow('الموقع / Location',             _v('prc_location'));
+        lvRow('اسم المشروع / Project',       _v('gpi_project')    || _v('prc_projectName'));
+        lvRow('رقم التقرير / Report No.',    _v('gpi_reportNo')   || _v('prc_reportNo'));
+        lvRow('العميل / Client',              _v('gpi_client')     || _v('prc_client'));
+        lvRow('رقم العينة / Sample ID',       _v('gpi_sampleId')   || _v('proctor_sampleId'));
+        lvRow('تاريخ الاختبار / Test Date',   _v('gpi_testDate')   || _v('proctor_testDate'));
+        lvRow('الموقع / Location',             _v('gpi_location')   || _v('prc_location'));
         lvRow('العمق / Depth (m)',             _v('prc_depth'));
         lvRow('الطريقة / Method',              _v('proctor_method'));
         lvRow('حجم القالب / Mold Vol. (cm³)', _v('moldVol_value'));
@@ -12691,6 +12734,7 @@ tr:last-child .rc{border-bottom:none;}
       <div class="pf"><label>💧 Relative Humidity</label><div class="pv">${humidity ? humidity+' %' : '—'}</div></div>
       <div class="pf"></div><div class="pf"></div>
     </div>` : ''}
+    ${gpiCustomPiItems('pv')}
   </div>
 
   <!-- LL TABLE -->
@@ -12826,11 +12870,17 @@ tr:last-child .rc{border-bottom:none;}
 </body>
 </html>`;
 
-    const win = window.open('', '_blank', 'width=900,height=800');
-    win.document.open();
-    win.document.write(reportHTML);
-    win.document.close();
-    win.focus();
+    // Blob URL — يعمل على file:// وhttp:// بدون قيود security origin
+    const blob = new Blob([reportHTML], { type: 'text/html; charset=utf-8' });
+    const blobUrl = URL.createObjectURL(blob);
+    const win = window.open(blobUrl, '_blank', 'width=900,height=800');
+    if (win) {
+      win.focus();
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+    } else {
+      alert('⚠️ البراوزر منع فتح التقرير. يرجى السماح بالنوافذ المنبثقة لهذا الموقع.');
+      URL.revokeObjectURL(blobUrl);
+    }
 }
 
 </script>
@@ -12851,7 +12901,7 @@ function generateD854Report() {
   const location  = _rd854('gpi_location');
   const ambTemp   = _r854('gpi_ambTemp')  || _r854('d854_ambTemp')  || '';
   const humidity  = _r854('gpi_humidity') || _r854('d854_humidity') || '';
-  const gpiCustomRows = '';
+  const gpiCustomRows = gpiCustomTableRows();
 
   // ── Collect D854 inputs ───────────────────────────────────────
   const T_val    = document.getElementById('d854_T')?.value     || '';
@@ -13228,8 +13278,8 @@ body{background:#f1f5f9;color:#111;font-size:8.5px;}
   iframe.style.cssText = 'width:100%;height:82vh;border:none;border-radius:0 0 12px 12px;';
   content.innerHTML = '';
   content.appendChild(iframe);
-  const doc = iframe.contentDocument || iframe.contentWindow.document;
-  doc.open(); doc.write(reportHTML); doc.close();
+  // srcdoc — يعمل على file:// وhttp:// بدون قيود security origin
+  iframe.srcdoc = reportHTML;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
