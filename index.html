@@ -272,6 +272,9 @@
                 <button id="tabCBR" onclick="switchTab('CBR')" class="tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap">
                     🚜 نسبة التحمل (CBR)
                 </button>
+                <button id="tabSandCone" onclick="switchTab('SandCone')" class="tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap">
+                    🏺 الساند كون (D1556)
+                </button>
             </div>
         </div>
     </nav>
@@ -373,7 +376,7 @@
             <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:18px;">
                 <div style="font-size:.75rem;font-weight:700;color:#374151;margin-bottom:8px;">📋 التبويبات المحفوظة:</div>
                 <div style="font-size:.72rem;color:#6b7280;line-height:1.8;">
-                    ✅ D6913 · D422 · D4318 · SoilClass · D1557 · D2216 · D854 · CBR<br>
+                    ✅ D6913 · D422 · D4318 · SoilClass · D1557 · D2216 · D854 · CBR · D1556<br>
                     ✅ بيانات المشروع العامة (Global Project Info)
                 </div>
             </div>
@@ -4580,6 +4583,133 @@
 <!-- ===== END CBR SECTION ===== -->
 
 
+<!-- ═══════════════════════════════════════════════════════════════════
+     SAND CONE SECTION — اختبار الساند كون ASTM D1556
+     ═══════════════════════════════════════════════════════════════════ -->
+<div id="sectionSandCone" class="hidden" style="padding:0 0 40px 0;">
+
+  <!-- TAB SAVE/IMPORT BAR -->
+  <div style="background:linear-gradient(135deg,#1e3a5f,#1e40af);border-radius:10px;margin-bottom:16px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+    <span style="color:#93c5fd;font-size:.78rem;font-weight:700;">🏺 الساند كون (D1556) — حفظ / استيراد</span>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <span id="tabBadge_SandCone" style="background:rgba(255,255,255,.12);color:#fde68a;font-size:.68rem;padding:2px 10px;border-radius:20px;font-weight:600;display:none;"></span>
+      <button onclick="saveTabJSON('SandCone','الساند كون (D1556)')" style="background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;border-radius:7px;padding:6px 14px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">💾 حفظ هذا التبويب</button>
+      <button onclick="importTabJSON('SandCone')" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:white;border:none;border-radius:7px;padding:6px 14px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">📂 استيراد</button>
+      <button onclick="exportToExcel('SandCone')" style="background:linear-gradient(135deg,#059669,#047857);color:white;border:none;border-radius:7px;padding:6px 14px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">📊 تصدير Excel</button>
+    </div>
+  </div>
+
+  <!-- HEADER CARD -->
+  <div class="section-card p-6 mb-6">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+      <div style="background:linear-gradient(135deg,#78350f,#b45309);border-radius:12px;width:54px;height:54px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0;">🏺</div>
+      <div>
+        <h2 style="font-size:1.2rem;font-weight:800;color:#1e3a8a;margin:0;">اختبار الكثافة الحقلية بطريقة الساند كون</h2>
+        <p style="font-size:.8rem;color:#6b7280;margin:2px 0 0;">Field Density Test by Sand Cone Method — ASTM D1556 / D1556M &nbsp;|&nbsp; يدعم حتى 5 نقاط اختبار</p>
+      </div>
+      <div style="margin-right:auto;display:flex;gap:8px;flex-wrap:wrap;">
+        <button onclick="loadDemoSandCone()" style="background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;border-radius:8px;padding:8px 16px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;">📋 بيانات تجريبية</button>
+        <button onclick="resetSandCone()" style="background:linear-gradient(135deg,#6b7280,#4b5563);color:white;border:none;border-radius:8px;padding:8px 16px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;">🔄 مسح الكل</button>
+        <button onclick="calcAllSandCone()" style="background:linear-gradient(135deg,#16a34a,#15803d);color:white;border:none;border-radius:8px;padding:8px 16px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;">⚡ احتساب الكل</button>
+        <button onclick="exportToExcel('SandCone')" style="background:linear-gradient(135deg,#059669,#047857);color:white;border:none;border-radius:8px;padding:8px 16px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;">📊 تصدير Excel</button>
+        <button onclick="generateSandConeReport()" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;border:none;border-radius:8px;padding:8px 16px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;">📄 تقرير نهائي</button>
+      </div>
+    </div>
+
+    <!-- Shared Proctor Reference (applies to all points) -->
+    <div style="background:#fffbeb;border:2px solid #fcd34d;border-radius:10px;padding:14px 16px;">
+      <div style="font-size:.85rem;font-weight:800;color:#92400e;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+        <span style="background:linear-gradient(135deg,#d97706,#b45309);color:white;border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;">★</span>
+        بيانات الدمك المرجعي (مشتركة لجميع النقاط) — Proctor Reference (ASTM D1557)
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        <div>
+          <label style="display:block;font-size:.72rem;font-weight:700;color:#92400e;margin-bottom:3px;">أقصى كثافة جافة (MDD) — gm/cm³</label>
+          <input id="sc_mdd" type="number" step="0.001" oninput="calcAllSandCone()" class="input-field w-full border border-yellow-300 rounded-lg px-3 py-2 text-sm" placeholder="مثال: 2.06">
+        </div>
+        <div>
+          <label style="display:block;font-size:.72rem;font-weight:700;color:#92400e;margin-bottom:3px;">المحتوى المائي الأمثل (OMC) — %</label>
+          <input id="sc_omc" type="number" step="0.1" class="input-field w-full border border-yellow-300 rounded-lg px-3 py-2 text-sm" placeholder="مثال: 5.9">
+        </div>
+        <div>
+          <label style="display:block;font-size:.72rem;font-weight:700;color:#92400e;margin-bottom:3px;">الحد الأدنى للدمك المطلوب — %</label>
+          <input id="sc_minCompaction" type="number" step="0.1" oninput="calcAllSandCone()" class="input-field w-full border border-yellow-300 rounded-lg px-3 py-2 text-sm" placeholder="مثال: 95">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── POINT TABS ──────────────────────────────────────────────── -->
+  <div style="display:flex;gap:6px;margin-bottom:0;flex-wrap:wrap;">
+    <button id="scPtTab_1" onclick="switchSCPoint(1)" style="padding:8px 20px;border:none;border-radius:8px 8px 0 0;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;box-shadow:0 -2px 6px rgba(0,0,0,.15);">📍 نقطة 1</button>
+    <button id="scPtTab_2" onclick="switchSCPoint(2)" style="padding:8px 20px;border:none;border-radius:8px 8px 0 0;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;background:#e5e7eb;color:#6b7280;">📍 نقطة 2</button>
+    <button id="scPtTab_3" onclick="switchSCPoint(3)" style="padding:8px 20px;border:none;border-radius:8px 8px 0 0;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;background:#e5e7eb;color:#6b7280;">📍 نقطة 3</button>
+    <button id="scPtTab_4" onclick="switchSCPoint(4)" style="padding:8px 20px;border:none;border-radius:8px 8px 0 0;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;background:#e5e7eb;color:#6b7280;">📍 نقطة 4</button>
+    <button id="scPtTab_5" onclick="switchSCPoint(5)" style="padding:8px 20px;border:none;border-radius:8px 8px 0 0;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;background:#e5e7eb;color:#6b7280;">📍 نقطة 5</button>
+  </div>
+
+  <!-- POINT PANELS (1-5) — rendered dynamically by JS -->
+  <div id="scPointsContainer" style="background:white;border:2px solid #1e3a5f;border-radius:0 12px 12px 12px;padding:20px;margin-bottom:16px;box-shadow:0 4px 12px rgba(0,0,0,.08);">
+    <!-- filled by renderSCPoint() -->
+  </div>
+
+  <!-- ── SUMMARY TABLE ───────────────────────────────────────────── -->
+  <div class="section-card p-5 mb-5">
+    <div style="font-size:1rem;font-weight:800;color:#1e3a8a;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+      <span style="background:linear-gradient(135deg,#059669,#047857);color:white;border-radius:50%;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;">∑</span>
+      ملخص جميع النقاط — All Points Summary
+    </div>
+    <div style="overflow-x:auto;">
+      <table id="scSummaryTable" style="width:100%;border-collapse:collapse;font-size:.82rem;">
+        <thead>
+          <tr style="background:linear-gradient(135deg,#065f46,#059669);color:white;">
+            <th style="padding:8px 10px;border:1px solid rgba(255,255,255,.2);text-align:center;">النقطة</th>
+            <th style="padding:8px 10px;border:1px solid rgba(255,255,255,.2);">Test No.</th>
+            <th style="padding:8px 10px;border:1px solid rgba(255,255,255,.2);">Layer</th>
+            <th style="padding:8px 10px;border:1px solid rgba(255,255,255,.2);">γ<sub>d</sub> (gm/cm³)</th>
+            <th style="padding:8px 10px;border:1px solid rgba(255,255,255,.2);">w%</th>
+            <th style="padding:8px 10px;border:1px solid rgba(255,255,255,.2);">PC%</th>
+            <th style="padding:8px 10px;border:1px solid rgba(255,255,255,.2);">النتيجة</th>
+          </tr>
+        </thead>
+        <tbody id="scSummaryBody">
+          <tr><td colspan="7" style="text-align:center;padding:16px;color:#9ca3af;">أدخل البيانات واضغط احتساب</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── REMARKS ─────────────────────────────────────────────────── -->
+  <div class="section-card p-5 mb-5">
+    <div style="font-size:1rem;font-weight:800;color:#1e3a8a;margin-bottom:10px;">📝 ملاحظات — Notes & Remarks</div>
+    <div style="font-size:.78rem;color:#374151;margin-bottom:8px;line-height:1.8;">
+      <div>📌 المعيار المطبق: ASTM D1557-12 (Reapproved 2021) — Modified Proctor</div>
+    </div>
+    <textarea id="sc_remarks" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="أي ملاحظات إضافية على الاختبار..."></textarea>
+    <div style="font-size:.72rem;color:#6b7280;margin-top:4px;">
+      * نتيجة الاختبار تتوافق مع المواصفة. &nbsp;|&nbsp;
+      * المختبر مسؤول عن جميع البيانات الواردة في هذا التقرير، ما عدا ما يوفره العميل. &nbsp;|&nbsp;
+      * نتائج الاختبار تمثل العينة المقدمة فقط.
+    </div>
+  </div>
+
+</div>
+<!-- END sectionSandCone -->
+
+<!-- ===== SAND CONE REPORT MODAL ===== -->
+<div id="sandConeReportModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:9999;overflow-y:auto;">
+  <div style="max-width:860px;margin:20px auto;background:white;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+    <div style="background:linear-gradient(135deg,#78350f,#b45309);color:white;padding:14px 20px;border-radius:12px 12px 0 0;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:1rem;font-weight:700;font-family:Cairo,sans-serif;">📄 تقرير اختبار الكثافة الحقلية — Field Density Test | ASTM D1556</span>
+      <div style="display:flex;gap:8px;">
+        <button onclick="(function(){var ifr=document.querySelector('#sandConeReportContent iframe');if(ifr){try{ifr.contentWindow.print();}catch(e){}}})()" style="background:#10b981;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-family:Cairo,sans-serif;font-weight:600;font-size:.85rem;">🖨️ طباعة</button>
+        <button onclick="document.getElementById('sandConeReportModal').style.display='none'" style="background:#ef4444;color:white;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:1.1rem;line-height:1;">✕</button>
+      </div>
+    </div>
+    <div id="sandConeReportContent" style="padding:0;"></div>
+  </div>
+</div>
+
     </main>
 
 
@@ -4794,6 +4924,11 @@ function switchTab(tab) {
             ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
             : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
 
+    document.getElementById('tabSandCone').className =
+        tab === 'SandCone'
+            ? 'tab-active tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap'
+            : 'tab-inactive tab-clickable px-4 py-2 rounded-lg font-semibold whitespace-nowrap';
+
 
     // 2. إظهار/إخفاء الأقسام (تم إضافة قسم CBR في الآخر)
     document.getElementById('sectionD6913').classList.toggle('hidden', tab !== 'D6913');
@@ -4806,6 +4941,7 @@ function switchTab(tab) {
     
     // >>> إضافة قسم CBR الجديد هنا <<<
     document.getElementById('sectionCBR').classList.toggle('hidden', tab !== 'CBR');
+    document.getElementById('sectionSandCone').classList.toggle('hidden', tab !== 'SandCone');
 
 
         // >>> تشغيل دالة CBR <<<
@@ -12348,6 +12484,237 @@ async function exportToExcel(mode) {
         }
     }
 
+    /* ══════════════════════════════════════════════════════════
+       تبويب SandCone — كثافة حقلية ASTM D1556
+       ══════════════════════════════════════════════════════════ */
+    else if (mode === 'SandCone') {
+
+        /* ── حفظ بيانات النقطة الحالية أولاً ── */
+        if (typeof saveSCPointInputs === 'function') saveSCPointInputs(typeof scCurrentPoint !== 'undefined' ? scCurrentPoint : 1);
+        if (typeof calcAllSandCone  === 'function') calcAllSandCone();
+
+        /* ── عنوان التبويب ── */
+        titleRow('🏺 اختبار الكثافة الحقلية — Sand Cone Field Density Test | ASTM D1556 / D1556M', 'B45309');
+        blankRow();
+
+        /* ─── ① بيانات المشروع من الهيدر ─── */
+        secHdr('① بيانات المشروع — Project Information (Global Header)', C.navyDark);
+        lvRow('اسم المشروع / Project Name',      _v('gpi_project'));
+        lvRow('اسم العميل / Client',             _v('gpi_client'));
+        lvRow('الموقع / Location',               _v('gpi_location'));
+        lvRow('رقم التقرير / Report No.',        _v('gpi_reportNo'));
+        lvRow('رقم العينة / Sample ID',          _v('gpi_sampleId'));
+        lvRow('المهندس / Engineer',              _v('gpi_engineer'));
+        lvRow('تاريخ الاختبار / Test Date',      _v('gpi_testDate'));
+        lvRow('تاريخ التقرير / Report Date',     _v('gpi_reportDate'));
+        lvRow('درجة حرارة المختبر / Lab Temp (°C)', _v('gpi_ambTemp'));
+        lvRow('الرطوبة النسبية / Humidity (%)',  _v('gpi_humidity'));
+        lvRow('ملاحظات / Remarks',               _v('gpi_remarks'));
+        blankRow();
+
+        /* ─── ② مرجع الدمك ─── */
+        secHdr('② مرجع الدمك — Proctor Reference (ASTM D1557)', 'D97706');
+        lvRow('أقصى كثافة جافة / MDD (gm/cm³)',        _v('sc_mdd'));
+        lvRow('المحتوى المائي الأمثل / OMC (%)',        _v('sc_omc'));
+        lvRow('الحد الأدنى للدمك المطلوب / Min PC (%)', _v('sc_minCompaction'));
+        blankRow();
+
+        /* ─── ③ جدول القياسات لكل نقطة ─── */
+        secHdr('③ قياسات الحقل والمختبر — Field & Lab Measurements', C.orange);
+
+        /* رؤوس الجدول */
+        var scPtCols = ['البيان / Item', 'الوحدة / Unit'];
+        var scPtFills = [C.orange, C.orange];
+        var scActPts = 0;
+        for (var pi = 0; pi < 5; pi++) {
+            var sd = (typeof scData !== 'undefined') ? scData[pi] : null;
+            if (!sd) continue;
+            var hasData = sd.wetSoilWt || sd.jarConeBefore || sd.jarConeAfter;
+            if (hasData) {
+                scPtCols.push('نقطة ' + (pi+1) + '\nPoint ' + (pi+1));
+                scPtFills.push(C.orange);
+                scActPts++;
+            }
+        }
+        if (scActPts === 0) {
+            /* لا توجد بيانات — أنشئ 5 أعمدة على الأقل */
+            for (var qq = 0; qq < 5; qq++) {
+                scPtCols.push('نقطة ' + (qq+1));
+                scPtFills.push(C.orange);
+            }
+        }
+        while (scPtCols.length < 8) { scPtCols.push(''); scPtFills.push('FFFFFF'); }
+        tblHdr(scPtCols.slice(0,8), scPtFills.slice(0,8));
+
+        /* helper: قيمة نقطة معينة */
+        function scCell(d, field) {
+            if (!d) return '—';
+            var v = d[field];
+            return (v === undefined || v === null || v === '' || v === 'NaN') ? '—' : String(v);
+        }
+        function scResult(d, field, dec) {
+            if (!d) return '—';
+            var v = d[field];
+            if (v === undefined || v === null || isNaN(v)) return '—';
+            return parseFloat(v).toFixed(dec);
+        }
+
+        /* حدد النقاط الفعّالة */
+        var activePts = [];
+        if (typeof scData !== 'undefined') {
+            for (var pi2 = 0; pi2 < 5; pi2++) {
+                var sd2 = scData[pi2];
+                if (sd2 && (sd2.wetSoilWt || sd2.jarConeBefore)) activePts.push(sd2);
+            }
+            if (activePts.length === 0) activePts = scData.slice(0,5); /* عرض الكل إن كانت فارغة */
+        }
+
+        function scRow(label, unit, fieldOrFn, dec) {
+            var row = [label, unit];
+            activePts.forEach(function(sd3) {
+                if (typeof fieldOrFn === 'function') {
+                    row.push(fieldOrFn(sd3));
+                } else if (dec !== undefined) {
+                    row.push(scResult(sd3, fieldOrFn, dec));
+                } else {
+                    row.push(scCell(sd3, fieldOrFn));
+                }
+            });
+            while (row.length < 8) row.push('');
+            return row;
+        }
+
+        var scRowIdx = 0;
+        function addScRow(label, unit, fieldOrFn, dec) {
+            tblRow(scRow(label, unit, fieldOrFn, dec), scRowIdx%2===1, true);
+            scRowIdx++;
+        }
+
+        addScRow('رقم الاختبار / Test No.',                  '—',    'testNo');
+        addScRow('رقم الطبقة / Layer No.',                   '—',    'layerNo');
+        addScRow('نوع المادة / Material',                    '—',    'material');
+        blankRow();
+
+        /* ── قياسات الحقل ── */
+        R++;
+        var subHdrRow = ws.getRow(R);
+        subHdrRow.height = 18;
+        var subC = subHdrRow.getCell(1);
+        subC.value = '⚙️ قياسات الحقل — Field Measurements';
+        S(subC, {font:{bold:true,size:9,color:{argb:'FF'+C.navyDark},name:'Cairo'}, fill:'EFF6FF',
+                 align:{vertical:'middle',horizontal:'right',readingOrder:2}});
+        ws.mergeCells(R, 1, R, 8);
+
+        scRowIdx = 0;
+        addScRow('وزن التربة الرطبة / Wet Soil Wt.',         'gm',   'wetSoilWt');
+        addScRow('الجرة+المخروط قبل / Jar+Cone Before',      'gm',   'jarConeBefore');
+        addScRow('الجرة+المخروط بعد / Jar+Cone After',       'gm',   'jarConeAfter');
+        addScRow('رمل المخروط+الحفرة / Sand Cone+Hole',      'gm',   'sandConeHole');
+        addScRow('رمل المخروط+الصفيحة / Sand Cone+Plate',    'gm',   'sandConePlate');
+        addScRow('كثافة الرمل السائب / Sand Bulk Density',   'g/cm³','sandBulkDensity');
+        blankRow();
+
+        /* ── محتوى مائي ── */
+        R++;
+        var wcHdrRow = ws.getRow(R);
+        wcHdrRow.height = 18;
+        var wcC = wcHdrRow.getCell(1);
+        wcC.value = '💧 المحتوى المائي — Moisture Content';
+        S(wcC, {font:{bold:true,size:9,color:{argb:'FF0369A1'},name:'Cairo'}, fill:'EFF6FF',
+                align:{vertical:'middle',horizontal:'right',readingOrder:2}});
+        ws.mergeCells(R, 1, R, 8);
+
+        scRowIdx = 0;
+        addScRow('كبسولة + تربة رطبة / Container+Wet',        'gm',   'wetTare');
+        addScRow('كبسولة + تربة جافة / Container+Dry',        'gm',   'dryTare');
+        addScRow('وزن الكبسولة / Container Wt.',               'gm',   'tare');
+        addScRow('المحتوى المائي المُدخل / w% Input',          '%',    'waterContent');
+        blankRow();
+
+        /* ─── ④ نتائج الحسابات ─── */
+        secHdr('④ نتائج الحسابات — Calculation Results (ASTM D1556)', C.green);
+        tblHdr(scPtCols.slice(0,8), scPtFills.map(function(f){ return f===C.orange?C.green:f; }).slice(0,8));
+
+        scRowIdx = 0;
+        addScRow('رمل الحفرة Sₕ / Sand in Hole',             'gm',   'r_sandInHole',  1);
+        addScRow('حجم الحفرة V / Hole Volume',                'cm³',  'r_holeVolume',  1);
+        addScRow('الكثافة الرطبة γw / Wet Density',           'g/cm³','r_wetDensity',  3);
+        addScRow('المحتوى المائي w / Water Content',          '%',    'r_wc',          1);
+        addScRow('الكثافة الجافة γd / Dry Density',           'g/cm³','r_dryDensity',  3);
+
+        /* صف نسبة الدمك — ألوان حسب النتيجة */
+        R++;
+        var pcRow = ws.getRow(R);
+        pcRow.height = 26;
+        var minComp = parseFloat((document.getElementById('sc_minCompaction')||{}).value) || 95;
+        ['نسبة الدمك PC / Compaction %', '%'].concat(activePts.map(function(sd4){
+            return scResult(sd4, 'r_compaction', 2);
+        })).forEach(function(v, ci) {
+            var cell = pcRow.getCell(ci+1);
+            cell.value = v === '—' ? '—' : (ci>=2 && v !== '—' ? parseFloat(v) : v);
+            var pass = (ci >= 2 && v !== '—' && !isNaN(parseFloat(v)) && parseFloat(v) >= minComp);
+            var fail = (ci >= 2 && v !== '—' && !isNaN(parseFloat(v)) && parseFloat(v) < minComp);
+            S(cell, {
+                font: {bold:true, size: ci>=2 ? 12 : 9,
+                       color: {argb: ci<2 ? 'FF1F2937' : (pass ? 'FF065F46' : (fail ? 'FF991B1B' : 'FF1F2937'))},
+                       name:'Cairo'},
+                fill: ci<2 ? C.grayBg : (pass ? 'D1FAE5' : (fail ? 'FEE2E2' : C.amberBg)),
+                align: {vertical:'middle', horizontal: ci===0?'right':'center',
+                        readingOrder: ci===0?2:1, wrapText:true}
+            });
+        });
+        blankRow();
+
+        /* ─── ⑤ ملخص النتائج ─── */
+        secHdr('⑤ ملخص جميع النقاط — All Points Summary', C.teal);
+        tblHdr(
+            ['النقطة','Test No.','Layer','γd (g/cm³)','w%','PC%','النتيجة',''],
+            [C.teal,C.teal,C.teal,C.teal,C.teal,C.teal,C.teal,'FFFFFF']
+        );
+        activePts.forEach(function(sd5, sidx) {
+            var pc = parseFloat(sd5.r_compaction);
+            var pass = (!isNaN(pc) && pc >= minComp);
+            var verdict = isNaN(pc) ? '—' : (pass ? '✅ PASS' : '❌ FAIL');
+            var row = [
+                'نقطة '+(sd5.pt||sidx+1),
+                scCell(sd5,'testNo'),
+                scCell(sd5,'layerNo'),
+                scResult(sd5,'r_dryDensity',3),
+                scResult(sd5,'r_wc',1),
+                scResult(sd5,'r_compaction',2)+'%',
+                verdict,
+                ''
+            ];
+            R++;
+            var sumRow = ws.getRow(R);
+            sumRow.height = 22;
+            row.forEach(function(v, ci) {
+                var cell = sumRow.getCell(ci+1);
+                cell.value = v;
+                var isPass = (ci===6 && verdict==='✅ PASS');
+                var isFail = (ci===6 && verdict==='❌ FAIL');
+                S(cell, {
+                    font: {bold: ci===0||ci===5||ci===6, size:9,
+                           color: {argb: isPass?'FF065F46':(isFail?'FF991B1B':'FF1F2937')},
+                           name:'Cairo'},
+                    fill: isPass?'D1FAE5':(isFail?'FEE2E2':(sidx%2===1?'F9FAFB':C.white)),
+                    align: {vertical:'middle', horizontal: ci===0?'right':'center',
+                            readingOrder: ci===0?2:1}
+                });
+            });
+        });
+        blankRow();
+
+        /* ─── ⑥ ملاحظات ─── */
+        secHdr('⑥ ملاحظات — Notes & Remarks', C.navyMid);
+        var rmk = _v('sc_remarks');
+        lvRow('ملاحظات الاختبار / Test Remarks', rmk !== '—' ? rmk : 'لا توجد ملاحظات');
+        lvRow('المعيار / Standard', 'ASTM D1556 / D1556M — Field Density by Sand Cone Method');
+        lvRow('نظام الجودة / QA System', 'ISO/IEC 17025:2017');
+        blankRow();
+    }
+    /* END SandCone */
+
     /* ══ Footer ══ */
     blankRow(); blankRow();
     R++;
@@ -12366,7 +12733,8 @@ async function exportToExcel(mode) {
     ws.mergeCells(R,6,R,8);
 
     /* ══ اسم الملف + تنزيل ══ */
-    var sId=(_v('sampleId')!=='—'?_v('sampleId'):
+    var sId=(_v('gpi_sampleId')!=='—'?_v('gpi_sampleId'):
+             _v('sampleId')!=='—'?_v('sampleId'):
              _v('proctor_sampleId')!=='—'?_v('proctor_sampleId'):
              _v('cbr_sampleId')!=='—'?_v('cbr_sampleId'):
              _v('d4318_sampleId')!=='—'?_v('d4318_sampleId'):
@@ -12374,7 +12742,8 @@ async function exportToExcel(mode) {
     var tabNames={
         D6913:'D6913-Sieve',D4318:'D4318-Atterberg',D1557:'D1557-Proctor',
         D2216:'D2216-WaterContent',D854:'D854-SpecificGravity',
-        SoilClass:'SoilClassification',CBR:'CBR-D1883',D422:'D422-Hydrometer'
+        SoilClass:'SoilClassification',CBR:'CBR-D1883',D422:'D422-Hydrometer',
+        SandCone:'D1556-SandCone'
     };
     var dateStr=new Date().toISOString().slice(0,10);
     var fileName=(sId!=='—'?sId.replace(/[^a-zA-Z0-9\u0600-\u06FF\-_]/g,'_')+'_':'')
@@ -13411,7 +13780,7 @@ function collectAllData() {
 
     // Sieve table inputs (they often don't have IDs, use name or positional key)
     const sieveInputs = {};
-    document.querySelectorAll('#sectionD6913 table input, #sectionD422 table input, #sectionD4318 table input, #sectionD1557 table input, #sectionD2216 table input, #sectionD854 table input, #sectionCBR table input').forEach((el, idx) => {
+    document.querySelectorAll('#sectionD6913 table input, #sectionD422 table input, #sectionD4318 table input, #sectionD1557 table input, #sectionD2216 table input, #sectionD854 table input, #sectionCBR table input, #sectionSandCone table input').forEach((el, idx) => {
         const key = el.id || el.name || ('__tbl_' + idx);
         sieveInputs[key] = el.value;
     });
@@ -13531,7 +13900,7 @@ function restoreAllData(data) {
         });
         // Positional table inputs
         const allTblInputs = Array.from(document.querySelectorAll(
-            '#sectionD6913 table input, #sectionD422 table input, #sectionD4318 table input, #sectionD1557 table input, #sectionD2216 table input, #sectionD854 table input, #sectionCBR table input'
+            '#sectionD6913 table input, #sectionD422 table input, #sectionD4318 table input, #sectionD1557 table input, #sectionD2216 table input, #sectionD854 table input, #sectionCBR table input, #sectionSandCone table input'
         ));
         allTblInputs.forEach((el, idx) => {
             const key = el.id || el.name || ('__tbl_' + idx);
@@ -13558,6 +13927,7 @@ const TAB_SECTION_MAP = {
     D2216:    { sectionId: 'sectionD2216',    label: 'المحتوى المائي D2216' },
     D854:     { sectionId: 'sectionD854',     label: 'الكثافة النوعية D854' },
     CBR:      { sectionId: 'sectionCBR',      label: 'نسبة التحمل CBR'      },
+    SandCone: { sectionId: 'sectionSandCone', label: 'الساند كون D1556'     },
 };
 
 // Currently targeted tab for modal
@@ -13802,6 +14172,625 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === this) this.style.display = 'none';
     });
 });
+
+/* ═══════════════════════════════════════════════════════════════════
+   SAND CONE TEST — ASTM D1556  اختبار الكثافة الحقلية بالساند كون
+   ═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════
+   SAND CONE TEST — ASTM D1556  اختبار الكثافة الحقلية بالساند كون
+   Multi-Point (up to 5) + Single-Page Report
+   ═══════════════════════════════════════════════════════════════════ */
+
+// ── State: 5 point objects ────────────────────────────────────────
+const SC_POINTS = 5;
+let scCurrentPoint = 1;
+
+// Each point stores raw inputs + computed results
+const scData = Array.from({length: SC_POINTS}, (_, i) => ({
+  pt: i + 1,
+  testNo: '', layerNo: '', material: '',
+  wetSoilWt: '', jarConeBefore: '', jarConeAfter: '',
+  sandConeHole: '', sandConePlate: '', sandBulkDensity: '',
+  wetTare: '', dryTare: '', tare: '', waterContent: '',
+  // computed
+  r_sandInHole: NaN, r_holeVolume: NaN, r_wetDensity: NaN,
+  r_wc: NaN, r_dryDensity: NaN, r_compaction: NaN
+}));
+
+// ── Helpers ───────────────────────────────────────────────────────
+function g_sc(id) { return document.getElementById(id); }
+function v_sc(id) { const el = g_sc(id); return el ? parseFloat(el.value) : NaN; }
+function set_sc(id, val) { const el = g_sc(id); if (el) el.textContent = val; }
+function fmtN(v, d=2) { return isNaN(v) ? '—' : v.toFixed(d); }
+
+// ── Render a point panel into #scPointsContainer ──────────────────
+function renderSCPoint(pt) {
+  const d = scData[pt - 1];
+  const container = document.getElementById('scPointsContainer');
+  if (!container) return;
+  container.innerHTML = `
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+    <div>
+      <label style="display:block;font-size:.72rem;font-weight:700;color:#374151;margin-bottom:3px;">رقم الاختبار — Test No.</label>
+      <input id="sc_testNo" type="text" placeholder="1" value="${d.testNo}"
+        oninput="scData[${pt-1}].testNo=this.value"
+        class="input-field w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+    </div>
+    <div>
+      <label style="display:block;font-size:.72rem;font-weight:700;color:#374151;margin-bottom:3px;">رقم الطبقة — Layer No.</label>
+      <input id="sc_layerNo" type="text" placeholder="1" value="${d.layerNo}"
+        oninput="scData[${pt-1}].layerNo=this.value"
+        class="input-field w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+    </div>
+    <div>
+      <label style="display:block;font-size:.72rem;font-weight:700;color:#374151;margin-bottom:3px;">نوع المادة — Material</label>
+      <input id="sc_material" type="text" placeholder="A-1-B" value="${d.material}"
+        oninput="scData[${pt-1}].material=this.value"
+        class="input-field w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <!-- Field/Lab Measurements -->
+    <div>
+      <div style="font-size:.8rem;font-weight:800;color:#1e3a8a;margin-bottom:8px;padding:6px 10px;background:#eff6ff;border-radius:6px;">⚙️ قياسات الحقل والمختبر</div>
+      <table style="width:100%;border-collapse:collapse;font-size:.8rem;">
+        <tbody>
+          ${scMeasRow('sc_wetSoilWt','وزن التربة الرطبة','Wet Soil Wt','gm','0.1',d.wetSoilWt,'3030.0',pt)}
+          ${scMeasRow('sc_jarConeBefore','الجرة+مخروط قبل','Jar+Cone Before','gm','0.1',d.jarConeBefore,'4980.0',pt)}
+          ${scMeasRow('sc_jarConeAfter','الجرة+مخروط بعد','Jar+Cone After','gm','0.1',d.jarConeAfter,'1830.0',pt)}
+          ${scMeasRow('sc_sandConeHole','رمل مخروط+حفرة','Sand Cone+Hole','gm','0.1',d.sandConeHole,'3150.0',pt)}
+          ${scMeasRow('sc_sandConePlate','رمل مخروط+صفيحة','Sand Cone+Plate','gm','0.1',d.sandConePlate,'1417.2',pt)}
+          ${scMeasRow('sc_sandBulkDensity','كثافة الرمل السائب','Sand Bulk Density','g/cm³','0.001',d.sandBulkDensity,'1.34',pt)}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Moisture + Results -->
+    <div>
+      <div style="font-size:.8rem;font-weight:800;color:#0369a1;margin-bottom:8px;padding:6px 10px;background:#eff6ff;border-radius:6px;">💧 المحتوى المائي</div>
+      <table style="width:100%;border-collapse:collapse;font-size:.8rem;margin-bottom:12px;">
+        <tbody>
+          ${scMeasRow('sc_wetTare','كبسولة+تربة رطبة','Container+Wet','gm','0.01',d.wetTare,'',pt)}
+          ${scMeasRow('sc_dryTare','كبسولة+تربة جافة','Container+Dry','gm','0.01',d.dryTare,'',pt)}
+          ${scMeasRow('sc_tare','وزن الكبسولة','Container Wt','gm','0.01',d.tare,'',pt)}
+          ${scMeasRow('sc_waterContent','المحتوى المائي (w%)','Water Content','%','0.1',d.waterContent,'',pt,true)}
+        </tbody>
+      </table>
+
+      <div style="font-size:.8rem;font-weight:800;color:#059669;margin-bottom:8px;padding:6px 10px;background:#f0fdf4;border-radius:6px;">📊 النتائج — Results</div>
+      <table style="width:100%;border-collapse:collapse;font-size:.8rem;">
+        <tbody>
+          ${scResRow('sc_r_sandInHole','رمل الحفرة (Sₕ)','gm',d.r_sandInHole,1)}
+          ${scResRow('sc_r_holeVolume','حجم الحفرة (V)','cm³',d.r_holeVolume,1)}
+          ${scResRow('sc_r_wetDensity','الكثافة الرطبة (γw)','g/cm³',d.r_wetDensity,2)}
+          ${scResRow('sc_r_wc','المحتوى المائي (w)','%',d.r_wc,1)}
+          ${scResRow('sc_r_dryDensity','الكثافة الجافة (γd)','g/cm³',d.r_dryDensity,3,'#059669')}
+          ${scResRow('sc_r_compaction','نسبة الدمك (PC)','%',d.r_compaction,2,'#c2410c',true)}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Verdict -->
+  <div id="sc_verdictBanner" style="margin-top:14px;border-radius:10px;padding:12px 20px;text-align:center;font-size:1rem;font-weight:800;${scVerdictStyle(pt)}">
+    ${scVerdictText(pt)}
+  </div>
+  `;
+}
+
+function scMeasRow(id, arLabel, enLabel, unit, step, val, ph, pt, isWC=false) {
+  const field = id.replace('sc_','');
+  const inputStyle = isWC ? 'background:#eff6ff;border-color:#93c5fd;font-weight:700;' : '';
+  return `<tr style="border-bottom:1px solid #f0f0f0;">
+    <td style="padding:5px 8px;font-size:.75rem;color:#374151;font-weight:600;width:45%;">${arLabel}<br><span style="font-size:.65rem;color:#9ca3af;font-weight:400;">${enLabel}</span></td>
+    <td style="padding:5px 6px;font-size:.7rem;color:#6b7280;width:18%;text-align:center;">${unit}</td>
+    <td style="padding:5px 6px;text-align:center;">
+      <input id="${id}" type="number" step="${step}" value="${val}"
+        placeholder="${ph}"
+        oninput="scData[${pt-1}]['${field}']=this.value;calcSCPoint(${pt})"
+        style="width:90px;padding:4px 6px;border:1.5px solid #d1d5db;border-radius:6px;font-size:.78rem;font-family:inherit;text-align:center;${inputStyle}">
+    </td>
+  </tr>`;
+}
+
+function scResRow(id, label, unit, val, dec=2, color='#1d4ed8', isBig=false) {
+  const formatted = isNaN(val) ? '—' : val.toFixed(dec);
+  const style = isBig ? `font-size:1.2rem;font-weight:900;color:${color};` : `font-weight:700;color:${color};`;
+  const bgStyle = isBig ? 'background:linear-gradient(135deg,#fef9c3,#fde68a);' : '';
+  return `<tr style="border-bottom:1px solid #f0f0f0;${bgStyle}">
+    <td style="padding:5px 8px;font-size:.75rem;color:#374151;font-weight:600;">${label}</td>
+    <td style="padding:5px 6px;font-size:.7rem;color:#6b7280;text-align:center;">${unit}</td>
+    <td id="${id}" style="padding:5px 6px;text-align:center;${style}">${formatted}</td>
+  </tr>`;
+}
+
+function scVerdictStyle(pt) {
+  const d = scData[pt-1];
+  const minC = parseFloat(g_sc('sc_minCompaction')?.value) || 95;
+  if (isNaN(d.r_compaction)) return 'display:none;';
+  if (d.r_compaction >= minC) return 'background:linear-gradient(135deg,#d1fae5,#a7f3d0);border:2px solid #6ee7b7;color:#065f46;';
+  return 'background:linear-gradient(135deg,#fee2e2,#fecaca);border:2px solid #f87171;color:#991b1b;';
+}
+
+function scVerdictText(pt) {
+  const d = scData[pt-1];
+  const minC = parseFloat(g_sc('sc_minCompaction')?.value) || 95;
+  if (isNaN(d.r_compaction)) return '';
+  if (d.r_compaction >= minC)
+    return `✅ PASS — نسبة الدمك ${d.r_compaction.toFixed(2)}% ≥ ${minC}% (المطلوب)`;
+  return `❌ FAIL — نسبة الدمك ${d.r_compaction.toFixed(2)}% < ${minC}% (المطلوب)`;
+}
+
+// ── Switch point tab ──────────────────────────────────────────────
+function switchSCPoint(pt) {
+  // save current inputs before switching
+  saveSCPointInputs(scCurrentPoint);
+  scCurrentPoint = pt;
+  // update tab styles
+  for (let i = 1; i <= SC_POINTS; i++) {
+    const btn = document.getElementById('scPtTab_' + i);
+    if (!btn) continue;
+    if (i === pt) {
+      btn.style.background = 'linear-gradient(135deg,#1e3a5f,#2d5a87)';
+      btn.style.color = 'white';
+    } else {
+      btn.style.background = '#e5e7eb';
+      btn.style.color = '#6b7280';
+    }
+  }
+  renderSCPoint(pt);
+}
+
+// Save DOM values back to scData before switching tabs
+function saveSCPointInputs(pt) {
+  const d = scData[pt-1];
+  const ids = ['testNo','layerNo','material','wetSoilWt','jarConeBefore','jarConeAfter',
+    'sandConeHole','sandConePlate','sandBulkDensity','wetTare','dryTare','tare','waterContent'];
+  ids.forEach(f => {
+    const el = document.getElementById('sc_' + f);
+    if (el) d[f] = el.value;
+  });
+}
+
+// ── Calculate one point ───────────────────────────────────────────
+function calcSCPoint(pt) {
+  const d = scData[pt - 1];
+
+  const wetSoilWt     = parseFloat(d.wetSoilWt)     || NaN;
+  const jarConeBefore = parseFloat(d.jarConeBefore)  || NaN;
+  const jarConeAfter  = parseFloat(d.jarConeAfter)   || NaN;
+  const sandConePlate = parseFloat(d.sandConePlate)  || NaN;
+  const sandBulkDens  = parseFloat(d.sandBulkDensity)|| NaN;
+  const mdd           = parseFloat(g_sc('sc_mdd')?.value) || NaN;
+  const minComp       = parseFloat(g_sc('sc_minCompaction')?.value) || 95;
+
+  // Water content: prefer direct entry, else calc from tare
+  let wc = parseFloat(d.waterContent);
+  if (isNaN(wc) || wc === 0) {
+    const wetTare = parseFloat(d.wetTare);
+    const dryTare = parseFloat(d.dryTare);
+    const tare    = parseFloat(d.tare);
+    if (!isNaN(wetTare) && !isNaN(dryTare) && !isNaN(tare)) {
+      const water = wetTare - dryTare;
+      const dry   = dryTare - tare;
+      if (dry > 0) {
+        wc = (water / dry) * 100;
+        d.waterContent = wc.toFixed(1);
+        const wcEl = document.getElementById('sc_waterContent');
+        if (wcEl && !wcEl.value) wcEl.value = wc.toFixed(1);
+      }
+    }
+  }
+
+  let sandInHole = NaN, holeVolume = NaN, wetDensity = NaN, dryDensity = NaN, compaction = NaN;
+  if (!isNaN(jarConeBefore) && !isNaN(jarConeAfter) && !isNaN(sandConePlate))
+    sandInHole = (jarConeBefore - jarConeAfter) - sandConePlate;
+  if (!isNaN(sandInHole) && !isNaN(sandBulkDens) && sandBulkDens > 0)
+    holeVolume = sandInHole / sandBulkDens;
+  if (!isNaN(wetSoilWt) && !isNaN(holeVolume) && holeVolume > 0)
+    wetDensity = wetSoilWt / holeVolume;
+  if (!isNaN(wetDensity) && !isNaN(wc))
+    dryDensity = wetDensity / (1 + wc / 100);
+  if (!isNaN(dryDensity) && !isNaN(mdd) && mdd > 0)
+    compaction = (dryDensity / mdd) * 100;
+
+  // Store results
+  d.r_sandInHole = sandInHole;
+  d.r_holeVolume = holeVolume;
+  d.r_wetDensity = wetDensity;
+  d.r_wc         = wc;
+  d.r_dryDensity = dryDensity;
+  d.r_compaction = compaction;
+
+  // Update DOM if this is the visible point
+  if (pt === scCurrentPoint) {
+    set_sc('sc_r_sandInHole', fmtN(sandInHole, 1));
+    set_sc('sc_r_holeVolume', fmtN(holeVolume, 1));
+    set_sc('sc_r_wetDensity', fmtN(wetDensity, 2));
+    set_sc('sc_r_wc',         fmtN(wc, 1));
+    set_sc('sc_r_dryDensity', fmtN(dryDensity, 3));
+    set_sc('sc_r_compaction', fmtN(compaction, 2));
+
+    const banner = g_sc('sc_verdictBanner');
+    if (banner) {
+      if (!isNaN(compaction)) {
+        banner.style.cssText = 'margin-top:14px;border-radius:10px;padding:12px 20px;text-align:center;font-size:1rem;font-weight:800;' + scVerdictStyle(pt);
+        banner.textContent = scVerdictText(pt);
+      } else {
+        banner.style.display = 'none';
+      }
+    }
+  }
+
+  updateSCSummary();
+}
+
+// ── Calculate ALL points ──────────────────────────────────────────
+function calcAllSandCone() {
+  saveSCPointInputs(scCurrentPoint);
+  for (let i = 1; i <= SC_POINTS; i++) calcSCPoint(i);
+  // re-render current point to refresh DOM
+  renderSCPoint(scCurrentPoint);
+  updateSCSummary();
+}
+
+// backward compat alias
+function calcSandCone() { calcSCPoint(scCurrentPoint); }
+
+// ── Update summary table ──────────────────────────────────────────
+function updateSCSummary() {
+  const tbody = document.getElementById('scSummaryBody');
+  if (!tbody) return;
+  const minC = parseFloat(g_sc('sc_minCompaction')?.value) || 95;
+  let rows = '';
+  let hasAny = false;
+  scData.forEach((d, i) => {
+    if (isNaN(d.r_dryDensity) && !d.testNo && !d.wetSoilWt) return;
+    hasAny = true;
+    const pass = !isNaN(d.r_compaction) && d.r_compaction >= minC;
+    const fail = !isNaN(d.r_compaction) && d.r_compaction < minC;
+    const passBg = pass ? '#d1fae5' : fail ? '#fee2e2' : '#f9fafb';
+    const verdict = pass ? '✅ PASS' : fail ? '❌ FAIL' : '—';
+    const verdColor = pass ? '#065f46' : fail ? '#991b1b' : '#9ca3af';
+    rows += `<tr style="background:${passBg};">
+      <td style="padding:7px 10px;text-align:center;font-weight:700;border:1px solid #e5e7eb;">📍 ${i+1}</td>
+      <td style="padding:7px 10px;text-align:center;border:1px solid #e5e7eb;">${d.testNo||'—'}</td>
+      <td style="padding:7px 10px;text-align:center;border:1px solid #e5e7eb;">${d.layerNo||'—'}</td>
+      <td style="padding:7px 10px;text-align:center;font-weight:700;color:#059669;border:1px solid #e5e7eb;">${fmtN(d.r_dryDensity,3)}</td>
+      <td style="padding:7px 10px;text-align:center;border:1px solid #e5e7eb;">${fmtN(d.r_wc,1)}</td>
+      <td style="padding:7px 10px;text-align:center;font-weight:800;color:#c2410c;border:1px solid #e5e7eb;">${fmtN(d.r_compaction,2)}</td>
+      <td style="padding:7px 10px;text-align:center;font-weight:800;color:${verdColor};border:1px solid #e5e7eb;">${verdict}</td>
+    </tr>`;
+  });
+  tbody.innerHTML = hasAny ? rows : '<tr><td colspan="7" style="text-align:center;padding:16px;color:#9ca3af;">أدخل البيانات واضغط احتساب</td></tr>';
+}
+
+// ── Load demo data ────────────────────────────────────────────────
+function loadDemoSandCone() {
+  const demos = [
+    {testNo:'1',layerNo:'1',material:'A-1-B',wetSoilWt:'3030.0',jarConeBefore:'4980.0',jarConeAfter:'1830.0',sandConeHole:'3150.0',sandConePlate:'1417.2',sandBulkDensity:'1.34',waterContent:'6.0'},
+    {testNo:'2',layerNo:'1',material:'A-1-B',wetSoilWt:'3150.0',jarConeBefore:'5050.0',jarConeAfter:'1900.0',sandConeHole:'3200.0',sandConePlate:'1417.2',sandBulkDensity:'1.34',waterContent:'5.8'},
+    {testNo:'3',layerNo:'2',material:'A-2-4',wetSoilWt:'2980.0',jarConeBefore:'4920.0',jarConeAfter:'1810.0',sandConeHole:'3100.0',sandConePlate:'1417.2',sandBulkDensity:'1.34',waterContent:'6.3'},
+    {testNo:'4',layerNo:'2',material:'A-2-4',wetSoilWt:'3080.0',jarConeBefore:'4970.0',jarConeAfter:'1840.0',sandConeHole:'3130.0',sandConePlate:'1417.2',sandBulkDensity:'1.34',waterContent:'5.5'},
+    {testNo:'5',layerNo:'3',material:'A-1-A',wetSoilWt:'3200.0',jarConeBefore:'5100.0',jarConeAfter:'1920.0',sandConeHole:'3250.0',sandConePlate:'1417.2',sandBulkDensity:'1.34',waterContent:'6.1'},
+  ];
+  demos.forEach((demo, i) => Object.assign(scData[i], demo));
+  if (g_sc('sc_mdd')) g_sc('sc_mdd').value = '2.06';
+  if (g_sc('sc_omc')) g_sc('sc_omc').value = '5.9';
+  if (g_sc('sc_minCompaction')) g_sc('sc_minCompaction').value = '95';
+  switchSCPoint(1);
+  calcAllSandCone();
+}
+
+// ── Reset all ─────────────────────────────────────────────────────
+function resetSandCone() {
+  scData.forEach(d => {
+    Object.assign(d, {
+      testNo:'',layerNo:'',material:'',wetSoilWt:'',jarConeBefore:'',jarConeAfter:'',
+      sandConeHole:'',sandConePlate:'',sandBulkDensity:'',wetTare:'',dryTare:'',tare:'',waterContent:'',
+      r_sandInHole:NaN,r_holeVolume:NaN,r_wetDensity:NaN,r_wc:NaN,r_dryDensity:NaN,r_compaction:NaN
+    });
+  });
+  ['sc_mdd','sc_omc','sc_minCompaction','sc_remarks'].forEach(id => {
+    const el = g_sc(id); if (el) el.value = '';
+  });
+  switchSCPoint(1);
+  updateSCSummary();
+}
+
+// ── Generate Report: single A4 page, up to 5 results side by side ─
+function generateSandConeReport() {
+  saveSCPointInputs(scCurrentPoint);
+  calcAllSandCone();
+
+  const gv = id => (document.getElementById(id)?.value || '');
+  const project   = gv('gpi_project')   || '—';
+  const client    = gv('gpi_client')    || '—';
+  const location  = gv('gpi_location')  || '—';
+  const reportNo  = gv('gpi_reportNo')  || '—';
+  const sampleId  = gv('gpi_sampleId')  || '—';
+  const engineer  = gv('gpi_engineer')  || '—';
+  const testDate  = gv('gpi_testDate')  || '—';
+  const reportDate= gv('gpi_reportDate')|| new Date().toISOString().slice(0,10);
+  const remarks   = gv('sc_remarks')    || '';
+  const mddVal    = gv('sc_mdd')   || '—';
+  const omcVal    = gv('sc_omc')   || '—';
+  const minComp   = gv('sc_minCompaction') || '95';
+
+  // Only include points that have data
+  const activePts = scData.filter(d => !isNaN(d.r_dryDensity) || d.wetSoilWt);
+  const nPts = Math.max(activePts.length, 1);
+
+  // dynamic column widths — label col fixed, unit col fixed, data cols split rest
+  const labelW = 36, unitW = 7, dataW = Math.floor((100 - labelW - unitW) / nPts);
+  const colgroup = `<colgroup>
+    <col style="width:${labelW}%;">
+    <col style="width:${unitW}%;">
+    ${activePts.map(()=>`<col style="width:${dataW}%;">`).join('')}
+  </colgroup>`;
+
+  // Shared header cells (reused in every table)
+  const ptTH = activePts.map(d =>
+    `<th style="text-align:center;background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:3px 4px;border:1px solid #1e3a5f;font-size:7pt;white-space:nowrap;">Pt ${d.pt} / T${d.testNo||d.pt}</th>`
+  ).join('');
+
+  // helper: one data row
+  const row = (label, unit, vals, opts={}) => {
+    const {bg='white', bold=false, color='#1d4ed8', bigFont=false, yellowBg=false, verdict=false, sepLine=false} = opts;
+    const rowBg = yellowBg ? 'linear-gradient(135deg,#fef9c3,#fde68a)' : bg;
+    const bdr = yellowBg ? '2px solid #f59e0b' : '1px solid #d1d5db';
+    const labelStyle = `padding:2px 6px;border:${bdr};font-size:${bigFont?'7.5':'7'}pt;font-weight:${bold?700:400};${sepLine?'border-top:2px solid #1e3a5f;':''}`; 
+    const cells = vals.map(v => {
+      if (verdict) {
+        const minC = parseFloat(minComp)||95;
+        const pc = parseFloat(v);
+        if (isNaN(pc)) return `<td style="text-align:center;border:${bdr};color:#9ca3af;padding:3px 4px;font-size:7pt;">—</td>`;
+        const pass = pc >= minC;
+        return `<td style="text-align:center;font-weight:900;font-size:8pt;color:${pass?'#065f46':'#991b1b'};background:${pass?'#d1fae5':'#fee2e2'};border:1px solid ${pass?'#6ee7b7':'#fca5a5'};padding:3px 2px;">${pass?'✅ PASS':'❌ FAIL'}<br><span style="font-size:6pt;">${isNaN(pc)?'—':pc.toFixed(2)}%</span></td>`;
+      }
+      return `<td style="text-align:center;font-weight:${bold?700:600};color:${color};border:${bdr};padding:2px 4px;font-size:${bigFont?'8.5':'7'}pt;">${v}</td>`;
+    }).join('');
+    return `<tr style="background:${rowBg};">
+      <td style="${labelStyle}">${label}</td>
+      <td style="text-align:center;border:${bdr};color:#6b7280;font-size:6.5pt;padding:2px 3px;">${unit}</td>
+      ${cells}
+    </tr>`;
+  };
+
+  const f = (v, d) => isNaN(v) ? '—' : Number(v).toFixed(d);
+
+  // ── Section 1: Identification rows
+  const idRows =
+    row('Layer No.',    '—', activePts.map(d=>d.layerNo||'—'), {bg:'#f8fafc', bold:true, color:'#111'}) +
+    row('Material',     '—', activePts.map(d=>d.material||'—'), {bg:'white',   bold:true, color:'#111'});
+
+  // ── Section 2: Field measurements
+  const measData = [
+    ['Wet Soil Weight (W_wet)',           'gm',    d=>d.wetSoilWt||'—',          '#f8fafc'],
+    ['Jar + Cone Before Test (W_before)', 'gm',    d=>d.jarConeBefore||'—',      'white'],
+    ['Jar + Cone After Test (W_after)',   'gm',    d=>d.jarConeAfter||'—',       '#f8fafc'],
+    ['Sand in Cone + Hole',               'gm',    d=>d.sandConeHole||'—',       'white'],
+    ['Sand in Cone + Plate',              'gm',    d=>d.sandConePlate||'—',      '#f8fafc'],
+    ['Sand Bulk Density (ρ_sand)',        'g/cm³', d=>d.sandBulkDensity||'—',   'white'],
+  ];
+  const measRows = measData.map(([lbl,u,fn,bg]) =>
+    row(lbl, u, activePts.map(fn), {bg, color:'#1d4ed8'})
+  ).join('');
+
+  // ── Section 3: Combined moisture + calculations + verdict (ONE TABLE)
+  const calcData = [
+    // moisture sub-header divider
+    {divider:'MOISTURE CONTENT'},
+    ['Container + Wet Soil',                'gm',    d=>d.wetTare||'—',               '#f0f9ff', false, '#1d4ed8'],
+    ['Container + Dry Soil',                'gm',    d=>d.dryTare||'—',               'white',   false, '#1d4ed8'],
+    ['Container Weight',                    'gm',    d=>d.tare||'—',                  '#f0f9ff', false, '#1d4ed8'],
+    ['Water Content (w)',                   '%',     d=>f(d.r_wc,1),                  'white',   true,  '#0369a1'],
+    // calc sub-header divider
+    {divider:'CALCULATION RESULTS (ASTM D1556)'},
+    ['Sand in Hole = (W_before−W_after)−S_c+p', 'gm',    d=>f(d.r_sandInHole,1),  '#f8fafc', false, '#1d4ed8'],
+    ['Test Hole Volume = S_h / ρ_sand',          'cm³',   d=>f(d.r_holeVolume,1),   'white',   false, '#1d4ed8'],
+    ['Field Wet Density = W_wet / V',            'g/cm³', d=>f(d.r_wetDensity,2),   '#f8fafc', false, '#1d4ed8'],
+    ['Fill Dry Density = γ_w / (1+w/100)',       'g/cm³', d=>f(d.r_dryDensity,3),   '#f0fdf4', true,  '#059669'],
+    ['Max. Dry Density — Proctor Ref. (MDD)',    'g/cm³', d=>mddVal,                 '#f0fdf4', true,  '#059669'],
+    ['Percent Compaction = (γ_d / MDD) × 100',  '%',     d=>f(d.r_compaction,2),    'YELLOW',  true,  '#c2410c'],
+    // verdict row
+    {verdict: true},
+  ];
+
+  const dividerStyle = (txt) =>
+    `<tr><td colspan="${nPts+2}" style="background:linear-gradient(135deg,#334155,#475569);color:white;font-size:6.5pt;font-weight:800;padding:2px 8px;letter-spacing:.3px;">${txt}</td></tr>`;
+
+  const combinedRows = calcData.map(item => {
+    if (item.divider) return dividerStyle(item.divider);
+    if (item.verdict) {
+      return row(`Result — Min. Required: ${minComp}%`, '', activePts.map(d=>f(d.r_compaction,2)), {verdict:true, sepLine:true});
+    }
+    const [lbl,u,fn,bg,bold,color] = item;
+    return row(lbl, u, activePts.map(fn), {bg: bg==='YELLOW'?undefined:bg, yellowBg: bg==='YELLOW', bold, color});
+  }).join('');
+
+  const reportHTML = `<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<title>Field Density Test — Sand Cone — ASTM D1556</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+  *{font-family:'Cairo',sans-serif;margin:0;padding:0;box-sizing:border-box;}
+  @page{size:A4 portrait;margin:5mm;}
+  body{font-size:7pt;color:#111;background:white;}
+  .page{width:100%;max-width:200mm;margin:0 auto;}
+  .rpt-header{border:2px solid #1e3a5f;}
+  .rpt-title-row{display:grid;grid-template-columns:72px 1fr 112px;border-bottom:1.5px solid #1e3a5f;}
+  .rpt-logo{border-right:1.5px solid #1e3a5f;padding:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.3rem;}
+  .rpt-logo span{font-size:5pt;font-weight:800;color:#1e3a5f;margin-top:1px;text-align:center;}
+  .rpt-title{text-align:center;padding:3px 6px;}
+  .rpt-title .company{font-size:6.5pt;font-weight:800;color:#1e3a5f;}
+  .rpt-title .test-name{font-size:9.5pt;font-weight:800;color:#1e3a5f;text-transform:uppercase;line-height:1.15;margin-top:2px;}
+  .rpt-title .std{font-size:6pt;color:#4b5563;margin-top:1px;}
+  .rpt-meta{border-left:1.5px solid #1e3a5f;padding:3px 5px;font-size:6.5pt;}
+  .rpt-meta table{width:100%;}
+  .rpt-meta td{padding:1px 2px;}
+  .rpt-meta td:first-child{color:#6b7280;white-space:nowrap;font-weight:600;}
+  .rpt-meta td:last-child{font-weight:700;}
+  .proj-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #e5e7eb;}
+  .proj-cell{padding:2px 6px;border-right:1px solid #e5e7eb;font-size:6.5pt;}
+  .proj-cell:last-child{border-right:none;}
+  .proj-cell .lbl{font-weight:700;color:#1e3a5f;}
+  .sec{background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;font-size:7pt;font-weight:800;padding:2px 7px;margin-top:2px;}
+  .dtbl{width:100%;border-collapse:collapse;font-size:7pt;}
+  .dtbl th{padding:3px 4px;border:1px solid #1e3a5f;text-align:center;color:white;font-weight:700;background:linear-gradient(135deg,#1e3a5f,#2d5a87);font-size:7pt;}
+  .dtbl th.lft{text-align:left;}
+  .dtbl td{padding:2px 5px;border:1px solid #d1d5db;font-size:7pt;}
+  .notes-box{border:1px solid #d1d5db;border-top:0;padding:3px 7px;font-size:6pt;line-height:1.55;}
+  .sign-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #d1d5db;}
+  .sign-box{padding:4px 7px;border-right:1px solid #d1d5db;}
+  .sign-box:last-child{border-right:none;}
+  .sign-title{font-size:6.5pt;font-weight:800;color:#1e3a5f;display:block;margin-bottom:3px;}
+  .sign-row{display:flex;align-items:flex-end;gap:4px;margin-top:3px;font-size:6pt;color:#374151;}
+  .sign-line{flex:1;border-bottom:1px solid #9ca3af;height:10px;}
+  .footer{display:flex;justify-content:space-between;font-size:5.5pt;color:#9ca3af;border-top:1px solid #e5e7eb;padding-top:2px;margin-top:2px;}
+  .proctor-ref{background:#fffbeb;border:1px solid #fcd34d;padding:2px 7px;font-size:6pt;margin-top:2px;}
+  .no-print{display:block;}
+  @media print{.no-print{display:none!important;}body{padding:0;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="rpt-header">
+    <div class="rpt-title-row">
+      <div class="rpt-logo">🏺<span>Elkasaby Lab</span></div>
+      <div class="rpt-title">
+        <div class="company">Elkasaby Geotechnical &amp; Materials Testing System</div>
+        <div class="test-name">Field Density Test — Sand Cone Method</div>
+        <div class="std">ASTM D1556 / D1556M &nbsp;·&nbsp; ISO/IEC 17025:2017 &nbsp;·&nbsp; ${nPts} Test Point${nPts>1?'s':''}</div>
+      </div>
+      <div class="rpt-meta">
+        <table>
+          <tr><td>Report No.:</td><td>${reportNo}</td></tr>
+          <tr><td>Test Date:</td><td>${testDate}</td></tr>
+          <tr><td>Report Date:</td><td>${reportDate}</td></tr>
+          <tr><td>Sample ID:</td><td>${sampleId}</td></tr>
+          <tr><td>Engineer:</td><td>${engineer}</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="proj-row">
+      <div class="proj-cell"><span class="lbl">Project:</span> ${project}</div>
+      <div class="proj-cell"><span class="lbl">Client:</span> ${client}</div>
+    </div>
+    <div class="proj-row" style="border-bottom:none;">
+      <div class="proj-cell"><span class="lbl">Location:</span> ${location}</div>
+      <div class="proj-cell"><span class="lbl">Standard:</span> ASTM D1556 / D1556M</div>
+    </div>
+  </div>
+
+  <!-- 1. Test Identification -->
+  <div class="sec">1. TEST IDENTIFICATION</div>
+  <table class="dtbl">${colgroup}
+    <thead><tr>
+      <th class="lft">Item</th><th>—</th>${ptTH}
+    </tr></thead>
+    <tbody>${idRows}</tbody>
+  </table>
+
+  <!-- 2. Field & Lab Measurements -->
+  <div class="sec">2. FIELD &amp; LAB MEASUREMENTS</div>
+  <table class="dtbl">${colgroup}
+    <thead><tr><th class="lft">Item</th><th>Unit</th>${ptTH}</tr></thead>
+    <tbody>${measRows}</tbody>
+  </table>
+
+  <!-- 3+4. Moisture + Calculations (combined single table) -->
+  <div class="sec">3. MOISTURE CONTENT &amp; CALCULATION RESULTS (ASTM D1556)</div>
+  <table class="dtbl">${colgroup}
+    <thead><tr><th class="lft">Item / Equation</th><th>Unit</th>${ptTH}</tr></thead>
+    <tbody>${combinedRows}</tbody>
+  </table>
+
+  <div class="proctor-ref">
+    <strong>Proctor Reference (ASTM D1557-12 Reapproved 2021):</strong>
+    MDD: <strong>${mddVal} gm/cm³</strong> &nbsp;|&nbsp;
+    OMC: <strong>${omcVal}%</strong> &nbsp;|&nbsp;
+    Min. Required Compaction: <strong>${minComp}%</strong>
+  </div>
+
+  <!-- 4. Notes -->
+  <div class="sec">4. NOTES &amp; REMARKS</div>
+  <div class="notes-box">
+    <div>* Test results comply with specification. &nbsp;|&nbsp; * The laboratory is responsible for all data in this report, except data provided by the client. &nbsp;|&nbsp; * Test results represent the submitted sample only.</div>
+    ${remarks ? '<div>&#128221; ' + remarks + '</div>' : ''}
+  </div>
+
+  <!-- 5. Authorization -->
+  <div class="sec">5. AUTHORIZATION</div>
+  <div class="sign-grid">
+    <div class="sign-box">
+      <span class="sign-title">Reported By</span>
+      <div class="sign-row"><span>Name:</span><div class="sign-line"></div></div>
+      <div class="sign-row"><span>Signature:</span><div class="sign-line"></div></div>
+      <div class="sign-row"><span>Date:</span><div class="sign-line"></div></div>
+    </div>
+    <div class="sign-box">
+      <span class="sign-title">Checked By</span>
+      <div class="sign-row"><span>Name:</span><div class="sign-line"></div></div>
+      <div class="sign-row"><span>Signature:</span><div class="sign-line"></div></div>
+      <div class="sign-row"><span>Date:</span><div class="sign-line"></div></div>
+    </div>
+    <div class="sign-box">
+      <span class="sign-title">Approved By</span>
+      <div class="sign-row"><span>Name:</span><div class="sign-line"></div></div>
+      <div class="sign-row"><span>Signature:</span><div class="sign-line"></div></div>
+      <div class="sign-row"><span>Date:</span><div class="sign-line"></div></div>
+    </div>
+  </div>
+
+  <div class="footer" style="margin-top:2px;">
+    <span>ASTM D1556 — Field Density by Sand Cone Method</span>
+    <span style="font-weight:800;color:#111;">Page 1 of 1</span>
+    <span>FM-ATT-D1556-01 · Rev.03 · ${new Date().toLocaleDateString('en-GB',{month:'long',year:'numeric'})}</span>
+  </div>
+
+</div>
+<div class="no-print" style="text-align:center;padding:10px;background:#f1f5f9;">
+  <button onclick="window.print()" style="background:linear-gradient(135deg,#78350f,#b45309);color:white;padding:8px 24px;border:none;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer;">🖨️ Print Report</button>
+</div>
+</body>
+</html>`;
+
+  const modal   = document.getElementById('sandConeReportModal');
+  const content = document.getElementById('sandConeReportContent');
+  modal.style.display = 'block';
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'width:100%;height:82vh;border:none;border-radius:0 0 12px 12px;';
+  content.innerHTML = '';
+  content.appendChild(iframe);
+  iframe.srcdoc = reportHTML;
+}
+
+// ── Initialize sand cone on first load ────────────────────────────
+(function initSandCone() {
+  // will be called when section becomes visible
+  const origSwitch = window.switchTab;
+  window.switchTab = function(tab) {
+    origSwitch && origSwitch(tab);
+    if (tab === 'SandCone') {
+      setTimeout(() => {
+        if (!document.getElementById('scPointsContainer').children.length ||
+            document.getElementById('scPointsContainer').innerHTML.trim() === '') {
+          switchSCPoint(1);
+        }
+      }, 50);
+    }
+  };
+  // Also init if already visible
+  setTimeout(() => {
+    const sec = document.getElementById('sectionSandCone');
+    if (sec && !sec.classList.contains('hidden')) switchSCPoint(1);
+  }, 100);
+})();
 
 // ── Toast Notification ────────────────────────────────────────────────
 function showJSONToast(msg, color) {
