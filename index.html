@@ -275,6 +275,185 @@
             </div>
         </div>
     </nav>
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- JSON SAVE / IMPORT TOOLBAR — شريط الحفظ والاستيراد       -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <div id="jsonToolbar" style="
+        background: linear-gradient(135deg, #1e3a5f, #1e40af);
+        padding: 8px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+    ">
+        <div style="display:flex;align-items:center;gap:8px;">
+            <span style="color:#93c5fd;font-size:.75rem;font-weight:700;">💾 إدارة البيانات — Data Management</span>
+            <span id="jsonCurrentFile" style="
+                background:rgba(255,255,255,0.12);
+                color:#fde68a;
+                font-size:.7rem;
+                padding:2px 10px;
+                border-radius:20px;
+                font-weight:600;
+                display:none;
+            "></span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <button onclick="saveDataJSON()" style="
+                background: linear-gradient(135deg,#10b981,#059669);
+                color:white;border:none;border-radius:8px;
+                padding:7px 16px;font-size:.8rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:6px;
+                transition:all .2s;box-shadow:0 2px 6px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                💾 حفظ البيانات (JSON)
+            </button>
+            <button onclick="importDataJSON()" style="
+                background: linear-gradient(135deg,#f59e0b,#d97706);
+                color:white;border:none;border-radius:8px;
+                padding:7px 16px;font-size:.8rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:6px;
+                transition:all .2s;box-shadow:0 2px 6px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                📂 استيراد بيانات محفوظة
+            </button>
+            <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="loadJSONFile(event)">
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- SAVE FILENAME MODAL — نافذة تسمية ملف الحفظ               -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <div id="saveModal" style="
+        display:none;position:fixed;inset:0;
+        background:rgba(0,0,0,0.55);z-index:9999;
+        display:none;align-items:center;justify-content:center;
+    ">
+        <div style="
+            background:white;border-radius:16px;padding:32px;
+            width:420px;max-width:90vw;
+            box-shadow:0 20px 60px rgba(0,0,0,0.35);
+            font-family:'Cairo',sans-serif;
+        ">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+                <div style="background:linear-gradient(135deg,#10b981,#059669);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">💾</div>
+                <div>
+                    <div style="font-size:1.05rem;font-weight:800;color:#1f2937;">حفظ البيانات</div>
+                    <div style="font-size:.75rem;color:#6b7280;">أدخل اسم الملف للتعرف عليه لاحقاً</div>
+                </div>
+            </div>
+
+            <label style="display:block;font-size:.78rem;font-weight:700;color:#374151;margin-bottom:6px;">
+                📝 اسم الملف <span style="color:#9ca3af;font-weight:400;">(مثال: عينة-أحمد-S001 أو Project_A_Bore3)</span>
+            </label>
+            <input id="saveFilenameInput" type="text"
+                placeholder="اكتب اسم الملف هنا..."
+                style="
+                    width:100%;border:2px solid #d1d5db;border-radius:10px;
+                    padding:10px 14px;font-size:.9rem;font-family:inherit;
+                    box-sizing:border-box;margin-bottom:6px;
+                    transition:border-color .2s;
+                "
+                onfocus="this.style.borderColor='#10b981'"
+                onblur="this.style.borderColor='#d1d5db'"
+                onkeydown="if(event.key==='Enter') confirmSaveJSON()"
+            >
+            <div style="font-size:.7rem;color:#9ca3af;margin-bottom:18px;">
+                📌 سيُحفظ بصيغة: <span id="saveFilenamePreview" style="color:#059669;font-weight:700;">elkasaby_data.json</span>
+            </div>
+
+            <!-- Tabs to include -->
+            <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:18px;">
+                <div style="font-size:.75rem;font-weight:700;color:#374151;margin-bottom:8px;">📋 التبويبات المحفوظة:</div>
+                <div style="font-size:.72rem;color:#6b7280;line-height:1.8;">
+                    ✅ D6913 · D422 · D4318 · SoilClass · D1557 · D2216 · D854 · CBR<br>
+                    ✅ بيانات المشروع العامة (Global Project Info)
+                </div>
+            </div>
+
+            <div style="display:flex;gap:10px;">
+                <button onclick="confirmSaveJSON()" style="
+                    flex:1;background:linear-gradient(135deg,#10b981,#059669);
+                    color:white;border:none;border-radius:9px;padding:11px;
+                    font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;
+                ">💾 حفظ الآن</button>
+                <button onclick="document.getElementById('saveModal').style.display='none'" style="
+                    flex:1;background:#f1f5f9;color:#4b5563;border:1.5px solid #d1d5db;
+                    border-radius:9px;padding:11px;font-size:.9rem;font-weight:700;
+                    cursor:pointer;font-family:inherit;
+                ">❌ إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- TAB SAVE MODAL — نافذة حفظ التبويب المستقل               -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <div id="tabSaveModal" style="
+        display:none;position:fixed;inset:0;
+        background:rgba(0,0,0,0.55);z-index:9999;
+        align-items:center;justify-content:center;
+    ">
+        <div style="
+            background:white;border-radius:16px;padding:32px;
+            width:420px;max-width:90vw;
+            box-shadow:0 20px 60px rgba(0,0,0,0.35);
+            font-family:'Cairo',sans-serif;
+        ">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+                <div id="tabSaveModalIcon" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">💾</div>
+                <div>
+                    <div id="tabSaveModalTitle" style="font-size:1.05rem;font-weight:800;color:#1f2937;">حفظ بيانات التبويب</div>
+                    <div style="font-size:.75rem;color:#6b7280;">أدخل اسم الملف — سيُحفظ هذا التبويب فقط</div>
+                </div>
+            </div>
+
+            <label style="display:block;font-size:.78rem;font-weight:700;color:#374151;margin-bottom:6px;">
+                📝 اسم الملف <span style="color:#9ca3af;font-weight:400;">(مثال: D6913-عينة-S001)</span>
+            </label>
+            <input id="tabSaveFilenameInput" type="text"
+                placeholder="اكتب اسم الملف هنا..."
+                style="
+                    width:100%;border:2px solid #d1d5db;border-radius:10px;
+                    padding:10px 14px;font-size:.9rem;font-family:inherit;
+                    box-sizing:border-box;margin-bottom:6px;
+                    transition:border-color .2s;
+                "
+                onfocus="this.style.borderColor='#3b82f6'"
+                onblur="this.style.borderColor='#d1d5db'"
+                onkeydown="if(event.key==='Enter') confirmTabSaveJSON()"
+                oninput="updateTabSavePreview()"
+            >
+            <div style="font-size:.7rem;color:#9ca3af;margin-bottom:18px;">
+                📌 سيُحفظ بصيغة: <span id="tabSaveFilenamePreview" style="color:#3b82f6;font-weight:700;">tab_data.json</span>
+            </div>
+
+            <div id="tabSaveInfo" style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;margin-bottom:18px;font-size:.73rem;color:#1e40af;line-height:1.7;"></div>
+
+            <div style="display:flex;gap:10px;">
+                <button onclick="confirmTabSaveJSON()" style="
+                    flex:1;background:linear-gradient(135deg,#3b82f6,#1d4ed8);
+                    color:white;border:none;border-radius:9px;padding:11px;
+                    font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;
+                ">💾 حفظ الآن</button>
+                <button onclick="document.getElementById('tabSaveModal').style.display='none'" style="
+                    flex:1;background:#f1f5f9;color:#4b5563;border:1.5px solid #d1d5db;
+                    border-radius:9px;padding:11px;font-size:.9rem;font-weight:700;
+                    cursor:pointer;font-family:inherit;
+                ">❌ إلغاء</button>
+            </div>
+        </div>
+    </div>
+    <!-- Hidden file input for tab import -->
+    <input type="file" id="tabJsonFileInput" accept=".json" style="display:none" onchange="loadTabJSONFile(event)">
+
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-6">
 
@@ -389,6 +568,40 @@
 
         <!-- ============================================= -->
         <div id="sectionD6913">
+
+    <!-- ── TAB SAVE/IMPORT BAR: D6913 ─────────────────────────── -->
+    <div style="
+        background:linear-gradient(135deg,#1e3a5f,#1e40af);
+        border-radius:10px;margin-bottom:16px;
+        padding:8px 16px;display:flex;align-items:center;
+        justify-content:space-between;flex-wrap:wrap;gap:8px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.2);
+    ">
+        <span style="color:#93c5fd;font-size:.78rem;font-weight:700;">📊 تدرج التربة (D6913) — حفظ / استيراد</span>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <span id="tabBadge_D6913" style="background:rgba(255,255,255,.12);color:#fde68a;font-size:.68rem;padding:2px 10px;border-radius:20px;font-weight:600;display:none;"></span>
+            <button onclick="saveTabJSON('D6913','تدرج التربة (D6913)')" style="
+                background:linear-gradient(135deg,#10b981,#059669);
+                color:white;border:none;border-radius:7px;
+                padding:6px 14px;font-size:.78rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:5px;
+                transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                💾 حفظ هذا التبويب
+            </button>
+            <button onclick="importTabJSON('D6913')" style="
+                background:linear-gradient(135deg,#f59e0b,#d97706);
+                color:white;border:none;border-radius:7px;
+                padding:6px 14px;font-size:.78rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:5px;
+                transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                📂 استيراد
+            </button>
+        </div>
+    </div>
             <!-- Page Title -->
             <div class="section-card p-6 mb-6">
                 <div class="flex items-center gap-4">
@@ -977,6 +1190,40 @@
 <!-- D422 SECTION - Hydrometer Analysis (ASTM D422-63) -->
 <!-- ============================================= -->
 <div id="sectionD422" class="hidden">
+
+    <!-- ── TAB SAVE/IMPORT BAR: D422 ─────────────────────────── -->
+    <div style="
+        background:linear-gradient(135deg,#1e3a5f,#1e40af);
+        border-radius:10px;margin-bottom:16px;
+        padding:8px 16px;display:flex;align-items:center;
+        justify-content:space-between;flex-wrap:wrap;gap:8px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.2);
+    ">
+        <span style="color:#93c5fd;font-size:.78rem;font-weight:700;">🧪 الهيدروميتر (D422) — حفظ / استيراد</span>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <span id="tabBadge_D422" style="background:rgba(255,255,255,.12);color:#fde68a;font-size:.68rem;padding:2px 10px;border-radius:20px;font-weight:600;display:none;"></span>
+            <button onclick="saveTabJSON('D422','الهيدروميتر (D422)')" style="
+                background:linear-gradient(135deg,#10b981,#059669);
+                color:white;border:none;border-radius:7px;
+                padding:6px 14px;font-size:.78rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:5px;
+                transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                💾 حفظ هذا التبويب
+            </button>
+            <button onclick="importTabJSON('D422')" style="
+                background:linear-gradient(135deg,#f59e0b,#d97706);
+                color:white;border:none;border-radius:7px;
+                padding:6px 14px;font-size:.78rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:5px;
+                transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                📂 استيراد
+            </button>
+        </div>
+    </div>
   <!-- Title Card -->
   <div class="section-card p-6 mb-6">
     <h2 class="text-2xl font-bold text-gray-800 mb-2">
@@ -1407,6 +1654,40 @@
         <!-- D1557 SECTION - Modified Proctor -->
         <!-- ============================================= -->
         <div id="sectionD1557" class="hidden">
+
+    <!-- ── TAB SAVE/IMPORT BAR: D1557 ─────────────────────────── -->
+    <div style="
+        background:linear-gradient(135deg,#1e3a5f,#1e40af);
+        border-radius:10px;margin-bottom:16px;
+        padding:8px 16px;display:flex;align-items:center;
+        justify-content:space-between;flex-wrap:wrap;gap:8px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.2);
+    ">
+        <span style="color:#93c5fd;font-size:.78rem;font-weight:700;">🔨 الدمك المعدل (D1557) — حفظ / استيراد</span>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <span id="tabBadge_D1557" style="background:rgba(255,255,255,.12);color:#fde68a;font-size:.68rem;padding:2px 10px;border-radius:20px;font-weight:600;display:none;"></span>
+            <button onclick="saveTabJSON('D1557','الدمك المعدل (D1557)')" style="
+                background:linear-gradient(135deg,#10b981,#059669);
+                color:white;border:none;border-radius:7px;
+                padding:6px 14px;font-size:.78rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:5px;
+                transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                💾 حفظ هذا التبويب
+            </button>
+            <button onclick="importTabJSON('D1557')" style="
+                background:linear-gradient(135deg,#f59e0b,#d97706);
+                color:white;border:none;border-radius:7px;
+                padding:6px 14px;font-size:.78rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:5px;
+                transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                📂 استيراد
+            </button>
+        </div>
+    </div>
             <!-- Page Title -->
             <div class="section-card p-6 mb-6">
                 <div class="flex items-center justify-between flex-wrap gap-4">
@@ -2034,6 +2315,40 @@
 <!-- D4318 SECTION - Atterberg Limits -->
 <!-- ============================================= -->
 <div id="sectionD4318" class="hidden">
+
+    <!-- ── TAB SAVE/IMPORT BAR: D4318 ─────────────────────────── -->
+    <div style="
+        background:linear-gradient(135deg,#1e3a5f,#1e40af);
+        border-radius:10px;margin-bottom:16px;
+        padding:8px 16px;display:flex;align-items:center;
+        justify-content:space-between;flex-wrap:wrap;gap:8px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.2);
+    ">
+        <span style="color:#93c5fd;font-size:.78rem;font-weight:700;">🏋️ حدود أتربرج (D4318) — حفظ / استيراد</span>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <span id="tabBadge_D4318" style="background:rgba(255,255,255,.12);color:#fde68a;font-size:.68rem;padding:2px 10px;border-radius:20px;font-weight:600;display:none;"></span>
+            <button onclick="saveTabJSON('D4318','حدود أتربرج (D4318)')" style="
+                background:linear-gradient(135deg,#10b981,#059669);
+                color:white;border:none;border-radius:7px;
+                padding:6px 14px;font-size:.78rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:5px;
+                transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                💾 حفظ هذا التبويب
+            </button>
+            <button onclick="importTabJSON('D4318')" style="
+                background:linear-gradient(135deg,#f59e0b,#d97706);
+                color:white;border:none;border-radius:7px;
+                padding:6px 14px;font-size:.78rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:5px;
+                transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                📂 استيراد
+            </button>
+        </div>
+    </div>
     <!-- Page Title -->
     <div class="section-card p-6 mb-6">
         <div class="flex items-center gap-4">
@@ -2358,6 +2673,40 @@
 <!-- SOIL CLASSIFICATION SECTION (USCS + AASHTO) -->
 <!-- ============================================= -->
 <div id="sectionSoilClass" class="hidden">
+
+    <!-- ── TAB SAVE/IMPORT BAR: SoilClass ─────────────────────────── -->
+    <div style="
+        background:linear-gradient(135deg,#1e3a5f,#1e40af);
+        border-radius:10px;margin-bottom:16px;
+        padding:8px 16px;display:flex;align-items:center;
+        justify-content:space-between;flex-wrap:wrap;gap:8px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.2);
+    ">
+        <span style="color:#93c5fd;font-size:.78rem;font-weight:700;">🏗️ تصنيف التربة — حفظ / استيراد</span>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <span id="tabBadge_SoilClass" style="background:rgba(255,255,255,.12);color:#fde68a;font-size:.68rem;padding:2px 10px;border-radius:20px;font-weight:600;display:none;"></span>
+            <button onclick="saveTabJSON('SoilClass','تصنيف التربة')" style="
+                background:linear-gradient(135deg,#10b981,#059669);
+                color:white;border:none;border-radius:7px;
+                padding:6px 14px;font-size:.78rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:5px;
+                transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                💾 حفظ هذا التبويب
+            </button>
+            <button onclick="importTabJSON('SoilClass')" style="
+                background:linear-gradient(135deg,#f59e0b,#d97706);
+                color:white;border:none;border-radius:7px;
+                padding:6px 14px;font-size:.78rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:5px;
+                transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                📂 استيراد
+            </button>
+        </div>
+    </div>
     <!-- Page Title -->
     <div class="section-card p-6 mb-6">
         <div class="flex items-center gap-4">
@@ -2719,6 +3068,40 @@
         <!-- D2216 SECTION - Water (Moisture) Content -->
         <!-- ============================================= -->
         <div id="sectionD2216" class="hidden">
+
+    <!-- ── TAB SAVE/IMPORT BAR: D2216 ─────────────────────────── -->
+    <div style="
+        background:linear-gradient(135deg,#1e3a5f,#1e40af);
+        border-radius:10px;margin-bottom:16px;
+        padding:8px 16px;display:flex;align-items:center;
+        justify-content:space-between;flex-wrap:wrap;gap:8px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.2);
+    ">
+        <span style="color:#93c5fd;font-size:.78rem;font-weight:700;">💧 المحتوى المائي (D2216) — حفظ / استيراد</span>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <span id="tabBadge_D2216" style="background:rgba(255,255,255,.12);color:#fde68a;font-size:.68rem;padding:2px 10px;border-radius:20px;font-weight:600;display:none;"></span>
+            <button onclick="saveTabJSON('D2216','المحتوى المائي (D2216)')" style="
+                background:linear-gradient(135deg,#10b981,#059669);
+                color:white;border:none;border-radius:7px;
+                padding:6px 14px;font-size:.78rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:5px;
+                transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                💾 حفظ هذا التبويب
+            </button>
+            <button onclick="importTabJSON('D2216')" style="
+                background:linear-gradient(135deg,#f59e0b,#d97706);
+                color:white;border:none;border-radius:7px;
+                padding:6px 14px;font-size:.78rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:5px;
+                transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                📂 استيراد
+            </button>
+        </div>
+    </div>
             <!-- Page Title -->
             <div class="section-card p-6 mb-6">
                 <div class="flex items-center gap-4">
@@ -3049,6 +3432,40 @@
 <!-- D854 SECTION - Specific Gravity (Gs) -->
 <!-- ============================================= -->
 <div id="sectionD854" class="hidden">
+
+    <!-- ── TAB SAVE/IMPORT BAR: D854 ─────────────────────────── -->
+    <div style="
+        background:linear-gradient(135deg,#1e3a5f,#1e40af);
+        border-radius:10px;margin-bottom:16px;
+        padding:8px 16px;display:flex;align-items:center;
+        justify-content:space-between;flex-wrap:wrap;gap:8px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.2);
+    ">
+        <span style="color:#93c5fd;font-size:.78rem;font-weight:700;">⚖️ الكثافة النوعية (D854) — حفظ / استيراد</span>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <span id="tabBadge_D854" style="background:rgba(255,255,255,.12);color:#fde68a;font-size:.68rem;padding:2px 10px;border-radius:20px;font-weight:600;display:none;"></span>
+            <button onclick="saveTabJSON('D854','الكثافة النوعية (D854)')" style="
+                background:linear-gradient(135deg,#10b981,#059669);
+                color:white;border:none;border-radius:7px;
+                padding:6px 14px;font-size:.78rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:5px;
+                transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                💾 حفظ هذا التبويب
+            </button>
+            <button onclick="importTabJSON('D854')" style="
+                background:linear-gradient(135deg,#f59e0b,#d97706);
+                color:white;border:none;border-radius:7px;
+                padding:6px 14px;font-size:.78rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:5px;
+                transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                📂 استيراد
+            </button>
+        </div>
+    </div>
   <!-- Page Title -->
   <div class="section-card p-6 mb-6">
     <div class="flex items-center gap-4">
@@ -3506,6 +3923,40 @@
   <!-- ===== CBR SECTION - ASTM D1883 ===== -->
 
 <div id="sectionCBR" class="hidden" style="padding:0 0 40px 0;">
+
+    <!-- ── TAB SAVE/IMPORT BAR: CBR ─────────────────────────── -->
+    <div style="
+        background:linear-gradient(135deg,#1e3a5f,#1e40af);
+        border-radius:10px;margin-bottom:16px;
+        padding:8px 16px;display:flex;align-items:center;
+        justify-content:space-between;flex-wrap:wrap;gap:8px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.2);
+    ">
+        <span style="color:#93c5fd;font-size:.78rem;font-weight:700;">🚜 نسبة التحمل (CBR) — حفظ / استيراد</span>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <span id="tabBadge_CBR" style="background:rgba(255,255,255,.12);color:#fde68a;font-size:.68rem;padding:2px 10px;border-radius:20px;font-weight:600;display:none;"></span>
+            <button onclick="saveTabJSON('CBR','نسبة التحمل (CBR)')" style="
+                background:linear-gradient(135deg,#10b981,#059669);
+                color:white;border:none;border-radius:7px;
+                padding:6px 14px;font-size:.78rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:5px;
+                transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                💾 حفظ هذا التبويب
+            </button>
+            <button onclick="importTabJSON('CBR')" style="
+                background:linear-gradient(135deg,#f59e0b,#d97706);
+                color:white;border:none;border-radius:7px;
+                padding:6px 14px;font-size:.78rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:5px;
+                transition:all .2s;box-shadow:0 2px 5px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                📂 استيراد
+            </button>
+        </div>
+    </div>
 
 <!-- ① HEADER ─────────────────────────────────────────────── -->
 <div class="cbr-card" style="margin-bottom:20px;">
@@ -12779,6 +13230,486 @@ body{background:#f1f5f9;color:#111;font-size:8.5px;}
   content.appendChild(iframe);
   const doc = iframe.contentDocument || iframe.contentWindow.document;
   doc.open(); doc.write(reportHTML); doc.close();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   JSON SAVE / IMPORT FUNCTIONS — وظائف الحفظ والاستيراد
+   ═══════════════════════════════════════════════════════════════════ */
+
+// ── Open Save Modal ──────────────────────────────────────────────────
+function saveDataJSON() {
+    const modal = document.getElementById('saveModal');
+    const input = document.getElementById('saveFilenameInput');
+    // Pre-fill with project info if available
+    const projectName = document.getElementById('gpi_project')?.value?.trim();
+    const sampleId    = document.getElementById('gpi_sampleId')?.value?.trim();
+    let suggestion = '';
+    if (projectName) suggestion += projectName.replace(/\s+/g,'_');
+    if (sampleId)    suggestion += (suggestion ? '_' : '') + sampleId;
+    if (!suggestion) suggestion = 'elkasaby_data';
+    input.value = suggestion;
+    updateSavePreview();
+    modal.style.display = 'flex';
+    setTimeout(() => { input.select(); input.focus(); }, 80);
+}
+
+// ── Update filename preview live ─────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('saveFilenameInput')?.addEventListener('input', updateSavePreview);
+});
+function updateSavePreview() {
+    const raw  = document.getElementById('saveFilenameInput')?.value?.trim() || 'elkasaby_data';
+    const safe = raw.replace(/[\\/:*?"<>|]/g, '_') || 'elkasaby_data';
+    const el   = document.getElementById('saveFilenamePreview');
+    if (el) el.textContent = safe + '.json';
+}
+
+// ── Collect all form data ─────────────────────────────────────────────
+function collectAllData() {
+    const data = { _meta: {}, fields: {}, checkboxes: {}, radios: {} };
+    data._meta = {
+        version: 'v11',
+        savedAt: new Date().toISOString(),
+        app: 'منظومة القصبي للاختبارات الجيوتقنية والمواد'
+    };
+
+    // All inputs (text, number, date, email, tel, textarea)
+    document.querySelectorAll('input:not([type=radio]):not([type=checkbox]):not([type=file]), textarea').forEach(el => {
+        if (el.id) data.fields[el.id] = el.value;
+    });
+
+    // Selects
+    document.querySelectorAll('select').forEach(el => {
+        if (el.id) data.fields[el.id] = el.value;
+    });
+
+    // Checkboxes
+    document.querySelectorAll('input[type=checkbox]').forEach(el => {
+        if (el.id) data.checkboxes[el.id] = el.checked;
+    });
+
+    // Radio buttons — save by name group
+    const radioGroups = {};
+    document.querySelectorAll('input[type=radio]').forEach(el => {
+        if (el.name && el.checked) radioGroups[el.name] = el.value;
+    });
+    data.radios = radioGroups;
+
+    // Sieve table inputs (they often don't have IDs, use name or positional key)
+    const sieveInputs = {};
+    document.querySelectorAll('#sectionD6913 table input, #sectionD422 table input, #sectionD4318 table input, #sectionD1557 table input, #sectionD2216 table input, #sectionD854 table input, #sectionCBR table input').forEach((el, idx) => {
+        const key = el.id || el.name || ('__tbl_' + idx);
+        sieveInputs[key] = el.value;
+    });
+    data._tableInputs = sieveInputs;
+
+    return data;
+}
+
+// ── Confirm Save & Download ──────────────────────────────────────────
+function confirmSaveJSON() {
+    const raw  = document.getElementById('saveFilenameInput')?.value?.trim() || 'elkasaby_data';
+    const safe = raw.replace(/[\\/:*?"<>|]/g, '_') || 'elkasaby_data';
+    const filename = safe + '.json';
+
+    const data = collectAllData();
+    data._meta.filename = filename;
+    data._meta.label    = raw;
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    // Show loaded filename in toolbar
+    const badge = document.getElementById('jsonCurrentFile');
+    badge.textContent = '📁 ' + filename;
+    badge.style.display = 'inline-block';
+
+    document.getElementById('saveModal').style.display = 'none';
+    showJSONToast('✅ تم الحفظ: ' + filename, '#10b981');
+}
+
+// ── Trigger File Picker for Import ───────────────────────────────────
+function importDataJSON() {
+    document.getElementById('jsonFileInput').value = '';
+    document.getElementById('jsonFileInput').click();
+}
+
+// ── Load & Restore JSON File ─────────────────────────────────────────
+function loadJSONFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            restoreAllData(data);
+            const badge = document.getElementById('jsonCurrentFile');
+            badge.textContent = '📁 ' + file.name;
+            badge.style.display = 'inline-block';
+            showJSONToast('✅ تم الاستيراد: ' + file.name, '#2563eb');
+        } catch(err) {
+            showJSONToast('❌ خطأ: الملف غير صالح أو تالف', '#dc2626');
+        }
+    };
+    reader.readAsText(file, 'UTF-8');
+}
+
+// ── Restore All Data from JSON ────────────────────────────────────────
+function restoreAllData(data) {
+    if (!data || typeof data !== 'object') return;
+
+    // Regular fields
+    if (data.fields) {
+        Object.entries(data.fields).forEach(([id, val]) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (el.tagName === 'SELECT') {
+                el.value = val;
+            } else {
+                el.value = val;
+            }
+            // Fire change/input events so the app re-calculates
+            el.dispatchEvent(new Event('input',  { bubbles: true }));
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+    }
+
+    // Checkboxes
+    if (data.checkboxes) {
+        Object.entries(data.checkboxes).forEach(([id, checked]) => {
+            const el = document.getElementById(id);
+            if (el && el.type === 'checkbox') {
+                el.checked = checked;
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+    }
+
+    // Radios
+    if (data.radios) {
+        Object.entries(data.radios).forEach(([name, val]) => {
+            const el = document.querySelector(`input[type=radio][name="${name}"][value="${val}"]`);
+            if (el) {
+                el.checked = true;
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+    }
+
+    // Table inputs
+    if (data._tableInputs) {
+        // Restore by ID or name first
+        Object.entries(data._tableInputs).forEach(([key, val]) => {
+            if (key.startsWith('__tbl_')) return; // positional — handle below
+            const el = document.getElementById(key) || document.querySelector(`[name="${key}"]`);
+            if (el) {
+                el.value = val;
+                el.dispatchEvent(new Event('input',  { bubbles: true }));
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+        // Positional table inputs
+        const allTblInputs = Array.from(document.querySelectorAll(
+            '#sectionD6913 table input, #sectionD422 table input, #sectionD4318 table input, #sectionD1557 table input, #sectionD2216 table input, #sectionD854 table input, #sectionCBR table input'
+        ));
+        allTblInputs.forEach((el, idx) => {
+            const key = el.id || el.name || ('__tbl_' + idx);
+            if (key.startsWith('__tbl_') && data._tableInputs[key] !== undefined) {
+                el.value = data._tableInputs[key];
+                el.dispatchEvent(new Event('input',  { bubbles: true }));
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// TAB-SPECIFIC SAVE / IMPORT  — حفظ واستيراد التبويب المستقل
+// ══════════════════════════════════════════════════════════════════════
+
+// Map each tab to its section container ID and field selectors
+const TAB_SECTION_MAP = {
+    D6913:    { sectionId: 'sectionD6913',    label: 'تدرج التربة D6913'    },
+    D422:     { sectionId: 'sectionD422',     label: 'الهيدروميتر D422'     },
+    D4318:    { sectionId: 'sectionD4318',    label: 'حدود أتربرج D4318'    },
+    SoilClass:{ sectionId: 'sectionSoilClass',label: 'تصنيف التربة'          },
+    D1557:    { sectionId: 'sectionD1557',    label: 'الدمك المعدل D1557'   },
+    D2216:    { sectionId: 'sectionD2216',    label: 'المحتوى المائي D2216' },
+    D854:     { sectionId: 'sectionD854',     label: 'الكثافة النوعية D854' },
+    CBR:      { sectionId: 'sectionCBR',      label: 'نسبة التحمل CBR'      },
+};
+
+// Currently targeted tab for modal
+let _tabSaveTarget = null;
+
+// ── Collect data for ONE section only ────────────────────────────────
+function collectTabData(tabId) {
+    const cfg = TAB_SECTION_MAP[tabId];
+    if (!cfg) return null;
+    const section = document.getElementById(cfg.sectionId);
+    if (!section) return null;
+
+    const data = {
+        _meta: {
+            version: 'v12-tab',
+            tabId,
+            label: cfg.label,
+            savedAt: new Date().toISOString(),
+            app: 'منظومة القصبي للاختبارات الجيوتقنية والمواد'
+        },
+        fields:     {},
+        checkboxes: {},
+        radios:     {},
+        _tableInputs: {}
+    };
+
+    // Regular inputs + textareas inside this section
+    section.querySelectorAll('input:not([type=radio]):not([type=checkbox]):not([type=file]), textarea, select').forEach(el => {
+        if (el.id) data.fields[el.id] = el.value;
+    });
+
+    // Checkboxes
+    section.querySelectorAll('input[type=checkbox]').forEach(el => {
+        if (el.id) data.checkboxes[el.id] = el.checked;
+    });
+
+    // Radios
+    const radioGroups = {};
+    section.querySelectorAll('input[type=radio]').forEach(el => {
+        if (el.name && el.checked) radioGroups[el.name] = el.value;
+    });
+    data.radios = radioGroups;
+
+    // Table inputs (positional fallback)
+    section.querySelectorAll('table input, table select').forEach((el, idx) => {
+        const key = el.id || el.name || ('__tbl_' + idx);
+        data._tableInputs[key] = el.value;
+    });
+
+    return data;
+}
+
+// ── Open tab-save modal ───────────────────────────────────────────────
+function saveTabJSON(tabId, tabName) {
+    _tabSaveTarget = tabId;
+    const cfg = TAB_SECTION_MAP[tabId];
+
+    // Pre-fill name
+    const projectName = document.getElementById('gpi_project')?.value?.trim() || '';
+    const sampleId    = document.getElementById('gpi_sampleId')?.value?.trim() || '';
+    let suggestion    = tabId;
+    if (projectName) suggestion += '_' + projectName.replace(/\s+/g,'_');
+    if (sampleId)    suggestion += '_' + sampleId;
+
+    document.getElementById('tabSaveFilenameInput').value = suggestion;
+    document.getElementById('tabSaveModalTitle').textContent = 'حفظ: ' + (cfg?.label || tabName);
+    document.getElementById('tabSaveInfo').innerHTML =
+        '✅ سيُحفظ هذا التبويب فقط: <strong>' + (cfg?.label || tabName) + '</strong><br>' +
+        '📌 بيانات المشروع العامة مشمولة أيضاً لأغراض التعريف.';
+    updateTabSavePreview();
+
+    const modal = document.getElementById('tabSaveModal');
+    modal.style.display = 'flex';
+    setTimeout(() => { document.getElementById('tabSaveFilenameInput').select(); document.getElementById('tabSaveFilenameInput').focus(); }, 80);
+}
+
+function updateTabSavePreview() {
+    const raw  = document.getElementById('tabSaveFilenameInput')?.value?.trim() || 'tab_data';
+    const safe = raw.replace(/[\\/:*?"<>|]/g,'_') || 'tab_data';
+    const el   = document.getElementById('tabSaveFilenamePreview');
+    if (el) el.textContent = safe + '.json';
+}
+
+// ── Confirm & download tab JSON ───────────────────────────────────────
+function confirmTabSaveJSON() {
+    if (!_tabSaveTarget) return;
+    const raw      = document.getElementById('tabSaveFilenameInput')?.value?.trim() || 'tab_data';
+    const safe     = raw.replace(/[\\/:*?"<>|]/g,'_') || 'tab_data';
+    const filename = safe + '.json';
+
+    const data = collectTabData(_tabSaveTarget);
+    if (!data) { showJSONToast('❌ خطأ: لم يُعثر على قسم التبويب', '#dc2626'); return; }
+    data._meta.filename = filename;
+    data._meta.filelabel = raw;
+
+    // Also include global project info for reference
+    const gpiFields = ['gpi_project','gpi_client','gpi_location','gpi_reportNo',
+                       'gpi_sampleId','gpi_engineer','gpi_testDate','gpi_reportDate',
+                       'gpi_ambTemp','gpi_humidity','gpi_remarks'];
+    data._globalInfo = {};
+    gpiFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) data._globalInfo[id] = el.value;
+    });
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    // Update badge in tab bar
+    const badge = document.getElementById('tabBadge_' + _tabSaveTarget);
+    if (badge) { badge.textContent = '📁 ' + filename; badge.style.display = 'inline-block'; }
+
+    document.getElementById('tabSaveModal').style.display = 'none';
+    showJSONToast('✅ تم حفظ ' + (TAB_SECTION_MAP[_tabSaveTarget]?.label || _tabSaveTarget) + ': ' + filename, '#10b981');
+    _tabSaveTarget = null;
+}
+
+// ── Trigger file picker for tab import ───────────────────────────────
+function importTabJSON(tabId) {
+    _tabSaveTarget = tabId;
+    const inp = document.getElementById('tabJsonFileInput');
+    inp.value = '';
+    inp.click();
+}
+
+// ── Load & restore tab JSON file ─────────────────────────────────────
+function loadTabJSONFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const tabId = _tabSaveTarget;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+
+            // Warn if wrong tab
+            if (data._meta?.tabId && data._meta.tabId !== tabId) {
+                const ok = confirm(
+                    '⚠️ تحذير: هذا الملف محفوظ من تبويب "' + (TAB_SECTION_MAP[data._meta.tabId]?.label || data._meta.tabId) + '".\n' +
+                    'التبويب الحالي هو "' + (TAB_SECTION_MAP[tabId]?.label || tabId) + '".\n\n' +
+                    'هل تريد الاستيراد على أي حال؟'
+                );
+                if (!ok) return;
+            }
+
+            restoreTabData(tabId, data);
+
+            // Also restore global info if present
+            if (data._globalInfo) {
+                Object.entries(data._globalInfo).forEach(([id, val]) => {
+                    const el = document.getElementById(id);
+                    if (el) { el.value = val; el.dispatchEvent(new Event('input', {bubbles:true})); }
+                });
+            }
+
+            // Update badge
+            const badge = document.getElementById('tabBadge_' + tabId);
+            if (badge) { badge.textContent = '📁 ' + file.name; badge.style.display = 'inline-block'; }
+
+            showJSONToast('✅ تم الاستيراد في ' + (TAB_SECTION_MAP[tabId]?.label || tabId) + ': ' + file.name, '#2563eb');
+        } catch(err) {
+            showJSONToast('❌ خطأ: الملف غير صالح أو تالف', '#dc2626');
+        }
+    };
+    reader.readAsText(file, 'UTF-8');
+}
+
+// ── Restore data into ONE section only ───────────────────────────────
+function restoreTabData(tabId, data) {
+    if (!data || typeof data !== 'object') return;
+    const cfg = TAB_SECTION_MAP[tabId];
+    if (!cfg) return;
+    const section = document.getElementById(cfg.sectionId);
+    if (!section) return;
+
+    // Fields
+    if (data.fields) {
+        Object.entries(data.fields).forEach(([id, val]) => {
+            const el = section.querySelector('#' + CSS.escape(id)) || document.getElementById(id);
+            if (!el) return;
+            el.value = val;
+            el.dispatchEvent(new Event('input',  { bubbles: true }));
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+    }
+
+    // Checkboxes
+    if (data.checkboxes) {
+        Object.entries(data.checkboxes).forEach(([id, checked]) => {
+            const el = section.querySelector('#' + CSS.escape(id)) || document.getElementById(id);
+            if (el && el.type === 'checkbox') {
+                el.checked = checked;
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+    }
+
+    // Radios
+    if (data.radios) {
+        Object.entries(data.radios).forEach(([name, val]) => {
+            const el = section.querySelector(`input[type=radio][name="${name}"][value="${val}"]`);
+            if (el) { el.checked = true; el.dispatchEvent(new Event('change', { bubbles: true })); }
+        });
+    }
+
+    // Table inputs
+    if (data._tableInputs) {
+        const allTbl = Array.from(section.querySelectorAll('table input, table select'));
+        Object.entries(data._tableInputs).forEach(([key, val]) => {
+            if (!key.startsWith('__tbl_')) {
+                const el = section.querySelector('#' + CSS.escape(key)) ||
+                           section.querySelector(`[name="${key}"]`);
+                if (el) {
+                    el.value = val;
+                    el.dispatchEvent(new Event('input',  { bubbles: true }));
+                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            }
+        });
+        // Positional
+        allTbl.forEach((el, idx) => {
+            const key = el.id || el.name || ('__tbl_' + idx);
+            if (key.startsWith('__tbl_') && data._tableInputs[key] !== undefined) {
+                el.value = data._tableInputs[key];
+                el.dispatchEvent(new Event('input',  { bubbles: true }));
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+    }
+}
+
+// ── Wire up tab-save preview listener ────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('tabSaveFilenameInput')?.addEventListener('input', updateTabSavePreview);
+    // Close tab modal on backdrop click
+    document.getElementById('tabSaveModal')?.addEventListener('click', function(e) {
+        if (e.target === this) this.style.display = 'none';
+    });
+});
+
+// ── Toast Notification ────────────────────────────────────────────────
+function showJSONToast(msg, color) {
+    const t = document.createElement('div');
+    t.textContent = msg;
+    t.style.cssText = `
+        position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+        background:${color};color:white;padding:11px 28px;border-radius:30px;
+        font-size:.88rem;font-weight:700;font-family:'Cairo',sans-serif;
+        box-shadow:0 6px 24px rgba(0,0,0,.25);z-index:99999;
+        opacity:0;transition:all .35s;pointer-events:none;
+    `;
+    document.body.appendChild(t);
+    requestAnimationFrame(() => {
+        t.style.opacity = '1';
+        t.style.transform = 'translateX(-50%) translateY(0)';
+    });
+    setTimeout(() => {
+        t.style.opacity = '0';
+        t.style.transform = 'translateX(-50%) translateY(20px)';
+        setTimeout(() => t.remove(), 400);
+    }, 3500);
 }
 </script>
 </body>
