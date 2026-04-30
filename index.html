@@ -797,6 +797,39 @@
        <span class="sb-badge" id="badge_SandCone"></span>
      </button>
 
+     <div class="sb-divider"></div>
+
+     <!-- ── المجموعة 4: التقارير الجيوتقنية ── -->
+     <div class="sb-group-label">التقارير الجيوتقنية</div>
+
+     <button id="tabBoringLog" class="sb-item" onclick="switchTab('BoringLog')" title="سجل الجسة — Boring Log">
+       <span class="sb-icon">
+         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+           <!-- عمود الحفر -->
+           <rect x="10" y="1" width="4" height="4" rx=".8" fill="currentColor" opacity=".9"/>
+           <line x1="12" y1="5" x2="12" y2="9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+           <!-- طبقة 1: رمل -->
+           <rect x="3" y="9" width="18" height="4" rx="1" fill="currentColor" opacity=".28"/>
+           <circle cx="7"  cy="11" r=".8" fill="currentColor" opacity=".6"/>
+           <circle cx="10" cy="11" r=".7" fill="currentColor" opacity=".6"/>
+           <circle cx="13" cy="11" r=".9" fill="currentColor" opacity=".6"/>
+           <circle cx="17" cy="11" r=".7" fill="currentColor" opacity=".6"/>
+           <!-- طبقة 2: طمي -->
+           <rect x="3" y="14" width="18" height="4" rx="1" fill="currentColor" opacity=".55"/>
+           <line x1="5"  y1="16" x2="10" y2="16" stroke="currentColor" stroke-width=".7" opacity=".5"/>
+           <line x1="12" y1="16" x2="19" y2="16" stroke="currentColor" stroke-width=".7" opacity=".5"/>
+           <!-- طبقة 3: صخر -->
+           <rect x="3" y="19" width="18" height="4" rx="1" fill="currentColor" opacity=".85"/>
+           <line x1="5"  y1="21" x2="8"  y2="21" stroke="white" stroke-width=".6" opacity=".4"/>
+           <line x1="10" y1="21" x2="14" y2="21" stroke="white" stroke-width=".6" opacity=".4"/>
+           <line x1="16" y1="21" x2="19" y2="21" stroke="white" stroke-width=".6" opacity=".4"/>
+         </svg>
+       </span>
+       <span class="sb-label">سجل الجسة</span>
+       <span class="sb-std">BH Log</span>
+       <span class="sb-badge" id="badge_BoringLog"></span>
+     </button>
+
      <div class="sb-footer">
        ASTM &nbsp;·&nbsp; ISO/IEC 17025:2017
      </div>
@@ -3447,6 +3480,26 @@
         </button>
     </div>
 
+    <!-- ── شريط حفظ نتيجة العمق ── -->
+    <div id="scDepthBar" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:2px solid #6ee7b7;border-radius:10px;padding:12px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <span style="font-weight:800;font-size:.82rem;color:#065f46;white-space:nowrap;">📍 عمق العينة — Sample Depth (m):</span>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <label style="font-size:.75rem;font-weight:700;color:#047857;">من:</label>
+        <input id="scDepthFrom" type="number" step="0.5" min="0" value="0"
+          style="width:80px;border:1.5px solid #6ee7b7;border-radius:7px;padding:5px 8px;font-size:.82rem;font-family:inherit;text-align:center;">
+        <label style="font-size:.75rem;font-weight:700;color:#047857;">إلى:</label>
+        <input id="scDepthTo" type="number" step="0.5" min="0" value="1.5"
+          style="width:80px;border:1.5px solid #6ee7b7;border-radius:7px;padding:5px 8px;font-size:.82rem;font-family:inherit;text-align:center;">
+        <span style="font-size:.72rem;color:#6b7280;">م</span>
+      </div>
+      <button id="scSaveBtn" onclick="scSaveCurrentResult()"
+        style="display:none;background:linear-gradient(135deg,#059669,#047857);color:white;border:none;border-radius:8px;padding:7px 18px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px rgba(5,150,105,0.3);transition:all .2s;"
+        onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform=''">
+        💾 حفظ نتيجة هذا العمق في الجدول
+      </button>
+      <span style="font-size:.7rem;color:#6b7280;margin-right:auto;">← احسب التصنيف أولاً ثم حدد العمق واضغط الحفظ</span>
+    </div>
+
     <div id="soilClassValidation" class="mb-6"></div>
 
     <!-- Results Section -->
@@ -3678,8 +3731,20 @@
             </div>
         </div>
     </div>
+
+    <!-- ══ جدول النتائج المخزنة حسب العمق ══ -->
+    <div class="section-card mb-6" style="overflow:hidden;padding:0;">
+      <div style="background:linear-gradient(135deg,#065f46,#059669);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <div style="color:white;font-weight:800;font-size:.92rem;">📦 نتائج التصنيف المخزنة حسب العمق — Stored Classification Results</div>
+        <button onclick="scClearAllResults()" style="background:rgba(239,68,68,0.3);color:#fca5a5;border:1px solid rgba(239,68,68,0.4);border-radius:7px;padding:5px 12px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">🗑️ مسح الكل</button>
+      </div>
+      <div id="scStoredTableInner" style="padding:8px;">
+        <p style="text-align:center;color:#9ca3af;padding:20px;font-size:.82rem;">لا توجد نتائج محفوظة بعد — احسب التصنيف لأي عمق واضغط <strong style="color:#059669;">💾 حفظ نتيجة هذا العمق</strong></p>
+      </div>
+    </div>
+
 </div>
-        
+
         <!-- ============================================= -->
         <!-- D2216 SECTION - Water (Moisture) Content -->
         <!-- ============================================= -->
@@ -5320,6 +5385,264 @@
 </div>
 <!-- END sectionSandCone -->
 
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- SECTION: BORING LOG — سجل الجسة                                   -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div id="sectionBoringLog" class="hidden" style="padding:0 0 40px 0;">
+
+  <!-- ── TAB SAVE/IMPORT BAR ── -->
+  <div style="background:linear-gradient(135deg,#1e3a5f,#1e40af);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:20px;border-radius:0 0 10px 10px;">
+    <span style="color:#93c5fd;font-size:.75rem;font-weight:700;">🕳️ سجل الجسة — Boring Log</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button onclick="blReset()" style="background:rgba(255,255,255,0.12);color:#fde68a;border:1px solid rgba(255,255,255,0.2);border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">🔄 إعادة تعيين</button>
+      <button onclick="blLoadDemo()" style="background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">📋 بيانات تجريبية</button>
+      <button onclick="blPullFromTabs()" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white;border:none;border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">⬇️ سحب من التبويبات</button>
+      <button onclick="blSaveJSON()" style="background:linear-gradient(135deg,#0891b2,#0e7490);color:white;border:none;border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">💾 حفظ JSON</button>
+      <button onclick="document.getElementById('blJSONFileInput').click()" style="background:linear-gradient(135deg,#0891b2,#0e7490);color:white;border:none;border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">📂 تحميل JSON</button>
+      <input id="blJSONFileInput" type="file" accept=".json" style="display:none;" onchange="blLoadJSONFile(event)">
+      <button onclick="blGenerate()" style="background:linear-gradient(135deg,#f97316,#ea580c);color:white;border:none;border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">📐 رسم اللوج</button>
+      <button onclick="blExportSVGasPNG()" title="تصدير كصورة PNG" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:white;border:none;border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">🖼️ تصدير PNG</button>
+      <button onclick="blPrintReport()" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;border:none;border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">🖨️ تقرير PDF</button>
+    </div>
+  </div>
+
+  <!-- ── بيانات الحفرة ── -->
+  <div class="section-card mb-6 p-5">
+    <div style="font-weight:800;font-size:1rem;color:#1e3a8a;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+      <span style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;border-radius:8px;padding:4px 12px;font-size:.82rem;">🕳️ بيانات الحفرة — Borehole Information</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#1e40af;margin-bottom:3px;">رقم الجسة — Boring No.</label>
+        <input id="bl_bhNo" type="text" placeholder="BH-01" oninput="blLiveUpdate()"
+          style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#1e40af;margin-bottom:3px;">تاريخ البدء — Date Started</label>
+        <input id="bl_dateStart" type="date" oninput="blLiveUpdate()"
+          style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#1e40af;margin-bottom:3px;">تاريخ الانتهاء — Date Finished</label>
+        <input id="bl_dateEnd" type="date" oninput="blLiveUpdate()"
+          style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#1e40af;margin-bottom:3px;">العمق الكلي — Total Depth (m)</label>
+        <input id="bl_totalDepth" type="number" step="0.5" min="0" placeholder="10.0" oninput="blLiveUpdate()"
+          style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;box-sizing:border-box;text-align:center;">
+      </div>
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#1e40af;margin-bottom:3px;">الجيولوجي — Geologist</label>
+        <input id="bl_geologist" type="text" placeholder="Eng. Name" oninput="blLiveUpdate()"
+          style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#1e40af;margin-bottom:3px;">الحفار — Driller</label>
+        <input id="bl_driller" type="text" placeholder="Driller Name" oninput="blLiveUpdate()"
+          style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#1e40af;margin-bottom:3px;">نوع الحفر — Drill Rig</label>
+        <select id="bl_drilRig" oninput="blLiveUpdate()"
+          style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;box-sizing:border-box;background:white;">
+          <option value="Rotary">Rotary</option>
+          <option value="Auger">Auger</option>
+          <option value="Cable Tool">Cable Tool</option>
+          <option value="Percussion">Percussion</option>
+          <option value="Wash Boring">Wash Boring</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#1e40af;margin-bottom:3px;">منسوب المياه — GWL</label>
+        <input id="bl_gwl" type="text" placeholder="NF / رقم بالمتر" oninput="blLiveUpdate()"
+          style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#1e40af;margin-bottom:3px;">الإحداثي الشمالي — North</label>
+        <input id="bl_north" type="text" placeholder="0000000" oninput="blLiveUpdate()"
+          style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#1e40af;margin-bottom:3px;">الإحداثي الشرقي — East</label>
+        <input id="bl_east" type="text" placeholder="0000000" oninput="blLiveUpdate()"
+          style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#1e40af;margin-bottom:3px;">المنسوب — Elevation (m)</label>
+        <input id="bl_elevation" type="text" placeholder="0.00" oninput="blLiveUpdate()"
+          style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#1e40af;margin-bottom:3px;">رقم المشروع — Project No.</label>
+        <input id="bl_projNo" type="text" placeholder="ST-SM-001" oninput="blLiveUpdate()"
+          style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#b45309;margin-bottom:3px;">قطر الحفر — Borehole Diameter (mm)</label>
+        <select id="bl_bhDiam" oninput="blLiveUpdate()"
+          style="width:100%;border:1.5px solid #fcd34d;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;box-sizing:border-box;background:white;">
+          <option value="">— اختر —</option>
+          <option value="76">76 mm (NQ)</option>
+          <option value="101">101 mm (HQ)</option>
+          <option value="150">150 mm (6")</option>
+          <option value="200">200 mm (8")</option>
+          <option value="250">250 mm (10")</option>
+          <option value="300">300 mm (12")</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#b45309;margin-bottom:3px;">سُمك الكيس — Casing Diameter (mm)</label>
+        <select id="bl_casing" oninput="blLiveUpdate()"
+          style="width:100%;border:1.5px solid #fcd34d;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;box-sizing:border-box;background:white;">
+          <option value="">— بدون كيس / No Casing —</option>
+          <option value="89">89 mm</option>
+          <option value="114">114 mm</option>
+          <option value="168">168 mm</option>
+          <option value="219">219 mm</option>
+          <option value="273">273 mm</option>
+        </select>
+      </div>
+      <!-- NEW: Hammer Energy -->
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#7c3aed;margin-bottom:3px;">⚙️ Hammer Energy — Er (%)</label>
+        <select id="bl_hammerEr" oninput="blLiveUpdate()"
+          style="width:100%;border:1.5px solid #c4b5fd;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;box-sizing:border-box;background:white;">
+          <option value="60">60% — Standard (N60)</option>
+          <option value="45">45% — Old Rope/Cathead</option>
+          <option value="70">70% — Automatic Hammer</option>
+          <option value="80">80% — Safety Hammer</option>
+        </select>
+      </div>
+      <!-- NEW: Overburden correction -->
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#7c3aed;margin-bottom:3px;">🌡️ تصحيح الضغط — CN Method</label>
+        <select id="bl_cnMethod" oninput="blLiveUpdate()"
+          style="width:100%;border:1.5px solid #c4b5fd;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;box-sizing:border-box;background:white;">
+          <option value="none">بدون تصحيح — None</option>
+          <option value="liao">Liao & Whitman (1986)</option>
+          <option value="seed">Seed et al. (1983)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── panel السحب من التبويبات ── -->
+  <div id="blPullPanel" class="section-card mb-6 p-5" style="border:2px solid #8b5cf6;display:none;">
+    <div style="font-weight:800;font-size:.92rem;color:#5b21b6;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+      <span>⬇️ سحب البيانات من التبويبات</span>
+      <span style="font-size:.72rem;font-weight:500;color:#7c3aed;">— يقرأ القيم المحسوبة من D4318 و D2216 و SoilClass</span>
+    </div>
+    <div id="blPullStatus" style="background:#f5f3ff;border:1px solid #c4b5fd;border-radius:8px;padding:12px;font-size:.8rem;line-height:1.7;color:#374151;"></div>
+    <!-- NEW: row selector -->
+    <div id="blPullRowSelector" style="display:none;margin-top:10px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px;">
+      <label style="font-size:.75rem;font-weight:700;color:#1e40af;display:block;margin-bottom:5px;">📌 تطبيق على الصف رقم:</label>
+      <select id="blTargetRowSelect" style="border:1.5px solid #93c5fd;border-radius:6px;padding:5px 10px;font-size:.8rem;font-family:inherit;min-width:200px;">
+        <option value="last">آخر صف مضاف</option>
+      </select>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+      <button onclick="blApplyPulledData()" id="blApplyBtn" style="display:none;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white;border:none;border-radius:7px;padding:6px 16px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;">✅ تطبيق على الصف المحدد</button>
+      <button onclick="document.getElementById('blPullPanel').style.display='none'" style="background:#f1f5f9;color:#374151;border:1px solid #d1d5db;border-radius:7px;padding:6px 14px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;">✕ إغلاق</button>
+    </div>
+  </div>
+
+  <!-- ── ملخص إحصائي (يظهر بعد الرسم) ── -->
+  <div id="blSummaryPanel" style="display:none;" class="section-card mb-6 p-5">
+    <div style="font-weight:800;font-size:.92rem;color:#1e3a8a;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+      <span style="background:linear-gradient(135deg,#0f766e,#0d9488);color:white;border-radius:8px;padding:4px 12px;font-size:.82rem;">📊 ملخص الجسة — Borehole Summary</span>
+    </div>
+    <div id="blSummaryContent" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;"></div>
+  </div>
+
+  <!-- ── جدول طبقات التربة ── -->
+  <div class="section-card mb-6" style="overflow:hidden;padding:0;">
+    <div style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <div style="color:white;font-weight:800;font-size:.92rem;">📋 طبقات التربة والصخور — Soil &amp; Rock Layers</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <!-- NEW: auto-depth toggle -->
+        <label style="color:#93c5fd;font-size:.72rem;font-weight:600;display:flex;align-items:center;gap:5px;cursor:pointer;">
+          <input type="checkbox" id="blAutoDepth" checked style="cursor:pointer;accent-color:#60a5fa;">
+          أعماق تلقائية
+        </label>
+        <button onclick="blAddRow()" style="background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">➕ إضافة طبقة</button>
+        <button onclick="blClearRows()" style="background:rgba(239,68,68,0.3);color:#fca5a5;border:1px solid rgba(239,68,68,0.4);border-radius:7px;padding:5px 12px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">🗑️ مسح الكل</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:.78rem;">
+        <thead>
+          <tr>
+            <th style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:50px;">#</th>
+            <th style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:80px;">من (م)<br><small>From</small></th>
+            <th style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:80px;">إلى (م)<br><small>To</small></th>
+            <th style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:60px;">رمز USCS</th>
+            <th style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:60px;">نوع الطبقة<br><small>Soil Type</small></th>
+            <th style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:260px;">الوصف — Description</th>
+            <th style="background:linear-gradient(135deg,#c2410c,#ea580c);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:70px;">SPT (N)</th>
+            <th style="background:linear-gradient(135deg,#6d28d9,#7c3aed);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:70px;">N60<br><small>corrected</small></th>
+            <th style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:100px;">Rel.Density/<br>Consistency</th>
+            <th style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:65px;">WC (%)</th>
+            <th style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:65px;">LL (%)</th>
+            <th style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:65px;">PI (%)</th>
+            <th style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:65px;">REC (%)</th>
+            <th style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:70px;">Sample No.</th>
+            <th style="background:linear-gradient(135deg,#374151,#4b5563);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:110px;">إجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="blLayersBody">
+        </tbody>
+      </table>
+    </div>
+    <div style="padding:8px 16px;background:#f8fafc;font-size:.7rem;color:#6b7280;border-top:1px solid #e5e7eb;">
+      💡 نوع الطبقة يحدد الرمز الهندسي في الرسم: Sand/Gravel/Silt/Clay/Rock/Fill/Organic &nbsp;|&nbsp; ✦ N60 = SPT × (Er/60) مُصحَّح تلقائياً حسب طاقة المطرقة
+    </div>
+  </div>
+
+  <!-- ── اللوج المرسوم ── -->
+  <div class="section-card mb-6 p-5">
+    <div style="font-weight:800;font-size:1rem;color:#1e3a8a;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <span style="display:flex;align-items:center;gap:8px;">
+        <span style="background:linear-gradient(135deg,#f97316,#ea580c);color:white;border-radius:8px;padding:4px 12px;font-size:.82rem;">📐 رسم سجل الجسة — Boring Log Drawing</span>
+      </span>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <label style="font-size:.72rem;font-weight:600;color:#374151;">مقياس الرسم:</label>
+        <select id="bl_scale" onchange="blGenerate()" style="border:1.5px solid #d1d5db;border-radius:6px;padding:4px 8px;font-size:.75rem;font-family:inherit;">
+          <option value="50">1م = 50px</option>
+          <option value="60" selected>1م = 60px</option>
+          <option value="80">1م = 80px</option>
+          <option value="100">1م = 100px</option>
+        </select>
+        <!-- NEW: show N60 toggle -->
+        <label style="font-size:.72rem;font-weight:600;color:#374151;display:flex;align-items:center;gap:4px;cursor:pointer;">
+          <input type="checkbox" id="blShowN60" style="accent-color:#7c3aed;cursor:pointer;">
+          عرض N60
+        </label>
+      </div>
+    </div>
+    <div id="blDrawingContainer" style="overflow-x:auto;overflow-y:auto;background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:16px;min-height:200px;display:flex;justify-content:center;">
+      <div id="blEmptyMsg" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#9ca3af;font-size:.88rem;padding:60px 20px;">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" opacity=".3"><rect x="3" y="5" width="18" height="4" rx="1" fill="#6b7280"/><rect x="3" y="10" width="18" height="4" rx="1" fill="#6b7280" opacity=".6"/><rect x="3" y="15" width="18" height="4" rx="1" fill="#6b7280" opacity=".3"/></svg>
+        <span>أدخل بيانات الطبقات ثم اضغط <strong style="color:#f97316;">📐 رسم اللوج</strong></span>
+      </div>
+      <svg id="blSVG" style="display:none;direction:ltr;" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+  </div>
+
+  <!-- ── Modal التقرير ── -->
+  <div id="blReportModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;">
+    <div style="background:white;border-radius:14px;width:96vw;max-width:1100px;max-height:94vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #e5e7eb;flex-shrink:0;">
+        <div style="font-weight:800;font-size:1rem;color:#1e3a8a;">🖨️ تقرير سجل الجسة — Boring Log Report</div>
+        <button onclick="document.getElementById('blReportModal').style.display='none'" style="background:#f1f5f9;border:none;border-radius:8px;padding:7px 16px;cursor:pointer;font-weight:700;font-size:.85rem;color:#374151;font-family:inherit;">✕ إغلاق</button>
+      </div>
+      <div id="blReportContent" style="flex:1;overflow:hidden;border-radius:0 0 14px 14px;"></div>
+    </div>
+  </div>
+
+</div>
+<!-- END sectionBoringLog -->
+
 <!-- ===== SAND CONE REPORT MODAL ===== -->
 <div id="sandConeReportModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:9999;overflow-y:auto;">
   <div style="max-width:860px;margin:20px auto;background:white;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
@@ -5347,14 +5670,11 @@
               Elkasaby Geotechnical &amp; Materials Testing System
             </p>
             <p class="text-gray-400 text-xs mt-2">
-              ASTM D6913 &nbsp;·&nbsp; D4318 &nbsp;·&nbsp; D2487 &nbsp;·&nbsp; D3282 &nbsp;·&nbsp; D1557 &nbsp;·&nbsp; D2216 &nbsp;·&nbsp; D854 &nbsp;·&nbsp; D1883 &nbsp;·&nbsp; AASHTO M 145
+              ASTM D6913 &nbsp;·&nbsp; D422 &nbsp;·&nbsp; D4318 &nbsp;·&nbsp; D2487 &nbsp;·&nbsp; D3282 &nbsp;·&nbsp; D1557 &nbsp;·&nbsp; D2216 &nbsp;·&nbsp; D854 &nbsp;·&nbsp; D1883 &nbsp;·&nbsp; D1556 &nbsp;·&nbsp; AASHTO M 145
             </p>
             <p class="text-gray-500 text-xs mt-1">
               جميع الحسابات وفقاً للمواصفات القياسية &nbsp;|&nbsp; ISO/IEC 17025:2017 Compliant &nbsp;|&nbsp; USCS Classification
             </p>
-            <div class="mt-3 pt-3 border-t border-gray-700">
-              <p class="text-gray-500 text-xs">الإصدار 2.0 &nbsp;·&nbsp; 2025</p>
-            </div>
         </div>
     </footer>
 
@@ -5604,7 +5924,7 @@ function switchTab(tab) {
     currentTab = tab;
 
     // ── 1. تحديث الـ Sidebar items ──
-    const ALL_TABS = ['D6913','D422','D4318','SoilClass','D1557','D2216','D854','CBR','SandCone'];
+    const ALL_TABS = ['D6913','D422','D4318','SoilClass','D1557','D2216','D854','CBR','SandCone','BoringLog'];
     ALL_TABS.forEach(function(t) {
         const btn = document.getElementById('tab' + t);
         if (!btn) return;
@@ -5627,6 +5947,7 @@ function switchTab(tab) {
     document.getElementById('sectionD854').classList.toggle('hidden', tab !== 'D854');
     document.getElementById('sectionCBR').classList.toggle('hidden', tab !== 'CBR');
     document.getElementById('sectionSandCone').classList.toggle('hidden', tab !== 'SandCone');
+    document.getElementById('sectionBoringLog').classList.toggle('hidden', tab !== 'BoringLog');
 
     // ── 3. تهيئة التبويبات الخاصة ──
     if (tab === 'CBR') {
@@ -5634,6 +5955,9 @@ function switchTab(tab) {
     }
     if (tab === 'SoilClass' && typeof autoReadDataForClassification === 'function') {
         autoReadDataForClassification();
+    }
+    if (tab === 'BoringLog') {
+        setTimeout(() => { blRenderTableIfEmpty(); }, 80);
     }
 }
         // =============================================
@@ -9309,6 +9633,9 @@ function calculateSoilClassification() {
     const soilEval = evaluateSoilByGI(aashtoResult.gi, aashtoResult.group);
     
     document.getElementById('soilClassResults').classList.remove('hidden');
+    // إظهار زر الحفظ
+    var scSaveBtnEl = document.getElementById('scSaveBtn');
+    if (scSaveBtnEl) scSaveBtnEl.style.display = 'inline-block';
     
     // USCS Results
     document.getElementById('sc_uscs_symbol').textContent = uscsSymbol;
@@ -9761,6 +10088,8 @@ function calculateSoilClassification() {
                 document.getElementById(id).textContent = '—';
             });
         }   // ← هنا نقفل resetSoilClassification تمامًا
+    var scSaveBtnEl = document.getElementById('scSaveBtn');
+    if (scSaveBtnEl) scSaveBtnEl.style.display = 'none';
 
 // =============================================
 // D854 FUNCTIONS - Specific Gravity of Soil Solids
@@ -15035,54 +15364,10 @@ function renderSCPoint(pt) {
       <div style="font-size:.8rem;font-weight:800;color:#0369a1;margin-bottom:8px;padding:6px 10px;background:#eff6ff;border-radius:6px;">💧 المحتوى المائي</div>
       <table style="width:100%;border-collapse:collapse;font-size:.8rem;margin-bottom:12px;">
         <tbody>
-          ${scMeasRow('sc_wetTare','طبق/علبة + تربة رطبة','Container+Wet','gm','0.01',d.wetTare,'',pt)}
-          ${scMeasRow('sc_dryTare','طبق/علبة + تربة جافة','Container+Dry','gm','0.01',d.dryTare,'',pt)}
-          ${scMeasRow('sc_tare','وزن الطبق/العلبة','Container Wt','gm','0.01',d.tare,'',pt)}
-          <tr style="border-bottom:1px solid #bfdbfe;background:linear-gradient(135deg,#eff6ff,#dbeafe);">
-            <td style="padding:6px 8px;font-size:.75rem;color:#1e40af;font-weight:700;width:45%;">
-              المحتوى المائي (w%)
-              <br><span style="font-size:.6rem;color:#6b7280;font-weight:400;">Water Content — أدخل مباشرة أو احسب</span>
-            </td>
-            <td style="padding:5px 6px;font-size:.7rem;color:#6b7280;width:18%;text-align:center;">%</td>
-            <td style="padding:5px 6px;text-align:center;">
-              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
-                <input id="sc_waterContent"
-                  type="number" step="0.1"
-                  value="${d.waterContent||''}"
-                  placeholder="أدخل أو احسب"
-                  oninput="scData[${pt-1}]['waterContent']=this.value; scData[${pt-1}]['wcManual']=(this.value!=''); calcSCPoint(${pt})"
-                  style="width:95px;padding:4px 6px;border:2px solid #93c5fd;border-radius:6px;
-                         font-size:.82rem;font-family:inherit;text-align:center;
-                         background:#eff6ff;font-weight:800;color:#1d4ed8;">
-                <div style="display:flex;gap:4px;align-items:center;">
-                  <span id="sc_wc_autolabel_${pt}" style="font-size:.58rem;color:#6b7280;">
-                    ${(()=>{
-                      const wt=parseFloat(d.wetTare),dr=parseFloat(d.dryTare),tr=parseFloat(d.tare);
-                      if(!isNaN(wt)&&!isNaN(dr)&&!isNaN(tr)&&(dr-tr)>0){
-                        const w=(((wt-dr)/(dr-tr))*100).toFixed(1);
-                        return '<span style="color:#16a34a;font-weight:700;">⟳ محسوب: ' + w + '%</span>';
-                      }
-                      return '<span style="color:#9ca3af;">أدخل الأوزان أو اكتب مباشرة</span>';
-                    })()}
-                  </span>
-                  <button onclick="(function(){
-                    const d=scData[${pt}-1];
-                    const wt=parseFloat(d.wetTare),dr=parseFloat(d.dryTare),tr=parseFloat(d.tare);
-                    if(!isNaN(wt)&&!isNaN(dr)&&!isNaN(tr)&&(dr-tr)>0){
-                      const w=(((wt-dr)/(dr-tr))*100).toFixed(1);
-                      d.waterContent=w; d.wcManual=false;
-                      const el=document.getElementById('sc_waterContent'); if(el)el.value=w;
-                      calcSCPoint(${pt});
-                    }
-                  })()"
-                  style="font-size:.6rem;padding:2px 6px;border-radius:4px;border:1px solid #86efac;
-                         background:#dcfce7;color:#15803d;cursor:pointer;font-weight:700;">
-                    ⟳ احسب
-                  </button>
-                </div>
-              </div>
-            </td>
-          </tr>
+          ${scMeasRow('sc_wetTare','كبسولة+تربة رطبة','Container+Wet','gm','0.01',d.wetTare,'',pt)}
+          ${scMeasRow('sc_dryTare','كبسولة+تربة جافة','Container+Dry','gm','0.01',d.dryTare,'',pt)}
+          ${scMeasRow('sc_tare','وزن الكبسولة','Container Wt','gm','0.01',d.tare,'',pt)}
+          ${scMeasRow('sc_waterContent','المحتوى المائي (w%)','Water Content','%','0.1',d.waterContent,'',pt,true)}
         </tbody>
       </table>
 
@@ -15194,33 +15479,21 @@ function calcSCPoint(pt) {
   const mdd           = parseFloat(g_sc('sc_mdd')?.value) || NaN;
   const minComp       = parseFloat(g_sc('sc_minCompaction')?.value) || 95;
 
-  // Water content: manual entry overrides auto-calc
-  let wc = NaN;
-  const wetTare = parseFloat(d.wetTare);
-  const dryTare = parseFloat(d.dryTare);
-  const tare    = parseFloat(d.tare);
-  const autoWC_possible = !isNaN(wetTare) && !isNaN(dryTare) && !isNaN(tare) && (dryTare - tare) > 0;
-  const autoWC = autoWC_possible ? ((wetTare - dryTare) / (dryTare - tare)) * 100 : NaN;
-
-  if (d.wcManual && d.waterContent !== '') {
-    // المستخدم كتب يدوياً
-    wc = parseFloat(d.waterContent);
-  } else if (autoWC_possible) {
-    // احسب تلقائياً من الأوزان
-    wc = autoWC;
-    d.waterContent = wc.toFixed(1);
-    const wcEl = document.getElementById('sc_waterContent');
-    if (wcEl) wcEl.value = wc.toFixed(1);
-  } else {
-    wc = parseFloat(d.waterContent) || NaN;
-  }
-  // تحديث ملصق الحساب التلقائي
-  const autoLbl = document.getElementById('sc_wc_autolabel_' + pt);
-  if (autoLbl) {
-    if (autoWC_possible) {
-      autoLbl.innerHTML = '<span style="color:#16a34a;font-weight:700;">⟳ محسوب: ' + autoWC.toFixed(1) + '%</span>';
-    } else {
-      autoLbl.innerHTML = '<span style="color:#9ca3af;">أدخل الأوزان أو اكتب مباشرة</span>';
+  // Water content: prefer direct entry, else calc from tare
+  let wc = parseFloat(d.waterContent);
+  if (isNaN(wc) || wc === 0) {
+    const wetTare = parseFloat(d.wetTare);
+    const dryTare = parseFloat(d.dryTare);
+    const tare    = parseFloat(d.tare);
+    if (!isNaN(wetTare) && !isNaN(dryTare) && !isNaN(tare)) {
+      const water = wetTare - dryTare;
+      const dry   = dryTare - tare;
+      if (dry > 0) {
+        wc = (water / dry) * 100;
+        d.waterContent = wc.toFixed(1);
+        const wcEl = document.getElementById('sc_waterContent');
+        if (wcEl && !wcEl.value) wcEl.value = wc.toFixed(1);
+      }
     }
   }
 
@@ -15651,7 +15924,1500 @@ function generateSandConeReport() {
   }, 100);
 })();
 
-// ── Toast Notification ────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════
+// BORING LOG ENGINE — سجل الجسة
+// ══════════════════════════════════════════════════════════════════
+
+// ── بيانات الطبقات ──────────────────────────────────────────────
+let blLayers = [];
+let blRowCounter = 0;
+
+// ── رموز USCS المقابلة لأنواع التربة ─────────────────────────────
+const BL_USCS_MAP = {
+  'Sand':    { code:'SP/SW', color:'#f5d98b', pattern:'sand'    },
+  'Gravel':  { code:'GP/GW', color:'#d4b483', pattern:'gravel'  },
+  'Silt':    { code:'ML',    color:'#c8d8a0', pattern:'silt'    },
+  'Clay':    { code:'CL/CH', color:'#a8b899', pattern:'clay'    },
+  'Rock':    { code:'ROCK',  color:'#b0b8c8', pattern:'rock'    },
+  'Fill':    { code:'FILL',  color:'#e0c8a0', pattern:'fill'    },
+  'Organic': { code:'OL/OH', color:'#a3b87a', pattern:'organic' },
+};
+
+// ── ألوان صف الجدول حسب نوع التربة ──
+const BL_ROW_COLORS = {
+  'Sand':    'rgba(254,243,199,0.45)',
+  'Gravel':  'rgba(253,230,138,0.35)',
+  'Silt':    'rgba(220,252,231,0.45)',
+  'Clay':    'rgba(221,214,254,0.35)',
+  'Rock':    'rgba(226,232,240,0.55)',
+  'Fill':    'rgba(254,243,199,0.35)',
+  'Organic': 'rgba(209,250,229,0.45)',
+};
+
+// ── حساب N60 (تصحيح طاقة المطرقة) ──────────────────────────────
+function blCalcN60(spt) {
+  if (spt === null || spt === '' || isNaN(spt)) return null;
+  var er = parseFloat((document.getElementById('bl_hammerEr') || {}).value || 60);
+  return Math.round(parseFloat(spt) * (er / 60) * 10) / 10;
+}
+
+// ── حساب (N1)60 — تصحيح الإجهاد الفوقي ─────────────────────────
+function blCalcN1_60(spt, depth) {
+  var n60 = blCalcN60(spt);
+  if (n60 === null) return null;
+  var method = (document.getElementById('bl_cnMethod') || {}).value || 'none';
+  if (method === 'none') return n60;
+  var sigmaV = depth * 18; // kPa تقريبي (γ=18 kN/m³)
+  var pa = 100; // ضغط جوي بـ kPa
+  var CN = 1;
+  if (method === 'liao') {
+    CN = Math.min(1.7, Math.sqrt(pa / Math.max(sigmaV, 10)));
+  } else if (method === 'seed') {
+    CN = Math.min(2.0, 1 - 1.25 * Math.log10(Math.max(sigmaV, 10) / pa));
+  }
+  return Math.round(n60 * CN * 10) / 10;
+}
+
+// ── تقدير كثافة التربة ──────────────────────────────────────────
+function blGetRD(spt, soilType) {
+  if (spt === null || isNaN(spt)) return {label:'—', color:'#6b7280', bg:'#f1f5f9'};
+  var n = parseFloat(spt);
+  var granular = ['Sand','Gravel'].indexOf(soilType) >= 0 || !soilType;
+  var cohesive = ['Clay','Silt','Organic'].indexOf(soilType) >= 0;
+  if (granular) {
+    if (n <= 4)  return {label:'Very Loose',  color:'#065f46', bg:'#d1fae5'};
+    if (n <= 10) return {label:'Loose',        color:'#166534', bg:'#dcfce7'};
+    if (n <= 30) return {label:'Medium Dense', color:'#92400e', bg:'#fef3c7'};
+    if (n <= 50) return {label:'Dense',        color:'#c2410c', bg:'#ffedd5'};
+    return            {label:'Very Dense',   color:'#991b1b', bg:'#fee2e2'};
+  }
+  if (cohesive) {
+    if (n <= 2)  return {label:'Very Soft',    color:'#065f46', bg:'#d1fae5'};
+    if (n <= 4)  return {label:'Soft',         color:'#166534', bg:'#dcfce7'};
+    if (n <= 8)  return {label:'Medium Stiff', color:'#92400e', bg:'#fef3c7'};
+    if (n <= 15) return {label:'Stiff',        color:'#c2410c', bg:'#ffedd5'};
+    if (n <= 30) return {label:'Very Stiff',   color:'#991b1b', bg:'#fee2e2'};
+    return            {label:'Hard',          color:'#7f1d1d', bg:'#fecaca'};
+  }
+  if (n <= 4)  return {label:'Very Loose',  color:'#065f46', bg:'#d1fae5'};
+  if (n <= 10) return {label:'Loose',        color:'#166534', bg:'#dcfce7'};
+  if (n <= 30) return {label:'Medium',       color:'#92400e', bg:'#fef3c7'};
+  if (n <= 50) return {label:'Dense',        color:'#c2410c', bg:'#ffedd5'};
+  return            {label:'Very Dense',   color:'#991b1b', bg:'#fee2e2'};
+}
+
+function blUpdateRDCell(id) {
+  var tr = document.getElementById('blRow_' + id);
+  if (!tr) return;
+  var inputs  = tr.querySelectorAll('input');
+  var selects = tr.querySelectorAll('select');
+  var spt      = inputs[3] && inputs[3].value !== '' ? parseFloat(inputs[3].value) : null;
+  var soilType = selects[1] ? selects[1].value : 'Sand';
+  var rd = blGetRD(spt, soilType);
+  var cell = document.getElementById('blRDCell_' + id);
+  if (cell) {
+    cell.textContent = rd.label;
+    cell.style.color = rd.color;
+    cell.style.background = rd.bg;
+  }
+  // Update N60 cell
+  var n60Cell = document.getElementById('blN60Cell_' + id);
+  if (n60Cell) {
+    var depth = inputs[1] ? parseFloat(inputs[1].value) || 0 : 0;
+    var n60 = blCalcN60(spt);
+    var cnMethod = (document.getElementById('bl_cnMethod') || {}).value || 'none';
+    if (cnMethod !== 'none' && spt !== null) {
+      var n1_60 = blCalcN1_60(spt, depth);
+      n60Cell.textContent = n1_60 !== null ? n1_60 : '—';
+      n60Cell.title = 'N60=' + (n60 || '—') + ' → (N1)60=' + (n1_60 || '—');
+    } else {
+      n60Cell.textContent = n60 !== null ? n60 : '—';
+    }
+  }
+  // Update row bg color
+  var rowColor = BL_ROW_COLORS[soilType] || '';
+  tr.style.background = rowColor;
+}
+
+// ── تحديث قائمة الصفوف في pull panel ──
+function blUpdateRowSelector() {
+  var sel = document.getElementById('blTargetRowSelect');
+  if (!sel) return;
+  var tbody = document.getElementById('blLayersBody');
+  var trs = tbody ? tbody.querySelectorAll('tr') : [];
+  sel.innerHTML = '<option value="last">آخر صف مضاف</option>';
+  trs.forEach(function(tr, i) {
+    var inputs = tr.querySelectorAll('input');
+    var from = inputs[0] ? inputs[0].value : '?';
+    var to   = inputs[1] ? inputs[1].value : '?';
+    var opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = 'الصف ' + (i+1) + ' — من ' + from + ' إلى ' + to + ' م';
+    sel.appendChild(opt);
+  });
+}
+
+// ── إضافة صف جديد ─────────────────────────────────────────────────
+function blAddRow(data) {
+  blRowCounter++;
+  const id = blRowCounter;
+  const d = data || {};
+  const tbody = document.getElementById('blLayersBody');
+  const soilTypes = Object.keys(BL_USCS_MAP);
+
+  // Auto-depth: "من" = "إلى" السابق
+  if (!d.from && !d.to) {
+    var autoDepth = (document.getElementById('blAutoDepth') || {}).checked !== false;
+    if (autoDepth) {
+      var trs = tbody.querySelectorAll('tr');
+      if (trs.length > 0) {
+        var lastTr = trs[trs.length - 1];
+        var lastInputs = lastTr.querySelectorAll('input');
+        var lastTo = lastInputs[1] ? parseFloat(lastInputs[1].value) : 0;
+        if (!isNaN(lastTo)) {
+          d.from = lastTo;
+          d.to   = lastTo + 1;
+        }
+      } else {
+        d.from = 0;
+        d.to   = 1;
+      }
+    }
+  }
+
+  const tr = document.createElement('tr');
+  tr.id = 'blRow_' + id;
+  var soilType0 = d.soilType || 'Sand';
+  tr.style.cssText = 'transition:background .25s;background:' + (BL_ROW_COLORS[soilType0] || '') + ';';
+  tr.onmouseenter = function(){ this.dataset.prevBg = this.style.background; this.style.background='#e0f2fe'; };
+  tr.onmouseleave = function(){ this.style.background = BL_ROW_COLORS[this.querySelector('select:nth-child(1)') && this.querySelectorAll('select')[1] ? this.querySelectorAll('select')[1].value : 'Sand'] || ''; };
+
+  const inp = (val, type, placeholder, extra) =>
+    `<input type="${type}" value="${val||''}" placeholder="${placeholder||''}" ${extra||''}
+      oninput="blRowChange(${id})"
+      style="width:100%;border:1.5px solid #d1d5db;border-radius:6px;padding:5px 4px;font-size:.78rem;font-family:inherit;text-align:center;background:white;box-sizing:border-box;">`;
+
+  const uscsOpts = ['SP','SW','SP-SM','SW-SM','SP-SC','SC','SM','SC-SM','GW','GP','GW-GM','GW-GC','GP-GM','GP-GC','GM','GC','ML','CL','CL-ML','MH','CH','OL','OH','Pt','ROCK','FILL','N/P'].map(v=>
+    `<option value="${v}" ${(d.uscs||'')==v?'selected':''}>${v}</option>`
+  ).join('');
+
+  const typeOpts = soilTypes.map(v=>
+    `<option value="${v}" ${(d.soilType||'Sand')==v?'selected':''}>${v}</option>`
+  ).join('');
+
+  var initRd = blGetRD(d.spt !== undefined && d.spt !== '' ? parseFloat(d.spt) : null, d.soilType || 'Sand');
+  var initN60 = blCalcN60(d.spt !== undefined && d.spt !== '' ? d.spt : null);
+
+  tr.innerHTML = `
+    <td style="padding:5px;border:1px solid #e5e7eb;text-align:center;font-weight:700;color:#6b7280;font-size:.75rem;">${id}</td>
+    <td style="padding:5px;border:1px solid #e5e7eb;">${inp(d.from,'number','0.00','step="0.5" min="0"')}</td>
+    <td style="padding:5px;border:1px solid #e5e7eb;">${inp(d.to,'number','1.00','step="0.5" min="0"')}</td>
+    <td style="padding:5px;border:1px solid #e5e7eb;">
+      <select oninput="blRowChange(${id})" style="width:100%;border:1.5px solid #d1d5db;border-radius:6px;padding:5px 3px;font-size:.74rem;font-family:inherit;background:white;">${uscsOpts}</select>
+    </td>
+    <td style="padding:5px;border:1px solid #e5e7eb;">
+      <select oninput="blRowChange(${id}); blAutoUSCS(${id})" style="width:100%;border:1.5px solid #d1d5db;border-radius:6px;padding:5px 3px;font-size:.74rem;font-family:inherit;background:white;">${typeOpts}</select>
+    </td>
+    <td style="padding:5px;border:1px solid #e5e7eb;">
+      <input type="text" value="${d.desc||''}" placeholder="وصف الطبقة / Layer Description"
+        oninput="blRowChange(${id})"
+        style="width:100%;border:1.5px solid #d1d5db;border-radius:6px;padding:5px 8px;font-size:.78rem;font-family:inherit;background:white;box-sizing:border-box;">
+    </td>
+    <td style="padding:5px;border:1px solid #e5e7eb;">${inp(d.spt,'number','—','min="0"')}</td>
+    <td style="padding:5px;border:1px solid #e5e7eb;text-align:center;">
+      <span id="blN60Cell_${id}" style="display:inline-block;padding:3px 7px;border-radius:8px;font-size:.72rem;font-weight:700;background:#ede9fe;color:#5b21b6;">${initN60 !== null ? initN60 : '—'}</span>
+    </td>
+    <td style="padding:5px;border:1px solid #e5e7eb;text-align:center;">
+      <span id="blRDCell_${id}" style="display:inline-block;padding:3px 7px;border-radius:10px;font-size:.72rem;font-weight:700;white-space:nowrap;color:${initRd.color};background:${initRd.bg};">${initRd.label}</span>
+    </td>
+    <td style="padding:5px;border:1px solid #e5e7eb;">${inp(d.wc,'number','—','step="0.1"')}</td>
+    <td style="padding:5px;border:1px solid #e5e7eb;">${inp(d.ll,'text','N.P')}</td>
+    <td style="padding:5px;border:1px solid #e5e7eb;">${inp(d.pi,'text','N.P')}</td>
+    <td style="padding:5px;border:1px solid #e5e7eb;">${inp(d.rec,'number','—','min="0" max="100"')}</td>
+    <td style="padding:5px;border:1px solid #e5e7eb;">${inp(d.sampleNo,'text','B-1-1')}</td>
+    <td style="padding:4px;border:1px solid #e5e7eb;text-align:center;white-space:nowrap;">
+      <button onclick="blMoveRow(${id},-1)" title="↑ تحريك للأعلى"
+        style="background:#e0f2fe;color:#0369a1;border:none;border-radius:5px;padding:3px 7px;cursor:pointer;font-size:.8rem;margin:1px;">↑</button>
+      <button onclick="blMoveRow(${id},1)" title="↓ تحريك للأسفل"
+        style="background:#e0f2fe;color:#0369a1;border:none;border-radius:5px;padding:3px 7px;cursor:pointer;font-size:.8rem;margin:1px;">↓</button>
+      <button onclick="blCopyRow(${id})" title="نسخ الطبقة"
+        style="background:#f0fdf4;color:#166534;border:none;border-radius:5px;padding:3px 7px;cursor:pointer;font-size:.8rem;margin:1px;">⧉</button>
+      <button onclick="blDeleteRow(${id})" title="حذف الطبقة"
+        style="background:#fee2e2;color:#dc2626;border:none;border-radius:5px;padding:3px 7px;cursor:pointer;font-size:.8rem;margin:1px;">✕</button>
+    </td>
+  `;
+  tbody.appendChild(tr);
+  blLiveUpdate();
+  blUpdateRowSelector();
+}
+
+function blRowChange(id) {
+  blUpdateRDCell(id);
+  blLiveUpdate();
+}
+
+function blMoveRow(id, dir) {
+  var tbody = document.getElementById('blLayersBody');
+  var tr = document.getElementById('blRow_' + id);
+  if (!tr) return;
+  if (dir === -1 && tr.previousElementSibling) {
+    tbody.insertBefore(tr, tr.previousElementSibling);
+  } else if (dir === 1 && tr.nextElementSibling) {
+    tbody.insertBefore(tr.nextElementSibling, tr);
+  }
+  blLiveUpdate();
+  blUpdateRowSelector();
+}
+
+function blCopyRow(id) {
+  var tr = document.getElementById('blRow_' + id);
+  if (!tr) return;
+  var inputs  = tr.querySelectorAll('input');
+  var selects = tr.querySelectorAll('select');
+  var d = {
+    from:     inputs[0] ? inputs[0].value : '',
+    to:       inputs[1] ? inputs[1].value : '',
+    uscs:     selects[0] ? selects[0].value : '',
+    soilType: selects[1] ? selects[1].value : 'Sand',
+    desc:     inputs[2] ? inputs[2].value : '',
+    spt:      inputs[3] ? inputs[3].value : '',
+    wc:       inputs[4] ? inputs[4].value : '',
+    ll:       inputs[5] ? inputs[5].value : '',
+    pi:       inputs[6] ? inputs[6].value : '',
+    rec:      inputs[7] ? inputs[7].value : '',
+    sampleNo: inputs[8] ? inputs[8].value : '',
+  };
+  var oldCounter = blRowCounter;
+  blAddRow(d);
+  var newTr = document.getElementById('blRow_' + blRowCounter);
+  if (newTr && tr.nextElementSibling) {
+    document.getElementById('blLayersBody').insertBefore(newTr, tr.nextElementSibling);
+  }
+  blLiveUpdate();
+}
+
+// ── حفظ وتحميل JSON ──────────────────────────────────────────────
+function blCollectHeaderData() {
+  return {
+    bhNo:      (document.getElementById('bl_bhNo')      || {}).value || '',
+    dateStart: (document.getElementById('bl_dateStart') || {}).value || '',
+    dateEnd:   (document.getElementById('bl_dateEnd')   || {}).value || '',
+    totalDepth:(document.getElementById('bl_totalDepth')|| {}).value || '',
+    geologist: (document.getElementById('bl_geologist') || {}).value || '',
+    driller:   (document.getElementById('bl_driller')   || {}).value || '',
+    drilRig:   (document.getElementById('bl_drilRig')   || {}).value || '',
+    gwl:       (document.getElementById('bl_gwl')       || {}).value || 'NF',
+    north:     (document.getElementById('bl_north')     || {}).value || '',
+    east:      (document.getElementById('bl_east')      || {}).value || '',
+    elevation: (document.getElementById('bl_elevation') || {}).value || '',
+    projNo:    (document.getElementById('bl_projNo')    || {}).value || '',
+    bhDiam:    (document.getElementById('bl_bhDiam')    || {}).value || '',
+    casing:    (document.getElementById('bl_casing')    || {}).value || '',
+    hammerEr:  (document.getElementById('bl_hammerEr')  || {}).value || '60',
+    cnMethod:  (document.getElementById('bl_cnMethod')  || {}).value || 'none',
+  };
+}
+
+function blApplyHeaderData(h) {
+  var keys = ['bhNo','dateStart','dateEnd','totalDepth','geologist','driller','drilRig','gwl','north','east','elevation','projNo','bhDiam','casing','hammerEr','cnMethod'];
+  keys.forEach(function(k) {
+    var el = document.getElementById('bl_' + k);
+    if (el && h[k] !== undefined) el.value = h[k];
+  });
+}
+
+function blSaveJSON() {
+  var data = {
+    version: 'v24',
+    header:  blCollectHeaderData(),
+    rows:    blGetRows(),
+  };
+  var json = JSON.stringify(data, null, 2);
+  var blob = new Blob([json], {type: 'application/json'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  var bhNo = (document.getElementById('bl_bhNo') || {}).value || 'BoringLog';
+  a.href     = url;
+  a.download = bhNo + '_BoringLog.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showJSONToast('✅ تم حفظ ملف JSON بنجاح', '#059669');
+}
+
+function blLoadJSONFile(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      document.getElementById('blLayersBody').innerHTML = '';
+      blRowCounter = 0;
+      if (data.header) blApplyHeaderData(data.header);
+      if (data.rows && Array.isArray(data.rows)) {
+        data.rows.forEach(function(r) { blAddRow(r); });
+      }
+      showJSONToast('✅ تم تحميل الملف بنجاح — ' + (data.rows ? data.rows.length : 0) + ' طبقات', '#059669');
+      blGenerate();
+    } catch(err) {
+      showJSONToast('❌ خطأ في قراءة الملف: ' + err.message, '#dc2626');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function blAutoUSCS(id) {
+  const tr = document.getElementById('blRow_' + id);
+  if (!tr) return;
+  const typeEl = tr.querySelectorAll('select')[1];
+  const uscsEl = tr.querySelectorAll('select')[0];
+  if (!typeEl || !uscsEl) return;
+  const map = {
+    Sand:'SP', Gravel:'GP', Silt:'ML', Clay:'CL',
+    Rock:'ROCK', Fill:'FILL', Organic:'OL'
+  };
+  if (map[typeEl.value]) uscsEl.value = map[typeEl.value];
+  // update row color
+  tr.style.background = BL_ROW_COLORS[typeEl.value] || '';
+}
+
+function blDeleteRow(id) {
+  const tr = document.getElementById('blRow_' + id);
+  if (tr) tr.remove();
+  blLiveUpdate();
+  blUpdateRowSelector();
+}
+
+function blClearRows() {
+  document.getElementById('blLayersBody').innerHTML = '';
+  blRowCounter = 0;
+  blLiveUpdate();
+  blUpdateRowSelector();
+}
+
+function blRenderTableIfEmpty() {
+  const tbody = document.getElementById('blLayersBody');
+  if (!tbody.children.length) { /* leave empty, user adds */ }
+}
+
+// ── قراءة بيانات الجدول ──────────────────────────────────────────
+function blGetRows() {
+  const rows = [];
+  const trs = document.getElementById('blLayersBody').querySelectorAll('tr');
+  trs.forEach(function(tr) {
+    const inputs = tr.querySelectorAll('input');
+    const selects = tr.querySelectorAll('select');
+    if (!inputs.length) return;
+    var sptVal = inputs[3] && inputs[3].value !== '' ? parseFloat(inputs[3].value) : null;
+    var soilType = selects[1] ? selects[1].value : 'Sand';
+    var toVal = parseFloat(inputs[1].value) || 0;
+    rows.push({
+      from:     parseFloat(inputs[0].value) || 0,
+      to:       toVal,
+      uscs:     selects[0] ? selects[0].value : '',
+      soilType: soilType,
+      desc:     inputs[2].value || '',
+      spt:      sptVal,
+      n60:      blCalcN60(sptVal),
+      rd:       blGetRD(sptVal, soilType),
+      wc:       inputs[4] && inputs[4].value !== '' ? inputs[4].value : '',
+      ll:       inputs[5] ? inputs[5].value : '',
+      pi:       inputs[6] ? inputs[6].value : '',
+      rec:      inputs[7] && inputs[7].value !== '' ? inputs[7].value : '',
+      sampleNo: inputs[8] ? inputs[8].value : '',
+    });
+  });
+  return rows;
+}
+
+// ── مشغّل live update ─────────────────────────────────────────────
+function blLiveUpdate() {
+  blUpdateSummary();
+}
+
+// ── ملخص إحصائي ──────────────────────────────────────────────────
+function blUpdateSummary() {
+  var rows = blGetRows();
+  var panel = document.getElementById('blSummaryPanel');
+  var content = document.getElementById('blSummaryContent');
+  if (!panel || !content) return;
+  if (!rows.length) { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+
+  var sptVals = rows.filter(function(r){ return r.spt !== null && !isNaN(r.spt); }).map(function(r){ return r.spt; });
+  var avgSPT = sptVals.length ? (sptVals.reduce(function(a,b){return a+b;},0) / sptVals.length).toFixed(1) : '—';
+  var maxSPT = sptVals.length ? Math.max.apply(null, sptVals) : '—';
+  var minSPT = sptVals.length ? Math.min.apply(null, sptVals) : '—';
+
+  // type distribution
+  var typeCounts = {};
+  var totalThick = 0;
+  rows.forEach(function(r){
+    var t = r.soilType || 'Sand';
+    var thick = Math.max(0, r.to - r.from);
+    typeCounts[t] = (typeCounts[t] || 0) + thick;
+    totalThick += thick;
+  });
+
+  var dominantType = Object.keys(typeCounts).sort(function(a,b){ return typeCounts[b]-typeCounts[a]; })[0] || '—';
+
+  var n60Vals = rows.filter(function(r){ return r.n60 !== null; }).map(function(r){ return r.n60; });
+  var avgN60 = n60Vals.length ? (n60Vals.reduce(function(a,b){return a+b;},0)/n60Vals.length).toFixed(1) : '—';
+
+  var cards = [
+    { icon:'🔢', label:'عدد الطبقات', value: rows.length, color:'#1e40af' },
+    { icon:'📏', label:'العمق الكلي (م)', value: totalThick.toFixed(1), color:'#0369a1' },
+    { icon:'📊', label:'متوسط SPT', value: avgSPT, color:'#c2410c' },
+    { icon:'⬆️', label:'أقصى SPT', value: maxSPT, color:'#991b1b' },
+    { icon:'⬇️', label:'أدنى SPT', value: minSPT, color:'#166534' },
+    { icon:'⚙️', label:'متوسط N60', value: avgN60, color:'#5b21b6' },
+    { icon:'🏷️', label:'النوع السائد', value: dominantType, color:'#0f766e' },
+  ];
+
+  content.innerHTML = cards.map(function(c){
+    return '<div style="background:white;border:1.5px solid #e5e7eb;border-radius:10px;padding:10px 14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06);">'
+      + '<div style="font-size:1.2rem;">' + c.icon + '</div>'
+      + '<div style="font-size:1rem;font-weight:800;color:' + c.color + ';margin:3px 0;">' + c.value + '</div>'
+      + '<div style="font-size:.68rem;color:#6b7280;font-weight:600;">' + c.label + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+// ── تصدير SVG كـ PNG ─────────────────────────────────────────────
+function blExportSVGasPNG() {
+  var svgEl = document.querySelector('#blDrawingContainer svg');
+  if (!svgEl) { alert('ارسم اللوج أولاً ثم صدّر'); return; }
+  var serializer = new XMLSerializer();
+  var svgStr = serializer.serializeToString(svgEl);
+  var svgBlob = new Blob([svgStr], {type:'image/svg+xml;charset=utf-8'});
+  var url = URL.createObjectURL(svgBlob);
+  var img = new Image();
+  img.onload = function() {
+    var canvas = document.createElement('canvas');
+    canvas.width  = svgEl.viewBox.baseVal.width  || parseInt(svgEl.getAttribute('width'))  || 900;
+    canvas.height = svgEl.viewBox.baseVal.height || parseInt(svgEl.getAttribute('height')) || 1200;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0);
+    URL.revokeObjectURL(url);
+    var a = document.createElement('a');
+    a.download = ((document.getElementById('bl_bhNo') || {}).value || 'BoringLog') + '_Log.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+    showJSONToast('✅ تم تصدير اللوج كصورة PNG', '#0f766e');
+  };
+  img.src = url;
+}
+
+// ── رسم اللوج SVG ─────────────────────────────────────────────────
+function blGenerate() {
+  const rows  = blGetRows();
+  const scale = parseInt(document.getElementById('bl_scale').value) || 60;
+  const showN60 = (document.getElementById('blShowN60') || {}).checked;
+
+  if (!rows.length) {
+    alert('أضف طبقات أولاً قبل الرسم');
+    return;
+  }
+
+  const totalDepth = parseFloat(document.getElementById('bl_totalDepth').value) ||
+                     Math.max(...rows.map(r=>r.to)) || 10;
+
+  // ── قراءة بيانات المشروع والحفرة ──
+  var blProj    = ((document.getElementById('gpi_project')  ||{}).value||'').trim() || '—';
+  var blLoc     = ((document.getElementById('gpi_location') ||{}).value||'').trim() || '—';
+  var blClient  = ((document.getElementById('gpi_client')   ||{}).value||'').trim() || '—';
+  var blBhNo    = (document.getElementById('bl_bhNo').value    ||'—').trim();
+  var blProjNo  = (document.getElementById('bl_projNo').value  ||'—').trim();
+  var blDStart  = (document.getElementById('bl_dateStart').value||'—').trim();
+  var blDEnd    = (document.getElementById('bl_dateEnd').value  ||'—').trim();
+  var blGeo     = (document.getElementById('bl_geologist').value||'—').trim();
+  var blDriller = (document.getElementById('bl_driller').value  ||'—').trim();
+  var blRig     = (document.getElementById('bl_drilRig').value  ||'—').trim();
+  var blGwlRaw  = (document.getElementById('bl_gwl').value      ||'NF').trim();
+  var blNorth   = (document.getElementById('bl_north').value    ||'—').trim();
+  var blEast    = (document.getElementById('bl_east').value     ||'—').trim();
+  var blElev    = (document.getElementById('bl_elevation').value||'—').trim();
+  var blGwlNum  = parseFloat(blGwlRaw);
+  var blBhDiam  = ((document.getElementById("bl_bhDiam")||{}).value||"").trim();
+  var blCasing  = ((document.getElementById("bl_casing")||{}).value||"").trim();
+  var blHammerEr = ((document.getElementById("bl_hammerEr")||{}).value||"60").trim();
+  var blCnMethod = ((document.getElementById("bl_cnMethod")||{}).value||"none").trim();
+
+  // ── أبعاد الرسم ──
+  const projHeaderH = 82;
+  const legendH     = 100;
+  const marginTop   = 100 + projHeaderH;
+  const marginLeft  = 20;
+  const colSymW     = 80;
+  const colSPTW     = 160;
+  const colDescW    = 240;
+  const colDataW    = 55;
+  const depthColW   = 45;
+  const numDataCols = 5;
+  const totalW      = marginLeft + depthColW + colSymW + colDescW + colSPTW + (numDataCols * colDataW) + 40;
+  const totalH      = marginTop + totalDepth * scale + 20 + legendH;
+
+  // ── أعمدة X ──
+  const xDepth  = marginLeft;
+  const xSym    = xDepth  + depthColW;
+  const xDesc   = xSym    + colSymW;
+  const xSPT    = xDesc   + colDescW;
+  const xWC     = xSPT    + colSPTW;
+  const xLL     = xWC     + colDataW;
+  const xPI     = xLL     + colDataW;
+  const xREC    = xPI     + colDataW;
+  const xSample = xREC    + colDataW;
+  const xEnd    = xSample + colDataW;
+
+  // ── حساب مقياس SPT ──
+  const sptVals    = rows.filter(r=>r.spt!==null && !isNaN(r.spt)).map(r=>r.spt||0);
+  const n60Vals_f  = rows.filter(r=>r.n60!==null && !isNaN(r.n60)).map(r=>r.n60||0);
+  const sptDataMax = sptVals.length ? Math.max(...sptVals) : 0;
+  const n60DataMax = n60Vals_f.length ? Math.max(...n60Vals_f) : 0;
+  const sptMax     = Math.max(60, Math.ceil(Math.max(sptDataMax, n60DataMax) / 10) * 10 + 10);
+  const sptOriginX = xSPT + 14;
+  const sptPlotW   = colSPTW - 20;
+  const sptSc      = sptPlotW / sptMax;
+  const sptX = n  => sptOriginX + Math.min(n, sptMax) * sptSc;
+
+  const zoneBottom = marginTop + totalDepth * scale;
+
+  const sptZones = [
+    { from:  0, to:  4, fill:'#f0fff4', label:'V.L' },
+    { from:  4, to: 10, fill:'#dcfce7', label:'L'   },
+    { from: 10, to: 30, fill:'#fef9c3', label:'M'   },
+    { from: 30, to: 50, fill:'#ffedd5', label:'D'   },
+    { from: 50, to: sptMax, fill:'#fee2e2', label:'V.D' },
+  ];
+
+  let svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + totalW + '" height="' + totalH + '" style="font-family:Arial,sans-serif;direction:ltr;">\n'
+  + '<defs>\n'
+  + blDefs()
+  + '<linearGradient id="sptG_vl" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#6ee7b7"/><stop offset="100%" stop-color="#10b981"/></linearGradient>'
+  + '<linearGradient id="sptG_l"  x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#4ade80"/><stop offset="100%" stop-color="#16a34a"/></linearGradient>'
+  + '<linearGradient id="sptG_m"  x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#fde68a"/><stop offset="100%" stop-color="#d97706"/></linearGradient>'
+  + '<linearGradient id="sptG_d"  x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#fb923c"/><stop offset="100%" stop-color="#c2410c"/></linearGradient>'
+  + '<linearGradient id="sptG_vd" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#f87171"/><stop offset="100%" stop-color="#b91c1c"/></linearGradient>'
+  + '<filter id="sptShadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="1" dy="0" stdDeviation="2" flood-color="#1d4ed8" flood-opacity="0.35"/></filter>'
+  + '</defs>\n'
+  + '<rect width="' + totalW + '" height="' + totalH + '" fill="white"/>\n';
+
+  // ══ رأس الجدول ══
+  var phY = 5;
+  var phW = xEnd - xDepth;
+  var phX = xDepth;
+  svg += '<rect x="' + phX + '" y="' + phY + '" width="' + phW + '" height="' + (projHeaderH-4) + '" fill="white" stroke="#1e3a5f" stroke-width="1.5" rx="3"/>';
+  svg += '<rect x="' + phX + '" y="' + phY + '" width="' + phW + '" height="22" fill="#1e3a5f" rx="3"/>';
+  svg += '<rect x="' + phX + '" y="' + (phY+14) + '" width="' + phW + '" height="8" fill="#1e3a5f"/>';
+  svg += '<text x="' + (phX + phW/2) + '" y="' + (phY+15) + '" text-anchor="middle" fill="white" font-size="11" font-weight="bold" letter-spacing="2">TEST BORING LOG</text>';
+  svg += '<rect x="' + phX + '" y="' + (phY+22) + '" width="' + phW + '" height="14" fill="#2d5a87"/>';
+  svg += '<text x="' + (phX + phW/2) + '" y="' + (phY+33) + '" text-anchor="middle" fill="white" font-size="8.5" font-weight="bold">BORING NO.: ' + blEsc(blBhNo) + '    |    PROJECT NO.: ' + blEsc(blProjNo) + '    |    TOTAL DEPTH: ' + blEsc(String(totalDepth)) + ' m    |    Er: ' + blEsc(blHammerEr) + '%</text>';
+  var infoY  = phY + 36;
+  var infoH  = projHeaderH - 4 - 36;
+  var col1W  = Math.floor(phW * 0.5);
+  var col2X  = phX + col1W;
+  svg += '<line x1="' + col2X + '" y1="' + infoY + '" x2="' + col2X + '" y2="' + (infoY+infoH) + '" stroke="#1e3a5f" stroke-width="0.8"/>';
+  var lx = phX + 8;
+  var ry = infoY + 12;
+  var rStep = 11;
+  svg += '<text x="' + lx + '" y="' + ry + '" fill="#1e3a5f" font-size="7.5" font-weight="bold">PROJECT:</text><text x="' + (lx+52) + '" y="' + ry + '" fill="#1e293b" font-size="7.5">' + blEsc(blProj) + '</text>';
+  ry += rStep;
+  svg += '<text x="' + lx + '" y="' + ry + '" fill="#1e3a5f" font-size="7.5" font-weight="bold">CLIENT:</text><text x="' + (lx+43) + '" y="' + ry + '" fill="#1e293b" font-size="7.5">' + blEsc(blClient) + '</text>';
+  ry += rStep;
+  svg += '<text x="' + lx + '" y="' + ry + '" fill="#1e3a5f" font-size="7.5" font-weight="bold">LOCATION:</text><text x="' + (lx+58) + '" y="' + ry + '" fill="#1e293b" font-size="7.5">' + blEsc(blLoc) + '</text>';
+  ry += rStep;
+  svg += '<text x="' + lx + '" y="' + ry + '" fill="#1e3a5f" font-size="7.5" font-weight="bold">NORTH / EAST:</text><text x="' + (lx+80) + '" y="' + ry + '" fill="#1e293b" font-size="7.5">' + blEsc(blNorth) + ' / ' + blEsc(blEast) + '</text>';
+  var rx2 = col2X + 8;
+  var ry2 = infoY + 12;
+  svg += '<text x="' + rx2 + '" y="' + ry2 + '" fill="#1e3a5f" font-size="7.5" font-weight="bold">DATE:</text><text x="' + (rx2+35) + '" y="' + ry2 + '" fill="#1e293b" font-size="7.5">' + blEsc(blDStart) + ' – ' + blEsc(blDEnd) + '</text>';
+  ry2 += rStep;
+  svg += '<text x="' + rx2 + '" y="' + ry2 + '" fill="#1e3a5f" font-size="7.5" font-weight="bold">GEOLOGIST:</text><text x="' + (rx2+62) + '" y="' + ry2 + '" fill="#1e293b" font-size="7.5">' + blEsc(blGeo) + '</text>';
+  ry2 += rStep;
+  svg += '<text x="' + rx2 + '" y="' + ry2 + '" fill="#1e3a5f" font-size="7.5" font-weight="bold">DRILLER / RIG:</text><text x="' + (rx2+78) + '" y="' + ry2 + '" fill="#1e293b" font-size="7.5">' + blEsc(blDriller) + ' / ' + blEsc(blRig) + '</text>';
+  ry2 += rStep;
+  svg += '<text x="' + rx2 + '" y="' + ry2 + '" fill="#1e3a5f" font-size="7.5" font-weight="bold">ELEVATION / GWL:</text><text x="' + (rx2+98) + '" y="' + ry2 + '" fill="#1e293b" font-size="7.5">' + blEsc(blElev) + ' m  /  ' + blEsc(blGwlRaw) + '</text>';
+  ry2 += rStep;
+  var diamStr = blBhDiam ? blBhDiam + ' mm' : '—';
+  var caseStr = blCasing ? blCasing + ' mm' : 'No Casing';
+  svg += '<text x="' + rx2 + '" y="' + ry2 + '" fill="#1e3a5f" font-size="7.5" font-weight="bold">BH DIAM / CASING:</text><text x="' + (rx2+100) + '" y="' + ry2 + '" fill="#1e293b" font-size="7.5">' + blEsc(diamStr) + '  /  ' + blEsc(caseStr) + '</text>';
+
+  // الأعمدة العادية (أزرق غامق) — ارتفاع 60px
+  svg += '<rect x="' + xDepth  + '" y="' + (marginTop-60) + '" width="' + depthColW + '" height="60" fill="#1e3a5f"/>';
+  svg += '<rect x="' + xSym    + '" y="' + (marginTop-60) + '" width="' + colSymW   + '" height="60" fill="#1e3a5f"/>';
+  svg += '<rect x="' + xDesc   + '" y="' + (marginTop-60) + '" width="' + colDescW  + '" height="60" fill="#1e3a5f"/>';
+  svg += '<rect x="' + xWC     + '" y="' + (marginTop-60) + '" width="' + colDataW  + '" height="60" fill="#1e3a5f"/>';
+  svg += '<rect x="' + xLL     + '" y="' + (marginTop-60) + '" width="' + colDataW  + '" height="60" fill="#1e3a5f"/>';
+  svg += '<rect x="' + xPI     + '" y="' + (marginTop-60) + '" width="' + colDataW  + '" height="60" fill="#1e3a5f"/>';
+  svg += '<rect x="' + xREC    + '" y="' + (marginTop-60) + '" width="' + colDataW  + '" height="60" fill="#1e3a5f"/>';
+  svg += '<rect x="' + xSample + '" y="' + (marginTop-60) + '" width="' + colDataW  + '" height="60" fill="#1e3a5f"/>';
+
+  // SPT header
+  svg += '<rect x="' + xSPT + '" y="' + (marginTop-60) + '" width="' + colSPTW + '" height="38" fill="#9a3412"/>';
+  svg += '<rect x="' + xSPT + '" y="' + (marginTop-22) + '" width="' + colSPTW + '" height="22" fill="#7c2d12"/>';
+  svg += '<line x1="' + xSPT + '" y1="' + (marginTop-22) + '" x2="' + (xSPT+colSPTW) + '" y2="' + (marginTop-22) + '" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/>';
+
+  // ══ نصوص رأس الجدول ══
+  svg += '<text x="' + (xDepth+depthColW/2)   + '" y="' + (marginTop-44) + '" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Depth</text>';
+  svg += '<text x="' + (xDepth+depthColW/2)   + '" y="' + (marginTop-32) + '" text-anchor="middle" fill="white" font-size="9" font-weight="bold">(m)</text>';
+  svg += '<text x="' + (xSym+colSymW/2)       + '" y="' + (marginTop-44) + '" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Soil</text>';
+  svg += '<text x="' + (xSym+colSymW/2)       + '" y="' + (marginTop-32) + '" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Symbol</text>';
+  svg += '<text x="' + (xDesc+colDescW/2)     + '" y="' + (marginTop-37) + '" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Description</text>';
+  svg += '<text x="' + (xSPT+colSPTW/2)       + '" y="' + (marginTop-47) + '" text-anchor="middle" fill="white" font-size="9.5" font-weight="bold">SPT ' + (showN60 ? '(N60)' : '(N)') + '  Blows</text>';
+  svg += '<text x="' + (xWC+colDataW/2)       + '" y="' + (marginTop-44) + '" text-anchor="middle" fill="white" font-size="8.5" font-weight="bold">WC</text>';
+  svg += '<text x="' + (xWC+colDataW/2)       + '" y="' + (marginTop-32) + '" text-anchor="middle" fill="white" font-size="8"   font-weight="bold">(%)</text>';
+  svg += '<text x="' + (xLL+colDataW/2)       + '" y="' + (marginTop-44) + '" text-anchor="middle" fill="white" font-size="8.5" font-weight="bold">LL</text>';
+  svg += '<text x="' + (xLL+colDataW/2)       + '" y="' + (marginTop-32) + '" text-anchor="middle" fill="white" font-size="8"   font-weight="bold">(%)</text>';
+  svg += '<text x="' + (xPI+colDataW/2)       + '" y="' + (marginTop-44) + '" text-anchor="middle" fill="white" font-size="8.5" font-weight="bold">PI</text>';
+  svg += '<text x="' + (xPI+colDataW/2)       + '" y="' + (marginTop-32) + '" text-anchor="middle" fill="white" font-size="8"   font-weight="bold">(%)</text>';
+  svg += '<text x="' + (xREC+colDataW/2)      + '" y="' + (marginTop-44) + '" text-anchor="middle" fill="white" font-size="8.5" font-weight="bold">REC</text>';
+  svg += '<text x="' + (xREC+colDataW/2)      + '" y="' + (marginTop-32) + '" text-anchor="middle" fill="white" font-size="8"   font-weight="bold">(%)</text>';
+  svg += '<text x="' + (xSample+colDataW/2)   + '" y="' + (marginTop-44) + '" text-anchor="middle" fill="white" font-size="8.5" font-weight="bold">Sample</text>';
+  svg += '<text x="' + (xSample+colDataW/2)   + '" y="' + (marginTop-32) + '" text-anchor="middle" fill="white" font-size="8"   font-weight="bold">No.</text>';
+
+  // ══ مقياس SPT ══
+  var sptTicks = [0, 10, 20, 30, 40, 50, 60].filter(function(v){ return v <= sptMax; });
+  sptTicks.forEach(function(n) {
+    var sx = sptX(n);
+    svg += '<line x1="' + sx + '" y1="' + (marginTop-22) + '" x2="' + sx + '" y2="' + (marginTop-14) + '" stroke="rgba(255,200,160,0.7)" stroke-width="1"/>';
+    svg += '<text x="' + sx + '" y="' + (marginTop-6) + '" text-anchor="middle" fill="rgba(255,210,170,0.95)" font-size="7.5" font-weight="bold">' + n + '</text>';
+  });
+
+  var sptZoneLabels = [{x:sptX(2),t:'V.Loose'},{x:sptX(7),t:'Loose'},{x:sptX(20),t:'Medium'},{x:sptX(40),t:'Dense'},{x:sptX(55),t:'V.Dense'}];
+  sptZoneLabels.forEach(function(lbl){
+    if (lbl.x < xSPT + colSPTW - 5) {
+      svg += '<text x="' + lbl.x + '" y="' + (marginTop-31) + '" text-anchor="middle" fill="rgba(255,220,200,0.55)" font-size="5.5" font-style="italic">' + lbl.t + '</text>';
+    }
+  });
+
+  // ══ خطوط العمق ══
+  var depthStep = scale >= 80 ? 0.5 : 1;
+  for (var d = 0; d <= totalDepth + 0.01; d += depthStep) {
+    var y = marginTop + d * scale;
+    var isInt = Math.abs(d - Math.round(d)) < 0.01;
+    if (isInt) {
+      svg += '<line x1="' + xDepth + '" y1="' + y + '" x2="' + xEnd + '" y2="' + y + '" stroke="#94a3b8" stroke-width="0.5" stroke-dasharray="2,3"/>';
+      svg += '<text x="' + (xDepth+depthColW-4) + '" y="' + (y+4) + '" text-anchor="end" fill="#1e3a5f" font-size="9" font-weight="bold">' + d.toFixed(0) + '</text>';
+      svg += '<line x1="' + xDepth + '" y1="' + y + '" x2="' + (xDepth+8) + '" y2="' + y + '" stroke="#1e3a5f" stroke-width="1"/>';
+    } else {
+      svg += '<line x1="' + (xDepth+depthColW-4) + '" y1="' + y + '" x2="' + (xDepth+8) + '" y2="' + y + '" stroke="#94a3b8" stroke-width="0.4"/>';
+    }
+  }
+
+  // ══ خلفيات zones الكثافة في عمود SPT ══
+  sptZones.forEach(function(z) {
+    var zx1 = sptX(z.from);
+    var zx2 = Math.min(sptX(z.to), xSPT + colSPTW - 4);
+    if (zx2 > zx1) {
+      svg += '<rect x="' + zx1 + '" y="' + marginTop + '" width="' + (zx2-zx1) + '" height="' + (zoneBottom-marginTop) + '" fill="' + z.fill + '" opacity="0.6"/>';
+    }
+  });
+
+  // ══ خطوط شبكة SPT ══
+  sptTicks.forEach(function(n) {
+    var sx = sptX(n);
+    svg += '<line x1="' + sx + '" y1="' + marginTop + '" x2="' + sx + '" y2="' + zoneBottom + '" stroke="' + (n===0?'#64748b':'#cbd5e1') + '" stroke-width="' + (n===0?'1':'0.65') + '"/>';
+  });
+
+  // ══ رسم كل طبقة ══
+  rows.forEach(function(row) {
+    if (row.from >= row.to) return;
+    var y1   = marginTop + row.from * scale;
+    var y2   = marginTop + row.to   * scale;
+    var h    = y2 - y1;
+    var info = BL_USCS_MAP[row.soilType] || BL_USCS_MAP['Sand'];
+
+    svg += '<rect x="' + xSym + '" y="' + y1 + '" width="' + colSymW + '" height="' + h + '" fill="url(#bl_pat_' + row.soilType.toLowerCase() + ')" stroke="#94a3b8" stroke-width="0.5"/>';
+    svg += '<rect x="' + xDesc + '" y="' + y1 + '" width="' + colDescW + '" height="' + h + '" fill="' + info.color + '22" stroke="#e2e8f0" stroke-width="0.4"/>';
+    var descLines = blWrapText(row.desc, 34);
+    var descMidY  = y1 + h/2;
+    var lineH     = 11;
+    var startY    = descMidY - ((descLines.length-1) * lineH)/2;
+    descLines.forEach(function(line, li) {
+      svg += '<text x="' + (xDesc+8) + '" y="' + (startY + li*lineH) + '" fill="#1e293b" font-size="8.5">' + blEsc(line) + '</text>';
+    });
+
+    svg += '<text x="' + (xSym+colSymW/2) + '" y="' + (y1+h/2+3) + '" text-anchor="middle" fill="#1e293b" font-size="8" font-weight="bold" opacity=".65">' + blEsc(row.uscs) + '</text>';
+
+    if (row.rd && row.rd.label && row.rd.label !== '—') {
+      var rdLabel = row.rd.label;
+      var rdColor = row.rd.color || '#6b7280';
+      var rdBg    = row.rd.bg    || '#f1f5f9';
+      var rdW     = Math.min(80, rdLabel.length * 5.5 + 8);
+      var rdX     = xDesc + colDescW - rdW - 4;
+      var rdY     = y2 - 14;
+      if (h > 22) {
+        svg += '<rect x="' + rdX + '" y="' + rdY + '" width="' + rdW + '" height="11" rx="3" fill="' + rdBg + '" stroke="' + rdColor + '" stroke-width="0.7" opacity="0.92"/>';
+        svg += '<text x="' + (rdX + rdW/2) + '" y="' + (rdY+8) + '" text-anchor="middle" fill="' + rdColor + '" font-size="6.5" font-weight="bold">' + blEsc(rdLabel) + '</text>';
+      }
+    }
+
+    // SPT bar — normal or N60
+    var sptValToPlot = showN60 ? (row.n60 !== null ? row.n60 : row.spt) : row.spt;
+    if (sptValToPlot !== null && !isNaN(sptValToPlot)) {
+      var midY = y1 + h/2;
+      var barH = Math.max(4, h * 0.55);
+      var barY = midY - barH/2;
+      var barW = Math.min(sptPlotW, sptValToPlot * sptSc);
+      var n = sptValToPlot;
+      var gradId = n <= 4 ? 'sptG_vl' : n <= 10 ? 'sptG_l' : n <= 30 ? 'sptG_m' : n <= 50 ? 'sptG_d' : 'sptG_vd';
+      svg += '<rect x="' + sptOriginX + '" y="' + barY + '" width="' + barW + '" height="' + barH + '" fill="url(#' + gradId + ')" rx="2" opacity="0.88"/>';
+      if (barW > 14) {
+        var txtX = sptOriginX + barW + 3;
+        var displayN = showN60 ? row.n60 : row.spt;
+        svg += '<text x="' + txtX + '" y="' + (midY + 3.5) + '" fill="#1e293b" font-size="8" font-weight="bold">' + blEsc(String(displayN)) + (showN60 ? '*' : '') + '</text>';
+      }
+    }
+
+    var midY = y1 + h/2 + 3;
+    var cellStyle = 'text-anchor="middle" fill="#1e293b" font-size="8.5"';
+    svg += '<rect x="' + xWC     + '" y="' + y1 + '" width="' + colDataW + '" height="' + h + '" fill="#f0f9ff" stroke="#e2e8f0" stroke-width="0.4"/>';
+    svg += '<rect x="' + xLL     + '" y="' + y1 + '" width="' + colDataW + '" height="' + h + '" fill="#f8fafc" stroke="#e2e8f0" stroke-width="0.4"/>';
+    svg += '<rect x="' + xPI     + '" y="' + y1 + '" width="' + colDataW + '" height="' + h + '" fill="#f8fafc" stroke="#e2e8f0" stroke-width="0.4"/>';
+    svg += '<rect x="' + xREC    + '" y="' + y1 + '" width="' + colDataW + '" height="' + h + '" fill="#f8fafc" stroke="#e2e8f0" stroke-width="0.4"/>';
+    svg += '<rect x="' + xSample + '" y="' + y1 + '" width="' + colDataW + '" height="' + h + '" fill="#fffbeb" stroke="#e2e8f0" stroke-width="0.4"/>';
+    if (row.wc)       svg += '<text x="' + (xWC+colDataW/2)     + '" y="' + midY + '" ' + cellStyle + '>' + blEsc(String(row.wc))       + '</text>';
+    if (row.ll)       svg += '<text x="' + (xLL+colDataW/2)     + '" y="' + midY + '" ' + cellStyle + '>' + blEsc(row.ll)               + '</text>';
+    if (row.pi)       svg += '<text x="' + (xPI+colDataW/2)     + '" y="' + midY + '" ' + cellStyle + '>' + blEsc(row.pi)               + '</text>';
+    if (row.rec)      svg += '<text x="' + (xREC+colDataW/2)    + '" y="' + midY + '" ' + cellStyle + '>' + blEsc(String(row.rec))      + '</text>';
+    if (row.sampleNo) svg += '<text x="' + (xSample+colDataW/2) + '" y="' + midY + '" fill="#b45309" font-size="8.5" font-weight="bold" text-anchor="middle">' + blEsc(row.sampleNo) + '</text>';
+  });
+
+  // ══ خط Profile SPT أو N60 ══
+  var sptPts = rows.filter(function(r){
+    var v = showN60 ? r.n60 : r.spt;
+    return v !== null && !isNaN(v) && r.from < r.to;
+  });
+  if (sptPts.length > 1) {
+    var pts = sptPts.map(function(r) {
+      var v = showN60 ? (r.n60 !== null ? r.n60 : r.spt) : r.spt;
+      var py = marginTop + (r.from + r.to)/2 * scale;
+      var px = sptX(v);
+      return px + ',' + py;
+    }).join(' ');
+    svg += '<polyline points="' + pts + '" fill="none" stroke="rgba(30,64,175,0.18)" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>';
+    svg += '<polyline points="' + pts + '" fill="none" stroke="#1d4ed8" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+    // نقاط على الخط
+    sptPts.forEach(function(r) {
+      var v = showN60 ? (r.n60 !== null ? r.n60 : r.spt) : r.spt;
+      var py = marginTop + (r.from + r.to)/2 * scale;
+      var px = sptX(v);
+      svg += '<circle cx="' + px + '" cy="' + py + '" r="3" fill="#1d4ed8" stroke="white" stroke-width="1"/>';
+    });
+  }
+
+  // ══ إطار خارجي + خطوط فاصلة ══
+  var frameTop = marginTop - 40;
+  svg += '<rect x="' + xDepth + '" y="' + frameTop + '" width="' + (xEnd-xDepth) + '" height="' + (totalDepth*scale+40) + '" fill="none" stroke="#1e3a5f" stroke-width="1.5"/>';
+  svg += '<line x1="' + xSym    + '" y1="' + frameTop + '" x2="' + xSym    + '" y2="' + zoneBottom + '" stroke="#1e3a5f" stroke-width="1"/>';
+  svg += '<line x1="' + xDesc   + '" y1="' + frameTop + '" x2="' + xDesc   + '" y2="' + zoneBottom + '" stroke="#1e3a5f" stroke-width="1"/>';
+  svg += '<line x1="' + xSPT    + '" y1="' + frameTop + '" x2="' + xSPT    + '" y2="' + zoneBottom + '" stroke="#1e3a5f" stroke-width="1"/>';
+  svg += '<line x1="' + xWC     + '" y1="' + frameTop + '" x2="' + xWC     + '" y2="' + zoneBottom + '" stroke="#1e3a5f" stroke-width="0.8"/>';
+  svg += '<line x1="' + xLL     + '" y1="' + frameTop + '" x2="' + xLL     + '" y2="' + zoneBottom + '" stroke="#1e3a5f" stroke-width="0.8"/>';
+  svg += '<line x1="' + xPI     + '" y1="' + frameTop + '" x2="' + xPI     + '" y2="' + zoneBottom + '" stroke="#1e3a5f" stroke-width="0.8"/>';
+  svg += '<line x1="' + xREC    + '" y1="' + frameTop + '" x2="' + xREC    + '" y2="' + zoneBottom + '" stroke="#1e3a5f" stroke-width="0.8"/>';
+  svg += '<line x1="' + xSample + '" y1="' + frameTop + '" x2="' + xSample + '" y2="' + zoneBottom + '" stroke="#1e3a5f" stroke-width="0.8"/>';
+
+  // ══ رمز منسوب المياه الجوفية ▼ GWL ══
+  if (!isNaN(blGwlNum) && blGwlNum >= 0 && blGwlNum <= totalDepth) {
+    var gwlY = marginTop + blGwlNum * scale;
+    svg += '<line x1="' + xDepth + '" y1="' + gwlY + '" x2="' + xEnd + '" y2="' + gwlY
+         + '" stroke="#0ea5e9" stroke-width="1.8" stroke-dasharray="8,4" opacity="0.85"/>';
+    var triX  = xDepth + depthColW / 2;
+    var triSz = 7;
+    svg += '<polygon points="'
+         + (triX)           + ',' + (gwlY + triSz) + ' '
+         + (triX - triSz)   + ',' + (gwlY - triSz * 0.6) + ' '
+         + (triX + triSz)   + ',' + (gwlY - triSz * 0.6)
+         + '" fill="#0ea5e9" stroke="#0369a1" stroke-width="0.8"/>';
+    svg += '<text x="' + (xDepth + depthColW / 2) + '" y="' + (gwlY + triSz + 10)
+         + '" text-anchor="middle" fill="#0369a1" font-size="7.5" font-weight="bold">GWL</text>';
+    svg += '<text x="' + (xDepth + depthColW / 2) + '" y="' + (gwlY + triSz + 19)
+         + '" text-anchor="middle" fill="#0369a1" font-size="7">' + blGwlNum.toFixed(1) + ' m</text>';
+  }
+
+  // ══ Legend Box في الأسفل ══
+  var lgY   = zoneBottom + 14;
+  var lgX   = xDepth;
+  var lgW   = xEnd - xDepth;
+  var lgH   = legendH - 16;
+  var lgPad = 10;
+
+  svg += '<rect x="' + lgX + '" y="' + lgY + '" width="' + lgW + '" height="' + lgH
+       + '" fill="#f8fafc" stroke="#1e3a5f" stroke-width="1.2" rx="4"/>';
+  svg += '<rect x="' + lgX + '" y="' + lgY + '" width="' + lgW + '" height="16" fill="#1e3a5f" rx="4"/>';
+  svg += '<rect x="' + lgX + '" y="' + (lgY + 10) + '" width="' + lgW + '" height="6" fill="#1e3a5f"/>';
+  svg += '<text x="' + (lgX + lgW / 2) + '" y="' + (lgY + 11)
+       + '" text-anchor="middle" fill="white" font-size="9" font-weight="bold" letter-spacing="1">LEGEND  —  مفتاح الرموز</text>';
+
+  var soilItems = [
+    { id:'sand',    label:'Sand (رمل)',     fill:'#fef9c3', stroke:'#d97706' },
+    { id:'gravel',  label:'Gravel (حصى)',   fill:'#d1fae5', stroke:'#059669' },
+    { id:'clay',    label:'Clay (طين)',     fill:'#ede9fe', stroke:'#7c3aed' },
+    { id:'silt',    label:'Silt (طمي)',     fill:'#fce7f3', stroke:'#db2777' },
+    { id:'rock',    label:'Rock (صخر)',     fill:'#e2e8f0', stroke:'#334155' },
+    { id:'fill',    label:'Fill (ردم)',     fill:'#fef3c7', stroke:'#b45309' },
+    { id:'organic', label:'Organic (عضوي)', fill:'#d1fae5', stroke:'#065f46' },
+  ];
+  var itemW  = Math.floor((lgW - lgPad * 2) / soilItems.length);
+  var row1Y  = lgY + 26;
+
+  soilItems.forEach(function(item, i) {
+    var ix = lgX + lgPad + i * itemW;
+    svg += '<rect x="' + ix + '" y="' + row1Y + '" width="20" height="12"'
+         + ' fill="url(#bl_pat_' + item.id + ')" stroke="' + item.stroke + '" stroke-width="0.8" rx="1"/>';
+    svg += '<text x="' + (ix + 24) + '" y="' + (row1Y + 9)
+         + '" fill="#1e293b" font-size="7.2">' + item.label + '</text>';
+  });
+
+  var sptLegItems = [
+    { label:'Very Loose  N≤4',  fill:'#f0fff4', stroke:'#10b981' },
+    { label:'Loose  N≤10',      fill:'#dcfce7', stroke:'#16a34a' },
+    { label:'Medium  N≤30',     fill:'#fef9c3', stroke:'#d97706' },
+    { label:'Dense  N≤50',      fill:'#ffedd5', stroke:'#c2410c' },
+    { label:'V.Dense  N>50',    fill:'#fee2e2', stroke:'#b91c1c' },
+  ];
+  var row2Y  = row1Y + 20;
+  var sptIW  = Math.floor((lgW - lgPad * 2) / sptLegItems.length);
+
+  sptLegItems.forEach(function(item, i) {
+    var ix = lgX + lgPad + i * sptIW;
+    svg += '<rect x="' + ix + '" y="' + row2Y + '" width="20" height="10"'
+         + ' fill="' + item.fill + '" stroke="' + item.stroke + '" stroke-width="0.8" rx="1"/>';
+    svg += '<text x="' + (ix + 24) + '" y="' + (row2Y + 8)
+         + '" fill="#1e293b" font-size="7">' + item.label + '</text>';
+  });
+
+  // ── صف 3: رموز أخرى (GWL / SPT Profile / Sample) ──
+  var row3Y = row2Y + 18;
+  var misc = [
+    function(ix) {
+      svg += '<line x1="' + ix + '" y1="' + (row3Y + 5) + '" x2="' + (ix+20) + '" y2="' + (row3Y+5)
+           + '" stroke="#0ea5e9" stroke-width="1.8" stroke-dasharray="5,3"/>';
+      svg += '<polygon points="'
+           + (ix+10)    + ',' + (row3Y+12) + ' '
+           + (ix+4)     + ',' + (row3Y+5)  + ' '
+           + (ix+16)    + ',' + (row3Y+5)
+           + '" fill="#0ea5e9" stroke="#0369a1" stroke-width="0.7"/>';
+      svg += '<text x="' + (ix+24) + '" y="' + (row3Y+9) + '" fill="#0369a1" font-size="7.5" font-weight="bold">GWL — منسوب المياه الجوفية</text>';
+    },
+    function(ix) {
+      svg += '<polyline points="' + ix + ',' + (row3Y+10) + ' ' + (ix+8) + ',' + (row3Y+3) + ' ' + (ix+20) + ',' + (row3Y+8)
+           + '" fill="none" stroke="#1d4ed8" stroke-width="1.8"/>';
+      svg += '<circle cx="' + ix       + '" cy="' + (row3Y+10) + '" r="2.5" fill="#1d4ed8" stroke="white" stroke-width="1"/>';
+      svg += '<circle cx="' + (ix+8)   + '" cy="' + (row3Y+3)  + '" r="2.5" fill="#1d4ed8" stroke="white" stroke-width="1"/>';
+      svg += '<circle cx="' + (ix+20)  + '" cy="' + (row3Y+8)  + '" r="2.5" fill="#1d4ed8" stroke="white" stroke-width="1"/>';
+      svg += '<text x="' + (ix+26) + '" y="' + (row3Y+9) + '" fill="#1e293b" font-size="7.5">SPT Profile (N-value)</text>';
+    },
+    function(ix) {
+      svg += '<rect x="' + ix + '" y="' + (row3Y+1) + '" width="16" height="10" fill="#fffbeb" stroke="#b45309" stroke-width="0.8" rx="1"/>';
+      svg += '<text x="' + (ix+4) + '" y="' + (row3Y+9) + '" fill="#b45309" font-size="7" font-weight="bold">S</text>';
+      svg += '<text x="' + (ix+20) + '" y="' + (row3Y+9) + '" fill="#1e293b" font-size="7.5">Sample No. — رقم العينة</text>';
+    },
+  ];
+
+  var miscSpacing = Math.floor((lgW - lgPad * 2) / misc.length);
+  misc.forEach(function(fn, i) {
+    fn(lgX + lgPad + i * miscSpacing);
+  });
+
+  svg += '</svg>';
+
+  document.getElementById('blDrawingContainer').innerHTML =
+    '<div style="overflow:auto;">' + svg + '</div>';
+
+  // تحديث الملخص بعد الرسم
+  blUpdateSummary();
+}
+
+// ── تعريف الباترنز SVG ───────────────────────────────────────────
+function blDefs() {
+  return `
+  <!-- رمل Sand: نقاط -->
+  <pattern id="bl_pat_sand" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
+    <rect width="12" height="12" fill="#fef9c3"/>
+    <circle cx="3"  cy="3"  r="1.2" fill="#d97706" opacity=".7"/>
+    <circle cx="9"  cy="3"  r="1.0" fill="#d97706" opacity=".6"/>
+    <circle cx="6"  cy="7"  r="1.3" fill="#b45309" opacity=".6"/>
+    <circle cx="2"  cy="10" r="1.0" fill="#d97706" opacity=".5"/>
+    <circle cx="10" cy="10" r="1.1" fill="#d97706" opacity=".6"/>
+  </pattern>
+  <!-- حصى Gravel: مضلعات -->
+  <pattern id="bl_pat_gravel" x="0" y="0" width="16" height="12" patternUnits="userSpaceOnUse">
+    <rect width="16" height="12" fill="#fde68a"/>
+    <ellipse cx="4"  cy="4"  rx="3"   ry="2.5" fill="none" stroke="#92400e" stroke-width=".9"/>
+    <ellipse cx="12" cy="4"  rx="2.5" ry="2"   fill="none" stroke="#92400e" stroke-width=".9"/>
+    <ellipse cx="8"  cy="9"  rx="3.2" ry="2"   fill="none" stroke="#92400e" stroke-width=".9"/>
+  </pattern>
+  <!-- طمي Silt: خطوط متموجة -->
+  <pattern id="bl_pat_silt" x="0" y="0" width="20" height="8" patternUnits="userSpaceOnUse">
+    <rect width="20" height="8" fill="#ecfccb"/>
+    <path d="M0,2 Q5,0 10,2 Q15,4 20,2" stroke="#65a30d" stroke-width=".8" fill="none"/>
+    <path d="M0,6 Q5,4 10,6 Q15,8 20,6" stroke="#65a30d" stroke-width=".8" fill="none"/>
+  </pattern>
+  <!-- طين Clay: خطوط أفقية -->
+  <pattern id="bl_pat_clay" x="0" y="0" width="20" height="6" patternUnits="userSpaceOnUse">
+    <rect width="20" height="6" fill="#d1fae5"/>
+    <line x1="0" y1="3" x2="20" y2="3" stroke="#6b7280" stroke-width=".7"/>
+  </pattern>
+  <!-- صخر Rock: خطوط متقاطعة -->
+  <pattern id="bl_pat_rock" x="0" y="0" width="14" height="14" patternUnits="userSpaceOnUse">
+    <rect width="14" height="14" fill="#e2e8f0"/>
+    <line x1="0" y1="0"  x2="14" y2="14" stroke="#94a3b8" stroke-width=".7"/>
+    <line x1="0" y1="7"  x2="7"  y2="14" stroke="#94a3b8" stroke-width=".7"/>
+    <line x1="7" y1="0"  x2="14" y2="7"  stroke="#94a3b8" stroke-width=".7"/>
+  </pattern>
+  <!-- ردم Fill: خطوط مائلة -->
+  <pattern id="bl_pat_fill" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+    <rect width="10" height="10" fill="#fef3c7"/>
+    <line x1="0" y1="10" x2="10" y2="0" stroke="#d97706" stroke-width=".9"/>
+    <line x1="-5" y1="10" x2="5"  y2="0" stroke="#d97706" stroke-width=".9" opacity=".4"/>
+    <line x1="5"  y1="10" x2="15" y2="0" stroke="#d97706" stroke-width=".9" opacity=".4"/>
+  </pattern>
+  <!-- عضوي Organic: خطوط متموجة + نقاط -->
+  <pattern id="bl_pat_organic" x="0" y="0" width="20" height="10" patternUnits="userSpaceOnUse">
+    <rect width="20" height="10" fill="#d9f0b0"/>
+    <path d="M0,3 Q5,1 10,3 Q15,5 20,3" stroke="#4d7c0f" stroke-width=".8" fill="none"/>
+    <path d="M0,7 Q5,5 10,7 Q15,9 20,7" stroke="#4d7c0f" stroke-width=".8" fill="none"/>
+    <circle cx="3"  cy="5"  r="0.9" fill="#4d7c0f" opacity=".5"/>
+    <circle cx="10" cy="2"  r="0.8" fill="#4d7c0f" opacity=".4"/>
+    <circle cx="17" cy="5"  r="0.9" fill="#4d7c0f" opacity=".5"/>
+  </pattern>`;
+}
+
+// ── Word wrap helper ──────────────────────────────────────────────
+function blWrapText(text, maxChars) {
+  if (!text) return [''];
+  const words = text.split(' ');
+  const lines = [];
+  let cur = '';
+  words.forEach(function(w) {
+    if ((cur + ' ' + w).trim().length > maxChars) {
+      if (cur) lines.push(cur.trim());
+      cur = w;
+    } else {
+      cur = (cur + ' ' + w).trim();
+    }
+  });
+  if (cur) lines.push(cur);
+  return lines.length ? lines : [''];
+}
+
+function blEsc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── إعادة تعيين ───────────────────────────────────────────────────
+function blReset() {
+  if (!confirm('هل تريد مسح جميع بيانات سجل الجسة؟')) return;
+  blClearRows();
+  ['bl_bhNo','bl_dateStart','bl_dateEnd','bl_totalDepth','bl_geologist',
+   'bl_driller','bl_gwl','bl_north','bl_east','bl_elevation','bl_projNo'].forEach(function(id){
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('bl_drilRig').value = 'Rotary';
+  var dEl = document.getElementById('bl_bhDiam'); if (dEl) dEl.value = '';
+  var cEl = document.getElementById('bl_casing'); if (cEl) cEl.value = '';
+  var erEl = document.getElementById('bl_hammerEr'); if (erEl) erEl.value = '60';
+  var cnEl = document.getElementById('bl_cnMethod'); if (cnEl) cnEl.value = 'none';
+  document.getElementById('blDrawingContainer').innerHTML =
+    `<div id="blEmptyMsg" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#9ca3af;font-size:.88rem;padding:60px 20px;">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" opacity=".3"><rect x="3" y="5" width="18" height="4" rx="1" fill="#6b7280"/><rect x="3" y="10" width="18" height="4" rx="1" fill="#6b7280" opacity=".6"/><rect x="3" y="15" width="18" height="4" rx="1" fill="#6b7280" opacity=".3"/></svg>
+      <span>أدخل بيانات الطبقات ثم اضغط <strong style="color:#f97316;">📐 رسم اللوج</strong></span>
+    </div>`;
+  var sp = document.getElementById('blSummaryPanel'); if (sp) sp.style.display = 'none';
+}
+
+// ── بيانات تجريبية ────────────────────────────────────────────────
+function blLoadDemo() {
+  blClearRows();
+  document.getElementById('bl_bhNo').value        = 'BH-39';
+  document.getElementById('bl_dateStart').value   = '2025-11-19';
+  document.getElementById('bl_dateEnd').value     = '2025-11-19';
+  document.getElementById('bl_totalDepth').value  = '10';
+  document.getElementById('bl_geologist').value   = 'Eng. Mahmoud';
+  document.getElementById('bl_driller').value     = 'Gamal';
+  document.getElementById('bl_drilRig').value     = 'Rotary';
+  document.getElementById('bl_gwl').value         = 'NF';
+  document.getElementById('bl_projNo').value      = 'ST-SM-326';
+  document.getElementById('bl_elevation').value   = '—';
+
+  const layers = [
+    { from:0, to:1,  uscs:'SM', soilType:'Sand',  desc:'Silty Sand with Gravel, Non-Plastic, Yellowish Brown, Fine to Medium Coarse Grained, Angular to Sub Rounded, dry, Loose to Medium Dense.', spt:8,  wc:'', ll:'N.P', pi:'N.P', rec:'', sampleNo:'B-1-1' },
+    { from:1, to:2,  uscs:'SM', soilType:'Sand',  desc:'',  spt:11, wc:'', ll:'',    pi:'N.P', rec:'', sampleNo:'B-1-2' },
+    { from:2, to:3,  uscs:'SM', soilType:'Sand',  desc:'',  spt:10, wc:'', ll:'',    pi:'',    rec:'', sampleNo:'' },
+    { from:3, to:4,  uscs:'SM', soilType:'Sand',  desc:'',  spt:18, wc:'', ll:'',    pi:'',    rec:'', sampleNo:'' },
+    { from:4, to:5,  uscs:'SM', soilType:'Sand',  desc:'',  spt:19, wc:'', ll:'',    pi:'',    rec:'', sampleNo:'' },
+    { from:5, to:6,  uscs:'SM', soilType:'Sand',  desc:'',  spt:25, wc:'', ll:'',    pi:'',    rec:'', sampleNo:'' },
+    { from:6, to:7,  uscs:'SM', soilType:'Sand',  desc:'',  spt:25, wc:'', ll:'',    pi:'',    rec:'', sampleNo:'' },
+    { from:7, to:8,  uscs:'SM', soilType:'Sand',  desc:'',  spt:29, wc:'', ll:'',    pi:'',    rec:'', sampleNo:'' },
+    { from:8, to:9,  uscs:'ROCK', soilType:'Rock', desc:'Completely Weathered, Completely Fractured GRANITE, Reddish Brown, Medium Dense to Dense, uncemented', spt:28, wc:'', ll:'', pi:'', rec:'', sampleNo:'B-1-4' },
+    { from:9, to:10, uscs:'ROCK', soilType:'Rock', desc:'End of Boring.', spt:33, wc:'', ll:'N.P', pi:'N.P', rec:'', sampleNo:'B-1-5' },
+  ];
+  layers.forEach(function(l){ blAddRow(l); });
+  setTimeout(blGenerate, 100);
+}
+
+// ── طباعة التقرير ─────────────────────────────────────────────────
+function blPrintReport() {
+  const rows = blGetRows();
+  if (!rows.length) { alert('أضف طبقات أولاً'); return; }
+  blGenerate();
+
+  const proj    = document.getElementById('gpi_project')?.value  || '—';
+  const client  = document.getElementById('gpi_client')?.value   || '—';
+  const loc     = document.getElementById('gpi_location')?.value || '—';
+  const eng     = document.getElementById('gpi_engineer')?.value || '—';
+  const bhNo    = document.getElementById('bl_bhNo').value       || '—';
+  const dStart  = document.getElementById('bl_dateStart').value  || '—';
+  const dEnd    = document.getElementById('bl_dateEnd').value    || '—';
+  const depth   = document.getElementById('bl_totalDepth').value || '—';
+  const geo     = document.getElementById('bl_geologist').value  || '—';
+  const driller = document.getElementById('bl_driller').value    || '—';
+  const rig     = document.getElementById('bl_drilRig').value    || '—';
+  const gwl     = document.getElementById('bl_gwl').value        || 'NF';
+  const north   = document.getElementById('bl_north').value      || '—';
+  const east    = document.getElementById('bl_east').value       || '—';
+  const elev    = document.getElementById('bl_elevation').value  || '—';
+  const projNo  = document.getElementById('bl_projNo').value     || '—';
+  const erVal   = document.getElementById('bl_hammerEr')?.value  || '60';
+  const cnVal   = document.getElementById('bl_cnMethod')?.value  || 'none';
+
+  const svgDiv = document.querySelector('#blDrawingContainer div');
+  const svgHTML = svgDiv ? svgDiv.innerHTML : '';
+
+  // Summary for report
+  var sptVals = rows.filter(function(r){ return r.spt !== null && !isNaN(r.spt); }).map(function(r){ return r.spt; });
+  var avgSPT = sptVals.length ? (sptVals.reduce(function(a,b){return a+b;},0)/sptVals.length).toFixed(1) : '—';
+  var maxSPT = sptVals.length ? Math.max.apply(null,sptVals) : '—';
+
+  const reportHTML = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<title>Boring Log — ${bhNo}</title>
+<style>
+  * { margin:0;padding:0;box-sizing:border-box; }
+  body { font-family:Arial,sans-serif; font-size:9pt; background:white; color:#111; }
+  .page { width:100%; max-width:900px; margin:0 auto; padding:10px; }
+  .header-box { border:2px solid #1e3a5f; margin-bottom:6px; }
+  .header-title { background:#1e3a5f; color:white; text-align:center; padding:8px; font-size:14pt; font-weight:bold; letter-spacing:1px; }
+  .header-sub { background:#2d5a87; color:white; text-align:center; padding:3px; font-size:9pt; }
+  .info-grid { display:grid; grid-template-columns:1fr 1fr; border-top:1px solid #1e3a5f; }
+  .info-col { padding:6px 10px; }
+  .info-row { display:flex; gap:4px; margin-bottom:3px; font-size:8.5pt; }
+  .info-label { font-weight:bold; min-width:110px; color:#1e3a5f; }
+  .info-value { flex:1; }
+  .divider-v { border-left:1px solid #1e3a5f; }
+  .log-section { margin-top:6px; overflow-x:auto; }
+  .summary-row { display:flex; gap:10px; margin:6px 0; flex-wrap:wrap; }
+  .sum-card { border:1px solid #e5e7eb; border-radius:6px; padding:4px 10px; font-size:8pt; background:#f8fafc; }
+  .sum-card b { color:#1e3a5f; }
+  .footer { margin-top:8px; border-top:1px solid #1e3a5f; padding-top:4px; display:flex; justify-content:space-between; font-size:7pt; color:#374151; }
+  @media print { body { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+</style>
+</head><body>
+<div class="page">
+  <div class="header-box">
+    <div class="header-title">TEST BORING LOG</div>
+    <div class="header-sub">BORING NO.: ${bhNo} &nbsp;|&nbsp; Er = ${erVal}% &nbsp;|&nbsp; CN: ${cnVal}</div>
+    <div class="info-grid">
+      <div class="info-col">
+        <div class="info-row"><span class="info-label">PROJECT NAME:</span><span class="info-value">${proj}</span></div>
+        <div class="info-row"><span class="info-label">LOCATION:</span><span class="info-value">${loc}</span></div>
+        <div class="info-row"><span class="info-label">OWNER:</span><span class="info-value">${client}</span></div>
+        <div class="info-row"><span class="info-label">PROJECT NO.:</span><span class="info-value">${projNo}</span></div>
+        <div class="info-row"><span class="info-label">GWD / GWL:</span><span class="info-value">${gwl}</span></div>
+        <div class="info-row"><span class="info-label">NORTH:</span><span class="info-value">${north}</span></div>
+        <div class="info-row"><span class="info-label">EAST:</span><span class="info-value">${east}</span></div>
+      </div>
+      <div class="info-col divider-v">
+        <div class="info-row"><span class="info-label">DATE STARTED:</span><span class="info-value">${dStart}</span></div>
+        <div class="info-row"><span class="info-label">DATE FINISHED:</span><span class="info-value">${dEnd}</span></div>
+        <div class="info-row"><span class="info-label">GEOLOGIST:</span><span class="info-value">${geo}</span></div>
+        <div class="info-row"><span class="info-label">DRILLER:</span><span class="info-value">${driller}</span></div>
+        <div class="info-row"><span class="info-label">DRILL RIG:</span><span class="info-value">${rig}</span></div>
+        <div class="info-row"><span class="info-label">ELEVATION:</span><span class="info-value">${elev}</span></div>
+        <div class="info-row"><span class="info-label">TOTAL DEPTH:</span><span class="info-value">${depth} m</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="summary-row">
+    <div class="sum-card">📊 Layers: <b>${rows.length}</b></div>
+    <div class="sum-card">📈 Avg SPT: <b>${avgSPT}</b></div>
+    <div class="sum-card">⬆️ Max SPT: <b>${maxSPT}</b></div>
+    <div class="sum-card">⚙️ Hammer Er: <b>${erVal}%</b></div>
+    <div class="sum-card">🌡️ CN: <b>${cnVal}</b></div>
+  </div>
+  <div class="log-section">${svgHTML}</div>
+  <div class="footer">
+    <span>DRILLING EQUIPMENT: ${rig}</span>
+    <span>Engineer: ${eng}</span>
+    <span>Elkasaby Geotechnical &amp; Materials Testing System</span>
+  </div>
+</div>
+<div style="text-align:center;padding:10px;background:#f1f5f9;margin-top:8px;">
+  <button onclick="window.print()" style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:8px 24px;border:none;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer;">🖨️ طباعة / Print</button>
+</div>
+</body></html>`;
+
+  const modal   = document.getElementById('blReportModal');
+  const content = document.getElementById('blReportContent');
+  modal.style.display = 'flex';
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'width:100%;height:82vh;border:none;border-radius:0 0 12px 12px;';
+  content.innerHTML = '';
+  content.appendChild(iframe);
+  iframe.srcdoc = reportHTML;
+}
+
+// ── سحب البيانات من التبويبات ─────────────────────────────────────
+var blPulledData = {};
+
+function blPullFromTabs() {
+  var panel  = document.getElementById('blPullPanel');
+  var status = document.getElementById('blPullStatus');
+  var applyBtn = document.getElementById('blApplyBtn');
+  var rowSel = document.getElementById('blPullRowSelector');
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior:'smooth', block:'start' });
+
+  var lines = [];
+  var data  = {};
+
+  // ── 1. Atterberg D4318 ────────────────────────────────────────────
+  var llEl = document.getElementById('d4318_LL_val');
+  var plEl = document.getElementById('d4318_PL_val');
+  var piEl = document.getElementById('d4318_PI_val');
+  var llV  = llEl ? llEl.textContent.trim() : '—';
+  var plV  = plEl ? plEl.textContent.trim() : '—';
+  var piV  = piEl ? piEl.textContent.trim() : '—';
+
+  var llOK = llV !== '—' && llV !== '';
+  var piOK = piV !== '—' && piV !== '';
+  var plOK = plV !== '—' && plV !== '';
+
+  if (llOK || piOK || plOK) {
+    lines.push('<span style="color:#5b21b6;font-weight:700;">📐 D4318 — حدود أترابيرج:</span>');
+    lines.push('&nbsp;&nbsp;• LL = <strong>' + llV + '</strong> %');
+    lines.push('&nbsp;&nbsp;• PL = <strong>' + plV + '</strong> %');
+    lines.push('&nbsp;&nbsp;• PI = <strong>' + piV + '</strong> %');
+    data.ll = llOK ? llV : 'N.P';
+    data.pl = plOK ? plV : 'N.P';
+    data.pi = piOK ? piV : 'N.P';
+  } else {
+    lines.push('<span style="color:#9ca3af;">📐 D4318: لا توجد قيم محسوبة — اذهب لتبويب أتربيرج وأجر الحساب أولاً.</span>');
+    data.ll = '';
+    data.pl = '';
+    data.pi = '';
+  }
+
+  // ── 2. محتوى المياه D2216 ─────────────────────────────────────────
+  var wcEl = document.getElementById('d2216_result_avg');
+  var wcV  = wcEl ? wcEl.textContent.trim() : '—';
+  var wcOK = wcV !== '—' && wcV !== '' && wcV !== 'NaN%';
+
+  if (wcOK) {
+    lines.push('<span style="color:#0369a1;font-weight:700;">💧 D2216 — محتوى الرطوبة:</span>');
+    lines.push('&nbsp;&nbsp;• WC (avg) = <strong>' + wcV + '</strong>');
+    data.wc = parseFloat(wcV) || '';
+  } else {
+    lines.push('<span style="color:#9ca3af;">💧 D2216: لا توجد قيم محسوبة.</span>');
+    data.wc = '';
+  }
+
+  // ── 3. تصنيف USCS ────────────────────────────────────────────────
+  var uscsEl  = document.getElementById('sc_uscs_symbol');
+  var uscs2El = document.getElementById('uscs_symbol');
+  var uscsV   = '';
+  if (uscsEl  && uscsEl.textContent.trim()  !== '—') uscsV = uscsEl.textContent.trim();
+  if (!uscsV && uscs2El && uscs2El.textContent.trim() !== '—') uscsV = uscs2El.textContent.trim();
+
+  var aashtoEl = document.getElementById('sc_aashto_group');
+  var aashtoV  = aashtoEl ? aashtoEl.textContent.trim() : '—';
+  var uscsDescEl = document.getElementById('uscs_description');
+  var uscsDesc   = '';
+  if (uscsDescEl && uscsDescEl.textContent.trim() !== '—') uscsDesc = uscsDescEl.textContent.trim();
+  var finesEl = document.getElementById('uscs_passNo200');
+  var finesV  = finesEl ? finesEl.textContent.trim() : '—';
+
+  if (uscsV) {
+    lines.push('<span style="color:#047857;font-weight:700;">🏷️ SoilClass — التصنيف:</span>');
+    lines.push('&nbsp;&nbsp;• USCS = <strong>' + uscsV + '</strong>' + (uscsDesc ? ' — ' + uscsDesc : ''));
+    if (aashtoV && aashtoV !== '—') lines.push('&nbsp;&nbsp;• AASHTO = <strong>' + aashtoV + '</strong>');
+    if (finesV  && finesV  !== '—') lines.push('&nbsp;&nbsp;• مار من 200 = <strong>' + finesV + '</strong>');
+    data.uscs   = uscsV;
+    data.aashto = aashtoV !== '—' ? aashtoV : '';
+    data.fines  = finesV  !== '—' ? finesV  : '';
+    data.desc   = uscsDesc;
+  } else {
+    lines.push('<span style="color:#9ca3af;">🏷️ SoilClass: لا يوجد تصنيف محسوب.</span>');
+    data.uscs   = '';
+    data.aashto = '';
+    data.fines  = '';
+    data.desc   = '';
+  }
+
+  // ── 4. قيم D6913 الغربلة ─────────────────────────────────────────
+  var cuEl = document.getElementById('uscs_Cu');
+  var ccEl = document.getElementById('uscs_Cc');
+  var cuV  = cuEl ? cuEl.textContent.trim() : '—';
+  var ccV  = ccEl ? ccEl.textContent.trim() : '—';
+
+  if ((cuV && cuV !== '—') || (ccV && ccV !== '—')) {
+    lines.push('<span style="color:#92400e;font-weight:700;">⚖️ D6913 — معاملات التدرج:</span>');
+    if (cuV !== '—') lines.push('&nbsp;&nbsp;• Cu = <strong>' + cuV + '</strong>');
+    if (ccV !== '—') lines.push('&nbsp;&nbsp;• Cc = <strong>' + ccV + '</strong>');
+    data.cu = cuV !== '—' ? cuV : '';
+    data.cc = ccV !== '—' ? ccV : '';
+  } else {
+    data.cu = '';
+    data.cc = '';
+  }
+
+  blPulledData = data;
+  status.innerHTML = lines.join('<br>');
+
+  var hasData = data.ll || data.wc || data.uscs || data.pi;
+  applyBtn.style.display = hasData ? 'inline-block' : 'none';
+  if (rowSel) rowSel.style.display = hasData ? 'block' : 'none';
+
+  // تحديث قائمة الصفوف
+  blUpdateRowSelector();
+
+  if (!hasData) {
+    status.innerHTML += '<br><br><span style="color:#dc2626;font-weight:700;">⚠️ لم يتم العثور على بيانات محسوبة في أي تبويب.</span>';
+  } else {
+    status.innerHTML += '<br><br><span style="color:#059669;font-weight:700;">✅ تم قراءة البيانات. اختر الصف ثم اضغط "تطبيق".</span>';
+  }
+}
+
+// ── تطبيق البيانات المسحوبة على الصف المحدد ──────────────────────
+function blApplyPulledData() {
+  var tbody = document.getElementById('blLayersBody');
+  var trs  = tbody.querySelectorAll('tr');
+  if (!trs.length) {
+    alert('أضف طبقة أولاً في الجدول ثم اضغط تطبيق.');
+    return;
+  }
+
+  var sel = document.getElementById('blTargetRowSelect');
+  var targetRow;
+  if (sel && sel.value !== 'last') {
+    var idx = parseInt(sel.value);
+    targetRow = trs[idx] || trs[trs.length - 1];
+  } else {
+    targetRow = trs[trs.length - 1];
+  }
+
+  var inputs  = targetRow.querySelectorAll('input');
+  var selects = targetRow.querySelectorAll('select');
+  var d = blPulledData;
+
+  if (d.uscs && selects[0]) {
+    var uscsOpt = Array.from(selects[0].options).find(function(o){ return o.value === d.uscs; });
+    if (uscsOpt) selects[0].value = d.uscs;
+  }
+
+  if (d.uscs && selects[1]) {
+    var typeMap = {
+      'SP':'Sand','SW':'Sand','SM':'Sand','SC':'Sand',
+      'SP-SM':'Sand','SW-SM':'Sand','SC-SM':'Sand','SP-SC':'Sand','SW-SC':'Sand',
+      'GW':'Gravel','GP':'Gravel','GM':'Gravel','GC':'Gravel',
+      'GP-GM':'Gravel','GW-GM':'Gravel','GW-GC':'Gravel','GP-GC':'Gravel',
+      'ML':'Silt','MH':'Silt',
+      'CL':'Clay','CH':'Clay','CL-ML':'Clay',
+      'OL':'Organic','OH':'Organic','Pt':'Organic',
+      'ROCK':'Rock','FILL':'Fill'
+    };
+    var typeVal = typeMap[d.uscs] || '';
+    if (typeVal) selects[1].value = typeVal;
+  }
+
+  if (d.desc && inputs[2]) inputs[2].value = d.desc;
+  if (d.wc !== '' && inputs[4]) inputs[4].value = d.wc;
+  if (d.ll && inputs[5]) inputs[5].value = d.ll;
+  if (d.pi && inputs[6]) inputs[6].value = d.pi;
+
+  document.getElementById('blPullPanel').style.display = 'none';
+
+  var container = document.getElementById('blDrawingContainer');
+  if (container && container.querySelector('svg')) blGenerate();
+
+  showJSONToast('✅ تم تطبيق البيانات على الصف المحدد!', '#059669');
+}
+
+// ══ STORED CLASSIFICATION RESULTS ENGINE ══════════════════════════
+// ══ END BORING LOG ENGINE ══
+
+// ══ STORED CLASSIFICATION RESULTS ENGINE ══════════════════════════
+var scStoredResults  = [];
+var scResultCounter  = 0;
+
+function scSaveCurrentResult() {
+  var from  = parseFloat(document.getElementById('scDepthFrom').value);
+  var to    = parseFloat(document.getElementById('scDepthTo').value);
+  if (isNaN(from) || isNaN(to) || to <= from) {
+    alert('❌ تحقق من قيم العمق: "إلى" يجب أن يكون أكبر من "من".');
+    return;
+  }
+
+  var uscsEl   = document.getElementById('sc_uscs_symbol');
+  var uscsV    = uscsEl ? uscsEl.textContent.trim() : '—';
+  if (!uscsV || uscsV === '—') {
+    alert('⚠️ لا يوجد تصنيف محسوب. احسب التصنيف أولاً ثم احفظ.');
+    return;
+  }
+
+  var aashtoV  = (document.getElementById('sc_aashto_group') || {}).textContent || '—';
+  var giV      = (document.getElementById('sc_aashto_gi')    || {}).textContent || '—';
+  var llV      = (document.getElementById('sc_LL')           || {}).textContent || '—';
+  var piV      = (document.getElementById('sc_PI')           || {}).textContent || '—';
+  var finesV   = (document.getElementById('sc_fines')        || {}).textContent || '—';
+  var descV    = (document.getElementById('sc_uscs_desc')    || {}).textContent || '';
+  var wcEl     = document.getElementById('d2216_result_avg');
+  var wcV      = wcEl ? wcEl.textContent.trim() : '—';
+  if (!wcV || wcV === 'NaN%') wcV = '—';
+
+  scResultCounter++;
+  scStoredResults.push({
+    id: scResultCounter,
+    from: from, to: to,
+    uscs: uscsV, aashto: aashtoV, gi: giV,
+    ll: llV, pi: piV, wc: wcV, fines: finesV, desc: descV
+  });
+  scRenderStoredTable();
+  showJSONToast('✅ تم حفظ نتيجة العمق ' + from + '–' + to + ' م', '#059669');
+}
+
+function scDeleteStoredResult(id) {
+  scStoredResults = scStoredResults.filter(function(r) { return r.id !== id; });
+  scRenderStoredTable();
+}
+
+function scClearAllResults() {
+  if (!scStoredResults.length) return;
+  if (!confirm('هل تريد مسح جميع نتائج التصنيف المحفوظة؟')) return;
+  scStoredResults = [];
+  scRenderStoredTable();
+}
+
+function scApplyToLog(id) {
+  var r = scStoredResults.find(function(x) { return x.id === id; });
+  if (!r) return;
+
+  var tbody = document.getElementById('blLayersBody');
+  var trs   = tbody.querySelectorAll('tr');
+  var targetRow = null;
+
+  // ابحث عن صف بنفس الأعماق
+  trs.forEach(function(tr) {
+    var inp = tr.querySelectorAll('input');
+    if (!inp.length) return;
+    var fv = parseFloat(inp[0].value);
+    var tv = parseFloat(inp[1].value);
+    if (Math.abs(fv - r.from) < 0.01 && Math.abs(tv - r.to) < 0.01) targetRow = tr;
+  });
+
+  if (!targetRow) {
+    // أضف صف جديد بالأعماق المطلوبة
+    blAddRow({ from: r.from, to: r.to });
+    trs      = tbody.querySelectorAll('tr');
+    targetRow = trs[trs.length - 1];
+  }
+
+  var inputs  = targetRow.querySelectorAll('input');
+  var selects = targetRow.querySelectorAll('select');
+
+  // USCS symbol → select[0]
+  if (r.uscs && selects[0]) {
+    var uscsOpt = Array.from(selects[0].options).find(function(o){ return o.value === r.uscs; });
+    if (uscsOpt) selects[0].value = r.uscs;
+  }
+  // Soil type → select[1]
+  if (r.uscs && selects[1]) {
+    var typeMap = {
+      'SP':'Sand','SW':'Sand','SM':'Sand','SC':'Sand','SP-SM':'Sand','SW-SM':'Sand','SC-SM':'Sand','SP-SC':'Sand','SW-SC':'Sand',
+      'GW':'Gravel','GP':'Gravel','GM':'Gravel','GC':'Gravel','GP-GM':'Gravel','GW-GM':'Gravel','GW-GC':'Gravel','GP-GC':'Gravel',
+      'ML':'Silt','MH':'Silt',
+      'CL':'Clay','CH':'Clay','CL-ML':'Clay','OH':'Clay',
+      'OL':'Organic','OH':'Organic','Pt':'Organic',
+      'ROCK':'Rock','FILL':'Fill'
+    };
+    var tv = typeMap[r.uscs];
+    if (tv && selects[1]) selects[1].value = tv;
+  }
+  // Description → inputs[2]
+  if (r.desc && inputs[2]) inputs[2].value = r.desc;
+  // WC → inputs[4]
+  var wcNum = parseFloat(r.wc);
+  if (!isNaN(wcNum) && inputs[4]) inputs[4].value = wcNum;
+  // LL → inputs[5]
+  if (r.ll && r.ll !== '—' && inputs[5]) inputs[5].value = r.ll;
+  // PI → inputs[6]
+  if (r.pi && r.pi !== '—' && inputs[6]) inputs[6].value = r.pi;
+
+  // انتقل لتبويب اللوج
+  switchTab('BoringLog');
+  showJSONToast('✅ تم تطبيق عمق ' + r.from + '–' + r.to + ' م على اللوج', '#1d4ed8');
+}
+
+function scRenderStoredTable() {
+  var inner = document.getElementById('scStoredTableInner');
+  if (!inner) return;
+
+  if (!scStoredResults.length) {
+    inner.innerHTML = '<p style="text-align:center;color:#9ca3af;padding:20px;font-size:.82rem;">لا توجد نتائج محفوظة — احسب التصنيف واضغط <strong style="color:#059669;">💾 حفظ نتيجة هذا العمق</strong></p>';
+    return;
+  }
+
+  var th = function(t) {
+    return '<th style="padding:8px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;white-space:nowrap;font-size:.74rem;">' + t + '</th>';
+  };
+  var td = function(t, extra) {
+    return '<td style="padding:6px 5px;border:1px solid #e5e7eb;text-align:center;' + (extra||'') + '">' + t + '</td>';
+  };
+
+  var html = '<div style="overflow-x:auto;">'
+    + '<table style="width:100%;border-collapse:collapse;font-size:.78rem;">'
+    + '<thead><tr style="background:linear-gradient(135deg,#065f46,#059669);color:white;">'
+    + th('#') + th('من (م)') + th('إلى (م)') + th('USCS') + th('AASHTO')
+    + th('GI') + th('LL %') + th('PI %') + th('WC %') + th('% فاينز')
+    + th('وصف الطبقة') + th('تطبيق على اللوج') + th('حذف')
+    + '</tr></thead><tbody>';
+
+  scStoredResults.forEach(function(r, i) {
+    var bg = i % 2 === 0 ? '#ffffff' : '#f0fdf4';
+    html += '<tr style="background:' + bg + ';">';
+    html += td('<span style="font-weight:700;color:#6b7280;">' + r.id + '</span>');
+    html += td('<strong>' + r.from + '</strong>');
+    html += td('<strong>' + r.to  + '</strong>');
+    html += td('<span style="background:#dbeafe;color:#1d4ed8;font-weight:700;padding:2px 8px;border-radius:6px;font-size:.8rem;">' + r.uscs + '</span>');
+    html += td('<span style="background:#dcfce7;color:#166534;font-weight:700;padding:2px 8px;border-radius:6px;font-size:.76rem;">' + r.aashto + '</span>');
+    html += td(r.gi);
+    html += td(r.ll !== '—' ? '<span style="color:#c2410c;font-weight:600;">' + r.ll + '</span>' : '—');
+    html += td(r.pi !== '—' ? '<span style="color:#7c3aed;font-weight:600;">' + r.pi + '</span>' : '—');
+    html += td(r.wc !== '—' ? '<span style="color:#0369a1;font-weight:600;">' + r.wc + '</span>' : '—');
+    html += td(r.fines !== '—' ? r.fines : '—');
+    html += '<td style="padding:6px 8px;border:1px solid #e5e7eb;font-size:.72rem;color:#374151;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + r.desc + '">' + (r.desc || '—') + '</td>';
+    html += '<td style="padding:6px 5px;border:1px solid #e5e7eb;text-align:center;">'
+      + '<button onclick="scApplyToLog(' + r.id + ')" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:.75rem;font-weight:700;font-family:inherit;white-space:nowrap;">🔗 تطبيق</button>'
+      + '</td>';
+    html += '<td style="padding:6px 5px;border:1px solid #e5e7eb;text-align:center;">'
+      + '<button onclick="scDeleteStoredResult(' + r.id + ')" style="background:#fee2e2;color:#dc2626;border:none;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:.8rem;font-weight:700;font-family:inherit;">✕</button>'
+      + '</td>';
+    html += '</tr>';
+  });
+
+  html += '</tbody></table></div>';
+  html += '<div style="padding:8px 12px;background:#f0fdf4;font-size:.7rem;color:#166534;border-top:1px solid #bbf7d0;">'
+    + '💡 اضغط <strong>🔗 تطبيق</strong> لأي عمق لنقل نتائجه مباشرة إلى سجل الجسة (BoringLog) — إن لم يوجد الصف سيُضاف تلقائياً.'
+    + '</div>';
+  inner.innerHTML = html;
+}
+// ══ END STORED CLASSIFICATION RESULTS ENGINE ══════════════════
+
 function showJSONToast(msg, color) {
     const t = document.createElement('div');
     t.textContent = msg;
