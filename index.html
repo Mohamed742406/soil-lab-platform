@@ -19,6 +19,55 @@
         .tab-clickable { cursor: pointer; transition: all 0.2s; }
         .tab-clickable:hover { background: linear-gradient(135deg, #60a5fa, #3b82f6); color: white; }
 
+
+
+        /* ══ USCS AUTO-SUGGEST BADGE ══ */
+        .bl-uscs-suggest {
+            display:none; align-items:center; gap:4px;
+            margin-top:3px; padding:3px 6px;
+            background:#fef3c7; border:1px solid #f59e0b;
+            border-radius:6px; font-size:.64rem; cursor:pointer;
+            transition:background .15s; white-space:nowrap;
+        }
+        .bl-uscs-suggest:hover { background:#fde68a; }
+        .bl-uscs-suggest .bl-sug-symbol {
+            font-weight:800; color:#92400e;
+            background:#fcd34d; border-radius:4px;
+            padding:1px 5px; font-size:.68rem;
+        }
+        .bl-uscs-suggest .bl-sug-label { color:#78350f; font-weight:600; }
+        .bl-uscs-suggest .bl-sug-apply {
+            margin-right:auto; background:#f59e0b; color:white;
+            border:none; border-radius:4px; padding:1px 6px;
+            font-size:.62rem; font-weight:700; cursor:pointer; font-family:inherit;
+        }
+
+        /* ══ BORING LOG AUTOCOMPLETE ══ */
+        .bl-desc-wrap { position:relative; width:100%; }
+        .bl-ac-list {
+            position:absolute; top:100%; left:0; right:0; z-index:9999;
+            background:white; border:1.5px solid #3b82f6;
+            border-radius:0 0 8px 8px; max-height:220px; overflow-y:auto;
+            box-shadow:0 8px 24px rgba(30,64,175,.18);
+            font-family:'Cairo',sans-serif; font-size:.76rem;
+        }
+        .bl-ac-list:empty { display:none; }
+        .bl-ac-item {
+            padding:6px 10px; cursor:pointer; border-bottom:1px solid #f1f5f9;
+            display:flex; flex-direction:column; gap:1px;
+            transition:background .12s;
+        }
+        .bl-ac-item:hover, .bl-ac-item.bl-ac-active {
+            background:#eff6ff;
+        }
+        .bl-ac-item .bl-ac-tag {
+            display:inline-block; background:#1e3a5f; color:white;
+            font-size:.62rem; font-weight:700; padding:1px 6px;
+            border-radius:10px; margin-bottom:1px; width:fit-content;
+        }
+        .bl-ac-item .bl-ac-main { color:#1e293b; font-weight:600; font-size:.75rem; line-height:1.3; }
+        .bl-ac-item .bl-ac-hint { color:#6b7280; font-size:.68rem; }
+
         /* ══ SIDEBAR NAVIGATION ══ */
         #appLayout { display:flex; min-height:calc(100vh - 90px); align-items:flex-start; }
 
@@ -297,6 +346,14 @@
         body.dark-mode table th { background: #1e3a5f !important; color:#e2e8f0 !important; }
         body.dark-mode table td { background: var(--bg-card) !important; color: var(--text-primary) !important; border-color: var(--border-color) !important; }
         body.dark-mode table tr:nth-child(even) td { background: var(--bg-card2) !important; }
+        body.dark-mode .section-card { background: var(--bg-card) !important; border-color: var(--border-color) !important; }
+        body.dark-mode .cbr-card { background: var(--bg-card) !important; border-color: var(--border-color) !important; }
+        body.dark-mode .result-card { background: linear-gradient(135deg,#1e293b,#172035) !important; border-color: #475569 !important; }
+        body.dark-mode [id*="blSummaryPanel"],
+        body.dark-mode [id*="blPullPanel"] { background: var(--bg-card) !important; border-color: var(--border-color) !important; }
+        body.dark-mode .bl-ac-list { background: #1e293b !important; border-color: #334155 !important; }
+        body.dark-mode .bl-ac-item { color: var(--text-primary) !important; }
+        body.dark-mode .bl-ac-item:hover, body.dark-mode .bl-ac-active { background: #334155 !important; }
 
         /* ══ LOCK MODE ══ */
         body.locked-mode input,
@@ -830,6 +887,35 @@
        <span class="sb-badge" id="badge_BoringLog"></span>
      </button>
 
+     <button id="tabMultiBH" class="sb-item" onclick="switchTab('MultiBH')" title="مقارنة جسات متعددة — Multi-BH SPT Comparison">
+       <span class="sb-icon">
+         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+           <!-- BH1 profile bar -->
+           <rect x="2" y="4" width="4" height="14" rx="1" fill="currentColor" opacity=".35"/>
+           <rect x="2" y="10" width="4" height="3"  rx=".5" fill="currentColor" opacity=".7"/>
+           <rect x="2" y="15" width="4" height="3"  rx=".5" fill="currentColor" opacity=".9"/>
+           <!-- BH2 profile bar -->
+           <rect x="8" y="4" width="4" height="14" rx="1" fill="currentColor" opacity=".35"/>
+           <rect x="8" y="7"  width="4" height="4"  rx=".5" fill="currentColor" opacity=".7"/>
+           <rect x="8" y="14" width="4" height="4"  rx=".5" fill="currentColor" opacity=".9"/>
+           <!-- BH3 profile bar -->
+           <rect x="14" y="4" width="4" height="14" rx="1" fill="currentColor" opacity=".35"/>
+           <rect x="14" y="6"  width="4" height="2"  rx=".5" fill="currentColor" opacity=".55"/>
+           <rect x="14" y="11" width="4" height="5"  rx=".5" fill="currentColor" opacity=".9"/>
+           <!-- connecting line (correlation) -->
+           <polyline points="4,12 10,11 16,14" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2,1.2" opacity=".6" fill="none"/>
+           <!-- depth axis -->
+           <line x1="20" y1="4" x2="20" y2="18" stroke="currentColor" stroke-width="1" opacity=".4"/>
+           <line x1="19" y1="4"  x2="21" y2="4"  stroke="currentColor" stroke-width=".8" opacity=".4"/>
+           <line x1="19" y1="11" x2="21" y2="11" stroke="currentColor" stroke-width=".8" opacity=".4"/>
+           <line x1="19" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width=".8" opacity=".4"/>
+         </svg>
+       </span>
+       <span class="sb-label">مقارنة جسات متعددة</span>
+       <span class="sb-std">Multi-BH</span>
+       <span class="sb-badge" id="badge_MultiBH"></span>
+     </button>
+
      <div class="sb-footer">
        ASTM &nbsp;·&nbsp; ISO/IEC 17025:2017
      </div>
@@ -887,6 +973,17 @@
                 transition:all .2s;box-shadow:0 2px 6px rgba(0,0,0,.2);
             " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
                 📂 استيراد بيانات محفوظة
+            </button>
+            <button onclick="typeof asShowPanel==='function' && asShowPanel()" style="
+                background: linear-gradient(135deg,#7c3aed,#5b21b6);
+                color:white;border:none;border-radius:8px;
+                padding:7px 16px;font-size:.8rem;font-weight:700;
+                cursor:pointer;font-family:inherit;
+                display:flex;align-items:center;gap:6px;
+                transition:all .2s;box-shadow:0 2px 6px rgba(0,0,0,.2);
+            " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'"
+               title="إدارة الحفظ التلقائي — localStorage">
+                🔄 Auto-Save
             </button>
             <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="loadJSONFile(event)">
         </div>
@@ -5402,6 +5499,7 @@
       <input id="blJSONFileInput" type="file" accept=".json" style="display:none;" onchange="blLoadJSONFile(event)">
       <button onclick="blGenerate()" style="background:linear-gradient(135deg,#f97316,#ea580c);color:white;border:none;border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">📐 رسم اللوج</button>
       <button onclick="blExportSVGasPNG()" title="تصدير كصورة PNG" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:white;border:none;border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">🖼️ تصدير PNG</button>
+      <button onclick="exportToExcel('BoringLog')" style="background:linear-gradient(135deg,#16a34a,#15803d);color:white;border:none;border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">📊 تصدير Excel</button>
       <button onclick="blPrintReport()" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;border:none;border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">🖨️ تقرير PDF</button>
     </div>
   </div>
@@ -5453,10 +5551,34 @@
           <option value="Wash Boring">Wash Boring</option>
         </select>
       </div>
-      <div>
-        <label style="display:block;font-size:.7rem;font-weight:700;color:#1e40af;margin-bottom:3px;">منسوب المياه — GWL</label>
-        <input id="bl_gwl" type="text" placeholder="NF / رقم بالمتر" oninput="blLiveUpdate()"
-          style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;box-sizing:border-box;">
+      <!-- ══ GWL موسمي متعدد ══ -->
+      <div style="grid-column:1/-1;background:#eff6ff;border:1.5px solid #93c5fd;border-radius:10px;padding:10px 12px;">
+        <div style="font-size:.72rem;font-weight:800;color:#1e40af;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+          💧 منسوب المياه الجوفية — Groundwater Level
+          <span style="font-weight:400;color:#6b7280;font-size:.66rem;">(اتركه فارغاً = NF)</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;">
+          <div>
+            <label style="display:block;font-size:.65rem;font-weight:700;color:#0369a1;margin-bottom:3px;">🕐 وقت الحفر — At Drilling</label>
+            <input id="bl_gwl" type="text" placeholder="NF أو عمق (م)" oninput="blLiveUpdate()"
+              style="width:100%;border:1.5px solid #93c5fd;border-radius:6px;padding:5px 8px;font-size:.8rem;font-family:inherit;box-sizing:border-box;background:white;">
+          </div>
+          <div>
+            <label style="display:block;font-size:.65rem;font-weight:700;color:#15803d;margin-bottom:3px;">🌿 موسم الجفاف — Dry Season</label>
+            <input id="bl_gwl_dry" type="text" placeholder="NF أو عمق (م)" oninput="blLiveUpdate()"
+              style="width:100%;border:1.5px solid #86efac;border-radius:6px;padding:5px 8px;font-size:.8rem;font-family:inherit;box-sizing:border-box;background:white;">
+          </div>
+          <div>
+            <label style="display:block;font-size:.65rem;font-weight:700;color:#b45309;margin-bottom:3px;">🌊 موسم الفيضان — Wet Season</label>
+            <input id="bl_gwl_wet" type="text" placeholder="NF أو عمق (م)" oninput="blLiveUpdate()"
+              style="width:100%;border:1.5px solid #fcd34d;border-radius:6px;padding:5px 8px;font-size:.8rem;font-family:inherit;box-sizing:border-box;background:white;">
+          </div>
+          <div>
+            <label style="display:block;font-size:.65rem;font-weight:700;color:#7c3aed;margin-bottom:3px;">⬆️ أعلى منسوب — Highest (Seasonal)</label>
+            <input id="bl_gwl_high" type="text" placeholder="NF أو عمق (م)" oninput="blLiveUpdate()"
+              style="width:100%;border:1.5px solid #ddd6fe;border-radius:6px;padding:5px 8px;font-size:.8rem;font-family:inherit;box-sizing:border-box;background:white;">
+          </div>
+        </div>
       </div>
       <div>
         <label style="display:block;font-size:.7rem;font-weight:700;color:#1e40af;margin-bottom:3px;">الإحداثي الشمالي — North</label>
@@ -5582,6 +5704,8 @@
             <th style="background:linear-gradient(135deg,#c2410c,#ea580c);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:70px;">SPT (N)</th>
             <th style="background:linear-gradient(135deg,#6d28d9,#7c3aed);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:70px;">N60<br><small>corrected</small></th>
             <th style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:100px;">Rel.Density/<br>Consistency</th>
+            <th style="background:linear-gradient(135deg,#0f766e,#0d9488);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:75px;" title="زاوية الاحتكاك الداخلي — للتربة الحبيبية">φ°<br><small>Granular</small></th>
+            <th style="background:linear-gradient(135deg,#b45309,#92400e);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:75px;" title="مقاومة القص غير المصرّف — للتربة اللاصقة">Su<br><small>kPa</small></th>
             <th style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:65px;">WC (%)</th>
             <th style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:65px;">LL (%)</th>
             <th style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:9px 6px;border:1px solid rgba(255,255,255,0.15);text-align:center;min-width:65px;">PI (%)</th>
@@ -5640,8 +5764,163 @@
     </div>
   </div>
 
+  <!-- ── قدرة التحمل من SPT — Meyerhof ── -->
+  <div class="section-card mb-6 p-5" id="blBCSection">
+    <div style="font-weight:800;font-size:1rem;color:#1e3a8a;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <span style="background:linear-gradient(135deg,#854d0e,#a16207);color:white;border-radius:8px;padding:4px 14px;font-size:.82rem;">
+        🏗️ تقدير قدرة التحمل من SPT — Meyerhof Method
+      </span>
+      <span style="font-size:.72rem;color:#6b7280;font-weight:400;">Meyerhof (1956) · Settlement ≤ 25mm · ASTM / BS Practice</span>
+    </div>
+
+    <!-- Input parameters -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;">
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#92400e;margin-bottom:3px;">عمق الأساس Df (م)</label>
+        <input id="bc_Df" type="number" step="0.1" min="0.3" value="1.5" style="width:100%;border:1.5px solid #fcd34d;border-radius:7px;padding:6px 10px;font-size:.85rem;font-family:inherit;text-align:center;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#92400e;margin-bottom:3px;">عرض الأساس B (م)</label>
+        <input id="bc_B" type="number" step="0.1" min="0.3" value="1.5" style="width:100%;border:1.5px solid #fcd34d;border-radius:7px;padding:6px 10px;font-size:.85rem;font-family:inherit;text-align:center;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#92400e;margin-bottom:3px;">شكل الأساس</label>
+        <select id="bc_shape" style="width:100%;border:1.5px solid #fcd34d;border-radius:7px;padding:6px 10px;font-size:.82rem;font-family:inherit;background:white;box-sizing:border-box;">
+          <option value="square">مربع — Square</option>
+          <option value="strip">شريطي — Strip</option>
+          <option value="rect">مستطيل — Rectangular</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#92400e;margin-bottom:3px;">منسوب المياه (م) — GWL</label>
+        <input id="bc_gwl" type="number" step="0.5" value="99" placeholder="99 = NF" style="width:100%;border:1.5px solid #fcd34d;border-radius:7px;padding:6px 10px;font-size:.85rem;font-family:inherit;text-align:center;box-sizing:border-box;">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center;">
+      <button onclick="blCalcBearingCapacity()" style="background:linear-gradient(135deg,#a16207,#854d0e);color:white;border:none;border-radius:8px;padding:8px 22px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px rgba(0,0,0,.2);">
+        🧮 احسب قدرة التحمل
+      </button>
+      <span style="font-size:.72rem;color:#78350f;background:#fef3c7;border:1px solid #fcd34d;border-radius:6px;padding:4px 10px;">
+        ⚠️ قيم تقديرية للتصميم الأولي فقط — تستلزم التحقق من مهندس جيوتقني
+      </span>
+    </div>
+
+    <!-- Results table -->
+    <div id="blBCResults" style="display:none;">
+      <!-- filled by JS -->
+    </div>
+
+    <!-- Method notes -->
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;font-size:.72rem;color:#78350f;line-height:1.7;margin-top:10px;">
+      <strong>📐 المعادلات المُستخدمة:</strong><br>
+      <strong>تربة حبيبية (Sand/Gravel):</strong>
+      &nbsp;B ≤ 1.2م: q<sub>a</sub> = 12N·F<sub>w</sub> kPa &nbsp;|&nbsp;
+      B > 1.2م: q<sub>a</sub> = 8N·[(B+0.3)/B]²·F<sub>w</sub> kPa<br>
+      <strong>تربة لاصقة (Clay/Silt):</strong>
+      &nbsp;q<sub>a</sub> = S<sub>u</sub>·N<sub>c</sub>/FS &nbsp;(S<sub>u</sub>=6.25N kPa, N<sub>c</sub>=5.14, FS=3)<br>
+      <strong>F<sub>w</sub> (معامل المياه الجوفية):</strong>
+      &nbsp;= 1.0 إذا GWL ≥ Df+B &nbsp;|&nbsp; = 0.5 إذا GWL ≤ Df &nbsp;|&nbsp; تدريج خطي بينهما
+    </div>
+  </div>
+
 </div>
 <!-- END sectionBoringLog -->
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- SECTION: MULTI-BH SPT COMPARISON                              -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="sectionMultiBH" class="hidden" style="padding:0 0 40px 0;">
+
+  <!-- ── TOP BAR ── -->
+  <div style="background:linear-gradient(135deg,#1e3a5f,#1e40af);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:20px;border-radius:0 0 10px 10px;">
+    <span style="color:#93c5fd;font-size:.75rem;font-weight:700;">📊 مقارنة جسات متعددة — Multi-Borehole SPT Comparison</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button onclick="mbhLoadDemo()" style="background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">📋 بيانات تجريبية</button>
+      <button onclick="mbhImportFromBL()" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white;border:none;border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">⬇️ استيراد من سجل الجسة</button>
+      <button onclick="mbhAddBH()" style="background:linear-gradient(135deg,#0891b2,#0e7490);color:white;border:none;border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">➕ إضافة جسة</button>
+      <button onclick="mbhRender()" style="background:linear-gradient(135deg,#f97316,#ea580c);color:white;border:none;border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">📐 رسم المقارنة</button>
+      <button onclick="mbhExportPNG()" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:white;border:none;border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">🖼️ تصدير PNG</button>
+      <button onclick="mbhReset()" style="background:rgba(255,255,255,0.12);color:#fde68a;border:1px solid rgba(255,255,255,0.2);border-radius:7px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;">🔄 مسح الكل</button>
+    </div>
+  </div>
+
+  <!-- ── Chart Options ── -->
+  <div class="section-card mb-4 p-4">
+    <div style="font-weight:800;font-size:.9rem;color:#1e3a8a;margin-bottom:12px;">⚙️ إعدادات الرسم — Chart Settings</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr) repeat(3,1fr);gap:10px;align-items:end;">
+      <div>
+        <label style="display:block;font-size:.68rem;font-weight:700;color:#374151;margin-bottom:3px;">المقياس (px/م)</label>
+        <input id="mbh_scale" type="number" value="55" min="20" max="120"
+          style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 8px;font-size:.82rem;font-family:inherit;text-align:center;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="display:block;font-size:.68rem;font-weight:700;color:#374151;margin-bottom:3px;">أقصى SPT للمحور</label>
+        <input id="mbh_sptMax" type="number" value="60" min="20" max="200" step="10"
+          style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 8px;font-size:.82rem;font-family:inherit;text-align:center;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="display:block;font-size:.68rem;font-weight:700;color:#374151;margin-bottom:3px;">عمق الرسم (م)</label>
+        <input id="mbh_depth" type="number" value="20" min="5" max="100" step="1"
+          style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 8px;font-size:.82rem;font-family:inherit;text-align:center;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="display:block;font-size:.68rem;font-weight:700;color:#374151;margin-bottom:3px;">نوع القيمة</label>
+        <select id="mbh_valType" style="width:100%;border:1.5px solid #93c5fd;border-radius:7px;padding:6px 8px;font-size:.82rem;font-family:inherit;background:white;box-sizing:border-box;">
+          <option value="spt">SPT (N) — الخام</option>
+          <option value="n60">N60 — المُصحَّح</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block;font-size:.68rem;font-weight:700;color:#5b21b6;margin-bottom:3px;">
+          ⚡ Er% — طاقة المطرقة
+          <span style="font-weight:400;color:#9ca3af;">(للـ N60)</span>
+        </label>
+        <input id="mbh_hammerEr" type="number" value="60" min="30" max="100" step="5"
+          style="width:100%;border:1.5px solid #c4b5fd;border-radius:7px;padding:6px 8px;font-size:.82rem;font-family:inherit;text-align:center;box-sizing:border-box;background:#faf5ff;"
+          title="نسبة طاقة المطرقة — Er%. القيمة الافتراضية 60% (rope-and-pulley). استخدم 72% للمطارق الأوتوماتيكية.">
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;padding-bottom:2px;">
+        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:.78rem;font-weight:600;color:#374151;">
+          <input type="checkbox" id="mbh_showZones" checked style="width:14px;height:14px;accent-color:#1d4ed8;">
+          مناطق الكثافة
+        </label>
+        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:.78rem;font-weight:600;color:#374151;">
+          <input type="checkbox" id="mbh_showProfile" checked style="width:14px;height:14px;accent-color:#1d4ed8;">
+          خط Profile
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Borehole Input Cards ── -->
+  <div id="mbhBHCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:20px;">
+    <!-- filled dynamically -->
+  </div>
+
+  <!-- ── SVG Output ── -->
+  <div class="section-card mb-4 p-4">
+    <div style="font-weight:800;font-size:.9rem;color:#1e3a8a;margin-bottom:12px;display:flex;align-items:center;gap:10px;">
+      📈 رسم المقارنة — SPT Profiles Comparison
+      <span style="font-size:.7rem;color:#6b7280;font-weight:400;">رسم تلقائي يتحدث فور الضغط على "رسم المقارنة"</span>
+    </div>
+    <div id="mbhDrawingContainer" style="overflow-x:auto;overflow-y:auto;background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:12px;min-height:200px;display:flex;justify-content:flex-start;">
+      <div id="mbhEmptyMsg" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#9ca3af;font-size:.88rem;padding:60px 20px;width:100%;text-align:center;">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" opacity=".25"><rect x="2" y="4" width="4" height="14" rx="1" fill="#6b7280"/><rect x="9" y="4" width="4" height="14" rx="1" fill="#6b7280"/><rect x="16" y="4" width="4" height="14" rx="1" fill="#6b7280"/></svg>
+        <span>أضف جسات ثم اضغط <strong style="color:#f97316;">📐 رسم المقارنة</strong></span>
+      </div>
+      <svg id="mbhSVG" style="display:none;direction:ltr;" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+  </div>
+
+  <!-- ── Statistics Comparison Table ── -->
+  <div class="section-card p-4" id="mbhStatsSection" style="display:none;">
+    <div style="font-weight:800;font-size:.9rem;color:#1e3a8a;margin-bottom:12px;">📋 جدول المقارنة الإحصائية — Statistical Comparison</div>
+    <div id="mbhStatsContent" style="overflow-x:auto;"></div>
+  </div>
+
+</div>
+<!-- END sectionMultiBH -->
 
 <!-- ===== SAND CONE REPORT MODAL ===== -->
 <div id="sandConeReportModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:9999;overflow-y:auto;">
@@ -5670,11 +5949,14 @@
               Elkasaby Geotechnical &amp; Materials Testing System
             </p>
             <p class="text-gray-400 text-xs mt-2">
-              ASTM D6913 &nbsp;·&nbsp; D422 &nbsp;·&nbsp; D4318 &nbsp;·&nbsp; D2487 &nbsp;·&nbsp; D3282 &nbsp;·&nbsp; D1557 &nbsp;·&nbsp; D2216 &nbsp;·&nbsp; D854 &nbsp;·&nbsp; D1883 &nbsp;·&nbsp; D1556 &nbsp;·&nbsp; AASHTO M 145
+              ASTM D6913 &nbsp;·&nbsp; D4318 &nbsp;·&nbsp; D2487 &nbsp;·&nbsp; D3282 &nbsp;·&nbsp; D1557 &nbsp;·&nbsp; D2216 &nbsp;·&nbsp; D854 &nbsp;·&nbsp; D1883 &nbsp;·&nbsp; AASHTO M 145
             </p>
             <p class="text-gray-500 text-xs mt-1">
               جميع الحسابات وفقاً للمواصفات القياسية &nbsp;|&nbsp; ISO/IEC 17025:2017 Compliant &nbsp;|&nbsp; USCS Classification
             </p>
+            <div class="mt-3 pt-3 border-t border-gray-700">
+              <p class="text-gray-500 text-xs">الإصدار 2.0 &nbsp;·&nbsp; 2025</p>
+            </div>
         </div>
     </footer>
 
@@ -5924,7 +6206,7 @@ function switchTab(tab) {
     currentTab = tab;
 
     // ── 1. تحديث الـ Sidebar items ──
-    const ALL_TABS = ['D6913','D422','D4318','SoilClass','D1557','D2216','D854','CBR','SandCone','BoringLog'];
+    const ALL_TABS = ['D6913','D422','D4318','SoilClass','D1557','D2216','D854','CBR','SandCone','BoringLog','MultiBH'];
     ALL_TABS.forEach(function(t) {
         const btn = document.getElementById('tab' + t);
         if (!btn) return;
@@ -5948,6 +6230,7 @@ function switchTab(tab) {
     document.getElementById('sectionCBR').classList.toggle('hidden', tab !== 'CBR');
     document.getElementById('sectionSandCone').classList.toggle('hidden', tab !== 'SandCone');
     document.getElementById('sectionBoringLog').classList.toggle('hidden', tab !== 'BoringLog');
+    document.getElementById('sectionMultiBH').classList.toggle('hidden', tab !== 'MultiBH');
 
     // ── 3. تهيئة التبويبات الخاصة ──
     if (tab === 'CBR') {
@@ -5958,6 +6241,9 @@ function switchTab(tab) {
     }
     if (tab === 'BoringLog') {
         setTimeout(() => { blRenderTableIfEmpty(); }, 80);
+    }
+    if (tab === 'MultiBH') {
+        setTimeout(() => { mbhInitIfEmpty(); }, 80);
     }
 }
         // =============================================
@@ -13810,6 +14096,429 @@ async function exportToExcel(mode) {
         lvRow('نظام الجودة / QA System', 'ISO/IEC 17025:2017');
         blankRow();
     }
+    else if (mode === 'BoringLog') {
+    /* ══════════════════════════════════════════════════════════
+       BORING LOG EXCEL EXPORT — جدول طبقات الجسة
+       Elkasaby Geotechnical & Materials Testing System
+    ══════════════════════════════════════════════════════════ */
+
+        /* ── helper: get header field value ── */
+        function blV(id) {
+            var el = document.getElementById(id);
+            return el ? (el.value || '').trim() || '—' : '—';
+        }
+
+        /* ── header data ── */
+        var bhNo      = blV('bl_bhNo');
+        var dateStart = blV('bl_dateStart');
+        var dateEnd   = blV('bl_dateEnd');
+        var depth     = blV('bl_totalDepth');
+        var geologist = blV('bl_geologist');
+        var driller   = blV('bl_driller');
+        var drilRig   = blV('bl_drilRig');
+        var gwlDrill  = blV('bl_gwl');
+        var gwlDry    = blV('bl_gwl_dry');
+        var gwlWet    = blV('bl_gwl_wet');
+        var gwlHigh   = blV('bl_gwl_high');
+        var north     = blV('bl_north');
+        var east      = blV('bl_east');
+        var elev      = blV('bl_elevation');
+        var projNo    = blV('bl_projNo');
+        var bhDiam    = blV('bl_bhDiam');
+        var casing    = blV('bl_casing');
+        var hammerEr  = blV('bl_hammerEr');
+        var cnMethod  = blV('bl_cnMethod');
+
+        /* ── custom column widths for BL ── */
+        ws.columns = [
+            {width:6},  // #
+            {width:8},  // From
+            {width:8},  // To
+            {width:9},  // Thick
+            {width:11}, // USCS
+            {width:13}, // Type
+            {width:42}, // Description
+            {width:9},  // SPT N
+            {width:9},  // N60
+            {width:11}, // Density/Consist
+            {width:9},  // Su kPa
+            {width:9},  // φ°
+            {width:9},  // wc%
+            {width:9},  // LL
+            {width:9},  // PI
+            {width:9},  // Rec%
+            {width:13}, // Sample No.
+        ];
+
+        /* ── palette for BL ── */
+        var BLC = {
+            navy:   '1E3A5F', navyMid:'2D5A87', navyLight:'DBEAFE',
+            orange: 'EA580C', orangeBg:'FFF7ED',
+            green:  '065F46', greenBg:'D1FAE5',
+            amber:  '92400E', amberBg:'FEF3C7',
+            purple: '5B21B6', purpleBg:'EDE9FE',
+            teal:   '0F766E', tealBg:'CCFBF1',
+            gray:   '374151', grayBg:'F9FAFB',
+            white:  'FFFFFF',
+            sand:   'FEF9C3', gravel:'D1FAE5', clay:'EDE9FE',
+            silt:   'FCE7F3', rock:  'E2E8F0', organic:'FEF3C7',
+        };
+
+        var THIN2 = { style:'thin', color:{argb:'FFDDDDDD'} };
+        var BORD2 = { top:THIN2, bottom:THIN2, left:THIN2, right:THIN2 };
+        var BORD_MED = { top:{style:'medium',color:{argb:'FF1E3A5F'}}, bottom:{style:'medium',color:{argb:'FF1E3A5F'}}, left:{style:'medium',color:{argb:'FF1E3A5F'}}, right:{style:'medium',color:{argb:'FF1E3A5F'}} };
+
+        function blCell(row, col, val, opts) {
+            var c = row.getCell(col);
+            c.value = (val === null || val === undefined || val === '') ? '—' : val;
+            if (opts.font)  c.font  = Object.assign({name:'Cairo', size:9}, opts.font);
+            if (opts.fill)  c.fill  = {type:'pattern', pattern:'solid', fgColor:{argb:'FF'+opts.fill}};
+            c.alignment = Object.assign({vertical:'middle', wrapText:true}, opts.align || {});
+            c.border = opts.bord || BORD2;
+            return c;
+        }
+
+        var NCOLS = 17;
+
+        function blMergeHdr(text, fillHex, fontColor, height) {
+            R++; var row = ws.getRow(R); row.height = height || 28;
+            var c = row.getCell(1);
+            c.value = text;
+            c.font  = {bold:true, size:13, color:{argb:'FF'+(fontColor||'FFFFFF')}, name:'Cairo'};
+            c.fill  = {type:'pattern', pattern:'solid', fgColor:{argb:'FF'+fillHex}};
+            c.alignment = {vertical:'middle', horizontal:'center', wrapText:true, readingOrder:2};
+            c.border = BORD_MED;
+            ws.mergeCells(R, 1, R, NCOLS);
+        }
+
+        function blSecHdr(text, fillHex) {
+            R++; var row = ws.getRow(R); row.height = 20;
+            var c = row.getCell(1);
+            c.value = text;
+            c.font  = {bold:true, size:10, color:{argb:'FFFFFFFF'}, name:'Cairo'};
+            c.fill  = {type:'pattern', pattern:'solid', fgColor:{argb:'FF'+fillHex}};
+            c.alignment = {vertical:'middle', horizontal:'right', wrapText:true, readingOrder:2};
+            ws.mergeCells(R, 1, R, NCOLS);
+        }
+
+        function blInfoRow(pairs) {
+            // pairs: [{label, value}, ...]  — 2 pairs per row
+            for (var pi = 0; pi < pairs.length; pi += 2) {
+                R++; var row = ws.getRow(R); row.height = 19;
+                var p1 = pairs[pi], p2 = pairs[pi+1];
+                // Label 1 (cols 1-2)
+                blCell(row, 1, p1.label, {font:{bold:true,size:9}, fill:BLC.navyLight, align:{horizontal:'right',readingOrder:2}, bord:BORD2});
+                blCell(row, 2, p1.value, {font:{bold:true,size:9,color:{argb:'FF'+BLC.teal}}, fill:'F0FDFA', align:{horizontal:'center'}, bord:BORD2});
+                ws.mergeCells(R, 1, R, 2);
+                ws.mergeCells(R, 3, R, 4);
+                blCell(row, 3, p1.value, {font:{bold:true,size:9,color:{argb:'FF'+BLC.teal}}, fill:'F0FDFA', align:{horizontal:'center'}, bord:BORD2});
+                // rebuild — simple 4-col layout:
+                // Unmerge and redo properly
+                // col1-3 label, col4-6 value, col7-9 label2, col10-12 value2
+                // Reset row
+                row.spliceRows && row.spliceRows();
+                row.eachCell(function(cell){ cell.value=''; });
+                // Label1 cols 1-3
+                for(var ci=1; ci<=3; ci++) {
+                    var lc = row.getCell(ci);
+                    lc.value = ci===1 ? (p1.label||'') : '';
+                    lc.font  = {bold:true, size:9, name:'Cairo', color:{argb:'FF'+BLC.navy}};
+                    lc.fill  = {type:'pattern', pattern:'solid', fgColor:{argb:'FF'+BLC.navyLight}};
+                    lc.alignment = {vertical:'middle', horizontal: ci===1?'right':'center', readingOrder:2, wrapText:true};
+                    lc.border = BORD2;
+                }
+                ws.mergeCells(R, 1, R, 3);
+                // Value1 cols 4-6
+                for(var ci2=4; ci2<=6; ci2++) {
+                    var vc = row.getCell(ci2);
+                    vc.value = ci2===4 ? (p1.value||'—') : '';
+                    vc.font  = {bold:true, size:9, name:'Cairo', color:{argb:'FF'+BLC.teal}};
+                    vc.fill  = {type:'pattern', pattern:'solid', fgColor:{argb:'FFF0FDFA'}};
+                    vc.alignment = {vertical:'middle', horizontal:'center', wrapText:true};
+                    vc.border = BORD2;
+                }
+                ws.mergeCells(R, 4, R, 6);
+                if (p2) {
+                    // Label2 cols 7-9
+                    for(var ci3=7; ci3<=9; ci3++) {
+                        var lc2 = row.getCell(ci3);
+                        lc2.value = ci3===7 ? (p2.label||'') : '';
+                        lc2.font  = {bold:true, size:9, name:'Cairo', color:{argb:'FF'+BLC.navy}};
+                        lc2.fill  = {type:'pattern', pattern:'solid', fgColor:{argb:'FF'+BLC.navyLight}};
+                        lc2.alignment = {vertical:'middle', horizontal: ci3===7?'right':'center', readingOrder:2, wrapText:true};
+                        lc2.border = BORD2;
+                    }
+                    ws.mergeCells(R, 7, R, 9);
+                    // Value2 cols 10-17
+                    for(var ci4=10; ci4<=NCOLS; ci4++) {
+                        var vc2 = row.getCell(ci4);
+                        vc2.value = ci4===10 ? (p2.value||'—') : '';
+                        vc2.font  = {bold:true, size:9, name:'Cairo', color:{argb:'FF'+BLC.teal}};
+                        vc2.fill  = {type:'pattern', pattern:'solid', fgColor:{argb:'FFF0FDFA'}};
+                        vc2.alignment = {vertical:'middle', horizontal:'center', wrapText:true};
+                        vc2.border = BORD2;
+                    }
+                    ws.mergeCells(R, 10, R, NCOLS);
+                } else {
+                    // extend value to end
+                    for(var ci5=7; ci5<=NCOLS; ci5++) {
+                        var ec = row.getCell(ci5);
+                        ec.value = '';
+                        ec.fill  = {type:'pattern', pattern:'solid', fgColor:{argb:'FFF0FDFA'}};
+                        ec.border = BORD2;
+                    }
+                    ws.mergeCells(R, 7, R, NCOLS);
+                }
+            }
+        }
+
+        /* ── SOIL TYPE → FILL COLOR ── */
+        function soilFill(type) {
+            var m = { Sand:'FEF9C3', Gravel:'D1FAE5', Clay:'EDE9FE',
+                      Silt:'FCE7F3', Rock:'E2E8F0', Organic:'FEF3C7' };
+            return m[type] || 'FFFFFF';
+        }
+
+        /* ═══════════════════════════════════
+           ROW 1: TITLE
+        ═══════════════════════════════════ */
+        blMergeHdr('🕳️ سجل الجسة — Boring Log Report | Elkasaby Geotechnical & Materials Testing System', BLC.navy, 'FFFFFF', 40);
+
+        /* ═══════════════════════════════════
+           SECTION A: Borehole Information
+        ═══════════════════════════════════ */
+        blSecHdr('① بيانات الحفرة — Borehole Information', BLC.navyMid);
+        blInfoRow([
+            {label:'رقم الجسة — Boring No.',        value: bhNo},
+            {label:'رقم المشروع — Project No.',      value: projNo},
+        ]);
+        blInfoRow([
+            {label:'تاريخ البدء — Date Started',     value: dateStart},
+            {label:'تاريخ الانتهاء — Date Finished', value: dateEnd},
+        ]);
+        blInfoRow([
+            {label:'العمق الكلي — Total Depth (m)',   value: depth + ' m'},
+            {label:'جيولوجي — Geologist',            value: geologist},
+        ]);
+        blInfoRow([
+            {label:'حفّار — Driller',                 value: driller},
+            {label:'جهاز الحفر — Drill Rig',         value: drilRig},
+        ]);
+        blInfoRow([
+            {label:'قطر الجسة — Borehole Diam.',     value: bhDiam},
+            {label:'غلاف — Casing',                  value: casing},
+        ]);
+        blInfoRow([
+            {label:'المنسوب — Elevation (m)',         value: elev},
+            {label:'إحداثي شمالي / شرقي',            value: north + ' N / ' + east + ' E'},
+        ]);
+        blInfoRow([
+            {label:'كفاءة المطرقة — Hammer Er%',      value: hammerEr + '%'},
+            {label:'طريقة Cn — Cn Method',           value: cnMethod},
+        ]);
+
+        /* ═══════════════════════════════════
+           SECTION B: Groundwater Levels
+        ═══════════════════════════════════ */
+        R++;
+        blSecHdr('② منسوب المياه الجوفية — Groundwater Levels (GWL)', '0369A1');
+        blInfoRow([
+            {label:'🕐 وقت الحفر — At Time of Drilling',   value: gwlDrill !== '—' ? gwlDrill + ' m' : 'NF'},
+            {label:'🌿 موسم الجفاف — Dry Season GWL',       value: gwlDry   !== '—' ? gwlDry   + ' m' : 'NF'},
+        ]);
+        blInfoRow([
+            {label:'🌊 موسم الفيضان — Wet Season GWL',      value: gwlWet  !== '—' ? gwlWet   + ' m' : 'NF'},
+            {label:'⬆️ أعلى منسوب — Highest Seasonal GWL', value: gwlHigh !== '—' ? gwlHigh  + ' m' : 'NF'},
+        ]);
+
+        /* ═══════════════════════════════════
+           SECTION C: Layers Table
+        ═══════════════════════════════════ */
+        R++;
+        blSecHdr('③ جدول الطبقات — Soil Layers', BLC.orange);
+
+        /* table header */
+        var hdrs = [
+            '#',
+            'من\nFrom (m)',
+            'إلى\nTo (m)',
+            'سُمك\nThick (m)',
+            'USCS',
+            'نوع التربة\nSoil Type',
+            'الوصف الجيولوجي — Geological Description',
+            'SPT\n(N)',
+            'N₆₀',
+            'كثافة/قوام\nDensity',
+            'Su\n(kPa)',
+            'φ°',
+            'wc\n(%)',
+            'LL\n(%)',
+            'PI\n(%)',
+            'Rec\n(%)',
+            'رقم العينة\nSample No.',
+        ];
+
+        R++; var hRow = ws.getRow(R); hRow.height = 38;
+        hdrs.forEach(function(h, i) {
+            var c = hRow.getCell(i+1);
+            c.value = h;
+            c.font  = {bold:true, size:8.5, color:{argb:'FFFFFFFF'}, name:'Cairo'};
+            c.fill  = {type:'pattern', pattern:'solid', fgColor:{argb:'FF'+BLC.navy}};
+            c.alignment = {vertical:'middle', horizontal:'center', wrapText:true, readingOrder: i<=5?2:1};
+            c.border = {
+                top:    {style:'medium', color:{argb:'FF'+BLC.navy}},
+                bottom: {style:'medium', color:{argb:'FF'+BLC.navy}},
+                left:   THIN2,
+                right:  THIN2
+            };
+        });
+
+        /* get rows */
+        var blRows = blGetRows();
+
+        blRows.forEach(function(row, idx) {
+            R++; var tr = ws.getRow(R); tr.height = 24;
+            var alt  = idx % 2 === 1;
+            var sF   = soilFill(row.soilType);
+            var n    = row.spt;
+            var n60v = (row.n60 !== null && row.n60 !== undefined && !isNaN(row.n60)) ? +row.n60 : null;
+
+            /* density/consistency label */
+            var densLabel = '—';
+            if (n !== null && !isNaN(n)) {
+                var gr = ['Sand','Gravel','Rock'].indexOf(row.soilType) >= 0;
+                var co = ['Clay','Silt','Organic'].indexOf(row.soilType) >= 0;
+                if (gr) {
+                    if (n < 4)  densLabel = 'Very Loose';
+                    else if (n < 10) densLabel = 'Loose';
+                    else if (n < 30) densLabel = 'Medium Dense';
+                    else if (n < 50) densLabel = 'Dense';
+                    else densLabel = 'Very Dense';
+                } else if (co) {
+                    if (n < 2)  densLabel = 'Very Soft';
+                    else if (n < 4)  densLabel = 'Soft';
+                    else if (n < 8)  densLabel = 'Medium Stiff';
+                    else if (n < 15) densLabel = 'Stiff';
+                    else if (n < 30) densLabel = 'Very Stiff';
+                    else densLabel = 'Hard';
+                }
+            }
+
+            var suVal  = (n !== null && ['Clay','Silt','Organic'].indexOf(row.soilType) >= 0) ? Math.round(6.25*n) : null;
+            var phiVal = (row.phi && row.phi.avg) ? row.phi.avg + '°' : null;
+            var thick  = Math.round((row.to - row.from) * 100) / 100;
+
+            var vals = [
+                idx + 1,
+                row.from,
+                row.to,
+                thick,
+                row.uscs || '—',
+                row.soilType || '—',
+                row.desc || '',
+                n !== null ? n : '—',
+                n60v !== null ? n60v : '—',
+                densLabel,
+                suVal !== null ? suVal : '—',
+                phiVal || '—',
+                row.wc  || '—',
+                row.ll  || '—',
+                row.pi  || '—',
+                row.rec || '—',
+                row.sampleNo || '—',
+            ];
+
+            /* color coding by SPT */
+            var sptColor = 'FF1F2937';
+            if (n !== null && !isNaN(n)) {
+                if (n < 4)  sptColor = 'FFDC2626';
+                else if (n < 10) sptColor = 'FFEA580C';
+                else if (n < 30) sptColor = 'FF065F46';
+                else sptColor = 'FF1D4ED8';
+            }
+
+            vals.forEach(function(v, ci) {
+                var c = tr.getCell(ci+1);
+                c.value = (v === null || v === undefined) ? '—' : v;
+
+                var fillHex;
+                if (ci === 6) {
+                    fillHex = alt ? 'F8FAFC' : 'FFFFFF'; // description col stays white
+                } else if (ci >= 4 && ci <= 5) {
+                    fillHex = sF; // soil-type color for USCS & Type cols
+                } else {
+                    fillHex = alt ? 'F9FAFB' : 'FFFFFF';
+                }
+
+                c.font = {
+                    name:'Cairo', size: ci===6 ? 8 : 9,
+                    bold: ci===0 || ci===7,
+                    color: { argb: ci===7 ? sptColor : 'FF1F2937' }
+                };
+                c.fill = {type:'pattern', pattern:'solid', fgColor:{argb:'FF'+fillHex}};
+                c.alignment = {
+                    vertical:'middle',
+                    horizontal: ci===0||ci===1||ci===2||ci===3 ? 'center'
+                              : ci===6 ? 'right'
+                              : 'center',
+                    wrapText: ci===6,
+                    readingOrder: ci===6 ? 2 : 1
+                };
+                c.border = BORD2;
+            });
+        });
+
+        /* ── summary row ── */
+        R++; var sumR = ws.getRow(R); sumR.height = 20;
+        var sumVals = ['', '', '', blRows.reduce(function(a,r){return a+(r.to-r.from);},0).toFixed(1)+' m',
+                       '','','جمع الطبقات / Total Layers: '+blRows.length,'','','','','','','','','',''];
+        sumVals.forEach(function(v,ci){
+            var c = sumR.getCell(ci+1);
+            c.value = v;
+            c.font  = {bold:true, size:9, name:'Cairo', color:{argb:'FF1E3A5F'}};
+            c.fill  = {type:'pattern', pattern:'solid', fgColor:{argb:'FFDBEAFE'}};
+            c.alignment = {vertical:'middle', horizontal:'center', wrapText:true};
+            c.border = {top:{style:'medium',color:{argb:'FF1E3A5F'}}, bottom:THIN2, left:THIN2, right:THIN2};
+        });
+        ws.mergeCells(R, 7, R, NCOLS);
+
+        /* ═══════════════════════════════════
+           SECTION D: SPT Summary
+        ═══════════════════════════════════ */
+        R++;
+        blSecHdr('④ ملخص قيم SPT — SPT Summary', BLC.teal);
+        var sptVals = blRows.filter(function(r){return r.spt !== null && !isNaN(r.spt);}).map(function(r){return r.spt;});
+        if (sptVals.length) {
+            var minSPT = Math.min.apply(null, sptVals);
+            var maxSPT = Math.max.apply(null, sptVals);
+            var avgSPT = (sptVals.reduce(function(a,b){return a+b;},0)/sptVals.length).toFixed(1);
+            blInfoRow([
+                {label:'أقل قيمة SPT — Min SPT (N)', value: minSPT},
+                {label:'أعلى قيمة SPT — Max SPT (N)', value: maxSPT},
+            ]);
+            blInfoRow([
+                {label:'متوسط SPT — Avg SPT (N)', value: avgSPT},
+                {label:'عدد قراءات SPT — Count',  value: sptVals.length},
+            ]);
+        }
+
+        /* ═══════════════════════════════════
+           SECTION E: Notes & Standards
+        ═══════════════════════════════════ */
+        R++;
+        blSecHdr('⑤ ملاحظات ومعايير — Notes & Standards', BLC.gray);
+        blInfoRow([
+            {label:'المعيار — Standard',             value: 'ASTM D1586 / D6913 / BS EN ISO 22476'},
+            {label:'نظام الجودة — QA System',        value: 'ISO/IEC 17025:2017'},
+        ]);
+        blInfoRow([
+            {label:'N₆₀ Correction — تصحيح N₆₀',   value: 'Er = ' + hammerEr + '%  |  CN: ' + cnMethod},
+            {label:'ملاحظات / Notes',                value: '—'},
+        ]);
+
+    }
+    /* END BoringLog */
+
     /* END SandCone */
 
     /* ══ Footer ══ */
@@ -13840,7 +14549,8 @@ async function exportToExcel(mode) {
         D6913:'D6913-Sieve',D4318:'D4318-Atterberg',D1557:'D1557-Proctor',
         D2216:'D2216-WaterContent',D854:'D854-SpecificGravity',
         SoilClass:'SoilClassification',CBR:'CBR-D1883',D422:'D422-Hydrometer',
-        SandCone:'D1556-SandCone'
+        SandCone:'D1556-SandCone',
+        BoringLog:'BoringLog-Layers'
     };
     var dateStr=new Date().toISOString().slice(0,10);
     var fileName=(sId!=='—'?sId.replace(/[^a-zA-Z0-9\u0600-\u06FF\-_]/g,'_')+'_':'')
@@ -14848,7 +15558,7 @@ function updateSavePreview() {
 function collectAllData() {
     const data = { _meta: {}, fields: {}, checkboxes: {}, radios: {} };
     data._meta = {
-        version: 'v11',
+        version: 'v12',
         savedAt: new Date().toISOString(),
         app: 'منظومة القصبي للاختبارات الجيوتقنية والمواد'
     };
@@ -14882,6 +15592,14 @@ function collectAllData() {
         sieveInputs[key] = el.value;
     });
     data._tableInputs = sieveInputs;
+
+    // ── Boring Log — حفظ طبقات اللوج ──
+    if (typeof blCollectHeaderData === 'function' && typeof blGetRows === 'function') {
+        data.boringLog = {
+            header: blCollectHeaderData(),
+            rows:   blGetRows(),
+        };
+    }
 
     return data;
 }
@@ -15007,6 +15725,20 @@ function restoreAllData(data) {
                 el.dispatchEvent(new Event('change', { bubbles: true }));
             }
         });
+    }
+
+    // ── استعادة Boring Log rows من الحفظ العام ──
+    if (data.boringLog && typeof blApplyHeaderData === 'function' && typeof blAddRow === 'function') {
+        try {
+            var blBody = document.getElementById('blLayersBody');
+            if (blBody) blBody.innerHTML = '';
+            if (typeof blRowCounter !== 'undefined') window.blRowCounter = 0;
+            if (data.boringLog.header) blApplyHeaderData(data.boringLog.header);
+            if (data.boringLog.rows && data.boringLog.rows.length) {
+                data.boringLog.rows.forEach(function(r) { blAddRow(r); });
+                setTimeout(function(){ if (typeof blGenerate === 'function') blGenerate(); }, 200);
+            }
+        } catch(e) { console.warn('Boring Log restore error:', e); }
     }
 }
 
@@ -15957,8 +16689,17 @@ const BL_ROW_COLORS = {
 // ── حساب N60 (تصحيح طاقة المطرقة) ──────────────────────────────
 function blCalcN60(spt) {
   if (spt === null || spt === '' || isNaN(spt)) return null;
-  var er = parseFloat((document.getElementById('bl_hammerEr') || {}).value || 60);
-  return Math.round(parseFloat(spt) * (er / 60) * 10) / 10;
+  var er  = parseFloat((document.getElementById('bl_hammerEr') || {}).value || 60);
+  // CE = Er/60 (energy ratio correction)
+  // CB = borehole diameter correction (assume standard 65-115mm → CB=1.0)
+  // CS = sampler correction (assume standard split spoon → CS=1.0)
+  // CR = rod length correction (assume >10m → CR=1.0, simplified)
+  var CE = er / 60;
+  var CB = 1.0;
+  var CS = 1.0;
+  var CR = 1.0;
+  var n60 = parseFloat(spt) * CE * CB * CS * CR;
+  return Math.round(n60 * 10) / 10;
 }
 
 // ── حساب (N1)60 — تصحيح الإجهاد الفوقي ─────────────────────────
@@ -16037,6 +16778,8 @@ function blUpdateRDCell(id) {
   // Update row bg color
   var rowColor = BL_ROW_COLORS[soilType] || '';
   tr.style.background = rowColor;
+  // Update φ and Su cells
+  blUpdatePhiSu(id);
 }
 
 // ── تحديث قائمة الصفوف في pull panel ──
@@ -16113,22 +16856,44 @@ function blAddRow(data) {
     <td style="padding:5px;border:1px solid #e5e7eb;">${inp(d.from,'number','0.00','step="0.5" min="0"')}</td>
     <td style="padding:5px;border:1px solid #e5e7eb;">${inp(d.to,'number','1.00','step="0.5" min="0"')}</td>
     <td style="padding:5px;border:1px solid #e5e7eb;">
-      <select oninput="blRowChange(${id})" style="width:100%;border:1.5px solid #d1d5db;border-radius:6px;padding:5px 3px;font-size:.74rem;font-family:inherit;background:white;">${uscsOpts}</select>
+      <select id="blUscsSelect_${id}" oninput="blRowChange(${id})" style="width:100%;border:1.5px solid #d1d5db;border-radius:6px;padding:5px 3px;font-size:.74rem;font-family:inherit;background:white;">${uscsOpts}</select>
+      <div id="blUscsSug_${id}" class="bl-uscs-suggest" onclick="blApplyUscsSuggestion(${id})">
+        <span class="bl-sug-symbol" id="blSugSymbol_${id}">—</span>
+        <span class="bl-sug-label" id="blSugLabel_${id}"></span>
+        <button class="bl-sug-apply">✓ تطبيق</button>
+      </div>
     </td>
     <td style="padding:5px;border:1px solid #e5e7eb;">
       <select oninput="blRowChange(${id}); blAutoUSCS(${id})" style="width:100%;border:1.5px solid #d1d5db;border-radius:6px;padding:5px 3px;font-size:.74rem;font-family:inherit;background:white;">${typeOpts}</select>
     </td>
     <td style="padding:5px;border:1px solid #e5e7eb;">
-      <input type="text" value="${d.desc||''}" placeholder="وصف الطبقة / Layer Description"
-        oninput="blRowChange(${id})"
-        style="width:100%;border:1.5px solid #d1d5db;border-radius:6px;padding:5px 8px;font-size:.78rem;font-family:inherit;background:white;box-sizing:border-box;">
+      <div class="bl-desc-wrap" id="blDescWrap_${id}">
+        <input type="text" id="blDesc_${id}" value="${d.desc||''}" placeholder="وصف الطبقة / Layer Description"
+          oninput="blRowChange(${id}); blAcShow(${id})"
+          onkeydown="blAcKey(event,${id})"
+          onfocus="blAcShow(${id})"
+          autocomplete="off"
+          style="width:100%;border:1.5px solid #d1d5db;border-radius:6px;padding:5px 8px;font-size:.78rem;font-family:inherit;background:white;box-sizing:border-box;">
+        <div id="blAcList_${id}" class="bl-ac-list"></div>
+      </div>
     </td>
-    <td style="padding:5px;border:1px solid #e5e7eb;">${inp(d.spt,'number','—','min="0"')}</td>
+    <td style="padding:5px;border:1px solid #e5e7eb;">
+      <input type="number" value="${d.spt||''}" placeholder="—" min="0"
+        id="blSptInp_${id}"
+        oninput="blRowChange(${id}); blSuggestUSCS(${id})"
+        style="width:100%;border:1.5px solid #d1d5db;border-radius:6px;padding:5px 4px;font-size:.78rem;font-family:inherit;text-align:center;background:white;box-sizing:border-box;">
+    </td>
     <td style="padding:5px;border:1px solid #e5e7eb;text-align:center;">
       <span id="blN60Cell_${id}" style="display:inline-block;padding:3px 7px;border-radius:8px;font-size:.72rem;font-weight:700;background:#ede9fe;color:#5b21b6;">${initN60 !== null ? initN60 : '—'}</span>
     </td>
     <td style="padding:5px;border:1px solid #e5e7eb;text-align:center;">
       <span id="blRDCell_${id}" style="display:inline-block;padding:3px 7px;border-radius:10px;font-size:.72rem;font-weight:700;white-space:nowrap;color:${initRd.color};background:${initRd.bg};">${initRd.label}</span>
+    </td>
+    <td style="padding:4px;border:1px solid #e5e7eb;text-align:center;">
+      <span id="blPhiCell_${id}" style="display:inline-block;padding:2px 6px;border-radius:8px;font-size:.72rem;font-weight:700;background:#ccfbf1;color:#0f766e;cursor:pointer;" title="اضغط لعرض المعادلات">—</span>
+    </td>
+    <td style="padding:4px;border:1px solid #e5e7eb;text-align:center;">
+      <span id="blSuCell_${id}" style="display:inline-block;padding:2px 6px;border-radius:8px;font-size:.72rem;font-weight:700;background:#fef3c7;color:#92400e;cursor:pointer;" title="اضغط لعرض المعادلات">—</span>
     </td>
     <td style="padding:5px;border:1px solid #e5e7eb;">${inp(d.wc,'number','—','step="0.1"')}</td>
     <td style="padding:5px;border:1px solid #e5e7eb;">${inp(d.ll,'text','N.P')}</td>
@@ -16153,6 +16918,7 @@ function blAddRow(data) {
 
 function blRowChange(id) {
   blUpdateRDCell(id);
+  blSuggestUSCS(id);
   blLiveUpdate();
 }
 
@@ -16207,6 +16973,9 @@ function blCollectHeaderData() {
     driller:   (document.getElementById('bl_driller')   || {}).value || '',
     drilRig:   (document.getElementById('bl_drilRig')   || {}).value || '',
     gwl:       (document.getElementById('bl_gwl')       || {}).value || 'NF',
+    gwl_dry:   (document.getElementById('bl_gwl_dry')   || {}).value || 'NF',
+    gwl_wet:   (document.getElementById('bl_gwl_wet')   || {}).value || 'NF',
+    gwl_high:  (document.getElementById('bl_gwl_high')  || {}).value || 'NF',
     north:     (document.getElementById('bl_north')     || {}).value || '',
     east:      (document.getElementById('bl_east')      || {}).value || '',
     elevation: (document.getElementById('bl_elevation') || {}).value || '',
@@ -16219,7 +16988,7 @@ function blCollectHeaderData() {
 }
 
 function blApplyHeaderData(h) {
-  var keys = ['bhNo','dateStart','dateEnd','totalDepth','geologist','driller','drilRig','gwl','north','east','elevation','projNo','bhDiam','casing','hammerEr','cnMethod'];
+  var keys = ['bhNo','dateStart','dateEnd','totalDepth','geologist','driller','drilRig','gwl','gwl_dry','gwl_wet','gwl_high','north','east','elevation','projNo','bhDiam','casing','hammerEr','cnMethod'];
   keys.forEach(function(k) {
     var el = document.getElementById('bl_' + k);
     if (el && h[k] !== undefined) el.value = h[k];
@@ -16273,14 +17042,695 @@ function blAutoUSCS(id) {
   const typeEl = tr.querySelectorAll('select')[1];
   const uscsEl = tr.querySelectorAll('select')[0];
   if (!typeEl || !uscsEl) return;
+  // Only auto-set if USCS is at default/generic value (don't override user-set USCS)
+  const currentUSCS = uscsEl.value;
+  const genericUSCS = ['SP','GP','ML','CL','ROCK','FILL','OL'];
   const map = {
-    Sand:'SP', Gravel:'GP', Silt:'ML', Clay:'CL',
+    Sand:'SM', Gravel:'GP', Silt:'ML', Clay:'CL',
     Rock:'ROCK', Fill:'FILL', Organic:'OL'
   };
-  if (map[typeEl.value]) uscsEl.value = map[typeEl.value];
+  // Only update if current USCS is a generic default or matches old soil type
+  if (map[typeEl.value] && (genericUSCS.includes(currentUSCS) || currentUSCS === '')) {
+    uscsEl.value = map[typeEl.value];
+  }
   // update row color
   tr.style.background = BL_ROW_COLORS[typeEl.value] || '';
+  // Auto-suggest description based on soil type change
+  blAcAutoFill(id);
 }
+
+// ══ USCS AUTO-SUGGESTION ENGINE ═════════════════════════════════════
+
+/*
+  Logic priority:
+  1. Description keywords → detect rock / fill / organic / peat
+  2. LL + PI values (if filled) → Atterberg-based clay/silt classification
+  3. SPT value → granular density classification
+  4. WC value → hints at cohesive vs granular
+  Combined → suggest most likely USCS symbol + soil type
+*/
+
+const BL_USCS_RULES = [
+  // ── Rock & Special ───────────────────────────────────────────────
+  { test: function(r) { return r.descLC.match(/granite|basalt|limestone|sandstone|shale|marble|gneiss|weathered|rock|eob|end of boring/); },
+    uscs:'ROCK', type:'Rock', conf:'high', reason:'كلمات مفتاحية صخرية في الوصف' },
+  { test: function(r) { return r.descLC.match(/fill|debris|rubbish|compacted fill|engineered fill/); },
+    uscs:'FILL', type:'Fill', conf:'high', reason:'وصف يحتوي كلمات ردم' },
+  { test: function(r) { return r.descLC.match(/peat|organic|fibrous|dark brown.*wet|peat.*soft/); },
+    uscs:'Pt', type:'Organic', conf:'high', reason:'مادة عضوية / خث' },
+
+  // ── LL/PI based (Casagrande chart) ───────────────────────────────
+  { test: function(r) { return r.ll >= 50 && r.pi >= 0.73*(r.ll-20); },
+    uscs:'CH', type:'Clay', conf:'high', reason:'CH — LL≥50, PI فوق خط A' },
+  { test: function(r) { return r.ll < 50 && r.ll >= 20 && r.pi >= 0.73*(r.ll-20) && r.pi >= 7; },
+    uscs:'CL', type:'Clay', conf:'high', reason:'CL — LL<50, PI فوق خط A' },
+  { test: function(r) { return r.ll < 50 && r.pi >= 4 && r.pi < 7 && r.pi >= 0.73*(r.ll-20); },
+    uscs:'CL-ML', type:'Clay', conf:'medium', reason:'CL-ML — PI بين 4 و 7' },
+  { test: function(r) { return r.ll >= 50 && r.pi < 0.73*(r.ll-20); },
+    uscs:'MH', type:'Silt', conf:'high', reason:'MH — LL≥50, PI تحت خط A' },
+  { test: function(r) { return r.ll < 50 && r.ll >= 20 && r.pi < 0.73*(r.ll-20) && r.pi < 4; },
+    uscs:'ML', type:'Silt', conf:'high', reason:'ML — LL<50, PI تحت خط A' },
+  { test: function(r) { return r.ll >= 1 && r.pi < 4 && r.ll < 20; },
+    uscs:'ML', type:'Silt', conf:'medium', reason:'ML — LL منخفض جداً' },
+
+  // ── SPT-based granular (when no LL/PI) ───────────────────────────
+  // Description keywords help refine
+  { test: function(r) { return !r.hasLL && r.spt !== null && r.descLC.match(/gravel|حصى/); },
+    uscs:'GP', type:'Gravel', conf:'medium', reason:'SPT + كلمة Gravel في الوصف' },
+  { test: function(r) { return !r.hasLL && r.spt !== null && r.spt >= 0 && r.spt <= 4 && r.descLC.match(/clay|soft|cohesive/); },
+    uscs:'CH', type:'Clay', conf:'low', reason:'SPT≤4 + وصف يشير لطين' },
+  { test: function(r) { return !r.hasLL && r.spt !== null && r.spt >= 0 && r.spt <= 8 && r.descLC.match(/silt|silty|طمي/); },
+    uscs:'ML', type:'Silt', conf:'medium', reason:'SPT≤8 + كلمة Silt في الوصف' },
+  { test: function(r) { return !r.hasLL && r.spt !== null && r.spt >= 0 && r.spt <= 15 && r.descLC.match(/clay|clayey|طين/); },
+    uscs:'CL', type:'Clay', conf:'medium', reason:'SPT≤15 + كلمة Clay في الوصف' },
+  { test: function(r) { return !r.hasLL && r.spt !== null && r.spt >= 0 && r.descLC.match(/silty sand|رمل طمي/); },
+    uscs:'SM', type:'Sand', conf:'high', reason:'SPT + Silty Sand في الوصف' },
+  { test: function(r) { return !r.hasLL && r.spt !== null && r.spt >= 0 && r.descLC.match(/clayey sand|رمل طيني/); },
+    uscs:'SC', type:'Sand', conf:'high', reason:'SPT + Clayey Sand في الوصف' },
+  { test: function(r) { return !r.hasLL && r.spt !== null && r.spt >= 0 && r.descLC.match(/well.*grad|graded.*sand/); },
+    uscs:'SW', type:'Sand', conf:'high', reason:'Well Graded Sand في الوصف' },
+  { test: function(r) { return !r.hasLL && r.spt !== null && r.spt >= 0 && r.descLC.match(/poorly.*grad/); },
+    uscs:'SP', type:'Sand', conf:'high', reason:'Poorly Graded Sand في الوصف' },
+  // Pure SPT fallback
+  { test: function(r) { return !r.hasLL && r.spt !== null && r.spt > 30; },
+    uscs:'SP', type:'Sand', conf:'low', reason:'SPT>30 يشير غالباً لرمل متماسك' },
+  { test: function(r) { return !r.hasLL && r.spt !== null && r.spt > 0 && r.spt <= 30; },
+    uscs:'SM', type:'Sand', conf:'low', reason:'SPT متوسط — Silty Sand كافتراضي' },
+];
+
+const BL_CONF_COLORS = {
+  high:   { bg:'#dcfce7', border:'#16a34a', text:'#14532d', icon:'🟢' },
+  medium: { bg:'#fef9c3', border:'#ca8a04', text:'#78350f', icon:'🟡' },
+  low:    { bg:'#fee2e2', border:'#dc2626', text:'#7f1d1d', icon:'🔴' },
+};
+
+var blUscsSuggestions = {}; // store suggestions per row id
+
+// ══ φ AND Su ENGINE FROM SPT ═══════════════════════════════════════
+/*
+  References:
+  φ (Granular soils):
+    - Peck, Hanson & Thornburn (1974): φ = 28.5 + 0.11×N  (N≤50)
+    - Wolff (1989): φ = 27.1 + 0.3×N60 − 0.00054×N60²
+    - Kulhawy & Mayne (1990): φ = arctan(N60 / (12.2 + 20.3×σv'/Pa))^0.34  → simplified
+    - Meyerhof (1956): φ = 25 + √N  (rough approx)
+  Su (Cohesive soils):
+    - Terzaghi & Peck (1948): Su = 6.25×N  [kPa]
+    - Stroud (1974):           Su = 4.5×N   [kPa]  (UK practice)
+    - Hara et al. (1971):      Su = 29×N^0.72 [kPa]
+    - NAVFAC DM 7.1:           Su ≈ 5×N to 7.5×N [kPa]
+*/
+
+function blCalcPhi(spt, soilType) {
+  if (spt === null || isNaN(spt)) return null;
+  var n = Math.min(parseFloat(spt), 100);
+  var granular = ['Sand','Gravel'].indexOf(soilType) >= 0;
+  var cohesive = ['Clay','Silt','Organic'].indexOf(soilType) >= 0;
+  if (cohesive) return null; // φ not applicable for cohesive
+
+  // Peck, Hanson & Thornburn (1974) — most widely used
+  var phi_peck  = Math.min(48, 28.5 + 0.11 * n);
+  // Wolff (1989) using N60
+  var n60 = blCalcN60(spt);
+  var phi_wolff = n60 !== null
+    ? Math.min(48, 27.1 + 0.3 * n60 - 0.00054 * n60 * n60)
+    : phi_peck;
+  // Meyerhof (1956) rough
+  var phi_meyerhof = Math.min(45, 25 + Math.sqrt(n));
+
+  return {
+    peck:     Math.round(phi_peck * 10) / 10,
+    wolff:    Math.round(phi_wolff * 10) / 10,
+    meyerhof: Math.round(phi_meyerhof * 10) / 10,
+    avg:      Math.round(((phi_peck + phi_wolff + phi_meyerhof) / 3) * 10) / 10,
+  };
+}
+
+function blCalcSu(spt, soilType) {
+  if (spt === null || isNaN(spt)) return null;
+  var granular = ['Sand','Gravel'].indexOf(soilType) >= 0;
+  if (granular) return null; // Su not applicable for granular
+  var n = Math.max(1, Math.min(parseFloat(spt), 60));
+
+  var su_terzaghi = Math.round(6.25 * n);           // Terzaghi & Peck
+  var su_stroud   = Math.round(4.5  * n);           // Stroud (1974)
+  var su_hara     = Math.round(29   * Math.pow(n, 0.72)); // Hara et al.
+  var su_navfac   = Math.round(6.0  * n);           // NAVFAC midpoint
+
+  return {
+    terzaghi: su_terzaghi,
+    stroud:   su_stroud,
+    hara:     su_hara,
+    navfac:   su_navfac,
+    avg:      Math.round((su_terzaghi + su_stroud + su_hara + su_navfac) / 4),
+    range:    su_stroud + '–' + su_hara,
+  };
+}
+
+function blUpdatePhiSu(id) {
+  var tr = document.getElementById('blRow_' + id);
+  if (!tr) return;
+  var inputs  = tr.querySelectorAll('input');
+  var selects = tr.querySelectorAll('select');
+  var sptRaw  = inputs[3] ? inputs[3].value : '';
+  var spt     = sptRaw !== '' ? parseFloat(sptRaw) : null;
+  var soilType = selects[1] ? selects[1].value : 'Sand';
+  var cohesive = ['Clay','Silt','Organic'].indexOf(soilType) >= 0;
+  var granular = ['Sand','Gravel'].indexOf(soilType) >= 0;
+
+  var phiCell = document.getElementById('blPhiCell_' + id);
+  var suCell  = document.getElementById('blSuCell_' + id);
+
+  if (phiCell) {
+    if (spt === null) { phiCell.textContent = '—'; phiCell.title = 'أدخل قيمة SPT'; }
+    else if (cohesive) { phiCell.textContent = 'N/A'; phiCell.style.background='#f1f5f9'; phiCell.style.color='#94a3b8'; phiCell.title = 'φ غير منطبق للتربة اللاصقة'; }
+    else {
+      var phi = blCalcPhi(spt, soilType);
+      var n60val = blCalcN60(spt);
+      if (phi) {
+        phiCell.textContent = phi.avg + '°';
+        phiCell.style.background = '#ccfbf1';
+        phiCell.style.color = '#0f766e';
+        phiCell.title =
+          'زاوية الاحتكاك الداخلي\n' +
+          'SPT(N) = ' + spt + '  |  N60 = ' + (n60val !== null ? n60val : '—') + '\n' +
+          '──────────────────────\n' +
+          'Peck et al. (1974):    φ = ' + phi.peck     + '°\n' +
+          'Wolff (1989) [N60]:    φ = ' + phi.wolff    + '°\n' +
+          'Meyerhof (1956):       φ = ' + phi.meyerhof + '°\n' +
+          '──────────────────────\n' +
+          'المتوسط:               φ = ' + phi.avg      + '°';
+        phiCell.onclick = function() { blShowPhiSuModal(id); };
+      }
+    }
+  }
+
+  if (suCell) {
+    if (spt === null) { suCell.textContent = '—'; suCell.title = 'أدخل قيمة SPT'; }
+    else if (granular) { suCell.textContent = 'N/A'; suCell.style.background='#f1f5f9'; suCell.style.color='#94a3b8'; suCell.title = 'Su غير منطبق للتربة الحبيبية'; }
+    else {
+      var su = blCalcSu(spt, soilType);
+      var n60valSu = blCalcN60(spt);
+      if (su) {
+        suCell.textContent = su.avg + ' kPa';
+        suCell.style.background = '#fef3c7';
+        suCell.style.color = '#92400e';
+        suCell.title =
+          'مقاومة القص غير المصرّف\n' +
+          'SPT(N) = ' + spt + '  |  N60 = ' + (n60valSu !== null ? n60valSu : '—') + '\n' +
+          '──────────────────────────────\n' +
+          'Terzaghi & Peck (1948): Su = ' + su.terzaghi + ' kPa\n' +
+          'Stroud (1974):          Su = ' + su.stroud   + ' kPa\n' +
+          'Hara et al. (1971):     Su = ' + su.hara     + ' kPa\n' +
+          'NAVFAC DM 7.1:          Su = ' + su.navfac   + ' kPa\n' +
+          '──────────────────────────────\n' +
+          'المتوسط:                Su = ' + su.avg      + ' kPa\n' +
+          'النطاق:                 Su = ' + su.range    + ' kPa';
+        suCell.onclick = function() { blShowPhiSuModal(id); };
+      }
+    }
+  }
+}
+
+// ── Modal عرض تفاصيل الحسابات ─────────────────────────────────────
+function blShowPhiSuModal(id) {
+  var tr = document.getElementById('blRow_' + id);
+  if (!tr) return;
+  var inputs   = tr.querySelectorAll('input');
+  var selects  = tr.querySelectorAll('select');
+  var sptRaw   = inputs[3] ? inputs[3].value : '';
+  var spt      = sptRaw !== '' ? parseFloat(sptRaw) : null;
+  var soilType = selects[1] ? selects[1].value : 'Sand';
+  var uscs     = selects[0] ? selects[0].value : '';
+  var from     = inputs[0] ? inputs[0].value : '?';
+  var to       = inputs[1] ? inputs[1].value : '?';
+  if (spt === null) return;
+
+  var phi = blCalcPhi(spt, soilType);
+  var su  = blCalcSu(spt, soilType);
+  var n60 = blCalcN60(spt);
+  var cohesive = ['Clay','Silt','Organic'].indexOf(soilType) >= 0;
+  var granular = ['Sand','Gravel'].indexOf(soilType) >= 0;
+
+  var phiRows = phi ? [
+    { method:'Peck, Hanson & Thornburn (1974)', formula:'φ = 28.5 + 0.11 × N', val: phi.peck + '°', ref:'الأكثر استخداماً في الممارسة الهندسية' },
+    { method:'Wolff (1989)',                    formula:'φ = 27.1 + 0.3×N₆₀ − 0.00054×N₆₀²', val: phi.wolff + '°', ref:'يستخدم N60 المُصحَّح' },
+    { method:'Meyerhof (1956)',                 formula:'φ = 25 + √N',   val: phi.meyerhof + '°', ref:'تقريب بسيط' },
+  ] : [];
+
+  var suRows = su ? [
+    { method:'Terzaghi & Peck (1948)', formula:'Su = 6.25 × N', val: su.terzaghi + ' kPa', ref:'المرجع الكلاسيكي' },
+    { method:'Stroud (1974)',           formula:'Su = 4.5 × N',  val: su.stroud   + ' kPa', ref:'الممارسة البريطانية' },
+    { method:'Hara et al. (1971)',      formula:'Su = 29 × N⁰·⁷²', val: su.hara  + ' kPa', ref:'علاقة قوة' },
+    { method:'NAVFAC DM 7.1',           formula:'Su = 6.0 × N',  val: su.navfac  + ' kPa', ref:'الممارسة الأمريكية البحرية' },
+  ] : [];
+
+  function makeTable(rows, avg, unit, title, color) {
+    if (!rows.length) return '<p style="color:#94a3b8;font-size:.8rem;padding:8px;">N/A — غير منطبق لهذا النوع من التربة</p>';
+    return '<div style="margin-bottom:12px;">'
+      + '<div style="font-weight:800;font-size:.82rem;color:' + color + ';margin-bottom:6px;">' + title + '</div>'
+      + '<table style="width:100%;border-collapse:collapse;font-size:.75rem;">'
+      + '<thead><tr>'
+      + '<th style="background:#1e3a5f;color:white;padding:5px 8px;text-align:right;">المرجع</th>'
+      + '<th style="background:#1e3a5f;color:white;padding:5px 8px;text-align:center;">المعادلة</th>'
+      + '<th style="background:#1e3a5f;color:white;padding:5px 8px;text-align:center;">القيمة</th>'
+      + '<th style="background:#1e3a5f;color:white;padding:5px 8px;text-align:right;">ملاحظة</th>'
+      + '</tr></thead><tbody>'
+      + rows.map(function(r, i) {
+          return '<tr style="background:' + (i%2===0?'#f8fafc':'white') + ';">'
+            + '<td style="padding:5px 8px;border:1px solid #e5e7eb;font-weight:700;color:#1e3a5f;">' + r.method + '</td>'
+            + '<td style="padding:5px 8px;border:1px solid #e5e7eb;text-align:center;font-family:monospace;color:#374151;">' + r.formula + '</td>'
+            + '<td style="padding:5px 8px;border:1px solid #e5e7eb;text-align:center;font-weight:800;color:' + color + ';font-size:.82rem;">' + r.val + '</td>'
+            + '<td style="padding:5px 8px;border:1px solid #e5e7eb;color:#6b7280;font-size:.7rem;">' + r.ref + '</td>'
+            + '</tr>';
+        }).join('')
+      + '</tbody></table>'
+      + '<div style="margin-top:6px;background:' + (color==='#0f766e'?'#ccfbf1':'#fef3c7') + ';border-radius:8px;padding:6px 12px;display:flex;justify-content:space-between;align-items:center;">'
+      + '<span style="font-size:.75rem;color:#374151;">المتوسط الموصى به:</span>'
+      + '<span style="font-size:1rem;font-weight:800;color:' + color + ';">' + avg + ' ' + unit + '</span>'
+      + '</div></div>';
+  }
+
+  var html = '<div style="padding:18px;font-family:Cairo,Arial,sans-serif;direction:rtl;">'
+    + '<div style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;border-radius:10px;padding:10px 16px;margin-bottom:14px;">'
+    + '<div style="font-weight:800;font-size:.95rem;">⚙️ حسابات φ و Su من SPT</div>'
+    + '<div style="font-size:.75rem;color:#93c5fd;margin-top:3px;">'
+    + 'الطبقة ' + from + '–' + to + ' م  |  ' + uscs + ' (' + soilType + ')  |  SPT = ' + spt + '  |  N60 = ' + (n60 || '—')
+    + '</div></div>'
+    + '<div style="background:#fef9c3;border:1px solid #f59e0b;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:.72rem;color:#78350f;">'
+    + '⚠️ <strong>تنبيه:</strong> هذه القيم <strong>تقديرية</strong> مبنية على علاقات إحصائية من SPT. '
+    + 'للتصميم الدقيق يُوصى بإجراء اختبارات مباشرة (Triaxial / Direct Shear / Vane Shear).'
+    + '</div>'
+    + makeTable(phiRows, phi ? phi.avg + '°' : '—', '°', '📐 زاوية الاحتكاك الداخلي φ° (للتربة الحبيبية)', '#0f766e')
+    + makeTable(suRows,  su  ? su.avg + ' kPa' : '—', 'kPa', '🔶 مقاومة القص غير المصرّف Su (للتربة اللاصقة)', '#92400e')
+    + '</div>';
+
+  // Use existing blReportModal or create quick modal
+  var modal = document.getElementById('blReportModal');
+  var content = document.getElementById('blReportContent');
+  if (modal && content) {
+    content.innerHTML = '<div style="overflow-y:auto;max-height:80vh;">' + html + '</div>';
+    modal.style.display = 'flex';
+    // Update modal title
+    var titleEl = modal.querySelector('div[style*="font-weight:800"]');
+    if (titleEl) titleEl.textContent = '⚙️ حسابات φ و Su من SPT — الطبقة ' + from + '–' + to + ' م';
+  }
+}
+
+function blSuggestUSCS(id) {
+  var tr = document.getElementById('blRow_' + id);
+  if (!tr) return;
+  var inputs  = tr.querySelectorAll('input');
+  var selects = tr.querySelectorAll('select');
+
+  var sptRaw  = inputs[3] ? inputs[3].value : '';
+  var spt     = sptRaw !== '' ? parseFloat(sptRaw) : null;
+  var wcRaw   = inputs[4] ? inputs[4].value : '';
+  var llRaw   = inputs[5] ? inputs[5].value : '';
+  var piRaw   = inputs[6] ? inputs[6].value : '';
+  var descEl  = document.getElementById('blDesc_' + id);
+  var desc    = descEl ? descEl.value : '';
+
+  var ll = (!llRaw || llRaw === 'N.P' || llRaw === 'NP') ? null : parseFloat(llRaw);
+  var pi = (!piRaw || piRaw === 'N.P' || piRaw === 'NP') ? null : parseFloat(piRaw);
+
+  var row = {
+    spt:     spt,
+    ll:      ll    !== null ? ll    : -1,
+    pi:      pi    !== null ? pi    : -1,
+    hasLL:   ll    !== null && !isNaN(ll),
+    hasPI:   pi    !== null && !isNaN(pi),
+    descLC:  desc.toLowerCase(),
+  };
+
+  // No data at all → hide badge
+  var sugBadge = document.getElementById('blUscsSug_' + id);
+  if (spt === null && !row.hasLL && !row.descLC.trim()) {
+    if (sugBadge) sugBadge.style.display = 'none';
+    return;
+  }
+
+  // Find first matching rule
+  var match = null;
+  for (var i = 0; i < BL_USCS_RULES.length; i++) {
+    try {
+      if (BL_USCS_RULES[i].test(row)) { match = BL_USCS_RULES[i]; break; }
+    } catch(e) {}
+  }
+
+  if (!match) {
+    if (sugBadge) sugBadge.style.display = 'none';
+    return;
+  }
+
+  // Store suggestion
+  blUscsSuggestions[id] = { uscs: match.uscs, type: match.type, conf: match.conf, reason: match.reason };
+
+  // Check if current selection already matches
+  var currentUscs = selects[0] ? selects[0].value : '';
+  var currentType = selects[1] ? selects[1].value : '';
+  if (currentUscs === match.uscs && currentType === match.type) {
+    if (sugBadge) sugBadge.style.display = 'none';
+    return;
+  }
+
+  // Show badge
+  var colors = BL_CONF_COLORS[match.conf];
+  var symEl   = document.getElementById('blSugSymbol_' + id);
+  var lblEl   = document.getElementById('blSugLabel_' + id);
+  if (symEl) symEl.textContent = match.uscs;
+  if (lblEl) lblEl.textContent = colors.icon + ' ' + match.reason;
+
+  if (sugBadge) {
+    sugBadge.style.display     = 'flex';
+    sugBadge.style.background  = colors.bg;
+    sugBadge.style.borderColor = colors.border;
+    var applyBtn = sugBadge.querySelector('.bl-sug-apply');
+    if (applyBtn) applyBtn.style.background = colors.border;
+  }
+}
+
+function blApplyUscsSuggestion(id) {
+  var sug = blUscsSuggestions[id];
+  if (!sug) return;
+  var tr = document.getElementById('blRow_' + id);
+  if (!tr) return;
+  var selects = tr.querySelectorAll('select');
+  if (selects[0]) selects[0].value = sug.uscs;
+  if (selects[1]) selects[1].value = sug.type;
+  tr.style.background = BL_ROW_COLORS[sug.type] || '';
+  var badge = document.getElementById('blUscsSug_' + id);
+  if (badge) badge.style.display = 'none';
+  blRowChange(id);
+  showJSONToast('✅ تم تطبيق التصنيف: ' + sug.uscs + ' (' + sug.type + ')', '#059669');
+}
+
+// ══ DESCRIPTION AUTOCOMPLETE ENGINE ════════════════════════════════
+
+// Full USCS descriptions dictionary (English — standard ASTM wording)
+const BL_DESC_DICT = {
+  'SP': [
+    'Poorly Graded Sand, Non-Plastic, Light Brown, Fine Grained, Loose to Medium Dense, Dry.',
+    'Poorly Graded Sand, Non-Plastic, Yellowish Brown, Fine to Medium Grained, Angular to Sub-Rounded, Dry, Loose.',
+    'Poorly Graded Sand, Non-Plastic, Reddish Brown, Medium to Coarse Grained, Sub-Rounded to Rounded, Moist, Loose to Medium Dense.',
+    'Poorly Graded Sand with trace Gravel, Non-Plastic, Light Brown, Dry, Loose.',
+    'Poorly Graded Sand, Non-Plastic, White to Grey, Fine Grained, Very Loose, Dry.',
+  ],
+  'SW': [
+    'Well Graded Sand, Non-Plastic, Brown, Fine to Coarse Grained, Angular to Sub-Angular, Dry, Medium Dense.',
+    'Well Graded Sand with Gravel, Non-Plastic, Brown, Dry, Medium Dense to Dense.',
+    'Well Graded Sand, Non-Plastic, Yellowish Brown, Fine to Coarse Grained, Moist, Dense.',
+  ],
+  'SM': [
+    'Silty Sand, Non-Plastic, Yellowish Brown, Fine to Medium Grained, Angular to Sub-Rounded, Dry, Loose to Medium Dense.',
+    'Silty Sand with Gravel, Non-Plastic, Light Brown, Fine to Coarse Grained, Dry, Medium Dense.',
+    'Silty Sand, Slightly Plastic, Brown, Fine Grained, Moist, Loose.',
+    'Silty Sand, Non-Plastic, Reddish Brown, Fine to Medium Grained, Dry, Medium Dense to Dense.',
+    'Silty Sand, Non-Plastic, Grey, Fine Grained, Wet, Very Loose to Loose.',
+  ],
+  'SC': [
+    'Clayey Sand, Low Plasticity, Brown, Fine Grained, Moist, Medium Stiff.',
+    'Clayey Sand with Gravel, Low to Medium Plasticity, Reddish Brown, Moist, Stiff.',
+    'Clayey Sand, Low Plasticity, Light Brown, Fine to Medium Grained, Moist, Loose to Medium Dense.',
+  ],
+  'SP-SM': [
+    'Poorly Graded Sand with Silt, Non-Plastic, Light Brown, Fine Grained, Dry, Loose.',
+    'Poorly Graded Sand with Silt, Non-Plastic, Yellowish Brown, Fine to Medium Grained, Dry, Medium Dense.',
+  ],
+  'SW-SM': [
+    'Well Graded Sand with Silt, Non-Plastic, Brown, Fine to Coarse Grained, Moist, Medium Dense to Dense.',
+  ],
+  'GW': [
+    'Well Graded Gravel with Sand, Non-Plastic, Brown, Angular to Sub-Rounded, Dry, Dense to Very Dense.',
+    'Well Graded Gravel, Non-Plastic, Light Brown, Angular, Dry, Dense.',
+    'Well Graded Gravel with Sand, Non-Plastic, Reddish Brown, Angular to Sub-Angular, Moist, Dense.',
+  ],
+  'GP': [
+    'Poorly Graded Gravel with Sand, Non-Plastic, Brown, Sub-Rounded, Dry, Medium Dense.',
+    'Poorly Graded Gravel, Non-Plastic, Light Grey, Angular, Dry, Loose to Medium Dense.',
+    'Poorly Graded Gravel, Non-Plastic, Brown, Mixed Sizes, Angular to Rounded, Dry, Loose.',
+  ],
+  'GM': [
+    'Silty Gravel with Sand, Non-Plastic, Brown, Angular to Sub-Rounded, Dry, Dense.',
+    'Silty Gravel, Non-Plastic to Slightly Plastic, Brown, Coarse Grained, Moist, Dense.',
+  ],
+  'GC': [
+    'Clayey Gravel with Sand, Low Plasticity, Brown, Angular to Sub-Angular, Moist, Dense.',
+    'Clayey Gravel, Low to Medium Plasticity, Reddish Brown, Coarse, Moist, Stiff.',
+  ],
+  'ML': [
+    'Silt with Sand, Low Plasticity, Light Brown, Fine Grained, Moist, Soft to Medium Stiff.',
+    'Inorganic Silt, Low Plasticity, Grey, Fine Grained, Moist, Soft.',
+    'Sandy Silt, Low Plasticity, Light Brown, Fine Grained, Moist, Medium Stiff.',
+    'Inorganic Silt, Low Plasticity, Light Grey to Brown, Wet, Soft.',
+    'Silty Soil, Low Plasticity, Brown, Moist, Soft to Medium Stiff.',
+  ],
+  'MH': [
+    'Elastic Silt, High Plasticity, Grey, Fine Grained, Moist, Soft.',
+    'Inorganic Silt with High Plasticity, Light Grey, Moist to Wet, Soft.',
+    'Elastic Silt with Clay, High Plasticity, Grey-Brown, Wet, Soft.',
+  ],
+  'CL': [
+    'Sandy Clay, Low Plasticity, Brown, Fine Grained, Moist, Stiff.',
+    'Lean Clay, Low Plasticity, Light Brown, Moist, Medium Stiff to Stiff.',
+    'Lean Clay with Sand, Low Plasticity, Brown, Moist, Stiff.',
+    'Lean Clay, Low Plasticity, Grey-Brown, Moist to Wet, Medium Stiff.',
+    'Sandy Clay, Low to Medium Plasticity, Reddish Brown, Moist, Stiff to Very Stiff.',
+  ],
+  'CL-ML': [
+    'Sandy Silt/Clay, Low Plasticity, Brown, Fine Grained, Moist, Stiff.',
+    'Silty Clay, Low Plasticity, Light Brown, Moist, Medium Stiff.',
+  ],
+  'CH': [
+    'Fat Clay, High Plasticity, Dark Grey, Fine Grained, Moist to Wet, Soft.',
+    'Fat Clay, High Plasticity, Brown to Dark Brown, Moist, Soft to Medium Stiff.',
+    'Fat Clay with Sand, High Plasticity, Grey, Moist to Wet, Soft.',
+    'Swelling Clay, High Plasticity, Dark Brown to Black, Moist, Stiff.',
+    'Fat Clay, High Plasticity, Grey-Brown, Wet, Very Soft to Soft.',
+  ],
+  'OL': [
+    'Organic Silt, Low Plasticity, Dark Brown to Black, Moist, Soft.',
+    'Organic Sandy Silt, Low Plasticity, Dark Brown, Wet, Very Soft.',
+    'Organic Silt with Clay, Low Plasticity, Dark Grey, Moist, Soft.',
+  ],
+  'OH': [
+    'Organic Clay, High Plasticity, Dark Brown, Wet, Very Soft.',
+    'Organic Fat Clay, High Plasticity, Dark Grey to Black, Wet, Very Soft.',
+  ],
+  'Pt': [
+    'Peat, Highly Organic, Dark Brown to Black, Fibrous, Wet, Very Soft, Strong Organic Odor.',
+    'Peat with Organic Material, Dark Brown, Fibrous, Saturated, Very Soft.',
+  ],
+  'ROCK': [
+    'Completely Weathered GRANITE, Reddish Brown, Completely Fractured, Medium Dense to Dense.',
+    'Highly Weathered Sandstone, Light Brown to Grey, Fractured, Weak.',
+    'Moderately Weathered LIMESTONE, Grey, Moderately Fractured, Moderate Strength.',
+    'Fresh BASALT, Dark Grey to Black, Slightly Fractured, High Strength.',
+    'Weathered SHALE, Grey-Brown, Highly Fractured to Laminated, Weak to Moderate Strength.',
+    'Completely Decomposed Granite (CDG), Reddish Brown, Sand-like Structure, Medium Dense.',
+    'Highly Weathered GRANITE, Grey, Fractured, Weak to Moderate Strength, End of Boring.',
+  ],
+  'FILL': [
+    'Fill Material, Mixed Soil with Debris, Brown, Loose, Heterogeneous.',
+    'Uncontrolled Fill, Sandy with Gravel and Debris, Brown, Very Loose.',
+    'Engineered Fill, Compacted Sand and Gravel, Brown, Medium Dense to Dense.',
+    'Fill — Silty Sand with Construction Debris, Brown, Loose.',
+  ],
+  'Sand': [
+    'Silty Sand with Gravel, Non-Plastic, Yellowish Brown, Fine to Medium Coarse Grained, Angular to Sub Rounded, Dry, Loose to Medium Dense.',
+    'Poorly Graded Sand, Non-Plastic, Light Brown, Fine Grained, Dry, Loose.',
+    'Well Graded Sand with Gravel, Non-Plastic, Brown, Medium Dense.',
+  ],
+  'Gravel': [
+    'Poorly Graded Gravel with Sand, Non-Plastic, Brown, Sub-Rounded, Dry, Medium Dense.',
+    'Well Graded Gravel with Sand, Non-Plastic, Brown, Angular, Dry, Dense.',
+    'Gravelly Sand, Non-Plastic, Light Brown, Dry, Medium Dense.',
+  ],
+  'Silt': [
+    'Sandy Silt, Low Plasticity, Light Brown, Fine Grained, Moist, Medium Stiff.',
+    'Inorganic Silt, Low Plasticity, Grey, Fine Grained, Moist, Soft.',
+  ],
+  'Clay': [
+    'Sandy Clay, Low Plasticity, Brown, Fine Grained, Moist, Stiff.',
+    'Fat Clay, High Plasticity, Dark Grey, Moist to Wet, Soft.',
+    'Lean Clay with Sand, Low Plasticity, Brown, Moist, Stiff.',
+  ],
+  'Rock': [
+    'Completely Weathered GRANITE, Reddish Brown, Completely Fractured, Uncemented, Medium Dense to Dense.',
+    'Highly Weathered Sandstone, Light Brown, Fractured, Weak.',
+    'Moderately Weathered LIMESTONE, Grey, Fractured, Moderate Strength.',
+    'Fresh BASALT, Dark Grey, Slightly Fractured, High Strength, End of Boring.',
+  ],
+  'Fill': [
+    'Uncontrolled Fill, Mixed Soil with Debris, Brown, Very Loose.',
+    'Engineered Fill, Compacted Sand and Gravel, Medium Dense.',
+    'Fill Material — Sandy with Silt, Brown, Loose, Heterogeneous.',
+  ],
+  'Organic': [
+    'Organic Silt, Low Plasticity, Dark Brown, Moist, Soft.',
+    'Peat, Highly Organic, Dark Brown to Black, Fibrous, Wet, Very Soft.',
+    'Organic Clay, High Plasticity, Dark Grey, Wet, Very Soft.',
+  ],
+};
+
+// Common keywords for free-text search
+const BL_DESC_KEYWORDS = [
+  { k:'loose',       text:'Loose to Medium Dense, Dry, Fine Grained Sand.' },
+  { k:'medium dense',text:'Medium Dense, Dry, Fine to Medium Grained Sand.' },
+  { k:'dense',       text:'Dense to Very Dense, Coarse Grained Sand/Gravel.' },
+  { k:'soft',        text:'Soft, Moist, Low Plasticity Clay.' },
+  { k:'stiff',       text:'Stiff to Very Stiff, Moist, Clay.' },
+  { k:'hard',        text:'Hard, Dry, High Plasticity Clay.' },
+  { k:'granite',     text:'Completely Weathered GRANITE, Reddish Brown, Completely Fractured, Uncemented, Medium Dense to Dense.' },
+  { k:'limestone',   text:'Moderately Weathered LIMESTONE, Grey, Moderately Fractured, Moderate Strength.' },
+  { k:'basalt',      text:'Fresh BASALT, Dark Grey to Black, Slightly Fractured, High Strength.' },
+  { k:'sandstone',   text:'Highly Weathered Sandstone, Light Brown to Grey, Fractured, Weak to Moderate Strength.' },
+  { k:'shale',       text:'Weathered SHALE, Grey-Brown, Highly Fractured to Laminated, Weak Strength.' },
+  { k:'end of boring', text:'End of Boring at Total Depth.' },
+  { k:'eob',         text:'End of Boring at Total Depth.' },
+  { k:'water',       text:'Groundwater encountered at this depth.' },
+  { k:'debris',      text:'Uncontrolled Fill, Mixed Soil with Debris, Brown, Very Loose.' },
+  { k:'peat',        text:'Peat, Highly Organic, Dark Brown to Black, Fibrous, Wet, Very Soft, Strong Organic Odor.' },
+];
+
+var blAcActiveIdx = {}; // per row active index
+
+function blAcGetSuggestions(id) {
+  var tr = document.getElementById('blRow_' + id);
+  if (!tr) return [];
+  var descEl = document.getElementById('blDesc_' + id);
+  var selects = tr.querySelectorAll('select');
+  var uscs     = selects[0] ? selects[0].value : '';
+  var soilType = selects[1] ? selects[1].value : '';
+  var query    = (descEl ? descEl.value : '').trim().toLowerCase();
+
+  var results = [];
+  var seen = new Set();
+
+  function addResult(text, tag) {
+    if (!seen.has(text)) {
+      seen.add(text);
+      results.push({ text: text, tag: tag });
+    }
+  }
+
+  // 1. Keyword match first
+  if (query.length >= 2) {
+    BL_DESC_KEYWORDS.forEach(function(kw) {
+      if (kw.k.indexOf(query) !== -1 || query.indexOf(kw.k) !== -1) {
+        addResult(kw.text, '💡 كلمة مفتاح');
+      }
+    });
+  }
+
+  // 2. Exact USCS match
+  if (uscs && BL_DESC_DICT[uscs]) {
+    BL_DESC_DICT[uscs].forEach(function(t) { addResult(t, uscs); });
+  }
+
+  // 3. Soil type match
+  if (soilType && BL_DESC_DICT[soilType]) {
+    BL_DESC_DICT[soilType].forEach(function(t) { addResult(t, soilType); });
+  }
+
+  // 4. Free-text filter
+  if (query.length >= 2) {
+    results = results.filter(function(r) {
+      return r.text.toLowerCase().indexOf(query) !== -1 || query.length < 3;
+    });
+    // Also search all dict for query
+    if (results.length < 4) {
+      Object.keys(BL_DESC_DICT).forEach(function(key) {
+        BL_DESC_DICT[key].forEach(function(t) {
+          if (t.toLowerCase().indexOf(query) !== -1) {
+            addResult(t, key);
+          }
+        });
+      });
+      results = results.filter(function(r) {
+        return r.text.toLowerCase().indexOf(query) !== -1;
+      });
+    }
+  }
+
+  return results.slice(0, 8);
+}
+
+function blAcShow(id) {
+  var list = document.getElementById('blAcList_' + id);
+  if (!list) return;
+  var suggestions = blAcGetSuggestions(id);
+  if (!suggestions.length) { list.innerHTML = ''; return; }
+
+  blAcActiveIdx[id] = -1;
+  list.innerHTML = suggestions.map(function(s, i) {
+    var hint = s.text.length > 80 ? s.text.substring(0,80) + '…' : s.text;
+    return '<div class="bl-ac-item" data-idx="' + i + '" data-text="' + s.text.replace(/"/g,'&quot;') + '"'
+      + ' onmousedown="blAcPick(' + id + ',' + i + ')" onmouseover="blAcHover(' + id + ',' + i + ')">'
+      + '<span class="bl-ac-tag">' + s.tag + '</span>'
+      + '<span class="bl-ac-main">' + hint + '</span>'
+      + '</div>';
+  }).join('');
+}
+
+function blAcHover(id, idx) {
+  blAcActiveIdx[id] = idx;
+  var list = document.getElementById('blAcList_' + id);
+  if (!list) return;
+  Array.from(list.querySelectorAll('.bl-ac-item')).forEach(function(el, i) {
+    el.classList.toggle('bl-ac-active', i === idx);
+  });
+}
+
+function blAcPick(id, idx) {
+  var list = document.getElementById('blAcList_' + id);
+  if (!list) return;
+  var items = list.querySelectorAll('.bl-ac-item');
+  var item = items[idx];
+  if (!item) return;
+  var text = item.getAttribute('data-text');
+  var descEl = document.getElementById('blDesc_' + id);
+  if (descEl) { descEl.value = text; blRowChange(id); blSuggestUSCS(id); }
+  list.innerHTML = '';
+}
+
+function blAcKey(event, id) {
+  var list = document.getElementById('blAcList_' + id);
+  if (!list || !list.children.length) return;
+  var items = list.querySelectorAll('.bl-ac-item');
+  var cur = blAcActiveIdx[id] || -1;
+  if (event.key === 'ArrowDown') {
+    event.preventDefault();
+    cur = Math.min(cur + 1, items.length - 1);
+    blAcActiveIdx[id] = cur;
+    Array.from(items).forEach(function(el, i) { el.classList.toggle('bl-ac-active', i === cur); });
+  } else if (event.key === 'ArrowUp') {
+    event.preventDefault();
+    cur = Math.max(cur - 1, 0);
+    blAcActiveIdx[id] = cur;
+    Array.from(items).forEach(function(el, i) { el.classList.toggle('bl-ac-active', i === cur); });
+  } else if (event.key === 'Enter' && cur >= 0) {
+    event.preventDefault();
+    blAcPick(id, cur);
+  } else if (event.key === 'Escape') {
+    list.innerHTML = '';
+  }
+}
+
+function blAcAutoFill(id) {
+  // When soil type changes AND description is empty → auto-suggest first option
+  var descEl = document.getElementById('blDesc_' + id);
+  if (!descEl || descEl.value.trim()) return; // don't overwrite existing text
+  // Just show the suggestions, don't auto-pick
+  blAcShow(id);
+}
+
+// Close dropdowns on outside click
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.bl-desc-wrap')) {
+    document.querySelectorAll('.bl-ac-list').forEach(function(el) { el.innerHTML = ''; });
+  }
+});
 
 function blDeleteRow(id) {
   const tr = document.getElementById('blRow_' + id);
@@ -16326,6 +17776,8 @@ function blGetRows() {
       pi:       inputs[6] ? inputs[6].value : '',
       rec:      inputs[7] && inputs[7].value !== '' ? inputs[7].value : '',
       sampleNo: inputs[8] ? inputs[8].value : '',
+      phi: blCalcPhi(sptVal, soilType),
+      su:  blCalcSu(sptVal, soilType),
     });
   });
   return rows;
@@ -16386,7 +17838,7 @@ function blUpdateSummary() {
 
 // ── تصدير SVG كـ PNG ─────────────────────────────────────────────
 function blExportSVGasPNG() {
-  var svgEl = document.querySelector('#blDrawingContainer svg');
+  var svgEl = document.getElementById('blSVG') || document.querySelector('#blDrawingContainer svg');
   if (!svgEl) { alert('ارسم اللوج أولاً ثم صدّر'); return; }
   var serializer = new XMLSerializer();
   var svgStr = serializer.serializeToString(svgEl);
@@ -16437,10 +17889,16 @@ function blGenerate() {
   var blDriller = (document.getElementById('bl_driller').value  ||'—').trim();
   var blRig     = (document.getElementById('bl_drilRig').value  ||'—').trim();
   var blGwlRaw  = (document.getElementById('bl_gwl').value      ||'NF').trim();
+  var blGwlDryRaw  = (document.getElementById('bl_gwl_dry')  ? document.getElementById('bl_gwl_dry').value  : '').trim() || 'NF';
+  var blGwlWetRaw  = (document.getElementById('bl_gwl_wet')  ? document.getElementById('bl_gwl_wet').value  : '').trim() || 'NF';
+  var blGwlHighRaw = (document.getElementById('bl_gwl_high') ? document.getElementById('bl_gwl_high').value : '').trim() || 'NF';
   var blNorth   = (document.getElementById('bl_north').value    ||'—').trim();
   var blEast    = (document.getElementById('bl_east').value     ||'—').trim();
   var blElev    = (document.getElementById('bl_elevation').value||'—').trim();
-  var blGwlNum  = parseFloat(blGwlRaw);
+  var blGwlNum    = parseFloat(blGwlRaw);
+  var blGwlDryNum  = parseFloat(blGwlDryRaw);
+  var blGwlWetNum  = parseFloat(blGwlWetRaw);
+  var blGwlHighNum = parseFloat(blGwlHighRaw);
   var blBhDiam  = ((document.getElementById("bl_bhDiam")||{}).value||"").trim();
   var blCasing  = ((document.getElementById("bl_casing")||{}).value||"").trim();
   var blHammerEr = ((document.getElementById("bl_hammerEr")||{}).value||"60").trim();
@@ -16454,10 +17912,11 @@ function blGenerate() {
   const colSymW     = 80;
   const colSPTW     = 160;
   const colDescW    = 240;
-  const colDataW    = 55;
+  const colDataW    = 52;
+  const colPhiW     = 50;
   const depthColW   = 45;
-  const numDataCols = 5;
-  const totalW      = marginLeft + depthColW + colSymW + colDescW + colSPTW + (numDataCols * colDataW) + 40;
+  const numDataCols = 7; // WC LL PI REC Sample + φ Su
+  const totalW      = marginLeft + depthColW + colSymW + colDescW + colSPTW + colPhiW + colPhiW + (5 * colDataW) + 40;
   const totalH      = marginTop + totalDepth * scale + 20 + legendH;
 
   // ── أعمدة X ──
@@ -16466,7 +17925,9 @@ function blGenerate() {
   const xDesc   = xSym    + colSymW;
   const xSPT    = xDesc   + colDescW;
   const xWC     = xSPT    + colSPTW;
-  const xLL     = xWC     + colDataW;
+  const xPhi    = xWC     + colDataW;
+  const xSu     = xPhi    + colPhiW;
+  const xLL     = xSu     + colPhiW;
   const xPI     = xLL     + colDataW;
   const xREC    = xPI     + colDataW;
   const xSample = xREC    + colDataW;
@@ -16493,7 +17954,7 @@ function blGenerate() {
     { from: 50, to: sptMax, fill:'#fee2e2', label:'V.D' },
   ];
 
-  let svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + totalW + '" height="' + totalH + '" style="font-family:Arial,sans-serif;direction:ltr;">\n'
+  let svg = '<svg id="blSVG" xmlns="http://www.w3.org/2000/svg" width="' + totalW + '" height="' + totalH + '" style="font-family:Arial,sans-serif;direction:ltr;">\n'
   + '<defs>\n'
   + blDefs()
   + '<linearGradient id="sptG_vl" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#6ee7b7"/><stop offset="100%" stop-color="#10b981"/></linearGradient>'
@@ -16538,7 +17999,11 @@ function blGenerate() {
   ry2 += rStep;
   svg += '<text x="' + rx2 + '" y="' + ry2 + '" fill="#1e3a5f" font-size="7.5" font-weight="bold">DRILLER / RIG:</text><text x="' + (rx2+78) + '" y="' + ry2 + '" fill="#1e293b" font-size="7.5">' + blEsc(blDriller) + ' / ' + blEsc(blRig) + '</text>';
   ry2 += rStep;
-  svg += '<text x="' + rx2 + '" y="' + ry2 + '" fill="#1e3a5f" font-size="7.5" font-weight="bold">ELEVATION / GWL:</text><text x="' + (rx2+98) + '" y="' + ry2 + '" fill="#1e293b" font-size="7.5">' + blEsc(blElev) + ' m  /  ' + blEsc(blGwlRaw) + '</text>';
+  var gwlHeaderText = blEsc(blElev) + ' m  |  GWL: ' + blEsc(blGwlRaw)
+    + (!isNaN(blGwlDryNum)  ? '  Dry:'  + blGwlDryRaw  + 'm' : '')
+    + (!isNaN(blGwlWetNum)  ? '  Wet:'  + blGwlWetRaw  + 'm' : '')
+    + (!isNaN(blGwlHighNum) ? '  High:' + blGwlHighRaw + 'm' : '');
+  svg += '<text x="' + rx2 + '" y="' + ry2 + '" fill="#1e3a5f" font-size="7.5" font-weight="bold">ELEVATION / GWL:</text><text x="' + (rx2+98) + '" y="' + ry2 + '" fill="#1e293b" font-size="7.5">' + gwlHeaderText + '</text>';
   ry2 += rStep;
   var diamStr = blBhDiam ? blBhDiam + ' mm' : '—';
   var caseStr = blCasing ? blCasing + ' mm' : 'No Casing';
@@ -16549,6 +18014,8 @@ function blGenerate() {
   svg += '<rect x="' + xSym    + '" y="' + (marginTop-60) + '" width="' + colSymW   + '" height="60" fill="#1e3a5f"/>';
   svg += '<rect x="' + xDesc   + '" y="' + (marginTop-60) + '" width="' + colDescW  + '" height="60" fill="#1e3a5f"/>';
   svg += '<rect x="' + xWC     + '" y="' + (marginTop-60) + '" width="' + colDataW  + '" height="60" fill="#1e3a5f"/>';
+  svg += '<rect x="' + xPhi    + '" y="' + (marginTop-60) + '" width="' + colPhiW   + '" height="60" fill="#0f766e"/>';
+  svg += '<rect x="' + xSu     + '" y="' + (marginTop-60) + '" width="' + colPhiW   + '" height="60" fill="#92400e"/>';
   svg += '<rect x="' + xLL     + '" y="' + (marginTop-60) + '" width="' + colDataW  + '" height="60" fill="#1e3a5f"/>';
   svg += '<rect x="' + xPI     + '" y="' + (marginTop-60) + '" width="' + colDataW  + '" height="60" fill="#1e3a5f"/>';
   svg += '<rect x="' + xREC    + '" y="' + (marginTop-60) + '" width="' + colDataW  + '" height="60" fill="#1e3a5f"/>';
@@ -16568,6 +18035,10 @@ function blGenerate() {
   svg += '<text x="' + (xSPT+colSPTW/2)       + '" y="' + (marginTop-47) + '" text-anchor="middle" fill="white" font-size="9.5" font-weight="bold">SPT ' + (showN60 ? '(N60)' : '(N)') + '  Blows</text>';
   svg += '<text x="' + (xWC+colDataW/2)       + '" y="' + (marginTop-44) + '" text-anchor="middle" fill="white" font-size="8.5" font-weight="bold">WC</text>';
   svg += '<text x="' + (xWC+colDataW/2)       + '" y="' + (marginTop-32) + '" text-anchor="middle" fill="white" font-size="8"   font-weight="bold">(%)</text>';
+  svg += '<text x="' + (xPhi+colPhiW/2)       + '" y="' + (marginTop-44) + '" text-anchor="middle" fill="white" font-size="9"   font-weight="bold">φ°</text>';
+  svg += '<text x="' + (xPhi+colPhiW/2)       + '" y="' + (marginTop-32) + '" text-anchor="middle" fill="white" font-size="7.5" font-weight="bold">Gran.</text>';
+  svg += '<text x="' + (xSu +colPhiW/2)       + '" y="' + (marginTop-44) + '" text-anchor="middle" fill="white" font-size="8.5" font-weight="bold">Su</text>';
+  svg += '<text x="' + (xSu +colPhiW/2)       + '" y="' + (marginTop-32) + '" text-anchor="middle" fill="white" font-size="7.5" font-weight="bold">kPa</text>';
   svg += '<text x="' + (xLL+colDataW/2)       + '" y="' + (marginTop-44) + '" text-anchor="middle" fill="white" font-size="8.5" font-weight="bold">LL</text>';
   svg += '<text x="' + (xLL+colDataW/2)       + '" y="' + (marginTop-32) + '" text-anchor="middle" fill="white" font-size="8"   font-weight="bold">(%)</text>';
   svg += '<text x="' + (xPI+colDataW/2)       + '" y="' + (marginTop-44) + '" text-anchor="middle" fill="white" font-size="8.5" font-weight="bold">PI</text>';
@@ -16674,11 +18145,29 @@ function blGenerate() {
     var midY = y1 + h/2 + 3;
     var cellStyle = 'text-anchor="middle" fill="#1e293b" font-size="8.5"';
     svg += '<rect x="' + xWC     + '" y="' + y1 + '" width="' + colDataW + '" height="' + h + '" fill="#f0f9ff" stroke="#e2e8f0" stroke-width="0.4"/>';
+    svg += '<rect x="' + xPhi    + '" y="' + y1 + '" width="' + colPhiW  + '" height="' + h + '" fill="#f0fdf9" stroke="#e2e8f0" stroke-width="0.4"/>';
+    svg += '<rect x="' + xSu     + '" y="' + y1 + '" width="' + colPhiW  + '" height="' + h + '" fill="#fffbeb" stroke="#e2e8f0" stroke-width="0.4"/>';
     svg += '<rect x="' + xLL     + '" y="' + y1 + '" width="' + colDataW + '" height="' + h + '" fill="#f8fafc" stroke="#e2e8f0" stroke-width="0.4"/>';
     svg += '<rect x="' + xPI     + '" y="' + y1 + '" width="' + colDataW + '" height="' + h + '" fill="#f8fafc" stroke="#e2e8f0" stroke-width="0.4"/>';
     svg += '<rect x="' + xREC    + '" y="' + y1 + '" width="' + colDataW + '" height="' + h + '" fill="#f8fafc" stroke="#e2e8f0" stroke-width="0.4"/>';
     svg += '<rect x="' + xSample + '" y="' + y1 + '" width="' + colDataW + '" height="' + h + '" fill="#fffbeb" stroke="#e2e8f0" stroke-width="0.4"/>';
     if (row.wc)       svg += '<text x="' + (xWC+colDataW/2)     + '" y="' + midY + '" ' + cellStyle + '>' + blEsc(String(row.wc))       + '</text>';
+    // φ value
+    if (row.phi && row.phi.avg) {
+      svg += '<text x="' + (xPhi+colPhiW/2) + '" y="' + midY + '" text-anchor="middle" fill="#0f766e" font-size="8" font-weight="bold">' + row.phi.avg + '°</text>';
+    } else if (row.su === null && row.phi === null) {
+      svg += '<text x="' + (xPhi+colPhiW/2) + '" y="' + midY + '" text-anchor="middle" fill="#94a3b8" font-size="7.5">—</text>';
+    } else {
+      svg += '<text x="' + (xPhi+colPhiW/2) + '" y="' + midY + '" text-anchor="middle" fill="#94a3b8" font-size="7">N/A</text>';
+    }
+    // Su value
+    if (row.su && row.su.avg) {
+      svg += '<text x="' + (xSu+colPhiW/2)  + '" y="' + midY + '" text-anchor="middle" fill="#92400e" font-size="8" font-weight="bold">' + row.su.avg + '</text>';
+    } else if (row.phi === null && row.su === null) {
+      svg += '<text x="' + (xSu+colPhiW/2)  + '" y="' + midY + '" text-anchor="middle" fill="#94a3b8" font-size="7.5">—</text>';
+    } else {
+      svg += '<text x="' + (xSu+colPhiW/2)  + '" y="' + midY + '" text-anchor="middle" fill="#94a3b8" font-size="7">N/A</text>';
+    }
     if (row.ll)       svg += '<text x="' + (xLL+colDataW/2)     + '" y="' + midY + '" ' + cellStyle + '>' + blEsc(row.ll)               + '</text>';
     if (row.pi)       svg += '<text x="' + (xPI+colDataW/2)     + '" y="' + midY + '" ' + cellStyle + '>' + blEsc(row.pi)               + '</text>';
     if (row.rec)      svg += '<text x="' + (xREC+colDataW/2)    + '" y="' + midY + '" ' + cellStyle + '>' + blEsc(String(row.rec))      + '</text>';
@@ -16715,28 +18204,39 @@ function blGenerate() {
   svg += '<line x1="' + xDesc   + '" y1="' + frameTop + '" x2="' + xDesc   + '" y2="' + zoneBottom + '" stroke="#1e3a5f" stroke-width="1"/>';
   svg += '<line x1="' + xSPT    + '" y1="' + frameTop + '" x2="' + xSPT    + '" y2="' + zoneBottom + '" stroke="#1e3a5f" stroke-width="1"/>';
   svg += '<line x1="' + xWC     + '" y1="' + frameTop + '" x2="' + xWC     + '" y2="' + zoneBottom + '" stroke="#1e3a5f" stroke-width="0.8"/>';
+  svg += '<line x1="' + xPhi    + '" y1="' + frameTop + '" x2="' + xPhi    + '" y2="' + zoneBottom + '" stroke="#0f766e" stroke-width="0.8"/>';
+  svg += '<line x1="' + xSu     + '" y1="' + frameTop + '" x2="' + xSu     + '" y2="' + zoneBottom + '" stroke="#92400e" stroke-width="0.8"/>';
   svg += '<line x1="' + xLL     + '" y1="' + frameTop + '" x2="' + xLL     + '" y2="' + zoneBottom + '" stroke="#1e3a5f" stroke-width="0.8"/>';
   svg += '<line x1="' + xPI     + '" y1="' + frameTop + '" x2="' + xPI     + '" y2="' + zoneBottom + '" stroke="#1e3a5f" stroke-width="0.8"/>';
   svg += '<line x1="' + xREC    + '" y1="' + frameTop + '" x2="' + xREC    + '" y2="' + zoneBottom + '" stroke="#1e3a5f" stroke-width="0.8"/>';
   svg += '<line x1="' + xSample + '" y1="' + frameTop + '" x2="' + xSample + '" y2="' + zoneBottom + '" stroke="#1e3a5f" stroke-width="0.8"/>';
 
-  // ══ رمز منسوب المياه الجوفية ▼ GWL ══
-  if (!isNaN(blGwlNum) && blGwlNum >= 0 && blGwlNum <= totalDepth) {
-    var gwlY = marginTop + blGwlNum * scale;
+  // ══ رمز منسوب المياه الجوفية ▼ GWL (Multiple Seasonal) ══
+  function drawGwlLine(gwlNum, gwlLabel, lineColor, fillColor, triOffset) {
+    if (isNaN(gwlNum) || gwlNum < 0 || gwlNum > totalDepth) return;
+    var gwlY  = marginTop + gwlNum * scale;
+    var triX  = xDepth + depthColW / 2 + triOffset;
+    var triSz = 6;
     svg += '<line x1="' + xDepth + '" y1="' + gwlY + '" x2="' + xEnd + '" y2="' + gwlY
-         + '" stroke="#0ea5e9" stroke-width="1.8" stroke-dasharray="8,4" opacity="0.85"/>';
-    var triX  = xDepth + depthColW / 2;
-    var triSz = 7;
+         + '" stroke="' + lineColor + '" stroke-width="1.6" stroke-dasharray="8,4" opacity="0.9"/>';
     svg += '<polygon points="'
-         + (triX)           + ',' + (gwlY + triSz) + ' '
-         + (triX - triSz)   + ',' + (gwlY - triSz * 0.6) + ' '
-         + (triX + triSz)   + ',' + (gwlY - triSz * 0.6)
-         + '" fill="#0ea5e9" stroke="#0369a1" stroke-width="0.8"/>';
-    svg += '<text x="' + (xDepth + depthColW / 2) + '" y="' + (gwlY + triSz + 10)
-         + '" text-anchor="middle" fill="#0369a1" font-size="7.5" font-weight="bold">GWL</text>';
-    svg += '<text x="' + (xDepth + depthColW / 2) + '" y="' + (gwlY + triSz + 19)
-         + '" text-anchor="middle" fill="#0369a1" font-size="7">' + blGwlNum.toFixed(1) + ' m</text>';
+         + triX           + ',' + (gwlY + triSz) + ' '
+         + (triX - triSz) + ',' + (gwlY - triSz * 0.6) + ' '
+         + (triX + triSz) + ',' + (gwlY - triSz * 0.6)
+         + '" fill="' + fillColor + '" stroke="' + lineColor + '" stroke-width="0.8"/>';
+    svg += '<text x="' + triX + '" y="' + (gwlY + triSz + 10)
+         + '" text-anchor="middle" fill="' + lineColor + '" font-size="6.5" font-weight="bold">' + gwlLabel + '</text>';
+    svg += '<text x="' + triX + '" y="' + (gwlY + triSz + 18)
+         + '" text-anchor="middle" fill="' + lineColor + '" font-size="6">' + gwlNum.toFixed(1) + ' m</text>';
   }
+  // At-drilling GWL (أزرق — الأساسي)
+  drawGwlLine(blGwlNum,    'GWL',  '#0369a1', '#0ea5e9', 0);
+  // Dry season GWL (أخضر)
+  drawGwlLine(blGwlDryNum, 'DRY',  '#15803d', '#4ade80', -12);
+  // Wet season GWL (برتقالي)
+  drawGwlLine(blGwlWetNum, 'WET',  '#b45309', '#fb923c', 0);
+  // Highest seasonal GWL (بنفسجي — الأعلى)
+  drawGwlLine(blGwlHighNum,'HIGH', '#7c3aed', '#c4b5fd', 12);
 
   // ══ Legend Box في الأسفل ══
   var lgY   = zoneBottom + 14;
@@ -16794,14 +18294,20 @@ function blGenerate() {
   var row3Y = row2Y + 18;
   var misc = [
     function(ix) {
-      svg += '<line x1="' + ix + '" y1="' + (row3Y + 5) + '" x2="' + (ix+20) + '" y2="' + (row3Y+5)
-           + '" stroke="#0ea5e9" stroke-width="1.8" stroke-dasharray="5,3"/>';
-      svg += '<polygon points="'
-           + (ix+10)    + ',' + (row3Y+12) + ' '
-           + (ix+4)     + ',' + (row3Y+5)  + ' '
-           + (ix+16)    + ',' + (row3Y+5)
-           + '" fill="#0ea5e9" stroke="#0369a1" stroke-width="0.7"/>';
-      svg += '<text x="' + (ix+24) + '" y="' + (row3Y+9) + '" fill="#0369a1" font-size="7.5" font-weight="bold">GWL — منسوب المياه الجوفية</text>';
+      // GWL line samples (3 colours)
+      var gy = row3Y + 6;
+      svg += '<line x1="' + ix     + '" y1="' + gy + '" x2="' + (ix+14) + '" y2="' + gy + '" stroke="#0369a1" stroke-width="1.6" stroke-dasharray="5,3"/>';
+      svg += '<polygon points="' + (ix+7) + ',' + (gy+6) + ' ' + (ix+3) + ',' + (gy-3) + ' ' + (ix+11) + ',' + (gy-3) + '" fill="#0ea5e9" stroke="#0369a1" stroke-width="0.7"/>';
+      svg += '<line x1="' + (ix+16) + '" y1="' + gy + '" x2="' + (ix+28) + '" y2="' + gy + '" stroke="#15803d" stroke-width="1.6" stroke-dasharray="5,3"/>';
+      svg += '<polygon points="' + (ix+22) + ',' + (gy+6) + ' ' + (ix+18) + ',' + (gy-3) + ' ' + (ix+26) + ',' + (gy-3) + '" fill="#4ade80" stroke="#15803d" stroke-width="0.7"/>';
+      svg += '<line x1="' + (ix+30) + '" y1="' + gy + '" x2="' + (ix+42) + '" y2="' + gy + '" stroke="#b45309" stroke-width="1.6" stroke-dasharray="5,3"/>';
+      svg += '<polygon points="' + (ix+36) + ',' + (gy+6) + ' ' + (ix+32) + ',' + (gy-3) + ' ' + (ix+40) + ',' + (gy-3) + '" fill="#fb923c" stroke="#b45309" stroke-width="0.7"/>';
+      svg += '<text x="' + (ix+46) + '" y="' + (row3Y+9) + '" fill="#0369a1" font-size="7" font-weight="bold">GWL </text>';
+      svg += '<text x="' + (ix+62) + '" y="' + (row3Y+9) + '" fill="#15803d" font-size="7" font-weight="bold">Dry </text>';
+      svg += '<text x="' + (ix+78) + '" y="' + (row3Y+9) + '" fill="#b45309" font-size="7" font-weight="bold">Wet</text>';
+      svg += '<line x1="' + (ix+97) + '" y1="' + gy + '" x2="' + (ix+111) + '" y2="' + gy + '" stroke="#7c3aed" stroke-width="1.6" stroke-dasharray="5,3"/>';
+      svg += '<polygon points="' + (ix+104) + ',' + (gy+6) + ' ' + (ix+100) + ',' + (gy-3) + ' ' + (ix+108) + ',' + (gy-3) + '" fill="#c4b5fd" stroke="#7c3aed" stroke-width="0.7"/>';
+      svg += '<text x="' + (ix+115) + '" y="' + (row3Y+9) + '" fill="#7c3aed" font-size="7" font-weight="bold">High</text>';
     },
     function(ix) {
       svg += '<polyline points="' + ix + ',' + (row3Y+10) + ' ' + (ix+8) + ',' + (row3Y+3) + ' ' + (ix+20) + ',' + (row3Y+8)
@@ -16890,10 +18396,18 @@ function blDefs() {
 // ── Word wrap helper ──────────────────────────────────────────────
 function blWrapText(text, maxChars) {
   if (!text) return [''];
-  const words = text.split(' ');
-  const lines = [];
-  let cur = '';
+  var words = text.split(' ');
+  var lines = [];
+  var cur = '';
   words.forEach(function(w) {
+    // إذا الكلمة أطول من maxChars وحدها — قسّمها
+    if (w.length > maxChars) {
+      if (cur) { lines.push(cur.trim()); cur = ''; }
+      for (var i = 0; i < w.length; i += maxChars) {
+        lines.push(w.substring(i, i + maxChars));
+      }
+      return;
+    }
     if ((cur + ' ' + w).trim().length > maxChars) {
       if (cur) lines.push(cur.trim());
       cur = w;
@@ -16914,7 +18428,8 @@ function blReset() {
   if (!confirm('هل تريد مسح جميع بيانات سجل الجسة؟')) return;
   blClearRows();
   ['bl_bhNo','bl_dateStart','bl_dateEnd','bl_totalDepth','bl_geologist',
-   'bl_driller','bl_gwl','bl_north','bl_east','bl_elevation','bl_projNo'].forEach(function(id){
+   'bl_driller','bl_gwl','bl_north','bl_east','bl_elevation','bl_projNo',
+   'bl_bhDiam','bl_casing','bl_gwl_dry','bl_gwl_wet','bl_gwl_high'].forEach(function(id){
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
@@ -16942,6 +18457,9 @@ function blLoadDemo() {
   document.getElementById('bl_driller').value     = 'Gamal';
   document.getElementById('bl_drilRig').value     = 'Rotary';
   document.getElementById('bl_gwl').value         = 'NF';
+  var blGwlDryEl  = document.getElementById('bl_gwl_dry');  if (blGwlDryEl)  blGwlDryEl.value  = '';
+  var blGwlWetEl  = document.getElementById('bl_gwl_wet');  if (blGwlWetEl)  blGwlWetEl.value  = '';
+  var blGwlHighEl = document.getElementById('bl_gwl_high'); if (blGwlHighEl) blGwlHighEl.value = '';
   document.getElementById('bl_projNo').value      = 'ST-SM-326';
   document.getElementById('bl_elevation').value   = '—';
 
@@ -16986,81 +18504,146 @@ function blPrintReport() {
   const erVal   = document.getElementById('bl_hammerEr')?.value  || '60';
   const cnVal   = document.getElementById('bl_cnMethod')?.value  || 'none';
 
-  const svgDiv = document.querySelector('#blDrawingContainer div');
-  const svgHTML = svgDiv ? svgDiv.innerHTML : '';
+  // ── Get the full SVG element from the drawing container ──
+  const svgEl = document.getElementById('blSVG') || document.querySelector('#blDrawingContainer svg');
+  const fullSVGHTML = svgEl ? svgEl.outerHTML : '';
 
-  // Summary for report
+  // Extract SVG width/height for page-slicing
+  const svgW = svgEl ? (parseInt(svgEl.getAttribute('width')) || 900) : 900;
+  const svgH = svgEl ? (parseInt(svgEl.getAttribute('height')) || 1200) : 1200;
+
+  const scaleVal = parseInt((document.getElementById('bl_scale') || {}).value || '60');
+  const totalDepthNum = parseFloat(depth) || rows.reduce(function(mx,r){ return Math.max(mx, parseFloat(r.to)||0); }, 0);
+
+  // ── Summary ──
   var sptVals = rows.filter(function(r){ return r.spt !== null && !isNaN(r.spt); }).map(function(r){ return r.spt; });
-  var avgSPT = sptVals.length ? (sptVals.reduce(function(a,b){return a+b;},0)/sptVals.length).toFixed(1) : '—';
-  var maxSPT = sptVals.length ? Math.max.apply(null,sptVals) : '—';
+  var n60ValsRpt = rows.filter(function(r){ return r.n60 !== null && !isNaN(r.n60); }).map(function(r){ return r.n60; });
+  var avgSPT  = sptVals.length ? (sptVals.reduce(function(a,b){return a+b;},0)/sptVals.length).toFixed(1) : '—';
+  var maxSPT  = sptVals.length ? Math.max.apply(null,sptVals) : '—';
+  var minSPT  = sptVals.length ? Math.min.apply(null,sptVals) : '—';
+  var avgN60  = n60ValsRpt.length ? (n60ValsRpt.reduce(function(a,b){return a+b;},0)/n60ValsRpt.length).toFixed(1) : '—';
+  var printDate = new Date().toLocaleDateString('en-GB', {year:'numeric',month:'short',day:'numeric'});
 
-  const reportHTML = `<!DOCTYPE html>
-<html><head><meta charset="UTF-8">
-<title>Boring Log — ${bhNo}</title>
-<style>
-  * { margin:0;padding:0;box-sizing:border-box; }
-  body { font-family:Arial,sans-serif; font-size:9pt; background:white; color:#111; }
-  .page { width:100%; max-width:900px; margin:0 auto; padding:10px; }
-  .header-box { border:2px solid #1e3a5f; margin-bottom:6px; }
-  .header-title { background:#1e3a5f; color:white; text-align:center; padding:8px; font-size:14pt; font-weight:bold; letter-spacing:1px; }
-  .header-sub { background:#2d5a87; color:white; text-align:center; padding:3px; font-size:9pt; }
-  .info-grid { display:grid; grid-template-columns:1fr 1fr; border-top:1px solid #1e3a5f; }
-  .info-col { padding:6px 10px; }
-  .info-row { display:flex; gap:4px; margin-bottom:3px; font-size:8.5pt; }
-  .info-label { font-weight:bold; min-width:110px; color:#1e3a5f; }
-  .info-value { flex:1; }
-  .divider-v { border-left:1px solid #1e3a5f; }
-  .log-section { margin-top:6px; overflow-x:auto; }
-  .summary-row { display:flex; gap:10px; margin:6px 0; flex-wrap:wrap; }
-  .sum-card { border:1px solid #e5e7eb; border-radius:6px; padding:4px 10px; font-size:8pt; background:#f8fafc; }
-  .sum-card b { color:#1e3a5f; }
-  .footer { margin-top:8px; border-top:1px solid #1e3a5f; padding-top:4px; display:flex; justify-content:space-between; font-size:7pt; color:#374151; }
-  @media print { body { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
-</style>
-</head><body>
-<div class="page">
-  <div class="header-box">
-    <div class="header-title">TEST BORING LOG</div>
-    <div class="header-sub">BORING NO.: ${bhNo} &nbsp;|&nbsp; Er = ${erVal}% &nbsp;|&nbsp; CN: ${cnVal}</div>
-    <div class="info-grid">
-      <div class="info-col">
-        <div class="info-row"><span class="info-label">PROJECT NAME:</span><span class="info-value">${proj}</span></div>
-        <div class="info-row"><span class="info-label">LOCATION:</span><span class="info-value">${loc}</span></div>
-        <div class="info-row"><span class="info-label">OWNER:</span><span class="info-value">${client}</span></div>
-        <div class="info-row"><span class="info-label">PROJECT NO.:</span><span class="info-value">${projNo}</span></div>
-        <div class="info-row"><span class="info-label">GWD / GWL:</span><span class="info-value">${gwl}</span></div>
-        <div class="info-row"><span class="info-label">NORTH:</span><span class="info-value">${north}</span></div>
-        <div class="info-row"><span class="info-label">EAST:</span><span class="info-value">${east}</span></div>
-      </div>
-      <div class="info-col divider-v">
-        <div class="info-row"><span class="info-label">DATE STARTED:</span><span class="info-value">${dStart}</span></div>
-        <div class="info-row"><span class="info-label">DATE FINISHED:</span><span class="info-value">${dEnd}</span></div>
-        <div class="info-row"><span class="info-label">GEOLOGIST:</span><span class="info-value">${geo}</span></div>
-        <div class="info-row"><span class="info-label">DRILLER:</span><span class="info-value">${driller}</span></div>
-        <div class="info-row"><span class="info-label">DRILL RIG:</span><span class="info-value">${rig}</span></div>
-        <div class="info-row"><span class="info-label">ELEVATION:</span><span class="info-value">${elev}</span></div>
-        <div class="info-row"><span class="info-label">TOTAL DEPTH:</span><span class="info-value">${depth} m</span></div>
-      </div>
-    </div>
-  </div>
-  <div class="summary-row">
-    <div class="sum-card">📊 Layers: <b>${rows.length}</b></div>
-    <div class="sum-card">📈 Avg SPT: <b>${avgSPT}</b></div>
-    <div class="sum-card">⬆️ Max SPT: <b>${maxSPT}</b></div>
-    <div class="sum-card">⚙️ Hammer Er: <b>${erVal}%</b></div>
-    <div class="sum-card">🌡️ CN: <b>${cnVal}</b></div>
-  </div>
-  <div class="log-section">${svgHTML}</div>
-  <div class="footer">
-    <span>DRILLING EQUIPMENT: ${rig}</span>
-    <span>Engineer: ${eng}</span>
-    <span>Elkasaby Geotechnical &amp; Materials Testing System</span>
-  </div>
-</div>
-<div style="text-align:center;padding:10px;background:#f1f5f9;margin-top:8px;">
-  <button onclick="window.print()" style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:8px 24px;border:none;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer;">🖨️ طباعة / Print</button>
-</div>
-</body></html>`;
+  // ── Multi-page logic ──
+  // Header height in SVG coords: marginTop = 182 (projHeaderH 82 + 100)
+  const svgMarginTop  = 182;
+  // How many px of DATA fit per print page (A4 landscape-ish at 96dpi minus header area)
+  const PRINT_PAGE_DATA_PX = 820;   // usable data height per page in SVG px
+  const metersPerPage = PRINT_PAGE_DATA_PX / scaleVal;
+
+  const numPages = Math.max(1, Math.ceil(totalDepthNum / metersPerPage));
+
+  // Build header HTML (compact, shared across pages)
+  const headerHTML = '<div class="header-box">'
+    + '<div class="header-title">TEST BORING LOG</div>'
+    + '<div class="header-sub">BORING NO.: ' + bhNo + ' &nbsp;|&nbsp; Er = ' + erVal + '% &nbsp;|&nbsp; CN: ' + cnVal
+    + ' &nbsp;|&nbsp; Depth: ' + totalDepthNum.toFixed(1) + ' m &nbsp;|&nbsp; GWL: ' + gwl + '</div>'
+    + '<div class="info-grid">'
+    + '<div class="info-col">'
+    + '<div class="info-row"><span class="info-label">PROJECT NAME:</span><span class="info-value">' + proj + '</span></div>'
+    + '<div class="info-row"><span class="info-label">LOCATION:</span><span class="info-value">' + loc + '</span></div>'
+    + '<div class="info-row"><span class="info-label">OWNER:</span><span class="info-value">' + client + '</span></div>'
+    + '<div class="info-row"><span class="info-label">PROJECT NO.:</span><span class="info-value">' + projNo + '</span></div>'
+    + '<div class="info-row"><span class="info-label">NORTH / EAST:</span><span class="info-value">' + north + ' / ' + east + '</span></div>'
+    + '</div>'
+    + '<div class="info-col divider-v">'
+    + '<div class="info-row"><span class="info-label">DATE STARTED:</span><span class="info-value">' + dStart + '</span></div>'
+    + '<div class="info-row"><span class="info-label">DATE FINISHED:</span><span class="info-value">' + dEnd + '</span></div>'
+    + '<div class="info-row"><span class="info-label">GEOLOGIST / DRILLER:</span><span class="info-value">' + geo + ' / ' + driller + '</span></div>'
+    + '<div class="info-row"><span class="info-label">DRILL RIG:</span><span class="info-value">' + rig + '</span></div>'
+    + '<div class="info-row"><span class="info-label">ELEVATION:</span><span class="info-value">' + elev + ' m</span></div>'
+    + '</div>'
+    + '</div>'
+    + '</div>';
+
+  const summaryHTML = '<div class="summary-row">'
+    + '<div class="sum-card">📊 Layers: <b>' + rows.length + '</b></div>'
+    + '<div class="sum-card">📈 Avg SPT: <b>' + avgSPT + '</b></div>'
+    + '<div class="sum-card">⬆️ Max SPT: <b>' + maxSPT + '</b></div>'
+    + '<div class="sum-card">⬇️ Min SPT: <b>' + minSPT + '</b></div>'
+    + '<div class="sum-card">⚙️ Avg N60: <b>' + avgN60 + '</b> (Er=' + erVal + '%)</div>'
+    + '<div class="sum-card">📄 Pages: <b>' + numPages + '</b></div>'
+    + '<div class="sum-card">🖨️ Printed: <b>' + printDate + '</b></div>'
+    + '</div>';
+
+  // ── Build page slices ──
+  // Each page clips the SVG using viewBox to show a depth band.
+  // Page 1 shows the full header band (0 → svgMarginTop) + first data band.
+  // Subsequent pages show a thin column-header repeat + next data band.
+  // We achieve this by setting viewBox and using a fixed display size.
+  const DISPLAY_W = 880; // CSS px width of displayed SVG per page
+  const svgAspect = svgW / DISPLAY_W;
+
+  var pagesHTML = '';
+
+  for (var p = 0; p < numPages; p++) {
+    var depthFrom = p * metersPerPage;                     // meters
+    var depthTo   = Math.min((p + 1) * metersPerPage, totalDepthNum);
+
+    // SVG y-coordinates for this depth band
+    // Include the column-header strip (20px above svgMarginTop) on every page
+    var HEADER_STRIP = 22; // height of the column label row just above data
+    var vbYstart = (p === 0)
+      ? 0
+      : (svgMarginTop - HEADER_STRIP + depthFrom * scaleVal);
+    var vbYend   = (p === 0)
+      ? (svgMarginTop + depthTo * scaleVal + 8)
+      : (svgMarginTop - HEADER_STRIP + depthTo * scaleVal + 8);
+
+    var vbH = vbYend - vbYstart;
+    var displayH = Math.round(vbH / svgAspect);
+
+    // Replace the SVG's width/height/viewBox attrs for this page slice
+    // We inject a wrapper that clips via viewBox
+    var pageSliceSVG = fullSVGHTML
+      .replace(/width="[^"]*"/, 'width="' + DISPLAY_W + '"')
+      .replace(/height="[^"]*"/, 'height="' + displayH + '"')
+      .replace(/<svg /, '<svg viewBox="0 ' + vbYstart + ' ' + svgW + ' ' + vbH + '" preserveAspectRatio="xMinYMin meet" ');
+
+    var pageLabel = numPages > 1 ? (' &nbsp;|&nbsp; صفحة ' + (p+1) + ' / ' + numPages + ' (عمق ' + depthFrom.toFixed(1) + '–' + depthTo.toFixed(1) + ' م)') : '';
+
+    var isLast = (p === numPages - 1);
+    pagesHTML += '<div class="log-page' + (isLast ? '' : ' page-break') + '">'
+      + (p === 0 ? headerHTML + summaryHTML : '<div class="page-cont-label">BH: ' + bhNo + ' — Continuation' + pageLabel + '</div>')
+      + '<div class="log-section">' + pageSliceSVG + '</div>'
+      + '<div class="footer">'
+      + '<span>🔧 Drill Rig: ' + rig + ' &nbsp;|&nbsp; Driller: ' + driller + '</span>'
+      + '<span>👷 Engineer: ' + eng + ' &nbsp;|&nbsp; Page ' + (p+1) + '/' + numPages + '</span>'
+      + '<span>Elkasaby Geotechnical &amp; Materials Testing System &nbsp;|&nbsp; ' + printDate + '</span>'
+      + '</div>'
+      + '</div>';
+  }
+
+  const reportHTML = '<!DOCTYPE html>\n<html><head><meta charset="UTF-8">'
+    + '<title>Boring Log \u2014 ' + bhNo + '</title>'
+    + '<style>'
+    + '* { margin:0;padding:0;box-sizing:border-box; }'
+    + 'body { font-family:Arial,sans-serif; font-size:9pt; background:white; color:#111; }'
+    + '.log-page { width:100%; max-width:' + (DISPLAY_W + 20) + 'px; margin:0 auto; padding:10px 10px 6px; }'
+    + '.page-break { page-break-after:always; break-after:page; border-bottom:2px dashed #94a3b8; margin-bottom:10px; padding-bottom:6px; }'
+    + '.header-box { border:2px solid #1e3a5f; margin-bottom:5px; }'
+    + '.header-title { background:#1e3a5f; color:white; text-align:center; padding:7px; font-size:13pt; font-weight:bold; letter-spacing:1px; }'
+    + '.header-sub { background:#2d5a87; color:white; text-align:center; padding:3px; font-size:8.5pt; }'
+    + '.info-grid { display:grid; grid-template-columns:1fr 1fr; border-top:1px solid #1e3a5f; }'
+    + '.info-col { padding:5px 8px; }'
+    + '.info-row { display:flex; gap:4px; margin-bottom:2px; font-size:8pt; }'
+    + '.info-label { font-weight:bold; min-width:120px; color:#1e3a5f; }'
+    + '.info-value { flex:1; }'
+    + '.divider-v { border-left:1px solid #1e3a5f; }'
+    + '.summary-row { display:flex; gap:8px; margin:4px 0 5px; flex-wrap:wrap; }'
+    + '.sum-card { border:1px solid #e5e7eb; border-radius:5px; padding:3px 9px; font-size:7.5pt; background:#f8fafc; }'
+    + '.sum-card b { color:#1e3a5f; }'
+    + '.log-section { overflow:hidden; }'
+    + '.footer { margin-top:5px; border-top:1px solid #1e3a5f; padding-top:3px; display:flex; justify-content:space-between; font-size:6.5pt; color:#374151; }'
+    + '.page-cont-label { background:#1e3a5f; color:white; padding:5px 10px; font-size:8pt; font-weight:bold; margin-bottom:4px; border-radius:4px; }'
+    + '@media print { body { -webkit-print-color-adjust:exact; print-color-adjust:exact; } .no-print { display:none !important; } }'
+    + '</style>'
+    + '</head><body>'
+    + pagesHTML
+    + '<div class="no-print" style="text-align:center;padding:12px;background:#f1f5f9;margin-top:8px;">'
+    + '<button onclick="window.print()" style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:8px 24px;border:none;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer;margin-left:8px;">🖨️ طباعة / Print</button>'
+    + '</div>'
+    + '</body></html>';
 
   const modal   = document.getElementById('blReportModal');
   const content = document.getElementById('blReportContent');
@@ -17418,7 +19001,845 @@ function scRenderStoredTable() {
 }
 // ══ END STORED CLASSIFICATION RESULTS ENGINE ══════════════════
 
-function showJSONToast(msg, color) {
+// ══ BEARING CAPACITY FROM SPT — MEYERHOF ══════════════════════════
+function blCalcBearingCapacity() {
+  var rows   = blGetRows();
+  if (!rows.length) { alert('أضف طبقات الجسة أولاً'); return; }
+
+  var Df    = parseFloat(document.getElementById('bc_Df').value)  || 1.5;
+  var B     = parseFloat(document.getElementById('bc_B').value)   || 1.5;
+  var gwl   = parseFloat(document.getElementById('bc_gwl').value);
+  var shape = (document.getElementById('bc_shape') || {}).value   || 'square';
+  if (isNaN(gwl)) gwl = 99;
+
+  // Ground water correction factor Fw
+  // If GWL >= Df + B → Fw = 1.0 (no effect)
+  // If GWL <= Df    → Fw = 0.5 (fully submerged)
+  // Interpolate linearly
+  var Fw;
+  if (gwl >= Df + B)      Fw = 1.0;
+  else if (gwl <= Df)     Fw = 0.5;
+  else                    Fw = 0.5 + 0.5 * (gwl - Df) / B;
+  Fw = Math.round(Fw * 100) / 100;
+
+  // Shape factor for Nc (cohesive)
+  // Strip Nc=5.14, Square/Circle Nc=6.14, Rectangular interpolated
+  var Nc;
+  if (shape === 'strip')                       Nc = 5.14;
+  else if (shape === 'square')                 Nc = 6.14;
+  else /* rect: approximate intermediate */   Nc = 5.14 + 1.0 * Math.min(1, B / Math.max(B, 1)); // simplification
+
+  // Meyerhof granular allowable (settlement ≤25mm)
+  function qa_granular(N) {
+    if (N === null || isNaN(N)) return null;
+    var qa;
+    if (B <= 1.2) {
+      qa = 12 * N * Fw;
+    } else {
+      var term = (B + 0.3) / B;
+      qa = 8 * N * term * term * Fw;
+    }
+    return Math.round(qa);
+  }
+
+  // Meyerhof cohesive allowable
+  // Su = 6.25 × N (kPa) — Terzaghi & Peck
+  // q_ult = Su × Nc  (general shear)
+  // q_a = q_ult / FS   (FS = 3)
+  function qa_cohesive(N) {
+    if (N === null || isNaN(N)) return null;
+    var Su   = 6.25 * N;
+    var qult = Su * Nc;
+    return Math.round(qult / 3);
+  }
+
+  // Density / consistency label from N
+  function densityLabel(N, granular) {
+    if (N === null || isNaN(N)) return '—';
+    if (granular) {
+      if (N < 4)  return '<span style="color:#166534;background:#dcfce7;padding:1px 6px;border-radius:4px;font-size:.72rem;">Very Loose</span>';
+      if (N < 10) return '<span style="color:#14532d;background:#bbf7d0;padding:1px 6px;border-radius:4px;font-size:.72rem;">Loose</span>';
+      if (N < 30) return '<span style="color:#713f12;background:#fef08a;padding:1px 6px;border-radius:4px;font-size:.72rem;">Medium Dense</span>';
+      if (N < 50) return '<span style="color:#c2410c;background:#ffedd5;padding:1px 6px;border-radius:4px;font-size:.72rem;">Dense</span>';
+      return          '<span style="color:#991b1b;background:#fee2e2;padding:1px 6px;border-radius:4px;font-size:.72rem;">Very Dense</span>';
+    } else {
+      if (N < 2)  return '<span style="color:#166534;background:#dcfce7;padding:1px 6px;border-radius:4px;font-size:.72rem;">Very Soft</span>';
+      if (N < 4)  return '<span style="color:#14532d;background:#bbf7d0;padding:1px 6px;border-radius:4px;font-size:.72rem;">Soft</span>';
+      if (N < 8)  return '<span style="color:#713f12;background:#fef08a;padding:1px 6px;border-radius:4px;font-size:.72rem;">Medium Stiff</span>';
+      if (N < 15) return '<span style="color:#c2410c;background:#ffedd5;padding:1px 6px;border-radius:4px;font-size:.72rem;">Stiff</span>';
+      if (N < 30) return '<span style="color:#991b1b;background:#fee2e2;padding:1px 6px;border-radius:4px;font-size:.72rem;">Very Stiff</span>';
+      return          '<span style="color:#7c2d12;background:#fecaca;padding:1px 6px;border-radius:4px;font-size:.72rem;">Hard</span>';
+    }
+  }
+
+  // Color coding for qa
+  function qaColor(qa) {
+    if (qa === null) return '#94a3b8';
+    if (qa < 50)  return '#dc2626';
+    if (qa < 100) return '#ea580c';
+    if (qa < 200) return '#d97706';
+    if (qa < 300) return '#16a34a';
+    return               '#0f766e';
+  }
+
+  // Build table
+  var th = function(t, w) {
+    return '<th style="padding:8px 6px;border:1px solid rgba(255,255,255,.15);text-align:center;white-space:nowrap;font-size:.74rem;' + (w ? 'min-width:' + w + 'px;' : '') + '">' + t + '</th>';
+  };
+  var td = function(t, extra) {
+    return '<td style="padding:6px 5px;border:1px solid #e5e7eb;text-align:center;font-size:.78rem;' + (extra||'') + '">' + (t === null || t === undefined || t === '' ? '—' : t) + '</td>';
+  };
+
+  var html = '<div style="overflow-x:auto;">'
+    + '<div style="padding:8px 12px;background:#1e3a5f;color:white;border-radius:8px 8px 0 0;font-size:.78rem;font-weight:700;display:flex;flex-wrap:wrap;gap:12px;align-items:center;">'
+    + '<span>🏗️ نتائج قدرة التحمل التقديرية</span>'
+    + '<span style="background:rgba(255,255,255,.15);padding:2px 10px;border-radius:6px;">Df = ' + Df + ' م</span>'
+    + '<span style="background:rgba(255,255,255,.15);padding:2px 10px;border-radius:6px;">B = ' + B + ' م</span>'
+    + '<span style="background:rgba(255,255,255,.15);padding:2px 10px;border-radius:6px;">Shape: ' + shape + '</span>'
+    + '<span style="background:rgba(255,255,255,.15);padding:2px 10px;border-radius:6px;">GWL = ' + (gwl >= 99 ? 'NF' : gwl + ' م') + '</span>'
+    + '<span style="background:rgba(255,255,255,.15);padding:2px 10px;border-radius:6px;">Fw = ' + Fw + '</span>'
+    + '</div>'
+    + '<table style="width:100%;border-collapse:collapse;">'
+    + '<thead><tr style="background:linear-gradient(135deg,#854d0e,#a16207);color:white;">'
+    + th('#') + th('من (م)', 55) + th('إلى (م)', 55)
+    + th('USCS', 55) + th('نوع', 70) + th('SPT (N)', 65) + th('N60', 55)
+    + th('Density / Consistency', 130)
+    + th('S<sub>u</sub> (kPa)<br><small>clay/silt</small>', 75)
+    + th('φ° (avg)<br><small>sand/gravel</small>', 80)
+    + th('q<sub>allow</sub> (kPa)<br><small style="font-weight:400;">Meyerhof</small>', 90)
+    + th('تصنيف قدرة التحمل', 120)
+    + '</tr></thead><tbody>';
+
+  var rowCount = 0;
+  rows.forEach(function(r, idx) {
+    var bg = idx % 2 === 0 ? '#ffffff' : '#fffbeb';
+    var cohesive  = ['Clay','Silt','Organic'].indexOf(r.type) >= 0;
+    var granular  = ['Sand','Gravel','Rock'].indexOf(r.type)  >= 0;
+    var N  = r.spt;
+    var n60 = r.n60;
+    var qa = null;
+    var suVal = null;
+    var phiVal = null;
+
+    if (N !== null && !isNaN(N)) {
+      if (granular)  qa = qa_granular(N);
+      else           qa = qa_cohesive(N);
+      if (cohesive)  suVal  = Math.round(6.25 * N);
+      if (granular) {
+        var phiObj = blCalcPhi(N, r.type);
+        if (phiObj) phiVal = phiObj.avg + '°';
+      }
+    }
+
+    var qaQual = '—';
+    if (qa !== null) {
+      if (qa < 50)  qaQual = '<span style="color:#dc2626;font-weight:700;">ضعيفة جداً</span>';
+      else if (qa < 100) qaQual = '<span style="color:#ea580c;font-weight:700;">ضعيفة</span>';
+      else if (qa < 200) qaQual = '<span style="color:#d97706;font-weight:700;">متوسطة</span>';
+      else if (qa < 300) qaQual = '<span style="color:#16a34a;font-weight:700;">جيدة</span>';
+      else               qaQual = '<span style="color:#0f766e;font-weight:700;">ممتازة</span>';
+    }
+
+    html += '<tr style="background:' + bg + ';">';
+    html += td(idx + 1);
+    html += td('<strong>' + r.from + '</strong>');
+    html += td('<strong>' + r.to   + '</strong>');
+    html += td(r.uscs  ? '<span style="background:#dbeafe;color:#1d4ed8;font-weight:700;padding:1px 7px;border-radius:5px;">' + r.uscs + '</span>' : '—');
+    html += td(r.type  || '—');
+    html += td(N !== null ? '<strong style="color:#c2410c;">' + N + '</strong>' : '—');
+    html += td(n60 !== null && !isNaN(n60) ? n60 : '—');
+    html += '<td style="padding:6px 5px;border:1px solid #e5e7eb;text-align:center;font-size:.76rem;">' + densityLabel(N, granular) + '</td>';
+    html += td(suVal  !== null ? '<span style="color:#7c3aed;font-weight:700;">' + suVal  + '</span>' : (cohesive ? '—' : 'N/A'));
+    html += td(phiVal !== null ? '<span style="color:#0f766e;font-weight:700;">' + phiVal + '</span>' : (granular ? '—' : 'N/A'));
+    html += td(qa !== null
+      ? '<span style="background:' + (qa < 100 ? '#fee2e2' : qa < 200 ? '#fef9c3' : '#dcfce7') + ';color:' + qaColor(qa) + ';font-weight:800;font-size:.85rem;padding:2px 10px;border-radius:7px;">' + qa + '</span>'
+      : '—');
+    html += '<td style="padding:6px 8px;border:1px solid #e5e7eb;text-align:center;">' + qaQual + '</td>';
+    html += '</tr>';
+    rowCount++;
+  });
+
+  html += '</tbody></table>';
+
+  // Summary bar: min qa
+  var qaVals = rows.map(function(r) {
+    var cohesive = ['Clay','Silt','Organic'].indexOf(r.type) >= 0;
+    var granular = ['Sand','Gravel','Rock'].indexOf(r.type)  >= 0;
+    var N = r.spt;
+    if (N === null || isNaN(N)) return null;
+    if (granular) return qa_granular(N);
+    return qa_cohesive(N);
+  }).filter(function(v) { return v !== null; });
+
+  var minQa  = qaVals.length ? Math.min.apply(null, qaVals) : null;
+  var maxQa  = qaVals.length ? Math.max.apply(null, qaVals) : null;
+  var avgQa  = qaVals.length ? Math.round(qaVals.reduce(function(a,b){return a+b;},0)/qaVals.length) : null;
+
+  html += '<div style="display:flex;gap:10px;flex-wrap:wrap;padding:8px 12px;background:#fefce8;border-top:2px solid #fcd34d;">'
+    + '<span style="font-size:.78rem;font-weight:700;color:#92400e;">ملخص قدرة التحمل:</span>'
+    + (minQa !== null ? '<span style="background:#fee2e2;color:#991b1b;font-weight:700;padding:3px 10px;border-radius:6px;font-size:.78rem;">الأدنى: ' + minQa + ' kPa</span>' : '')
+    + (avgQa !== null ? '<span style="background:#fef9c3;color:#713f12;font-weight:700;padding:3px 10px;border-radius:6px;font-size:.78rem;">المتوسط: ' + avgQa + ' kPa</span>' : '')
+    + (maxQa !== null ? '<span style="background:#dcfce7;color:#14532d;font-weight:700;padding:3px 10px;border-radius:6px;font-size:.78rem;">الأعلى: ' + maxQa + ' kPa</span>' : '')
+    + '<span style="font-size:.7rem;color:#92400e;font-style:italic;">⚠️ استنادًا لـ Meyerhof (1956) · هبوط ≤ 25mm · للتصميم الأولي فقط</span>'
+    + '</div>'
+    + '</div>';
+
+  var el = document.getElementById('blBCResults');
+  el.innerHTML = html;
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  showJSONToast('✅ تم حساب قدرة التحمل لـ ' + rowCount + ' طبقة (Meyerhof)', '#854d0e');
+}
+// ══ END BEARING CAPACITY ══════════════════════════════════════════
+
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║   MULTI-BH SPT COMPARISON MODULE                                ║
+// ║   مقارنة جسات متعددة — SPT Profiles on One Chart               ║
+// ╚══════════════════════════════════════════════════════════════════╝
+
+(function() {
+
+  // ── Palette: up to 8 boreholes ──────────────────────────────────
+  var MBH_COLORS = [
+    { stroke:'#1d4ed8', fill:'#3b82f6', light:'#dbeafe', name:'أزرق'    },
+    { stroke:'#dc2626', fill:'#ef4444', light:'#fee2e2', name:'أحمر'    },
+    { stroke:'#16a34a', fill:'#22c55e', light:'#dcfce7', name:'أخضر'    },
+    { stroke:'#d97706', fill:'#f59e0b', light:'#fef3c7', name:'برتقالي' },
+    { stroke:'#7c3aed', fill:'#a855f7', light:'#f3e8ff', name:'بنفسجي' },
+    { stroke:'#0e7490', fill:'#06b6d4', light:'#cffafe', name:'تركوازي'},
+    { stroke:'#be185d', fill:'#ec4899', light:'#fce7f3', name:'وردي'   },
+    { stroke:'#374151', fill:'#6b7280', light:'#f3f4f6', name:'رمادي'  },
+  ];
+
+  // Internal store of boreholes
+  var mbhBoreholes = [];
+  var mbhNextId    = 1;
+
+  // ── Init: add 2 default boreholes if empty ──────────────────────
+  window.mbhInitIfEmpty = function() {
+    if (mbhBoreholes.length === 0) {
+      mbhAddBH();
+      mbhAddBH();
+    }
+  };
+
+  // ── Add a new borehole card ──────────────────────────────────────
+  window.mbhAddBH = function() {
+    if (mbhBoreholes.length >= 8) {
+      showJSONToast('⚠️ الحد الأقصى 8 جسات في المقارنة', '#c2410c');
+      return;
+    }
+    var id  = mbhNextId++;
+    var col = MBH_COLORS[(id - 1) % MBH_COLORS.length];
+    mbhBoreholes.push({ id: id, color: col, name: 'BH-0' + id, layers: [] });
+    mbhRebuildCards();
+    showJSONToast('✅ تمت إضافة الجسة BH-0' + id, '#1d4ed8');
+  };
+
+  // ── Remove a borehole ───────────────────────────────────────────
+  window.mbhRemoveBH = function(id) {
+    mbhBoreholes = mbhBoreholes.filter(function(b){ return b.id !== id; });
+    mbhRebuildCards();
+    // clear chart
+    var c = document.getElementById('mbhDrawingContainer');
+    var svg = document.getElementById('mbhSVG');
+    var msg = document.getElementById('mbhEmptyMsg');
+    if (svg)  { svg.innerHTML = ''; svg.style.display = 'none'; }
+    if (msg)  { msg.style.display = 'flex'; }
+    document.getElementById('mbhStatsSection').style.display = 'none';
+  };
+
+  // ── Rebuild card UI from mbhBoreholes array ──────────────────────
+  function mbhRebuildCards() {
+    var wrap = document.getElementById('mbhBHCards');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    mbhBoreholes.forEach(function(bh) {
+      wrap.innerHTML += mbhCardHTML(bh);
+    });
+    // Restore layer rows
+    mbhBoreholes.forEach(function(bh) {
+      bh.layers.forEach(function(layer, idx) {
+        mbhSetLayerValues(bh.id, idx, layer);
+      });
+    });
+  }
+
+  function mbhCardHTML(bh) {
+    var col = bh.color;
+    var html = '<div id="mbhCard_' + bh.id + '" style="background:white;border:2px solid ' + col.stroke + ';border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'
+        + '<div style="display:flex;align-items:center;gap:8px;">'
+          + '<div style="width:14px;height:14px;border-radius:50%;background:' + col.fill + ';box-shadow:0 0 0 3px ' + col.light + ';flex-shrink:0;"></div>'
+          + '<input id="mbhName_' + bh.id + '" type="text" value="' + bh.name + '" placeholder="BH-01" '
+            + 'style="font-size:.82rem;font-weight:700;color:#1e3a8a;border:1.5px solid #93c5fd;border-radius:6px;padding:3px 8px;font-family:inherit;width:90px;">'
+          + '<span style="font-size:.68rem;color:' + col.stroke + ';background:' + col.light + ';padding:2px 8px;border-radius:10px;font-weight:700;">' + col.name + '</span>'
+        + '</div>'
+        + '<div style="display:flex;gap:6px;">'
+          + '<button onclick="mbhAddLayer(' + bh.id + ')" style="background:' + col.fill + ';color:white;border:none;border-radius:6px;padding:3px 10px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;">+ طبقة</button>'
+          + '<button onclick="mbhRemoveBH(' + bh.id + ')" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;border-radius:6px;padding:3px 8px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;">✕</button>'
+        + '</div>'
+      + '</div>'
+      // Layer table header
+      + '<div style="overflow-x:auto;">'
+      + '<table style="width:100%;border-collapse:collapse;font-size:.76rem;" id="mbhTable_' + bh.id + '">'
+      + '<thead><tr style="background:' + col.stroke + ';color:white;">'
+        + '<th style="padding:5px 6px;text-align:center;border:1px solid rgba(255,255,255,.2);min-width:60px;">من (م)</th>'
+        + '<th style="padding:5px 6px;text-align:center;border:1px solid rgba(255,255,255,.2);min-width:60px;">إلى (م)</th>'
+        + '<th style="padding:5px 6px;text-align:center;border:1px solid rgba(255,255,255,.2);min-width:55px;">SPT N</th>'
+        + '<th style="padding:5px 6px;text-align:center;border:1px solid rgba(255,255,255,.2);min-width:80px;">نوع التربة</th>'
+        + '<th style="padding:5px 6px;text-align:center;border:1px solid rgba(255,255,255,.2);min-width:30px;"></th>'
+      + '</tr></thead>'
+      + '<tbody id="mbhLayers_' + bh.id + '">'
+      + '</tbody>'
+      + '</table>'
+      + '</div>'
+      + '<div style="margin-top:6px;font-size:.68rem;color:#6b7280;">💡 أدخل طبقات الجسة مع قراءات SPT</div>'
+    + '</div>';
+    return html;
+  }
+
+  // ── Add a layer row to a borehole ──────────────────────────────
+  window.mbhAddLayer = function(bhId) {
+    var tbody = document.getElementById('mbhLayers_' + bhId);
+    if (!tbody) return;
+    var bh    = mbhBoreholes.find(function(b){ return b.id === bhId; });
+    var idx   = tbody.querySelectorAll('tr').length;
+    var prevTo = idx > 0 ? (parseFloat(tbody.querySelectorAll('tr')[idx-1].querySelector('input[data-f="to"]').value) || 0) : 0;
+    var tr = document.createElement('tr');
+    tr.style.background = (idx % 2 === 0) ? '#ffffff' : '#f9fafb';
+    tr.innerHTML = ''
+      + '<td style="border:1px solid #e5e7eb;padding:3px 4px;">'
+        + '<input data-bh="' + bhId + '" data-idx="' + idx + '" data-f="from" type="number" step="0.5" min="0" value="' + prevTo + '" '
+        + 'style="width:100%;border:1px solid #d1d5db;border-radius:5px;padding:3px 4px;font-size:.76rem;text-align:center;font-family:inherit;">'
+      + '</td>'
+      + '<td style="border:1px solid #e5e7eb;padding:3px 4px;">'
+        + '<input data-bh="' + bhId + '" data-idx="' + idx + '" data-f="to" type="number" step="0.5" min="0" value="' + (prevTo + 1.5) + '" '
+        + 'style="width:100%;border:1px solid #d1d5db;border-radius:5px;padding:3px 4px;font-size:.76rem;text-align:center;font-family:inherit;">'
+      + '</td>'
+      + '<td style="border:1px solid #e5e7eb;padding:3px 4px;">'
+        + '<input data-bh="' + bhId + '" data-idx="' + idx + '" data-f="spt" type="number" step="1" min="0" max="200" placeholder="N" '
+        + 'style="width:100%;border:1px solid #d1d5db;border-radius:5px;padding:3px 4px;font-size:.76rem;text-align:center;font-family:inherit;">'
+      + '</td>'
+      + '<td style="border:1px solid #e5e7eb;padding:3px 4px;">'
+        + '<select data-bh="' + bhId + '" data-idx="' + idx + '" data-f="type" '
+        + 'style="width:100%;border:1px solid #d1d5db;border-radius:5px;padding:3px 2px;font-size:.72rem;font-family:inherit;background:white;">'
+          + '<option>Sand</option><option>Clay</option><option>Silt</option>'
+          + '<option>Gravel</option><option>Rock</option><option>Fill</option>'
+        + '</select>'
+      + '</td>'
+      + '<td style="border:1px solid #e5e7eb;padding:3px 4px;text-align:center;">'
+        + '<button onclick="mbhRemoveLayer(this)" style="background:#fee2e2;color:#dc2626;border:none;border-radius:4px;padding:2px 6px;font-size:.7rem;cursor:pointer;font-family:inherit;">✕</button>'
+      + '</td>';
+    tbody.appendChild(tr);
+  };
+
+  window.mbhRemoveLayer = function(btn) {
+    var tr = btn.closest('tr');
+    tr.parentNode.removeChild(tr);
+  };
+
+  function mbhSetLayerValues(bhId, idx, layer) {
+    var tbody = document.getElementById('mbhLayers_' + bhId);
+    if (!tbody) return;
+    var tr = tbody.querySelectorAll('tr')[idx];
+    if (!tr) return;
+    var fromI  = tr.querySelector('[data-f="from"]');
+    var toI    = tr.querySelector('[data-f="to"]');
+    var sptI   = tr.querySelector('[data-f="spt"]');
+    var typeS  = tr.querySelector('[data-f="type"]');
+    if (fromI) fromI.value = layer.from || 0;
+    if (toI)   toI.value   = layer.to   || 0;
+    if (sptI)  sptI.value  = layer.spt  !== undefined ? layer.spt : '';
+    if (typeS) typeS.value = layer.type || 'Sand';
+  }
+
+  // ── Read current data from the cards ───────────────────────────
+  function mbhReadAll() {
+    return mbhBoreholes.map(function(bh) {
+      var nameEl  = document.getElementById('mbhName_' + bh.id);
+      var name    = nameEl ? nameEl.value || ('BH-' + bh.id) : ('BH-' + bh.id);
+      var tbody   = document.getElementById('mbhLayers_' + bh.id);
+      var layers  = [];
+      if (tbody) {
+        tbody.querySelectorAll('tr').forEach(function(tr) {
+          var fromV  = parseFloat((tr.querySelector('[data-f="from"]') || {}).value);
+          var toV    = parseFloat((tr.querySelector('[data-f="to"]') || {}).value);
+          var sptV   = (tr.querySelector('[data-f="spt"]') || {}).value;
+          var typeV  = (tr.querySelector('[data-f="type"]') || {}).value || 'Sand';
+          if (!isNaN(fromV) && !isNaN(toV)) {
+            layers.push({
+              from: fromV,
+              to:   toV,
+              spt:  sptV !== '' && sptV !== undefined ? parseFloat(sptV) : null,
+              type: typeV,
+            });
+          }
+        });
+      }
+      return { id: bh.id, name: name, color: bh.color, layers: layers };
+    });
+  }
+
+  // ── Import current BL data as first borehole ───────────────────
+  window.mbhImportFromBL = function() {
+    if (typeof blGetRows !== 'function') {
+      showJSONToast('⚠️ افتح سجل الجسة أولاً وأدخل البيانات', '#c2410c');
+      return;
+    }
+    var blRows = blGetRows();
+    if (!blRows.length) {
+      showJSONToast('⚠️ لا توجد طبقات في سجل الجسة الحالي', '#c2410c');
+      return;
+    }
+    var bhNameEl = document.getElementById('bl_bhNo');
+    var bhName   = bhNameEl ? (bhNameEl.value || 'BH-import') : 'BH-import';
+
+    // Add new borehole slot
+    var id  = mbhNextId++;
+    var col = MBH_COLORS[(mbhBoreholes.length) % MBH_COLORS.length];
+    mbhBoreholes.push({ id: id, color: col, name: bhName, layers: [] });
+    mbhRebuildCards();
+
+    // Set name
+    var nameEl = document.getElementById('mbhName_' + id);
+    if (nameEl) nameEl.value = bhName;
+
+    // Add rows
+    blRows.forEach(function(r) {
+      mbhAddLayer(id);
+      var tbody = document.getElementById('mbhLayers_' + id);
+      if (!tbody) return;
+      var trs = tbody.querySelectorAll('tr');
+      var tr  = trs[trs.length - 1];
+      if (!tr) return;
+      var fromI = tr.querySelector('[data-f="from"]');
+      var toI   = tr.querySelector('[data-f="to"]');
+      var sptI  = tr.querySelector('[data-f="spt"]');
+      var typeS = tr.querySelector('[data-f="type"]');
+      if (fromI) fromI.value = r.from;
+      if (toI)   toI.value   = r.to;
+      if (sptI)  sptI.value  = r.spt !== null ? r.spt : '';
+      if (typeS) typeS.value = r.soilType || 'Sand';
+    });
+
+    showJSONToast('✅ تم استيراد ' + blRows.length + ' طبقة من سجل الجسة كـ ' + bhName, '#1d4ed8');
+  };
+
+  // ── Demo data ──────────────────────────────────────────────────
+  window.mbhLoadDemo = function() {
+    mbhBoreholes = [];
+    mbhNextId    = 1;
+    document.getElementById('mbhBHCards').innerHTML = '';
+
+    var demoData = [
+      { name: 'BH-01', layers: [
+        {from:0,  to:1.5, spt:5,  type:'Fill'},
+        {from:1.5,to:3,   spt:8,  type:'Sand'},
+        {from:3,  to:5,   spt:12, type:'Sand'},
+        {from:5,  to:7.5, spt:18, type:'Clay'},
+        {from:7.5,to:10,  spt:25, type:'Sand'},
+        {from:10, to:13,  spt:38, type:'Gravel'},
+        {from:13, to:15,  spt:50, type:'Rock'},
+      ]},
+      { name: 'BH-02', layers: [
+        {from:0,  to:1.5, spt:4,  type:'Fill'},
+        {from:1.5,to:3,   spt:6,  type:'Clay'},
+        {from:3,  to:5,   spt:10, type:'Clay'},
+        {from:5,  to:7,   spt:14, type:'Silt'},
+        {from:7,  to:10,  spt:22, type:'Sand'},
+        {from:10, to:12,  spt:31, type:'Sand'},
+        {from:12, to:15,  spt:45, type:'Gravel'},
+      ]},
+      { name: 'BH-03', layers: [
+        {from:0,  to:2,   spt:7,  type:'Sand'},
+        {from:2,  to:4,   spt:11, type:'Sand'},
+        {from:4,  to:6,   spt:9,  type:'Silt'},
+        {from:6,  to:8,   spt:16, type:'Clay'},
+        {from:8,  to:11,  spt:28, type:'Sand'},
+        {from:11, to:14,  spt:42, type:'Gravel'},
+        {from:14, to:15,  spt:55, type:'Rock'},
+      ]},
+    ];
+
+    demoData.forEach(function(d) {
+      var id  = mbhNextId++;
+      var col = MBH_COLORS[(id-1) % MBH_COLORS.length];
+      mbhBoreholes.push({ id: id, color: col, name: d.name, layers: [] });
+    });
+    mbhRebuildCards();
+
+    demoData.forEach(function(d, di) {
+      var bh = mbhBoreholes[di];
+      d.layers.forEach(function(layer) {
+        mbhAddLayer(bh.id);
+        var tbody = document.getElementById('mbhLayers_' + bh.id);
+        if (!tbody) return;
+        var trs = tbody.querySelectorAll('tr');
+        var tr  = trs[trs.length - 1];
+        if (!tr) return;
+        var fromI = tr.querySelector('[data-f="from"]');
+        var toI   = tr.querySelector('[data-f="to"]');
+        var sptI  = tr.querySelector('[data-f="spt"]');
+        var typeS = tr.querySelector('[data-f="type"]');
+        if (fromI) fromI.value = layer.from;
+        if (toI)   toI.value   = layer.to;
+        if (sptI)  sptI.value  = layer.spt;
+        if (typeS) typeS.value = layer.type;
+      });
+      var nameEl = document.getElementById('mbhName_' + bh.id);
+      if (nameEl) nameEl.value = d.name;
+    });
+
+    showJSONToast('✅ تم تحميل 3 جسات تجريبية — اضغط "رسم المقارنة"', '#059669');
+  };
+
+  // ── Reset all ──────────────────────────────────────────────────
+  window.mbhReset = function() {
+    if (!confirm('هل تريد مسح جميع الجسات؟')) return;
+    mbhBoreholes = [];
+    mbhNextId    = 1;
+    document.getElementById('mbhBHCards').innerHTML = '';
+    var svg = document.getElementById('mbhSVG');
+    var msg = document.getElementById('mbhEmptyMsg');
+    if (svg) { svg.innerHTML = ''; svg.style.display = 'none'; }
+    if (msg) msg.style.display = 'flex';
+    document.getElementById('mbhStatsSection').style.display = 'none';
+    showJSONToast('🔄 تم مسح جميع الجسات', '#6b7280');
+  };
+
+  // ╔══════════════════════════════════════════════════════════════╗
+  // ║   RENDER — Main Drawing Function                             ║
+  // ╚══════════════════════════════════════════════════════════════╝
+  window.mbhRender = function() {
+    var data      = mbhReadAll().filter(function(bh){ return bh.layers.length > 0; });
+    if (!data.length) { showJSONToast('⚠️ أضف جسة واحدة على الأقل مع طبقاتها', '#c2410c'); return; }
+
+    var scale     = parseInt(document.getElementById('mbh_scale').value)   || 55;
+    var sptMax    = parseInt(document.getElementById('mbh_sptMax').value)   || 60;
+    var maxDepth  = parseInt(document.getElementById('mbh_depth').value)    || 20;
+    var showN60   = document.getElementById('mbh_valType').value === 'n60';
+    var showZones = document.getElementById('mbh_showZones').checked;
+    var showProf  = document.getElementById('mbh_showProfile').checked;
+
+    // Get the value (SPT or N60) for a layer
+    function getVal(layer) {
+      var n = layer.spt;
+      if (n === null || isNaN(n)) return null;
+      if (!showN60) return n;
+      // N60 = N × (Er / 60) — ASTM standard energy-ratio correction
+      var erEl = document.getElementById('mbh_hammerEr');
+      var er   = erEl ? (parseFloat(erEl.value) || 60) : 60;
+      return Math.round(parseFloat(n) * (er / 60) * 10) / 10;
+    }
+
+    // ── Layout constants ────────────────────────────────────────
+    var marginTop    = 100;
+    var marginBottom = 40;
+    var marginLeft   = 20;
+    var marginRight  = 30;
+
+    var depthColW    = 48;      // depth axis on the left
+    var bhColW       = 200;     // each BH column: SPT plot width
+    var bhGap        = 40;      // gap between BH columns
+    var legendH      = 90;
+
+    var totalW = marginLeft + depthColW + data.length * (bhColW + bhGap) + marginRight;
+    var chartH = maxDepth * scale;
+    var totalH = marginTop + chartH + marginBottom + legendH;
+
+    // Density zone definitions
+    var zones = [
+      { from:0,  to:4,  fill:'#f0fff4', label:'V.Loose/V.Soft', title:'0–4' },
+      { from:4,  to:10, fill:'#dcfce7', label:'Loose/Soft',     title:'4–10' },
+      { from:10, to:30, fill:'#fef9c3', label:'Medium',         title:'10–30' },
+      { from:30, to:50, fill:'#ffedd5', label:'Dense/Stiff',    title:'30–50' },
+      { from:50, to:sptMax, fill:'#fee2e2', label:'V.Dense/Hard', title:'50+' },
+    ];
+
+    var sptSc = bhColW / sptMax;  // px per SPT unit
+
+    // ── SVG start ──────────────────────────────────────────────
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" width="' + totalW + '" height="' + totalH + '" style="font-family:Arial,sans-serif;direction:ltr;">\n'
+      + '<defs>'
+      + '<filter id="mbhShadow"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#1e3a8a" flood-opacity="0.18"/></filter>'
+      + '</defs>\n'
+      + '<rect width="' + totalW + '" height="' + totalH + '" fill="white"/>\n';
+
+    // ── Title bar ──────────────────────────────────────────────
+    s += '<rect x="0" y="0" width="' + totalW + '" height="' + marginTop + '" fill="#1e3a5f"/>\n';
+    s += '<text x="' + (totalW/2) + '" y="28" text-anchor="middle" fill="white" font-size="14" font-weight="bold">مقارنة SPT لجسات متعددة — Multi-Borehole SPT Comparison</text>\n';
+    s += '<text x="' + (totalW/2) + '" y="46" text-anchor="middle" fill="#93c5fd" font-size="10">' + (showN60 ? 'القيم المعروضة: N60 (مُصحَّحة)' : 'القيم المعروضة: N (خام)') + ' · العمق الكلي: ' + maxDepth + ' م · sptMax: ' + sptMax + '</text>\n';
+
+    // Draw BH name badges in title bar
+    data.forEach(function(bh, bi) {
+      var bx = marginLeft + depthColW + bi * (bhColW + bhGap);
+      s += '<rect x="' + (bx + 4) + '" y="58" width="' + (bhColW - 8) + '" height="28" rx="7" fill="' + bh.color.fill + '" opacity=".85"/>\n';
+      s += '<text x="' + (bx + bhColW/2) + '" y="77" text-anchor="middle" fill="white" font-size="11" font-weight="bold">' + mbhEscapeXML(bh.name) + '</text>\n';
+    });
+
+    var chartTop = marginTop;
+
+    // ── Depth axis ─────────────────────────────────────────────
+    s += '<rect x="' + marginLeft + '" y="' + chartTop + '" width="' + depthColW + '" height="' + chartH + '" fill="#f1f5f9" stroke="#94a3b8" stroke-width=".8"/>\n';
+    s += '<text x="' + (marginLeft + depthColW/2) + '" y="' + (chartTop - 8) + '" text-anchor="middle" fill="#1e3a5f" font-size="9" font-weight="bold">العمق</text>\n';
+    s += '<text x="' + (marginLeft + depthColW/2) + '" y="' + (chartTop - 1) + '" text-anchor="middle" fill="#1e3a5f" font-size="9">(م)</text>\n';
+
+    // Depth grid lines and labels
+    for (var d = 0; d <= maxDepth; d++) {
+      var dy = chartTop + d * scale;
+      var isMajor = (d % 2 === 0);
+      s += '<line x1="' + marginLeft + '" y1="' + dy + '" x2="' + (totalW - marginRight) + '" y2="' + dy + '" stroke="' + (isMajor ? '#cbd5e1' : '#e2e8f0') + '" stroke-width="' + (isMajor ? '.8' : '.4') + '" stroke-dasharray="' + (isMajor ? '' : '3,3') + '"/>\n';
+      if (isMajor) {
+        s += '<text x="' + (marginLeft + depthColW/2) + '" y="' + (dy + 4) + '" text-anchor="middle" fill="#475569" font-size="9" font-weight="' + (d % 5 === 0 ? 'bold' : 'normal') + '">' + d + '</text>\n';
+      }
+    }
+
+    // ── Per-borehole columns ───────────────────────────────────
+    data.forEach(function(bh, bi) {
+      var bx    = marginLeft + depthColW + bi * (bhColW + bhGap);
+      var col   = bh.color;
+      var sptX  = function(n) { return bx + Math.min(n, sptMax) * sptSc; };
+
+      // Column background
+      s += '<rect x="' + bx + '" y="' + chartTop + '" width="' + bhColW + '" height="' + chartH + '" fill="#fafafa" stroke="#e2e8f0" stroke-width=".8"/>\n';
+
+      // Density zone shading
+      if (showZones) {
+        zones.forEach(function(z) {
+          var zx1 = bx + z.from * sptSc;
+          var zx2 = bx + Math.min(z.to, sptMax) * sptSc;
+          s += '<rect x="' + zx1 + '" y="' + chartTop + '" width="' + (zx2-zx1) + '" height="' + chartH + '" fill="' + z.fill + '" opacity=".6"/>\n';
+        });
+      }
+
+      // SPT axis ticks and labels (0,10,20,30,40,50,60...)
+      for (var n = 0; n <= sptMax; n += 10) {
+        var nx = bx + n * sptSc;
+        s += '<line x1="' + nx + '" y1="' + chartTop + '" x2="' + nx + '" y2="' + (chartTop + chartH) + '" stroke="#d1d5db" stroke-width=".5" stroke-dasharray="2,3"/>\n';
+        s += '<text x="' + nx + '" y="' + (chartTop - 5) + '" text-anchor="middle" fill="#64748b" font-size="8">' + n + '</text>\n';
+      }
+
+      // Column title (BH name)
+      s += '<text x="' + (bx + bhColW/2) + '" y="' + (chartTop - 20) + '" text-anchor="middle" fill="' + col.stroke + '" font-size="10" font-weight="bold">' + mbhEscapeXML(bh.name) + '</text>\n';
+
+      // Draw layers as colored bars
+      bh.layers.forEach(function(layer) {
+        var ly1 = chartTop + Math.min(layer.from, maxDepth) * scale;
+        var ly2 = chartTop + Math.min(layer.to, maxDepth)   * scale;
+        if (ly1 >= chartTop + chartH) return;
+        var lh  = Math.max(0, ly2 - ly1);
+        var val = getVal(layer);
+
+        // Soil type hatching / fill color
+        var soilFill = mbhSoilFill(layer.type);
+        s += '<rect x="' + bx + '" y="' + ly1 + '" width="' + bhColW + '" height="' + lh + '" fill="' + soilFill + '" opacity=".12"/>\n';
+        // Layer separator
+        s += '<line x1="' + bx + '" y1="' + ly2 + '" x2="' + (bx+bhColW) + '" y2="' + ly2 + '" stroke="#94a3b8" stroke-width=".7" stroke-dasharray="4,3"/>\n';
+
+        // SPT bar
+        if (val !== null) {
+          var bw  = Math.min(val, sptMax) * sptSc;
+          var bGrad = mbhSPTGradient(val);
+          var bmid = ly1 + lh * 0.5;
+          var barH = Math.max(4, Math.min(lh * 0.6, 22));
+          s += '<rect x="' + bx + '" y="' + (bmid - barH/2) + '" width="' + bw + '" height="' + barH + '" rx="3" fill="' + col.fill + '" opacity=".85" filter="url(#mbhShadow)"/>\n';
+          // N value text inside bar
+          if (bw > 24) {
+            s += '<text x="' + (bx + bw - 5) + '" y="' + (bmid + 4) + '" text-anchor="end" fill="white" font-size="9" font-weight="bold">' + val + '</text>\n';
+          }
+          // Value label outside bar if short
+          if (bw <= 24) {
+            s += '<text x="' + (bx + bw + 5) + '" y="' + (bmid + 4) + '" text-anchor="start" fill="' + col.stroke + '" font-size="9" font-weight="bold">' + val + '</text>\n';
+          }
+        }
+
+        // Depth label at layer top
+        s += '<text x="' + (bx + 4) + '" y="' + (ly1 + 10) + '" fill="#475569" font-size="8">' + layer.from.toFixed(1) + ' m</text>\n';
+        // Soil type label
+        s += '<text x="' + (bx + bhColW - 4) + '" y="' + (ly1 + lh/2 + 4) + '" text-anchor="end" fill="#64748b" font-size="8" font-style="italic">' + (layer.type || '') + '</text>\n';
+      });
+
+      // SPT Profile Line (polyline through midpoint of each layer)
+      if (showProf) {
+        var pts = [];
+        bh.layers.forEach(function(layer) {
+          var val = getVal(layer);
+          if (val === null) return;
+          var midDepth = (layer.from + layer.to) / 2;
+          if (midDepth > maxDepth) return;
+          var px = bx + Math.min(val, sptMax) * sptSc;
+          var py = chartTop + midDepth * scale;
+          pts.push(px + ',' + py);
+        });
+        if (pts.length > 1) {
+          s += '<polyline points="' + pts.join(' ') + '" fill="none" stroke="' + col.stroke + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity=".9"/>\n';
+          // Dots at each point
+          pts.forEach(function(pt) {
+            var p = pt.split(',');
+            s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="4" fill="white" stroke="' + col.stroke + '" stroke-width="2"/>\n';
+          });
+        } else if (pts.length === 1) {
+          var p = pts[0].split(',');
+          s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="4" fill="white" stroke="' + col.stroke + '" stroke-width="2"/>\n';
+        }
+      }
+
+      // Column border
+      s += '<rect x="' + bx + '" y="' + chartTop + '" width="' + bhColW + '" height="' + chartH + '" fill="none" stroke="' + col.stroke + '" stroke-width="1.5"/>\n';
+    }); // end per-BH
+
+    // ── Legend ─────────────────────────────────────────────────
+    var ly = chartTop + chartH + marginBottom;
+    s += '<rect x="0" y="' + ly + '" width="' + totalW + '" height="' + legendH + '" fill="#f8fafc" stroke="#e2e8f0" stroke-width=".8"/>\n';
+    s += '<text x="12" y="' + (ly + 15) + '" fill="#1e3a5f" font-size="9.5" font-weight="bold">📊 مفتاح الجسات — Boreholes Legend:</text>\n';
+
+    data.forEach(function(bh, bi) {
+      var lx = 20 + bi * 130;
+      s += '<rect x="' + lx + '" y="' + (ly + 22) + '" width="18" height="12" rx="4" fill="' + bh.color.fill + '"/>\n';
+      s += '<text x="' + (lx + 24) + '" y="' + (ly + 32) + '" fill="' + bh.color.stroke + '" font-size="9.5" font-weight="bold">' + mbhEscapeXML(bh.name) + '</text>\n';
+    });
+
+    if (showZones) {
+      s += '<text x="12" y="' + (ly + 54) + '" fill="#475569" font-size="8.5" font-weight="bold">مناطق الكثافة — Density Zones:</text>\n';
+      var zoneLabels = [
+        {fill:'#d1fae5', txt:'N<4: Very Loose/Soft', x:12},
+        {fill:'#a7f3d0', txt:'4–10: Loose/Soft', x:130},
+        {fill:'#fef08a', txt:'10–30: Medium', x:248},
+        {fill:'#fed7aa', txt:'30–50: Dense/Stiff', x:346},
+        {fill:'#fca5a5', txt:'50+: V.Dense/Hard', x:464},
+      ];
+      zoneLabels.forEach(function(z) {
+        s += '<rect x="' + z.x + '" y="' + (ly + 60) + '" width="10" height="10" rx="2" fill="' + z.fill + '" stroke="#94a3b8" stroke-width=".6"/>\n';
+        s += '<text x="' + (z.x + 14) + '" y="' + (ly + 69) + '" fill="#374151" font-size="8">' + z.txt + '</text>\n';
+      });
+    }
+
+    s += '</svg>';
+
+    // ── Output to DOM ──────────────────────────────────────────
+    var container = document.getElementById('mbhDrawingContainer');
+    var svgEl     = document.getElementById('mbhSVG');
+    var emptyMsg  = document.getElementById('mbhEmptyMsg');
+
+    container.innerHTML = s;
+    document.getElementById('mbhStatsSection').style.display = 'block';
+    mbhBuildStats(data, showN60);
+    showJSONToast('✅ تم رسم مقارنة ' + data.length + ' جسة', '#059669');
+  };
+
+  // ── Helper: soil fill color ────────────────────────────────────
+  function mbhSoilFill(type) {
+    var map = {
+      'Sand':'#fcd34d','Clay':'#a78bfa','Silt':'#6ee7b7','Gravel':'#f97316',
+      'Rock':'#94a3b8','Fill':'#c4b5fd','Organic':'#86efac'
+    };
+    return map[type] || '#e2e8f0';
+  }
+
+  function mbhSPTGradient(n) {
+    if (n < 4)  return '#10b981';
+    if (n < 10) return '#22c55e';
+    if (n < 30) return '#f59e0b';
+    if (n < 50) return '#f97316';
+    return '#ef4444';
+  }
+
+  function mbhEscapeXML(str) {
+    return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ── Build statistics comparison table ────────────────────────
+  function mbhBuildStats(data, showN60) {
+    var el = document.getElementById('mbhStatsContent');
+    if (!el) return;
+
+    var getVal = function(layer) {
+      var n = layer.spt;
+      if (n === null || isNaN(n)) return null;
+      if (!showN60) return n;
+      // N60 = N × (Er / 60) — same formula as blCalcN60
+      var erEl = document.getElementById('mbh_hammerEr');
+      var er   = erEl ? (parseFloat(erEl.value) || 60) : 60;
+      return Math.round(parseFloat(n) * (er / 60) * 10) / 10;
+    };
+
+    var rows = data.map(function(bh) {
+      var vals = bh.layers.map(getVal).filter(function(v){ return v !== null; });
+      var minV = vals.length ? Math.min.apply(null, vals) : null;
+      var maxV = vals.length ? Math.max.apply(null, vals) : null;
+      var avgV = vals.length ? (vals.reduce(function(a,b){return a+b;},0)/vals.length).toFixed(1) : null;
+      var totalDepth = bh.layers.length ? Math.max.apply(null, bh.layers.map(function(l){return l.to;})) : 0;
+      return { bh: bh, min: minV, max: maxV, avg: avgV, depth: totalDepth, count: vals.length };
+    });
+
+    var th = function(t) { return '<th style="padding:8px 10px;border:1px solid rgba(255,255,255,.2);text-align:center;font-size:.76rem;white-space:nowrap;">' + t + '</th>'; };
+    var td = function(t, extra) { return '<td style="padding:7px 8px;border:1px solid #e5e7eb;text-align:center;font-size:.8rem;' + (extra||'') + '">' + (t !== null && t !== undefined ? t : '—') + '</td>'; };
+
+    var html = '<table style="width:100%;border-collapse:collapse;">'
+      + '<thead><tr style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;">'
+      + th('الجسة — BH') + th('العمق الكلي (م)') + th('عدد القراءات') + th('أدنى SPT') + th('أعلى SPT') + th('متوسط SPT') + th('تقييم عام')
+      + '</tr></thead><tbody>';
+
+    rows.forEach(function(r, i) {
+      var bg = i % 2 === 0 ? '#fff' : '#f9fafb';
+      var dot = '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + r.bh.color.fill + ';margin-left:5px;"></span>';
+      var rating = '—';
+      if (r.avg !== null) {
+        var a = parseFloat(r.avg);
+        if (a < 4)  rating = '<span style="color:#166534;background:#dcfce7;padding:1px 7px;border-radius:5px;font-weight:700;">ضعيف جداً</span>';
+        else if (a < 10) rating = '<span style="color:#15803d;background:#bbf7d0;padding:1px 7px;border-radius:5px;font-weight:700;">ضعيف</span>';
+        else if (a < 30) rating = '<span style="color:#b45309;background:#fef9c3;padding:1px 7px;border-radius:5px;font-weight:700;">متوسط</span>';
+        else if (a < 50) rating = '<span style="color:#c2410c;background:#ffedd5;padding:1px 7px;border-radius:5px;font-weight:700;">جيد</span>';
+        else             rating = '<span style="color:#991b1b;background:#fee2e2;padding:1px 7px;border-radius:5px;font-weight:700;">ممتاز</span>';
+      }
+      html += '<tr style="background:' + bg + ';">'
+        + td(dot + '<strong style="color:' + r.bh.color.stroke + ';">' + mbhEscapeXML(r.bh.name) + '</strong>')
+        + td(r.depth.toFixed(1))
+        + td(r.count)
+        + td(r.min !== null ? '<span style="color:#166534;font-weight:700;">' + r.min + '</span>' : '—')
+        + td(r.max !== null ? '<span style="color:#991b1b;font-weight:700;">' + r.max + '</span>' : '—')
+        + td(r.avg !== null ? '<span style="color:#c2410c;font-weight:800;font-size:.9rem;">' + r.avg + '</span>' : '—')
+        + '<td style="padding:7px 8px;border:1px solid #e5e7eb;text-align:center;">' + rating + '</td>'
+        + '</tr>';
+    });
+
+    html += '</tbody></table>';
+    el.innerHTML = html;
+  }
+
+  // ── Export SVG as PNG ─────────────────────────────────────────
+  window.mbhExportPNG = function() {
+    var container = document.getElementById('mbhDrawingContainer');
+    var svgEl = container.querySelector('svg');
+    if (!svgEl) { showJSONToast('⚠️ ارسم المقارنة أولاً', '#c2410c'); return; }
+    var serializer = new XMLSerializer();
+    var svgStr  = serializer.serializeToString(svgEl);
+    var svgBlob = new Blob([svgStr], {type:'image/svg+xml;charset=utf-8'});
+    var url     = URL.createObjectURL(svgBlob);
+    var img     = new Image();
+    img.onload  = function() {
+      var canvas = document.createElement('canvas');
+      canvas.width  = parseInt(svgEl.getAttribute('width'))  || 1000;
+      canvas.height = parseInt(svgEl.getAttribute('height')) || 1400;
+      var ctx = canvas.getContext('2d');
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+      var a = document.createElement('a');
+      a.download = 'Multi-BH_SPT_Comparison.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+      showJSONToast('✅ تم تصدير رسم المقارنة كـ PNG', '#0f766e');
+    };
+    img.src = url;
+  };
+
+})(); // end IIFE
+// ══ END MULTI-BH COMPARISON MODULE ═══════════════════════════════
+
+  function showJSONToast(msg, color) {
     const t = document.createElement('div');
     t.textContent = msg;
     t.style.cssText = `
@@ -17439,6 +19860,360 @@ function showJSONToast(msg, color) {
         setTimeout(() => t.remove(), 400);
     }, 3500);
 }
+
+// ══════════════════════════════════════════════════════════════════════
+// AUTO-SAVE SYSTEM — الحفظ التلقائي بـ localStorage
+// يحفظ تلقائياً كل 30 ثانية وعند أي تغيير في البيانات
+// يستعيد البيانات تلقائياً عند فتح الصفحة إذا وُجد حفظ سابق
+// ══════════════════════════════════════════════════════════════════════
+(function() {
+  var AS_KEY      = 'elkasaby_autosave_v27';
+  var AS_META_KEY = 'elkasaby_autosave_meta_v27';
+  var AS_INTERVAL = 30000; // 30 seconds
+  var _asTimer    = null;
+  var _asDirty    = false;
+  var _asEnabled  = true;
+
+  // ── indicator badge ──────────────────────────────────────────────
+  function asCreateIndicator() {
+    if (document.getElementById('asIndicator')) return;
+    var ind = document.createElement('div');
+    ind.id = 'asIndicator';
+    ind.style.cssText = [
+      'position:fixed;bottom:16px;right:16px;z-index:9998;',
+      'display:flex;align-items:center;gap:6px;',
+      'background:rgba(30,58,95,0.92);color:white;',
+      'border-radius:20px;padding:5px 12px;font-size:.7rem;',
+      'font-family:Cairo,sans-serif;font-weight:600;',
+      'box-shadow:0 2px 10px rgba(0,0,0,.3);',
+      'transition:all .3s;cursor:pointer;user-select:none;',
+      'border:1px solid rgba(255,255,255,0.15);',
+    ].join('');
+    ind.title = 'حفظ تلقائي — اضغط لاستعادة أو حذف';
+    ind.onclick = asShowPanel;
+    ind.innerHTML = '<span id="asDot" style="width:7px;height:7px;border-radius:50%;background:#10b981;flex-shrink:0;"></span>'
+                  + '<span id="asText">💾 Auto-Save: جاهز</span>';
+    document.body.appendChild(ind);
+  }
+
+  function asSetStatus(text, dotColor) {
+    var t = document.getElementById('asText');
+    var d = document.getElementById('asDot');
+    if (t) t.textContent = '💾 ' + text;
+    if (d) d.style.background = dotColor || '#10b981';
+  }
+
+  // ── collect all app data ─────────────────────────────────────────
+  function asCollectData() {
+    var data = { timestamp: Date.now(), tabs: {}, globalInfo: {} };
+
+    // Global project info
+    var gpiIds = ['gpi_project','gpi_client','gpi_location','gpi_reportNo',
+                  'gpi_sampleId','gpi_engineer','gpi_testDate','gpi_reportDate',
+                  'gpi_ambTemp','gpi_humidity','gpi_remarks'];
+    gpiIds.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) data.globalInfo[id] = el.value;
+    });
+
+    // All input fields and selects (by tab section)
+    var sections = document.querySelectorAll('[id^="section"]');
+    sections.forEach(function(sec) {
+      var tabId = sec.id.replace('section','');
+      var fields = {};
+      sec.querySelectorAll('input[id], select[id], textarea[id]').forEach(function(el) {
+        if (el.type === 'checkbox') {
+          fields[el.id] = el.checked;
+        } else {
+          fields[el.id] = el.value;
+        }
+      });
+      if (Object.keys(fields).length) data.tabs[tabId] = fields;
+    });
+
+    // Boring Log rows (special handling)
+    try {
+      if (typeof blGetRows === 'function' && typeof blCollectHeaderData === 'function') {
+        data.boringLog = {
+          header: blCollectHeaderData(),
+          rows:   blGetRows(),
+        };
+      }
+    } catch(e) {}
+
+    // Multi-BH boreholes
+    try {
+      if (typeof mbhGetState === 'function') {
+        data.multiBH = mbhGetState();
+      }
+    } catch(e) {}
+
+    // Custom global fields
+    try {
+      var customFields = [];
+      document.querySelectorAll('#globalCustomFields [data-field-key]').forEach(function(el) {
+        var key = el.getAttribute('data-field-key');
+        var val = el.querySelector('input') ? el.querySelector('input').value : '';
+        var lbl = el.querySelector('[data-label]') ? el.querySelector('[data-label]').textContent : '';
+        customFields.push({ key: key, label: lbl, value: val });
+      });
+      data.customFields = customFields;
+    } catch(e) {}
+
+    return data;
+  }
+
+  // ── save to localStorage ─────────────────────────────────────────
+  function asSave(manual) {
+    if (!_asEnabled) return;
+    try {
+      var data = asCollectData();
+      var json = JSON.stringify(data);
+
+      // Check size (localStorage limit ~5MB)
+      if (json.length > 4 * 1024 * 1024) {
+        asSetStatus('⚠️ البيانات كبيرة جداً', '#f59e0b');
+        return;
+      }
+
+      localStorage.setItem(AS_KEY, json);
+      localStorage.setItem(AS_META_KEY, JSON.stringify({
+        timestamp: data.timestamp,
+        size: json.length,
+        tabCount: Object.keys(data.tabs).length,
+      }));
+
+      _asDirty = false;
+      var timeStr = new Date(data.timestamp).toLocaleTimeString('ar-EG', {hour:'2-digit',minute:'2-digit'});
+      asSetStatus('محفوظ ' + timeStr, '#10b981');
+
+      if (manual) showJSONToast('✅ تم الحفظ التلقائي بنجاح', '#059669');
+    } catch(e) {
+      asSetStatus('❌ خطأ في الحفظ', '#ef4444');
+      console.warn('AutoSave error:', e);
+    }
+  }
+
+  // ── restore from localStorage ────────────────────────────────────
+  function asRestore(data) {
+    if (!data) return;
+
+    // Restore global info
+    if (data.globalInfo) {
+      Object.keys(data.globalInfo).forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) { el.value = data.globalInfo[id]; }
+      });
+      try { if (typeof syncGlobalInfo === 'function') syncGlobalInfo(); } catch(e) {}
+    }
+
+    // Restore tab fields
+    if (data.tabs) {
+      Object.keys(data.tabs).forEach(function(tabId) {
+        var fields = data.tabs[tabId];
+        Object.keys(fields).forEach(function(id) {
+          var el = document.getElementById(id);
+          if (!el) return;
+          if (el.type === 'checkbox') { el.checked = fields[id]; }
+          else { el.value = fields[id]; }
+        });
+      });
+    }
+
+    // Restore Boring Log
+    if (data.boringLog && typeof blApplyHeaderData === 'function' && typeof blAddRow === 'function') {
+      try {
+        var blBody = document.getElementById('blLayersBody');
+        if (blBody) blBody.innerHTML = '';
+        if (typeof blRowCounter !== 'undefined') window.blRowCounter = 0;
+        if (data.boringLog.header) blApplyHeaderData(data.boringLog.header);
+        if (data.boringLog.rows && data.boringLog.rows.length) {
+          data.boringLog.rows.forEach(function(r) { blAddRow(r); });
+        }
+      } catch(e) { console.warn('AutoSave BL restore error:', e); }
+    }
+
+    asSetStatus('✅ تم الاستعادة', '#3b82f6');
+  }
+
+  // ── check if autosave exists on load ────────────────────────────
+  function asCheckOnLoad() {
+    try {
+      var meta = localStorage.getItem(AS_META_KEY);
+      if (!meta) return;
+      var m = JSON.parse(meta);
+      var age = Date.now() - m.timestamp;
+      var ageMin = Math.round(age / 60000);
+      var ageStr = ageMin < 60
+        ? ageMin + ' دقيقة'
+        : Math.round(ageMin / 60) + ' ساعة';
+
+      var sizeKB = Math.round(m.size / 1024);
+
+      // Show restore banner
+      var banner = document.createElement('div');
+      banner.id = 'asRestoreBanner';
+      banner.style.cssText = [
+        'position:fixed;top:0;left:0;right:0;z-index:99997;',
+        'background:linear-gradient(135deg,#1e3a5f,#1e40af);',
+        'color:white;padding:10px 20px;',
+        'display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;',
+        'font-family:Cairo,sans-serif;font-size:.8rem;',
+        'box-shadow:0 3px 12px rgba(0,0,0,.35);',
+      ].join('');
+      banner.innerHTML = [
+        '<div style="display:flex;align-items:center;gap:10px;">',
+          '<span style="font-size:1.2rem;">💾</span>',
+          '<div>',
+            '<div style="font-weight:700;font-size:.88rem;">يوجد حفظ تلقائي سابق — Auto-Save Found</div>',
+            '<div style="font-size:.7rem;color:#93c5fd;">منذ ' + ageStr + ' · الحجم: ' + sizeKB + ' KB</div>',
+          '</div>',
+        '</div>',
+        '<div style="display:flex;gap:8px;">',
+          '<button id="asRestoreBtn" style="background:#10b981;color:white;border:none;border-radius:7px;',
+              'padding:6px 16px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;">',
+            '✅ استعادة البيانات',
+          '</button>',
+          '<button id="asDiscardBtn" style="background:rgba(255,255,255,.12);color:white;border:1px solid rgba(255,255,255,.25);',
+              'border-radius:7px;padding:6px 16px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;">',
+            '🗑️ تجاهل',
+          '</button>',
+        '</div>',
+      ].join('');
+      document.body.prepend(banner);
+
+      document.getElementById('asRestoreBtn').onclick = function() {
+        try {
+          var raw = localStorage.getItem(AS_KEY);
+          if (raw) asRestore(JSON.parse(raw));
+          showJSONToast('✅ تم استعادة البيانات المحفوظة', '#059669');
+        } catch(e) {
+          showJSONToast('❌ خطأ في الاستعادة: ' + e.message, '#dc2626');
+        }
+        banner.remove();
+      };
+      document.getElementById('asDiscardBtn').onclick = function() {
+        localStorage.removeItem(AS_KEY);
+        localStorage.removeItem(AS_META_KEY);
+        banner.remove();
+        asSetStatus('جاهز (بدون استعادة)', '#6b7280');
+      };
+
+    } catch(e) { console.warn('AutoSave check error:', e); }
+  }
+
+  // ── panel (manual manage) ────────────────────────────────────────
+  function asShowPanel() {
+    var meta = null;
+    try { meta = JSON.parse(localStorage.getItem(AS_META_KEY) || 'null'); } catch(e) {}
+
+    var timeStr = meta ? new Date(meta.timestamp).toLocaleString('ar-EG') : '—';
+    var sizeKB  = meta ? Math.round(meta.size / 1024) : 0;
+
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99998;display:flex;align-items:center;justify-content:center;';
+    overlay.innerHTML = [
+      '<div style="background:white;border-radius:16px;padding:28px;width:380px;max-width:92vw;',
+          'font-family:Cairo,sans-serif;box-shadow:0 20px 60px rgba(0,0,0,.3);">',
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">',
+          '<div style="background:linear-gradient(135deg,#1e3a5f,#1e40af);border-radius:50%;',
+              'width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">💾</div>',
+          '<div>',
+            '<div style="font-weight:800;font-size:.95rem;color:#111827;">إدارة الحفظ التلقائي</div>',
+            '<div style="font-size:.72rem;color:#6b7280;">Auto-Save Manager</div>',
+          '</div>',
+        '</div>',
+        '<div style="background:#f8fafc;border-radius:10px;padding:12px;margin-bottom:16px;font-size:.78rem;line-height:1.8;">',
+          '<div>📅 آخر حفظ: <strong>' + timeStr + '</strong></div>',
+          '<div>📦 الحجم: <strong>' + sizeKB + ' KB</strong></div>',
+          '<div>⏱️ الحفظ التلقائي: كل <strong>30 ثانية</strong></div>',
+        '</div>',
+        '<div style="display:flex;flex-direction:column;gap:8px;">',
+          '<button id="asPanelSave" style="background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;',
+              'border-radius:8px;padding:10px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;">',
+            '💾 حفظ الآن',
+          '</button>',
+          '<button id="asPanelRestore" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:white;border:none;',
+              'border-radius:8px;padding:10px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;"' + (!meta ? ' disabled' : '') + '>',
+            '🔄 استعادة آخر حفظ',
+          '</button>',
+          '<button id="asPanelClear" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;',
+              'border-radius:8px;padding:10px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;"' + (!meta ? ' disabled' : '') + '>',
+            '🗑️ حذف الحفظ التلقائي',
+          '</button>',
+          '<button id="asPanelClose" style="background:#f1f5f9;color:#4b5563;border:1.5px solid #d1d5db;',
+              'border-radius:8px;padding:10px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;">',
+            '✕ إغلاق',
+          '</button>',
+        '</div>',
+      '</div>',
+    ].join('');
+    document.body.appendChild(overlay);
+
+    overlay.querySelector('#asPanelSave').onclick    = function() { asSave(true); overlay.remove(); };
+    overlay.querySelector('#asPanelClose').onclick   = function() { overlay.remove(); };
+    overlay.querySelector('#asPanelClear').onclick   = function() {
+      localStorage.removeItem(AS_KEY);
+      localStorage.removeItem(AS_META_KEY);
+      asSetStatus('تم حذف الحفظ', '#6b7280');
+      showJSONToast('🗑️ تم حذف الحفظ التلقائي', '#6b7280');
+      overlay.remove();
+    };
+    overlay.querySelector('#asPanelRestore').onclick = function() {
+      try {
+        var raw = localStorage.getItem(AS_KEY);
+        if (raw) { asRestore(JSON.parse(raw)); showJSONToast('✅ تم استعادة البيانات', '#059669'); }
+      } catch(e) { showJSONToast('❌ ' + e.message, '#dc2626'); }
+      overlay.remove();
+    };
+
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+  }
+
+  // ── dirty-tracking: mark dirty on any input change ────────────────
+  function asMarkDirty() {
+    _asDirty = true;
+    asSetStatus('يكتب...', '#f59e0b');
+    // debounce: save 3s after last change
+    clearTimeout(_asTimer);
+    _asTimer = setTimeout(function() { if (_asDirty) asSave(false); }, 3000);
+  }
+
+  // ── periodic auto-save ────────────────────────────────────────────
+  function asStartInterval() {
+    setInterval(function() {
+      if (_asEnabled) asSave(false);
+    }, AS_INTERVAL);
+  }
+
+  // ── init ──────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    asCreateIndicator();
+    asCheckOnLoad();
+    asStartInterval();
+
+    // Listen to all input/change events
+    document.addEventListener('input',  asMarkDirty, true);
+    document.addEventListener('change', asMarkDirty, true);
+  });
+
+  // Save before page unload
+  window.addEventListener('beforeunload', function() {
+    if (_asDirty) asSave(false);
+  });
+
+  // Expose for manual use
+  window.asManualSave    = function() { asSave(true); };
+  window.asShowPanel     = asShowPanel;
+  window.asForceRestore  = function() {
+    try {
+      var raw = localStorage.getItem(AS_KEY);
+      if (raw) asRestore(JSON.parse(raw));
+    } catch(e) {}
+  };
+
+})();
+// ══ END AUTO-SAVE SYSTEM ═════════════════════════════════════════════
 </script>
    </main>
    </div><!-- /mainContent -->
